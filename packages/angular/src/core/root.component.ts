@@ -5,11 +5,14 @@ import {
     Sanitizer,
     SecurityContext
 } from '@angular/core'
+import {
+    ResponsiveComponent
+} from '@stratusjs/angular/core/responsive.component'
 
 /**
  * This provides common functionality for root components.
  */
-export class RootComponent {
+export class RootComponent extends ResponsiveComponent {
 
     /**
      * @param elementRef The DOM Element to reference attributes from.

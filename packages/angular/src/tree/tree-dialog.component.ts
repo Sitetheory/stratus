@@ -61,6 +61,11 @@ import {
     TreeNodeComponent
 } from '@stratusjs/angular/tree/tree-node.component'
 
+// Extends
+import {
+    ResponsiveComponent
+} from '@stratusjs/angular/core/responsive.component'
+
 // Data Types
 export interface DialogData {
     tree: TreeComponent
@@ -97,7 +102,7 @@ const localDir = `${installDir}/${boot.configuration.paths[`${systemDir}/*`].rep
     templateUrl: `${localDir}/${parentModuleName}/${moduleName}.component.html`,
     // changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class TreeDialogComponent implements OnInit, OnDestroy {
+export class TreeDialogComponent extends ResponsiveComponent implements OnInit, OnDestroy {
 
     // Basic Component Settings
     title = moduleName + '_component'
@@ -144,8 +149,11 @@ export class TreeDialogComponent implements OnInit, OnDestroy {
         @Inject(MAT_DIALOG_DATA) public data: DialogData,
         private fb: FormBuilder,
         // private dialog: MatDialog,
-        private ref: ChangeDetectorRef
+        protected ref: ChangeDetectorRef
     ) {
+        // Chain constructor
+        super()
+
         // Manually render upon data change
         // ref.detach()
     }
@@ -166,8 +174,9 @@ export class TreeDialogComponent implements OnInit, OnDestroy {
                 this.isStyled = true
                 // this.refresh()
             })
-            .catch(() => {
-                console.error('CSS Failed to load for Component:', this)
+            .catch((err: any) => {
+                console.warn('Issue detected in CSS Loader for Component:', this)
+                console.error(err)
                 this.isStyled = true
                 // this.refresh()
             })
@@ -283,13 +292,7 @@ export class TreeDialogComponent implements OnInit, OnDestroy {
         if (this.isDestroyed) {
             return
         }
-        if (!this.ref) {
-            console.error('ref not available:', this)
-            return
-        }
-        this.ref.detach()
-        this.ref.detectChanges()
-        this.ref.reattach()
+        super.refresh()
     }
 
     onCancelClick(): void {

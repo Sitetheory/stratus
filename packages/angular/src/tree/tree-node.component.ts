@@ -40,6 +40,11 @@ import {Stratus} from '@stratusjs/runtime/stratus'
 import {IconOptions} from '@angular/material/icon/icon-registry'
 import {Observable} from 'rxjs'
 
+// Extends
+import {
+    ResponsiveComponent
+} from '@stratusjs/angular/core/responsive.component'
+
 // Local Setup
 const installDir = '/assets/1/0/bundles'
 const systemDir = '@stratusjs/angular'
@@ -57,7 +62,7 @@ const localDir = `${installDir}/${boot.configuration.paths[`${systemDir}/*`].rep
     templateUrl: `${localDir}/${parentModuleName}/${moduleName}.component.html`,
     // changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class TreeNodeComponent implements OnInit, OnDestroy {
+export class TreeNodeComponent extends ResponsiveComponent implements OnInit, OnDestroy {
 
     // Basic Component Settings
     title = moduleName + '_component'
@@ -85,8 +90,11 @@ export class TreeNodeComponent implements OnInit, OnDestroy {
 
     constructor(
         public dialog: MatDialog,
-        private ref: ChangeDetectorRef
+        protected ref: ChangeDetectorRef
     ) {
+        // Chain constructor
+        super()
+
         // Manually render upon data change
         // ref.detach()
 
@@ -109,8 +117,9 @@ export class TreeNodeComponent implements OnInit, OnDestroy {
                 this.isStyled = true
                 this.refresh()
             })
-            .catch(() => {
-                console.error('CSS Failed to load for Component:', this)
+            .catch((err: any) => {
+                console.warn('Issue detected in CSS Loader for Component:', this)
+                console.error(err)
                 this.isStyled = true
                 this.refresh()
             })
@@ -137,13 +146,7 @@ export class TreeNodeComponent implements OnInit, OnDestroy {
         if (this.isDestroyed) {
             return
         }
-        if (!this.ref) {
-            console.error('ref not available:', this)
-            return
-        }
-        this.ref.detach()
-        this.ref.detectChanges()
-        this.ref.reattach()
+        super.refresh()
     }
 
     public onPostPersist() {

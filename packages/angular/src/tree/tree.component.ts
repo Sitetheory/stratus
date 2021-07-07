@@ -222,7 +222,7 @@ export class TreeComponent extends RootComponent implements OnInit, OnDestroy {
         public iconRegistry: MatIconRegistry,
         public sanitizer: DomSanitizer,
         public backend: BackendService,
-        private ref: ChangeDetectorRef,
+        protected ref: ChangeDetectorRef,
         private elementRef: ElementRef,
         @Inject(DOCUMENT) private document: Document
     ) {
@@ -245,8 +245,9 @@ export class TreeComponent extends RootComponent implements OnInit, OnDestroy {
                 this.isStyled = true
                 this.refresh()
             })
-            .catch(() => {
-                console.error('CSS Failed to load for Component:', this)
+            .catch((err: any) => {
+                console.warn('Issue detected in CSS Loader for Component:', this)
+                console.error(err)
                 this.isStyled = true
                 this.refresh()
             })
@@ -344,10 +345,6 @@ export class TreeComponent extends RootComponent implements OnInit, OnDestroy {
         if (this.isDestroyed) {
             return
         }
-        if (!this.ref) {
-            console.error('ref not available:', this)
-            return
-        }
         // TODO: Refresh treeNodeComponents through a map
         _.forEach(this.metaMap, (meta: NodeMeta) => {
             if (!meta.component || !('refresh' in meta.component)) {
@@ -356,9 +353,7 @@ export class TreeComponent extends RootComponent implements OnInit, OnDestroy {
             // console.log('refreshing meta:', meta.component)
             meta.component.refresh()
         })
-        this.ref.detach()
-        this.ref.detectChanges()
-        this.ref.reattach()
+        super.refresh()
     }
 
     public remove(model: any) {
