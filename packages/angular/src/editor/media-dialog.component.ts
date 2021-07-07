@@ -53,6 +53,11 @@ import {
 import {Model} from '@stratusjs/angularjs/services/model'
 import {TriggerInterface} from '@stratusjs/angular/core/trigger.interface'
 
+// Extends
+import {
+    ResponsiveComponent
+} from '@stratusjs/angular/core/responsive.component'
+
 // Local Setup
 const installDir = '/assets/1/0/bundles'
 const systemDir = '@stratusjs/angular'
@@ -70,7 +75,7 @@ const localDir = `${installDir}/${boot.configuration.paths[`${systemDir}/*`].rep
     templateUrl: `${localDir}/${parentModuleName}/${moduleName}.component.html`,
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class MediaDialogComponent implements OnInit {
+export class MediaDialogComponent extends ResponsiveComponent implements OnInit {
 
     // Basic Component Settings
     title = moduleName + '_component'
@@ -113,8 +118,11 @@ export class MediaDialogComponent implements OnInit {
         private fb: FormBuilder,
         private backend: BackendService,
         private snackBar: MatSnackBar,
-        private ref: ChangeDetectorRef
+        protected ref: ChangeDetectorRef
     ) {
+        // Chain constructor
+        super()
+
         // Manually render upon data change
         // ref.detach()
     }
@@ -168,16 +176,6 @@ export class MediaDialogComponent implements OnInit {
         // FIXME: We have to go in this roundabout way to force changes to be detected since the
         // Dialog Sub-Components don't seem to have the right timing for ngOnInit
         this.refresh()
-    }
-
-    public refresh() {
-        if (!this.ref) {
-            console.error('ref not available:', this)
-            return
-        }
-        this.ref.detach()
-        this.ref.detectChanges()
-        this.ref.reattach()
     }
 
     onCancelClick(): void {
