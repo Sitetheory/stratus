@@ -58,55 +58,69 @@
 
 /* Based on Angular Material 8+ */
 
-.media-selected {
-  &-list {
-    width: 1000px;
-    max-width: 100%;
-    border: solid 1px #ccc;
-    min-height: 60px;
-    display: flex;
-    flex-direction: row;
-    background: white;
-    border-radius: 4px;
-    overflow: hidden;
+.media-selector {
+  .media-selected {
+    // Note: an ampersand appears twice in this selector
+    &-list.cdk-drop-list-dragging &-box:not(.cdk-drag-placeholder) {
+      transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+    }
   }
-  &-box {
-    padding: 20px 10px;
-    border-right: solid 1px #ccc;
-    color: rgba(0, 0, 0, 0.87);
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-    box-sizing: border-box;
-    cursor: move;
-    background: white;
-    font-size: 14px;
-    flex-grow: 1;
-    flex-basis: 0;
+  ul.media-selected {
+    &-list {
+      width: 1000px;
+      max-width: 100%;
+      //border: solid 1px #ccc;
+      min-height: 60px;
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      //background: white;
+      //border-radius: 4px;
+      //overflow: hidden;
+    }
   }
-  &-box:last-child {
-    border: none;
-  }
-  // TODO: check if this double ampersand worked
-  &-list.cdk-drop-list-dragging &-box:not(.cdk-drag-placeholder) {
-    transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+  li.media-selected {
+    &-box {
+      padding: 20px 10px;
+      //border-right: solid 1px #ccc;
+      color: rgba(0, 0, 0, 0.87);
+      // FIXME: when this uses display:flex, the box collapses
+      //display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+      //box-sizing: border-box;
+      cursor: move;
+      //background: white;
+      font-size: 14px;
+      flex-grow: 1;
+      flex-basis: 0;
+    }
+    &-box:last-child {
+      //border: none;
+    }
   }
 }
 .cdk-drag {
   &-preview {
-    box-sizing: border-box;
-    border-radius: 4px;
+    //box-sizing: border-box;
+    //border-radius: 4px;
     //box-shadow: 2px 2px 4px rgba(0,0,0,.3)
-    box-shadow: 0 5px 5px -3px rgba(0, 0, 0, 0.2),
-    0 8px 10px 1px rgba(0, 0, 0, 0.14),
-    0 3px 14px 2px rgba(0, 0, 0, 0.12);
+    //box-shadow: 0 5px 5px -3px rgba(0, 0, 0, 0.2),
+    //0 8px 10px 1px rgba(0, 0, 0, 0.14),
+    //0 3px 14px 2px rgba(0, 0, 0, 0.12);
   }
   &-placeholder {
-    opacity: 0;
+    opacity: 0.7;
+    //opacity: 0;
   }
   &-animating {
     transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+  }
+  &-dragging {
+    .info-hover-container {
+      display: none !important;
+    }
   }
 }
 .custom-ghost-placeholder {
@@ -136,4 +150,12 @@ sa-media-selector,
   &-height {
     height: 100%;
   }
+}
+
+/* Text Transforms */
+.uppercase {
+  text-transform: uppercase;
+}
+.lowercase {
+  text-transform: lowercase;
 }
