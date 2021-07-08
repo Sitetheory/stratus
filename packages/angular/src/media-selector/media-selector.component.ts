@@ -125,11 +125,12 @@ export class MediaSelectorComponent extends RootComponent { // implements OnInit
     styled = false
     empty = false
     libraryDisplay = false
+    isSelector = true
 
     constructor(
         private iconRegistry: MatIconRegistry,
         private sanitizer: DomSanitizer,
-        private ref: ChangeDetectorRef,
+        protected ref: ChangeDetectorRef,
         private elementRef: ElementRef
     ) {
         // Chain constructor
@@ -146,8 +147,10 @@ export class MediaSelectorComponent extends RootComponent { // implements OnInit
         _.forEach({
             // action buttons
             media_selector_add: '/assets/1/0/bundles/sitetheorycore/images/icons/actionButtons/add.svg',
+            media_selector_clear: '/assets/1/0/bundles/sitetheorycore/images/icons/actionButtons/clear.svg',
             media_selector_delete: '/assets/1/0/bundles/sitetheorycore/images/icons/actionButtons/delete.svg',
             media_selector_edit: '/assets/1/0/bundles/sitetheorycore/images/icons/actionButtons/edit.svg',
+            media_selector_info: '/assets/1/0/bundles/sitetheorycore/images/icons/actionButtons/info.svg',
             // type icons
             media_selector_image: '/assets/1/0/bundles/sitetheorymedia/images/mediaTypeIcons/media-icon-image.svg',
             media_selector_video: '/assets/1/0/bundles/sitetheorymedia/images/mediaTypeIcons/media-icon-video.svg',
@@ -162,8 +165,9 @@ export class MediaSelectorComponent extends RootComponent { // implements OnInit
                 this.styled = true
                 this.refresh()
             })
-            .catch(() => {
-                console.error('CSS Failed to load for Component:', this)
+            .catch((err: any) => {
+                console.warn('Issue detected in CSS Loader for Component:', this)
+                console.error(err)
                 this.styled = true
                 this.refresh()
             })
@@ -173,6 +177,7 @@ export class MediaSelectorComponent extends RootComponent { // implements OnInit
 
         // Declare Event ID (based on data from hydrated elementRefs above)
         this.eventID = `${this.target}:${this.id}:${this.property}`
+
         // Outside of production, print events for this component
         // if (cookie('env')) {
         //     const events: string[] = [
@@ -205,16 +210,6 @@ export class MediaSelectorComponent extends RootComponent { // implements OnInit
                 data.on('change', onDataChange)
                 onDataChange()
             })
-    }
-
-    public refresh() {
-        if (!this.ref) {
-            console.error('ref not available:', this)
-            return
-        }
-        this.ref.detach()
-        this.ref.detectChanges()
-        this.ref.reattach()
     }
 
     drop(event: CdkDragDrop<string[]>) {
@@ -376,9 +371,22 @@ export class MediaSelectorComponent extends RootComponent { // implements OnInit
 
     toggleLibrary() {
         this.libraryDisplay = !this.libraryDisplay
-        // trigger umbrella event
         Stratus.Environment.trigger(this.eventID, 'toggleLibrary')
-        // trigger specific event
         Stratus.Environment.trigger(`${this.eventID}:toggleLibrary`, this.libraryDisplay)
+    }
+
+    showDetails(model: any) {
+        Stratus.Environment.trigger(this.eventID, 'showDetails')
+        Stratus.Environment.trigger(`${this.eventID}:showDetails`, model)
+    }
+
+    deleteMedia(model: any) {
+        Stratus.Environment.trigger(this.eventID, 'deleteMedia')
+        Stratus.Environment.trigger(`${this.eventID}:deleteMedia`, model)
+    }
+
+    removeFromSelected(model: any) {
+        Stratus.Environment.trigger(this.eventID, 'removeFromSelected')
+        Stratus.Environment.trigger(`${this.eventID}:removeFromSelected`, model)
     }
 }
