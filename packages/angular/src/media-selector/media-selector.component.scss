@@ -117,9 +117,10 @@
   &-animating {
     transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
   }
-  &-dragging {
+  // hide tooltip in preview (dragged element) and placeholder in the list
+  &-preview, &-placeholder {
     .info-hover-container {
-      display: none !important;
+      display: none;
     }
   }
 }

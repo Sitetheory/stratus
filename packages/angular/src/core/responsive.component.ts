@@ -42,7 +42,7 @@ export class ResponsiveComponent implements ResponsiveInterface, BaseInterface {
             }
             setTimeout(() => {
                 this.refresh()
-            }, 500)
+            }, 50)
             return
         }
         this.reloading = true
