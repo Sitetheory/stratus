@@ -42,8 +42,9 @@ export class TestDirective { // implements OnInit, OnChanges {
                 this.styled = true
                 this.refresh()
             })
-            .catch(() => {
-                console.error('CSS Failed to load for Component:', this)
+            .catch((err: any) => {
+                console.warn('Issue detected in CSS Loader for Component:', this)
+                console.error(err)
                 this.styled = true
                 this.refresh()
             })

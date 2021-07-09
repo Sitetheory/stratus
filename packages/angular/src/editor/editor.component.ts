@@ -859,7 +859,7 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
     constructor(
         // private iconRegistry: MatIconRegistry,
         private sanitizer: DomSanitizer,
-        private ref: ChangeDetectorRef,
+        protected ref: ChangeDetectorRef,
         private elementRef: ElementRef,
         private fb: FormBuilder,
         public dialog: MatDialog,
@@ -895,7 +895,7 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             this.refresh()
         }).catch((e: Error) => {
             console.error(e)
-            console.warn('CSS Failed to load for Component:', this.uid)
+            console.warn('Issue detected in CSS Loader for Component:', this.uid)
             this.styled = true
             this.refresh()
         })
@@ -1122,16 +1122,6 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
     // ngDoCheck(): void {
     //     console.info('ngDoCheck:', this.dataSub);
     // }
-
-    public refresh() {
-        if (!this.ref) {
-            console.error('ref not available:', this)
-            return
-        }
-        this.ref.detach()
-        this.ref.detectChanges()
-        this.ref.reattach()
-    }
 
     handleError(err: ObservableInput<any>): ObservableInput<any> {
         console.error(err)

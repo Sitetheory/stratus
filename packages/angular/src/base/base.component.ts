@@ -81,7 +81,7 @@ export class BaseComponent extends RootComponent implements OnInit, OnChanges {
 
     constructor(
         private sanitizer: DomSanitizer,
-        private ref: ChangeDetectorRef,
+        protected ref: ChangeDetectorRef,
         private elementRef: ElementRef
     ) {
         // Chain constructor
@@ -112,16 +112,5 @@ export class BaseComponent extends RootComponent implements OnInit, OnChanges {
             api: this.api,
             urlRoot: this.urlRoot,
         })
-    }
-
-    // TODO: Decide on moving this to RootComponent or creating an Interface
-    public refresh() {
-        if (!this.ref) {
-            console.error('ref not available:', this)
-            return
-        }
-        this.ref.detach()
-        this.ref.detectChanges()
-        this.ref.reattach()
     }
 }

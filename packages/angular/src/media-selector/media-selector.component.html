@@ -12,12 +12,170 @@
     </div>
 </ng-template>
 
-<!-- TODO: Remove the ID from this... -->
-<div id="media-selector" *ngIf="styled">
+<div class="media-selector" *ngIf="styled">
 
     <div class="media-component section-container selected-container border-default border-default-all border-radius-default" *ngIf="!empty; else emptyList">
         <p class="small-all-caps selected-media-label"
            [textContent]="'Selected ' + (type || 'Items')"></p>
-        <div id="selected-area" class="media-content"></div>
+        <div class="selected-area media-content">
+            <ul cdkDropList class="list-inline media-selected-list"
+                cdkDropListOrientation="horizontal"
+                (cdkDropListDropped)="drop($event)">
+                <li cdkDrag class="media-selected-list-row media-selected-box"
+                    *ngFor="let selectedModel of dataSub | async">
+                    <!--<div class="custom-ghost-placeholder" *cdkDragPlaceholder></div>-->
+                    <div class="media-item selected-media-item" [id]="'libb_' + selectedModel.id">
+                        <div class="image-draggable"
+                             [ngClass]="{
+                                'image-thumb': selectedModel.mime && selectedModel.mime.includes('image'),
+                                'video-thumb' : selectedModel.mime && selectedModel.mime.includes('video'),
+                                'audio-thumb' : selectedModel.mime && selectedModel.mime.includes('audio'),
+                                'document-thumb' : selectedModel.mime && selectedModel.mime.includes('application'),
+                                'word' : selectedModel.extension && selectedModel.extension.includes('doc'),
+                                'pdf' :  selectedModel.extension && selectedModel.extension.includes('pdf'),
+                                'generic-thumb' : !selectedModel.mime || (
+                                    !selectedModel.mime.includes('image')
+                                    && !selectedModel.mime.includes('video')
+                                    && !selectedModel.mime.includes('audio')
+                                    && !selectedModel.mime.includes('application')
+                                )
+                             }"
+                             [ngStyle]="{'background': 'url(' + (_.get(selectedModel, '_thumbSrc') || _.get(selectedModel, 'bestImage.thumb') || _.get(selectedModel, 'meta.thumbnail_small')) + ') no-repeat center center', 'background-size': 'cover'}">
+
+                            <img class="shapeholder" src="/assets/1/0/bundles/sitetheorycore/images/shapeholder-square.png">
+
+                            <div class="thumb-gradient">&nbsp;</div>
+
+                            <!-- This is a fallback for a blank ngStyle on the parent -->
+                            <h4 *ngIf="!selectedModel._thumbSrc && !selectedModel.bestImage.thumb && !selectedModel.meta.thumbnail_small"
+                                class="thumb-title position-center"
+                                [innerText]="selectedModel.name"></h4>
+
+                            <div class="thumb-icon">
+                                <mat-icon *ngIf="selectedModel.mime.includes('image')"
+                                          svgIcon="media_selector_image"
+                                          aria-hidden="true"
+                                          aria-label="Image">
+                                    Image
+                                </mat-icon>
+                                <mat-icon *ngIf="selectedModel.mime.includes('video')"
+                                          svgIcon="media_selector_video"
+                                          aria-hidden="true"
+                                          aria-label="Video">
+                                    Video
+                                </mat-icon>
+                                <mat-icon *ngIf="selectedModel.mime.includes('audio')"
+                                          svgIcon="media_selector_audio"
+                                          aria-hidden="true"
+                                          aria-label="Audio">
+                                    Audio
+                                </mat-icon>
+                                <mat-icon *ngIf="selectedModel.mime.includes('document')"
+                                          svgIcon="media_selector_document"
+                                          aria-hidden="true"
+                                          aria-label="Document">
+                                    Document
+                                </mat-icon>
+                            </div>
+                        </div>
+
+                        <!-- Image hover info -->
+                        <!-- this was taken from the stratus-media-short-details component -->
+                        <div class="info-hover-container"
+                             (mouseover)="hovering=true"
+                             (mouseout)="hovering=false">
+                            <div class="border-radius-default image-hover-info"
+                                 layout="column"
+                                 layout-align="space-between center">
+                                <div class="format-size">
+                                    <div class="small-all-caps file-details">
+                                        <span class="file-type uppercase"
+                                              [innerText]="selectedModel.extension || selectedModel.service || (selectedModel._embedCode ? 'Embedded Video' : '')">
+                                        </span>
+                                        <!-- TODO: evaluate the possibility of an ng-container here instead -->
+                                        <span class="delimiter"
+                                              *ngIf="selectedModel.bytesHuman && selectedModel.bytesHuman !== 'Empty'"></span>
+                                        <span class="file-size"
+                                              [innerText]="(selectedModel.bytesHuman && selectedModel.bytesHuman !== 'Empty') ? selectedModel.bytesHuman : ''"></span>
+                                    </div>
+                                </div>
+                                <p class="font-body image-title" [innerText]="selectedModel.name || 'No title'">
+                                    <!--{{ ((selectedModel.data ? selectedModel.data.name : selectedModel.name) || 'No title')  | limitTo:34 }}-->
+                                </p>
+                                <div class="position-action-area">
+                                    <div class="action-btns">
+                                        <!--md-grid-list md-cols="2" md-row-height="1:1" md-gutter-gt-md="8px" md-gutter="6px"-->
+                                        <div>
+                                            <div (click)="showDetails(selectedModel)">
+                                                <a class="border-radius-default"
+                                                   href="#"
+                                                   matTooltip="Show details">
+                                                    <!--<md-tooltip>Show details</md-tooltip>-->
+                                                    <mat-icon class="info-icon"
+                                                              svgIcon="media_selector_info"
+                                                              aria-hidden="true"
+                                                              aria-label="Info">
+                                                        Info
+                                                    </mat-icon>
+                                                </a>
+                                            </div>
+                                            <!--md-grid-tile-->
+                                            <div (click)="!isSelector ? deleteMedia(selectedModel) : removeFromSelected(selectedModel.id)">
+                                                <a class="border-radius-default"
+                                                   href="#"
+                                                   matTooltip="Permanently delete from libary"
+                                                   *ngIf="!isSelector">
+                                                    <!--<md-tooltip>Permanently delete from libary</md-tooltip>-->
+                                                    <mat-icon class="delete-icon"
+                                                              svgIcon="media_selector_delete"
+                                                              aria-hidden="true"
+                                                              aria-label="Delete">
+                                                        Delete
+                                                    </mat-icon>
+                                                </a>
+                                                <a class="border-radius-default"
+                                                   href="#"
+                                                   matTooltip="Remove selection"
+                                                   *ngIf="isSelector">
+                                                    <!--<md-tooltip>Remove selection</md-tooltip>-->
+                                                    <mat-icon class="clear-icon"
+                                                              svgIcon="media_selector_clear"
+                                                              aria-hidden="true"
+                                                              aria-label="Clear">
+                                                        Clear
+                                                    </mat-icon>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+                <li class="library-toggle">
+                    <a  class="position-anchor accent-background-hover border-default border-default-all color-primary"
+                        [matTooltip]="(libraryDisplay ? 'Open' : 'Close') + ' Media Library'"
+                        (click)="toggleLibrary()"
+                        [ngClass]="{'library-toggle-open': libraryDisplay}">
+                        <!--<md-tooltip *ngIf="!libraryOpen">Open Media Library</md-tooltip>-->
+                        <div aria-hidden="true">
+                            <mat-icon class="position-center"
+                                      *ngIf="!libraryDisplay"
+                                      svgIcon="media_selector_add"
+                                      aria-hidden="false"
+                                      aria-label="Add">
+                                Add
+                            </mat-icon>
+                            <div class="btn-text small-all-caps position-center">
+                                Close Library
+                            </div>
+                            <img class="shapeholder"
+                                 src="/assets/1/0/bundles/sitetheorycore/images/shapeholder-square.png">
+                        </div>
+                    </a>
+                </li>
+            </ul>
+        </div>
     </div>
 </div>

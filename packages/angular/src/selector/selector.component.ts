@@ -138,7 +138,7 @@ export class SelectorComponent extends RootComponent { // implements OnInit, OnC
     constructor(
         private iconRegistry: MatIconRegistry,
         private sanitizer: DomSanitizer,
-        private ref: ChangeDetectorRef,
+        protected ref: ChangeDetectorRef,
         private elementRef: ElementRef
     ) {
         // Chain constructor
@@ -164,8 +164,9 @@ export class SelectorComponent extends RootComponent { // implements OnInit, OnC
                 this.styled = true
                 this.refresh()
             })
-            .catch(() => {
-                console.error('CSS Failed to load for Component:', this)
+            .catch((err: any) => {
+                console.warn('Issue detected in CSS Loader for Component:', this)
+                console.error(err)
                 this.styled = true
                 this.refresh()
             })
@@ -229,16 +230,6 @@ export class SelectorComponent extends RootComponent { // implements OnInit, OnC
     // ngDoCheck(): void {
     //     console.info('ngDoCheck:', this.dataSub);
     // }
-
-    public refresh() {
-        if (!this.ref) {
-            console.error('ref not available:', this)
-            return
-        }
-        this.ref.detach()
-        this.ref.detectChanges()
-        this.ref.reattach()
-    }
 
     drop(event: CdkDragDrop<string[]>) {
         const models = this.dataRef()

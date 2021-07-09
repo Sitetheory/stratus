@@ -40,6 +40,11 @@ import {
     Model
 } from '@stratusjs/angularjs/services/model'
 
+// Extends
+import {
+    ResponsiveComponent
+} from '@stratusjs/angular/core/responsive.component'
+
 // Local Setup
 const installDir = '/assets/1/0/bundles'
 const systemDir = '@stratusjs/angular'
@@ -57,7 +62,7 @@ const localDir = `${installDir}/${boot.configuration.paths[`${systemDir}/*`].rep
     templateUrl: `${localDir}/${parentModuleName}/${moduleName}.component.html`,
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class CodeViewDialogComponent implements OnInit {
+export class CodeViewDialogComponent extends ResponsiveComponent implements OnInit {
 
     // Basic Component Settings
     title = moduleName + '_component'
@@ -88,10 +93,13 @@ export class CodeViewDialogComponent implements OnInit {
     constructor(
         public dialogRef: MatDialogRef<CodeViewDialogComponent>,
         @Inject(MAT_DIALOG_DATA) public data: CodeViewDialogData,
-        private ref: ChangeDetectorRef,
+        protected ref: ChangeDetectorRef,
         private fb: FormBuilder,
         private ngZone: NgZone
     ) {
+        // Chain constructor
+        super()
+
         // Manually render upon data change
         // ref.detach()
     }
@@ -144,16 +152,6 @@ export class CodeViewDialogComponent implements OnInit {
         // FIXME: We have to go in this roundabout way to force changes to be detected since the
         // Dialog Sub-Components don't seem to have the right timing for ngOnInit
         this.refresh()
-    }
-
-    public refresh() {
-        if (!this.ref) {
-            console.error('ref not available:', this)
-            return
-        }
-        this.ref.detach()
-        this.ref.detectChanges()
-        this.ref.reattach()
     }
 
     onCancelClick(): void {
