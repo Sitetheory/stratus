@@ -343,7 +343,7 @@ export class TreeComponent extends RootComponent implements OnInit, OnDestroy {
 
     public refresh() {
         if (this.isDestroyed) {
-            return
+            return new Promise(resolve => resolve())
         }
         // TODO: Refresh treeNodeComponents through a map
         _.forEach(this.metaMap, (meta: NodeMeta) => {
@@ -353,7 +353,7 @@ export class TreeComponent extends RootComponent implements OnInit, OnDestroy {
             // console.log('refreshing meta:', meta.component)
             meta.component.refresh()
         })
-        super.refresh()
+        return super.refresh()
     }
 
     public remove(model: any) {

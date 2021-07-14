@@ -32,23 +32,28 @@ export class ResponsiveComponent implements ResponsiveInterface, BaseInterface {
      * force a redraw
      */
     public refresh() {
-        if (!this.ref) {
-            console.error('ChangeDetectorRef not set:', this.uid)
-            return
-        }
-        if (this.reloading) {
-            if (cookie('env')) {
-                console.warn('[collision avoidance] waiting to refresh component:', this.uid)
+        return new Promise((resolve, reject) => {
+            if (!this.ref) {
+                console.error('ChangeDetectorRef not set:', this.uid)
+                reject()
+                return
             }
-            setTimeout(() => {
-                this.refresh()
-            }, 50)
-            return
-        }
-        this.reloading = true
-        this.ref.detach()
-        this.ref.detectChanges()
-        this.ref.reattach()
-        this.reloading = false
+            if (this.reloading) {
+                if (cookie('env')) {
+                    console.warn('[control flow] waiting to refresh component:', this.uid)
+                }
+                setTimeout(() => {
+                    this.refresh()
+                        .then(() => resolve())
+                }, 50)
+                return
+            }
+            this.reloading = true
+            this.ref.detach()
+            this.ref.detectChanges()
+            this.ref.reattach()
+            this.reloading = false
+            resolve()
+        })
     }
 }

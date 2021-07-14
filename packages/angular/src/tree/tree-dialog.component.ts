@@ -290,9 +290,9 @@ export class TreeDialogComponent extends ResponsiveComponent implements OnInit, 
 
     public refresh() {
         if (this.isDestroyed) {
-            return
+            return new Promise(resolve => resolve())
         }
-        super.refresh()
+        return super.refresh()
     }
 
     onCancelClick(): void {
