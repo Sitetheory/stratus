@@ -1,23 +1,15 @@
 <!-- !model.completed || model.saving -->
 <mat-progress-bar mode="indeterminate" *ngIf="!styled"></mat-progress-bar>
 
-<!-- This shows up if the list is empty -->
-<ng-template #emptyList>
+<div class="media-selector" *ngIf="styled">
+
     <div class="media-component section-container selected-container border-default border-default-all border-radius-default">
         <p class="small-all-caps selected-media-label"
            [textContent]="'Selected ' + (type || 'Items')"></p>
-    </div>
-    <div class="selected-message-box">
-        Nothing has been selected.
-    </div>
-</ng-template>
-
-<div class="media-selector" *ngIf="styled">
-
-    <div class="media-component section-container selected-container border-default border-default-all border-radius-default" *ngIf="!empty; else emptyList">
-        <p class="small-all-caps selected-media-label"
-           [textContent]="'Selected ' + (type || 'Items')"></p>
         <div class="selected-area media-content">
+            <div class="selected-message-box" *ngIf="empty">
+                Nothing has been selected.
+            </div>
             <ul cdkDropList class="list-inline media-selected-list"
                 cdkDropListOrientation="horizontal"
                 (cdkDropListDropped)="drop($event)">
@@ -120,7 +112,8 @@
                                                 </a>
                                             </div>
                                             <!--md-grid-tile-->
-                                            <div (click)="!isSelector ? deleteMedia(selectedModel) : removeFromSelected(selectedModel.id)">
+                                            <!--<div (click)="!isSelector ? deleteMedia(selectedModel) : removeFromSelected(selectedModel.id)">-->
+                                            <div (click)="remove(selectedModel)">
                                                 <a class="border-radius-default"
                                                    href="#"
                                                    matTooltip="Permanently delete from libary"
