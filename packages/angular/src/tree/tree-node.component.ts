@@ -144,9 +144,9 @@ export class TreeNodeComponent extends ResponsiveComponent implements OnInit, On
 
     public refresh() {
         if (this.isDestroyed) {
-            return
+            return new Promise(resolve => resolve())
         }
-        super.refresh()
+        return super.refresh()
     }
 
     public onPostPersist() {

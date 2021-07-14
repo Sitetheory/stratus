@@ -500,7 +500,11 @@ export class Model<T = LooseObject> extends ModelBase<T> {
                         const intermediateChangeSet = _.cloneDeep(patch(this.data, this.sent))
                         if (!_.isEmpty(intermediateChangeSet)) {
                             if (cookie('env')) {
-                                console.log('Intermediate ChangeSet detected:', intermediateChangeSet)
+                                console.log('Intermediate ChangeSet detected:',
+                                    cookie('debug_change_set')
+                                        ? JSON.stringify(intermediateChangeSet)
+                                        : intermediateChangeSet
+                                )
                             }
                             _.forEach(intermediateChangeSet, (element: any, key: any) => {
                                 _.set(intermediateData, key, element)
