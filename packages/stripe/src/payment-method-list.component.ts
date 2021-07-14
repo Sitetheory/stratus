@@ -3,7 +3,6 @@ import {
     Component,
     ElementRef,
     Input,
-    OnDestroy,
     OnInit
 } from '@angular/core'
 import {DomSanitizer} from '@angular/platform-browser'
@@ -21,9 +20,7 @@ import {Collection} from '@stratusjs/angularjs/services/collection'
 import {cookie} from '@stratusjs/core/environment'
 
 // Services
-import {
-    StripeService
-} from '@stratusjs/stripe/stripe.service'
+import {StripeService} from '@stratusjs/stripe/stripe.service'
 
 // Local Setup
 const min = !cookie('env') ? '.min' : ''
@@ -38,7 +35,7 @@ const localDir = `${Stratus.BaseUrl}${Stratus.DeploymentPath}@stratusjs/${packag
     selector: `sa-${packageName}-${componentName}`,
     templateUrl: `${localDir}${componentName}.component${min}.html`,
 })
-export class StripePaymentMethodListComponent extends RootComponent implements OnDestroy, OnInit {
+export class StripePaymentMethodListComponent extends RootComponent implements OnInit {
 
     // Basic Component Settings
     title = `${packageName}_${componentName}_component`
@@ -101,10 +98,6 @@ export class StripePaymentMethodListComponent extends RootComponent implements O
 
     async fetchPaymentMethods() {
         await this.collection.fetch()
-    }
-
-    ngOnDestroy() {
-        delete Stratus.Instances[this.uid]
     }
 
 }

@@ -5,7 +5,6 @@ import {
     Component,
     ElementRef,
     Input,
-    OnDestroy,
     OnInit
 } from '@angular/core'
 import {DomSanitizer} from '@angular/platform-browser'
@@ -40,7 +39,7 @@ const componentName = 'setup-intent'
     // templateUrl: `${localDir}/${parentModuleName}/${moduleName}.component.html`,
     template: '<button mat-button (click)="addPaymentMethod($event)" [disabled]="newPaymentMethodPending || newPaymentMethodPrompt">Add Payment Method</button>',
 })
-export class StripeSetupIntentComponent extends RootComponent implements OnDestroy, OnInit {
+export class StripeSetupIntentComponent extends RootComponent implements OnInit {
 
     // Basic Component Settings
     title = `${packageName}_${componentName}_component`
@@ -157,10 +156,6 @@ export class StripeSetupIntentComponent extends RootComponent implements OnDestr
                 console.log('payment dialog result:', result)
             }
         })
-    }
-
-    ngOnDestroy() {
-        delete Stratus.Instances[this.uid]
     }
 
 }

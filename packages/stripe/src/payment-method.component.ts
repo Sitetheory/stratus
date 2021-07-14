@@ -30,11 +30,9 @@ import {RootComponent} from '@stratusjs/angular/core/root.component'
 import {Model} from '@stratusjs/angularjs/services/model'
 import {cookie} from '@stratusjs/core/environment'
 
+
 // Services
-import {
-    // PaymentBillingInfo,
-    StripeService
-} from '@stratusjs/stripe/stripe.service'
+import {StripeService} from '@stratusjs/stripe/stripe.service'
 
 // Local Setup
 const min = !cookie('env') ? '.min' : ''
@@ -137,7 +135,7 @@ export class StripePaymentMethodComponent extends RootComponent implements OnDes
         // this.card.mount(`#${this.elementId}-mount`)
         // Provide possible Stripe errors
         // this.card.addEventListener('change', (event) => {
-        this.Stripe.elementAddEventListener(this.cardId, 'change', (event) => {
+        this.Stripe.elementAddEventListener(this.cardId, 'change', (event: stripe.elements.ElementChangeResponse) => {
             const displayError = document.getElementById(`${this.elementId}-errors`)
             console.log('event', event) // Can get postal code from here
             // need to track if button is able to save
@@ -268,11 +266,12 @@ export class StripePaymentMethodComponent extends RootComponent implements OnDes
     }
 
     ngOnDestroy() {
-        // console.warn('local destroying stratus', this.uid)
+        console.warn('local destroying stratus', this.uid)
         if (this.cardId) {
             this.Stripe.destroyElement(this.cardId)
         }
-        delete Stratus.Instances[this.uid]
+        super.ngOnDestroy()
+        // delete Stratus.Instances[this.uid]
     }
 
 }
