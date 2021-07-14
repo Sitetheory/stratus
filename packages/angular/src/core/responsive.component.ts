@@ -8,16 +8,21 @@ import {
 
 // Libraries
 import {
-    ChangeDetectorRef
+    ChangeDetectorRef,
+    OnDestroy
 } from '@angular/core'
 import {
     cookie
 } from '@stratusjs/core/environment'
+import _ from 'lodash'
+import {
+    Stratus
+} from '@stratusjs/runtime/stratus'
 
 /**
  * This provides common functionality for component responsiveness.
  */
-export class ResponsiveComponent implements ResponsiveInterface, BaseInterface {
+export class ResponsiveComponent implements OnDestroy, ResponsiveInterface, BaseInterface {
 
     // identifiers
     uid: string
@@ -55,5 +60,15 @@ export class ResponsiveComponent implements ResponsiveInterface, BaseInterface {
             this.reloading = false
             resolve()
         })
+    }
+
+    /**
+     * Remove Stratus.Instance References on destruction
+     * use super.ngOnDestroy() to override
+     */
+    ngOnDestroy() {
+        if (!_.isEmpty(this.uid)) {
+            delete Stratus.Instances[this.uid]
+        }
     }
 }
