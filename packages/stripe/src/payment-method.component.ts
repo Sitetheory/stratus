@@ -1,251 +1,284 @@
-// Stripe Payment Method Component
-// @stratusjs/stripe/payment-method.component
-// <stratus-stripe-payment-method>
-// --------------
+// Angular Core
+import {
+    Component,
+    ElementRef,
+    Inject,
+    Input,
+    OnDestroy,
+    OnInit,
+    Optional
+} from '@angular/core'
+import {DomSanitizer} from '@angular/platform-browser'
+import {
+    MAT_DIALOG_DATA,
+    MatDialogRef
+} from '@angular/material/dialog'
+/*import {
+    FormBuilder,
+    FormGroup
+} from '@angular/forms'*/
 
 // Runtime
 import _ from 'lodash'
-import {Stratus} from '@stratusjs/runtime/stratus'
-import * as angular from 'angular'
-
-// Angular 1 Modules
-import 'angular-material'
-
-// Services
-import '@stratusjs/stripe/stripe' // Ensures the files loads, rather than the TYPE
-// tslint:disable-next-line:no-duplicate-imports
-import {StripeService} from '@stratusjs/stripe/stripe'
+import {keys} from 'ts-transformer-keys'
 
 // Stratus Dependencies
-import {cookie} from '@stratusjs/core/environment'
-import {isJSON, ObjectWithFunctions} from '@stratusjs/core/misc'
+import {
+    Stratus
+} from '@stratusjs/runtime/stratus'
+import {RootComponent} from '@stratusjs/angular/core/root.component'
 import {Model} from '@stratusjs/angularjs/services/model'
+import {cookie} from '@stratusjs/core/environment'
 
-// Environment
+// Services
+import {
+    // PaymentBillingInfo,
+    StripeService
+} from '@stratusjs/stripe/stripe.service'
+
+// Local Setup
 const min = !cookie('env') ? '.min' : ''
 const packageName = 'stripe'
-// const moduleName = 'components'
 const componentName = 'payment-method'
 const localDir = `${Stratus.BaseUrl}${Stratus.DeploymentPath}@stratusjs/${packageName}/src/`
 
-export type StripePaymentMethodScope = angular.IScope & ObjectWithFunctions & {
-    elementId: string
-    localDir: string
-    // Stripe: stripe.StripeStatic
-    stripe: stripe.Stripe
-    stripeElements: stripe.elements.Elements
-    stripeCard: stripe.elements.Element
+/**
+ * @title Dialog for Nested Tree
+ */
+@Component({
+    selector: `sa-${packageName}-${componentName}`,
+    // templateUrl: `${localDir}/${parentModuleName}/${moduleName}.component.html`,
+    templateUrl: `${localDir}${componentName}.component${min}.html`,
+    // changeDetection: ChangeDetectionStrategy.OnPush
+})
+export class StripePaymentMethodComponent extends RootComponent implements OnDestroy, OnInit {
 
-    detailedBillingInfo: boolean,
-    billingInfo: {
-        name?: string
-        email?: string
-        phone?: string
-        address: {
-            line1?: string
-            line2?: string
-            city?: string
-            state?: string
-            postal_code?: string
-            country?: string
+    // Basic Component Settings
+    title = `${packageName}_${componentName}_component`
+    uid: string
+    @Input() elementId: string
+
+    // Dependencies
+    _: any
+
+    // States
+    styled = false
+    initialized = false
+    cardComplete = false
+    cardSaved = false
+    formPending = false
+
+    // The SetupIntent Secret. This allows altering the SetupIntent that was created such as changing card details
+    @Input() clientSecret: string
+    @Input() publishKey = ''
+    @Input() detailedBillingInfo?: boolean
+    paymentMethodApiPath = 'PaymentMethod'
+    billingInfo: stripe.BillingDetails = { // fixme should copy stripe.BillingDetails // PaymentBillingInfo
+        address: {}
+    }
+    // card: stripe.elements.Element
+    private cardId?: string
+
+    constructor(
+        private elementRef: ElementRef,
+        private sanitizer: DomSanitizer,
+        private Stripe: StripeService,
+        @Optional() private dialogRef: MatDialogRef<StripePaymentMethodComponent>, // TODO detect if we are a dialog
+        @Optional() @Inject(MAT_DIALOG_DATA) private dialogData: StripePaymentMethodDialogData,
+    ) {
+        // Chain constructor
+        super()
+
+        // Initialization
+        this.uid = _.uniqueId(`sa_${_.snakeCase(this.title)}_`)
+        Stratus.Instances[this.uid] = this
+        this.elementId = this.elementId || this.uid
+
+        // TODO: Assess & Possibly Remove when the System.js ecosystem is complete
+        // Load Component CSS until System.js can import CSS properly.
+        Stratus.Internals.CssLoader(`${localDir}${componentName}.component${min}.css`)
+            .then(() => {
+                this.styled = true
+            })
+            .catch(() => {
+                console.error('CSS Failed to load for Component:', this)
+                this.styled = false
+            })
+
+        // Hydrate Root App Inputs
+        this.hydrate(this.elementRef, this.sanitizer, keys<StripePaymentMethodComponent>())
+
+        // Hydrate Dialog Data
+        if (!_.isEmpty(this.dialogData)) {
+            const keysPossible = keys<StripePaymentMethodDialogData>()
+            Object.keys(this.dialogData).forEach((attr) => {
+                if (!_.isEmpty(attr) && _.includes(keysPossible, attr)) {
+                    _.set(this, attr, this.dialogData[attr as keyof StripePaymentMethodDialogData])
+                }
+            })
         }
     }
-    initialized: boolean
-    cardComplete: boolean
-    cardSaved: boolean
-    formPending: boolean
 
-    paymentMethodApiPath: string
+    async ngOnInit() {
+        const options: stripe.elements.ElementsOptions = {
+            // {} // style options
+            // FIXME dont simplify. detailedBillingInfo needs to be converted to boolean
+            hidePostalCode: this.detailedBillingInfo ? true : false // option can remove postal
+        }
+        this.cardId = await this.Stripe.createElement(
+            this.uid,
+            this.publishKey,
+            'card',
+            options,
+            `#${this.elementId}-mount`
+        )
+        console.log('loading', _.clone(options))
+        // Render the Card
+        // this.card.mount(`#${this.elementId}-mount`)
+        // Provide possible Stripe errors
+        // this.card.addEventListener('change', (event) => {
+        this.Stripe.elementAddEventListener(this.cardId, 'change', (event) => {
+            const displayError = document.getElementById(`${this.elementId}-errors`)
+            console.log('event', event) // Can get postal code from here
+            // need to track if button is able to save
+            if (
+                Object.prototype.hasOwnProperty.call(event, 'complete') &&
+                this.cardComplete !== event.complete
+            ) {
+                // this.$applyAsync(() => {
+                this.cardComplete = event.complete
+                // })
+            }
+            // Ensure we display any errors
+            if (event.error) {
+                displayError.textContent = event.error.message
+            } else {
+                displayError.textContent = ''
+            }
+        })
+
+        // $scope.$applyAsync(() => {
+        this.initialized = true
+        // })
+
+    }
+
+    isEditable() {
+        // console.log('isEditable = ', !this.formPending && this.initialized)
+        return !this.formPending && this.initialized
+    }
+
+    /**
+     * If all text fields are filled out (other than card details)
+     */
+    isBillingDetailsFilled() {
+        if (
+            !_.isEmpty(this.billingInfo.name) &&
+            !_.isEmpty(this.billingInfo.email) &&
+            !_.isEmpty(this.billingInfo.address.line1) &&
+            !_.isEmpty(this.billingInfo.address.city) &&
+            !_.isEmpty(this.billingInfo.address.state) &&
+            !_.isEmpty(this.billingInfo.address.postal_code)
+        ) {
+            // TODO not checking this yet
+        }
+        return this.isEditable()
+    }
+
+    isSubmittable() {
+        return this.cardComplete && this.isEditable() && this.isBillingDetailsFilled()
+    }
+
+    /**
+     * Check and template fields and submit to Stripe to attempt a Confirm Card Setup
+     */
+    async saveCard() {
+        if (!this.isSubmittable()) {
+            // prevent trying to submit when not needed
+            return
+        }
+
+        // TODO need to freeze all input fields as this could take a moment and changes will do nothing
+        // TODO add loading bar to show something is being worked on
+        this.formPending = true
+        const {setupIntent, error} = await this.Stripe.confirmCardSetup(
+            this.cardId,
+            this.clientSecret,
+            {
+                payment_method: {
+                    billing_details: this.billingInfo
+                    //    name: 'Test'
+                    // }
+                }
+            }
+        )
+
+        if (error) {
+            // Display error.message in your UI.
+            console.error('error:', error, setupIntent) // only run this in dev mode
+
+            // $scope.$applyAsync(() => {
+            this.formPending = false
+            const displayError = document.getElementById(`${this.elementId}-errors`)
+            let errorMessage = 'An Unknown Error has occurred'
+            if (Object.prototype.hasOwnProperty.call(error, 'message')) {
+                errorMessage = error.message
+            }
+            displayError.textContent = errorMessage
+            // })
+            return
+        }
+
+        if (
+            setupIntent.status === 'succeeded'
+            && _.isString(setupIntent.payment_method)
+        ) {
+            // The setup has succeeded.
+            // Send setupIntent.payment_method to your server to save the card to a Customer as default
+            const model = new Model({
+                target: this.paymentMethodApiPath
+            })
+            model.data = {
+                payment_method: setupIntent.payment_method
+            }
+            await model.save()
+            // TODO check if Sitetheory refreshed
+            // hide form and Display a success message
+            // $scope.$applyAsync(() => {
+            this.cardSaved = true
+            this.formPending = false
+            // Reload any collections listing PMs
+            this.Stripe.fetchCollections()
+            // })
+        } else {
+            // handle everything else
+            // $scope.$applyAsync(() => {
+            this.formPending = false
+            console.error('something went wrong. no error, no success', setupIntent)
+            const displayError = document.getElementById(`${this.elementId}-errors`)
+            displayError.textContent = 'An unknown Error has occurred'
+            // })
+        }
+    }
+
+    dialogClose(): void {
+        if (this.dialogRef) {
+            this.dialogRef.close()
+        }
+    }
+
+    ngOnDestroy() {
+        // console.warn('local destroying stratus', this.uid)
+        if (this.cardId) {
+            this.Stripe.destroyElement(this.cardId)
+        }
+        delete Stratus.Instances[this.uid]
+    }
+
 }
 
-Stratus.Components.StripePaymentMethod = {
-    bindings: {
-        // Basic Control for Designers
-        elementId: '@',
-        // The SetupIntent Secret. This allows altering the SetupIntent that was created such as changing card details
-        clientSecret: '@',
-        // When true, Requests for Name + Address to be added
-        detailedBillingInfo: '@',
-        // Stripe Publish Key
-        publishKey: '@',
-    },
-    controller(
-        $attrs: angular.IAttributes,
-        $element: angular.IRootElementService,
-        $scope: StripePaymentMethodScope, // angular.IScope breaks references so far
-        // $timeout: angular.ITimeoutService,
-        // $window: angular.IWindowService,
-        Stripe: StripeService
-    ) {
-        // Initialize
-        const $ctrl = this
-        $ctrl.uid = _.uniqueId(_.camelCase(packageName) + '_' + _.camelCase(componentName) + '_')
-        Stratus.Instances[$ctrl.uid] = $scope
-        $scope.elementId = $attrs.elementId || $ctrl.uid
-        $scope.localDir = localDir
-        Stratus.Internals.CssLoader(`${localDir}${componentName}.component${min}.css`)
-
-        // The SetupIntent Secret. This allows altering the SetupIntent that was created such as changing card details
-        const clientSecret: string = $attrs.clientSecret || null
-        const publishKey = $attrs.publishKey || ''
-        let card: stripe.elements.Element = null
-        $scope.initialized = false
-        $scope.cardComplete = false
-        $scope.cardSaved = false
-        $scope.formPending = false
-        // TODO Add an option for dispalying an existing card/info (to update)
-        $scope.detailedBillingInfo = $attrs.detailedBillingInfo && isJSON($attrs.detailedBillingInfo) ?
-            JSON.parse($attrs.detailedBillingInfo) : false
-        $scope.billingInfo = {
-            address: {}
-        }
-
-        $scope.paymentMethodApiPath = 'PaymentMethod' // FIXME allow this to be customizable
-
-        /**
-         * On load, attempt to prepare and render the Card element
-         */
-        $ctrl.$onInit = async () => {
-            // Stripe.elements() will await until it all loaded and ready to use
-            // create(card) will make a 'card' type of Setup
-            const options: stripe.elements.ElementsOptions = {
-                // {} // style options
-                hidePostalCode: $scope.detailedBillingInfo // option can remove postal
-            }
-            card = (await Stripe.elements(publishKey)).create('card', options)
-            console.log('loading', _.clone(options))
-            // Render the Card
-            card.mount(`#${$scope.elementId}-mount`)
-            // Provide possible Stripe errors
-            card.addEventListener('change', (event) => {
-                const displayError = document.getElementById(`${$scope.elementId}-errors`)
-                console.log('event', event) // Can get postal code from here
-                // need to track if button is able to save
-                if (
-                    Object.prototype.hasOwnProperty.call(event, 'complete') &&
-                    $scope.cardComplete !== event.complete
-                ) {
-                    $scope.$applyAsync(() => {
-                        $scope.cardComplete = event.complete
-                    })
-                }
-                // Ensure we display any errors
-                if (event.error) {
-                    displayError.textContent = event.error.message
-                } else {
-                    displayError.textContent = ''
-                }
-            })
-
-            $scope.$applyAsync(() => {
-                $scope.initialized = true
-            })
-        }
-
-        $scope.isEditable = () => {
-            return !$scope.formPending && $scope.initialized
-        }
-
-        /**
-         * If all text fields are filled out (other than card details)
-         */
-        $scope.isBillingDetailsFilled = () => {
-            if (
-                !_.isEmpty($scope.billingInfo.name) &&
-                !_.isEmpty($scope.billingInfo.email) &&
-                !_.isEmpty($scope.billingInfo.address.line1) &&
-                !_.isEmpty($scope.billingInfo.address.city) &&
-                !_.isEmpty($scope.billingInfo.address.state) &&
-                !_.isEmpty($scope.billingInfo.address.postal_code)
-            ) {
-
-            }
-            return !$scope.formPending && $scope.initialized
-        }
-
-        $scope.isSubmittable = () => {
-            return $scope.cardComplete && $scope.isEditable() && $scope.isBillingDetailsFilled()
-        }
-
-        /**
-         * Check and template fields and submit to Stripe to attempt a Confirm Card Setup
-         */
-        $scope.saveCard = async () => {
-            if (!$scope.isSubmittable()) {
-                // prevent trying to submit when not needed
-                return
-            }
-            // TODO need to freeze all input fields as this could take a moment and changes will do nothing
-            // TODO add loading bar to show something is being worked on
-            $scope.formPending = true
-            const {setupIntent, error} = await Stripe.confirmCardSetup(
-                clientSecret,
-                {
-                    payment_method: {
-                        card,
-                        billing_details: $scope.billingInfo
-                        //    name: 'Test'
-                        // }
-                    }
-                }
-            )
-
-            if (error) {
-                // Display error.message in your UI.
-                console.error('error:', error, setupIntent) // only run this in dev mode
-
-                $scope.$applyAsync(() => {
-                    $scope.formPending = false
-                    const displayError = document.getElementById(`${$scope.elementId}-errors`)
-                    let errorMessage = 'An Unknown Error has occurred'
-                    if (Object.prototype.hasOwnProperty.call(error, 'message')) {
-                        errorMessage = error.message
-                    }
-                    displayError.textContent = errorMessage
-                })
-                return
-            }
-
-            if (
-                setupIntent.status === 'succeeded'
-                && _.isString(setupIntent.payment_method)
-            ) {
-                // The setup has succeeded.
-                // Send setupIntent.payment_method to your server to save the card to a Customer as default
-                const model = new Model({
-                    target: $scope.paymentMethodApiPath
-                })
-                model.data = {
-                    payment_method: setupIntent.payment_method
-                }
-                await model.save()
-                // TODO check if Sitetheory refreshed
-                // hide form and Display a success message
-                $scope.$applyAsync(() => {
-                    $scope.cardSaved = true
-                    $scope.formPending = false
-                    // Reload any collections listing PMs
-                    Stripe.fetchCollections()
-                })
-            } else {
-                // handle everything else
-                $scope.$applyAsync(() => {
-                    $scope.formPending = false
-                    console.error('something went wrong. no error, no success', setupIntent)
-                    const displayError = document.getElementById(`${$scope.elementId}-errors`)
-                    displayError.textContent = 'An unknown Error has occurred'
-                })
-            }
-        }
-
-        // TODO other options like form submission
-
-        /**
-         * Destroy this widget
-         */
-        $scope.remove = (): void => {
-            // delete Stripe Elements?
-        }
-    },
-    templateUrl: (): string => `${localDir}${componentName}.component${min}.html`
+export interface StripePaymentMethodDialogData {
+    clientSecret: string
+    publishKey: string
+    detailedBillingInfo?: boolean
 }

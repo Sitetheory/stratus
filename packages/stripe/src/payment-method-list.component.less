@@ -1,12 +1,20 @@
 @white-color: #fff;
-stratus-stripe-payment-method-list {
-  md-card.payment-method-container {
+@light-grey-color: #f5f5f5;
+sa-stripe-payment-method-list {
+  mat-card.payment-method-container {
     position: relative;
-    md-card-content {
+    margin-bottom: 6px;
+    background-color: @light-grey-color;
+    mat-card-content {
       animation: background-color 2s ease-out both;
       -webkit-animation: background-color 2s ease-out both;
-      background-color: @white-color;
-      padding-top: 20px;
+      white-space: pre;
+
+      /* padding-top: 20px; */
+    }
+    mat-grid-tile .aligned-tile {
+      display: flex;
+      width: 100%;
     }
     .action-buttons {
       position: absolute;
