@@ -77,6 +77,7 @@ export class StripePaymentMethodListComponent extends RootComponent implements O
                 this.styled = false
             })
 
+        // TODO needs to make use of Observables
         this.collection = new Collection({
             autoSave: false,
             target: this.paymentMethodApiPath,
