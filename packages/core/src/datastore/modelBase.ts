@@ -88,7 +88,7 @@ export class ModelBase<T = LooseObject> extends EventManager {
 
         // Console Info for New ChangeSets
         if (cookie('env')) {
-            console.log('Changed:', changeSet)
+            console.log('Changed:', cookie('debug_change_set') ? JSON.stringify(changeSet) : changeSet)
         }
 
         // Dispatch Events
