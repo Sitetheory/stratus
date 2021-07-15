@@ -34,6 +34,7 @@ import {IconOptions} from '@angular/material/icon/icon-registry'
 import {Stratus} from '@stratusjs/runtime/stratus'
 import _ from 'lodash'
 import {keys} from 'ts-transformer-keys'
+import {cookie} from '@stratusjs/core/environment'
 
 // Components
 import {RootComponent} from '@stratusjs/angular/core/root.component'
@@ -44,7 +45,6 @@ import {Registry} from '@stratusjs/angularjs/services/registry'
 // Core Classes
 import {EventManager} from '@stratusjs/core/events/eventManager'
 import {EventBase} from '@stratusjs/core/events/eventBase'
-// import {cookie} from '@stratusjs/core/environment'
 
 // AngularJS Classes
 import {Model} from '@stratusjs/angularjs/services/model'
@@ -56,6 +56,7 @@ const systemDir = '@stratusjs/angular'
 const moduleName = 'selector'
 
 // Directory Template
+const min = !cookie('env') ? '.min' : ''
 const localDir = `${installDir}/${boot.configuration.paths[`${systemDir}/*`].replace(/[^/]*$/, '')}`
 
 // Utility Functions
@@ -72,11 +73,11 @@ const has = (object: object, path: string) => _.has(object, path) && !_.isEmpty(
 @Component({
     // selector: 'sa-selector-component',
     selector: `sa-${moduleName}`,
-    templateUrl: `${localDir}/${moduleName}/${moduleName}.component.html`,
+    templateUrl: `${localDir}/${moduleName}/${moduleName}.component${min}.html`,
     // FIXME: This doesn't work, as it seems Angular attempts to use a System.js import instead of their own, so it will
     // require the steal-css module
     // styleUrls: [
-    //     `${localDir}/${moduleName}/${moduleName}.component.css`
+    //     `${localDir}/${moduleName}/${moduleName}.component${min}.css`
     // ],
     // changeDetection: ChangeDetectionStrategy.OnPush
 })
@@ -159,7 +160,7 @@ export class SelectorComponent extends RootComponent { // implements OnInit, OnC
 
         // TODO: Assess & Possibly Remove when the System.js ecosystem is complete
         // Load Component CSS until System.js can import CSS properly.
-        Stratus.Internals.CssLoader(`${localDir}${moduleName}/${moduleName}.component.css`)
+        Stratus.Internals.CssLoader(`${localDir}${moduleName}/${moduleName}.component${min}.css`)
             .then(() => {
                 this.styled = true
                 this.refresh()

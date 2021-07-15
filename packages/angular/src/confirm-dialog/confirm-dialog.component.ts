@@ -6,6 +6,7 @@ import {
     MAT_DIALOG_DATA,
     MatDialogRef
 } from '@angular/material/dialog'
+import {cookie} from '@stratusjs/core/environment'
 
 // Local Setup
 const installDir = '/assets/1/0/bundles'
@@ -13,6 +14,7 @@ const systemDir = '@stratusjs/angular'
 const moduleName = 'confirm-dialog'
 
 // Directory Template
+const min = !cookie('env') ? '.min' : ''
 const localDir = `${installDir}/${boot.configuration.paths[`${systemDir}/*`].replace(/[^/]*$/, '')}`
 
 export interface ConfirmDialogData {
@@ -25,7 +27,7 @@ export interface ConfirmDialogData {
  */
 @Component({
     selector: `sa-${moduleName}`,
-    templateUrl: `${localDir}/${moduleName}/${moduleName}.component.html`,
+    templateUrl: `${localDir}/${moduleName}/${moduleName}.component${min}.html`,
     // changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ConfirmDialogComponent {

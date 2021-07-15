@@ -126,6 +126,7 @@ const systemDir = '@stratusjs/angular'
 const moduleName = 'tree'
 
 // Directory Template
+const min = !cookie('env') ? '.min' : ''
 const localDir = `${installDir}/${boot.configuration.paths[`${systemDir}/*`].replace(/[^/]*$/, '')}`
 
 /**
@@ -133,12 +134,12 @@ const localDir = `${installDir}/${boot.configuration.paths[`${systemDir}/*`].rep
  */
 @Component({
     selector: `sa-${moduleName}`,
-    templateUrl: `${localDir}/${moduleName}/${moduleName}.component.html`,
+    templateUrl: `${localDir}/${moduleName}/${moduleName}.component${min}.html`,
     // templateUrl: `${systemDir}/${moduleName}/${moduleName}.component.html`,
     // FIXME: This doesn't work, as it seems Angular attempts to use a System.js import instead of their own, so it will
     // require the steal-css module
     // styleUrls: [
-    //     `${localDir}/${moduleName}/${moduleName}.component.css`
+    //     `${localDir}/${moduleName}/${moduleName}.component${min}.css`
     // ],
     // changeDetection: ChangeDetectionStrategy.OnPush
 })
@@ -240,7 +241,7 @@ export class TreeComponent extends RootComponent implements OnInit, OnDestroy {
 
         // TODO: Assess & Possibly Remove when the System.js ecosystem is complete
         // Load Component CSS until System.js can import CSS properly.
-        Stratus.Internals.CssLoader(`${localDir}/${moduleName}/${moduleName}.component.css`)
+        Stratus.Internals.CssLoader(`${localDir}/${moduleName}/${moduleName}.component${min}.css`)
             .then(() => {
                 this.isStyled = true
                 this.refresh()
