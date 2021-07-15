@@ -1,47 +1,47 @@
-<div id="{{ elementId }}">
-    <md-content data-layout-padding data-ng-show="!cardSaved">
+<mat-card [attr.id]="elementId">
+    <mat-card-content data-layout-padding [hidden]="cardSaved">
         <!-- TODO add a form to collect Billing info for the card as an option -->
-        <div data-ng-if="detailedBillingInfo" class="billing-info">
-            <md-input-container class="md-block">
-                <label>Name</label>
-                <input data-ng-model="billingInfo.name" data-ng-disabled="!isEditable()">
-            </md-input-container>
-            <md-input-container class="md-block">
-                <label>Email</label>
-                <input data-ng-model="billingInfo.email" data-ng-disabled="!isEditable()">
-            </md-input-container>
-            <md-input-container class="md-block">
-                <label>Address</label>
-                <input data-ng-model="billingInfo.address.line1" data-ng-disabled="!isEditable()">
-            </md-input-container>
-            <md-input-container class="md-block">
-                <label>Address 2</label>
-                <input data-ng-model="billingInfo.address.line2" data-ng-disabled="!isEditable()">
-            </md-input-container>
-            <md-input-container class="md-block">
-                <label>City</label>
-                <input data-ng-model="billingInfo.address.city" data-ng-disabled="!isEditable()">
-            </md-input-container>
+        <div *ngIf="detailedBillingInfo" class="billing-info">
+            <mat-form-field class="md-block">
+                <mat-label>Name</mat-label>
+                <input matInput [(ngModel)]="billingInfo.name" [disabled]="!isEditable()">
+            </mat-form-field>
+            <mat-form-field class="md-block">
+                <mat-label>Email</mat-label>
+                <input matInput [(ngModel)]="billingInfo.email" [disabled]="!isEditable()">
+            </mat-form-field>
+            <mat-form-field class="md-block">
+                <mat-label>Address</mat-label>
+                <input matInput [(ngModel)]="billingInfo.address.line1" [disabled]="!isEditable()">
+            </mat-form-field>
+            <mat-form-field class="md-block">
+                <mat-label>Address 2</mat-label>
+                <input matInput [(ngModel)]="billingInfo.address.line2" [disabled]="!isEditable()">
+            </mat-form-field>
+            <mat-form-field class="md-block">
+                <mat-label>City</mat-label>
+                <input matInput [(ngModel)]="billingInfo.address.city" [disabled]="!isEditable()">
+            </mat-form-field>
             <div data-layout-gt-sm="row">
-                <md-input-container class="md-block" flex-gt-sm>
-                    <label>State</label>
-                    <input data-ng-model="billingInfo.address.state" data-ng-disabled="!isEditable()">
-                </md-input-container>
-                <md-input-container class="md-block" flex-gt-sm>
-                    <label>Zip</label>
-                    <input name="postalCode" data-ng-model="billingInfo.address.postal_code"
-                           data-ng-pattern="/^[0-9]{5}$/" maxlength="5" data-ng-disabled="!isEditable()">
-                </md-input-container>
+                <mat-form-field class="md-block" flex-gt-sm>
+                    <mat-label>State</mat-label>
+                    <input matInput [(ngModel)]="billingInfo.address.state" [disabled]="!isEditable()">
+                </mat-form-field>
+                <mat-form-field class="md-block" flex-gt-sm>
+                    <mat-label>Zip</mat-label>
+                    <input matInput name="postalCode" [(ngModel)]="billingInfo.address.postal_code"
+                           pattern="/^[0-9]{5}$/" maxlength="5" [disabled]="!isEditable()">
+                </mat-form-field>
             </div>
         </div>
-        <div id="{{ elementId+'-mount' }}" class="card-element" data-ng-class="{'no-pointer-event': !isEditable()}"></div>
-        <div id="{{ elementId+'-errors' }}" class="card-errors" role="alert"></div>
-        <button data-ng-on-click="saveCard()" data-ng-disabled="!isSubmittable()">Save Payment Method</button>
-        <md-progress-linear ng-if="formPending" md-mode="indeterminate"></md-progress-linear>
-    </md-content>
-    <md-content data-layout-padding data-ng-show="cardSaved">
+        <div [attr.id]="elementId+'-mount'" class="card-element" [class.no-pointer-event]="!isEditable()"></div>
+        <div [attr.id]="elementId+'-errors'" class="card-errors" role="alert"></div>
+        <button (click)="saveCard()" [disabled]="!isSubmittable()">Save Payment Method</button>
+        <mat-spinner *ngIf="formPending"></mat-spinner>
+    </mat-card-content>
+    <mat-card-content data-layout-padding [hidden]="!cardSaved">
         <p>
             Payment Method Saved
         </p>
-    </md-content>
-</div>
+    </mat-card-content>
+</mat-card>

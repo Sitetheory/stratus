@@ -1,118 +1,103 @@
-// Stripe Payment Method List Component
-// @stratusjs/stripe/payment-method-list.component
-// <stratus-stripe-payment-method-list>
-// --------------
+// Angular Core
+import {
+    Component,
+    ElementRef,
+    Input,
+    OnInit
+} from '@angular/core'
+import {DomSanitizer} from '@angular/platform-browser'
 
 // Runtime
 import _ from 'lodash'
-import {Stratus} from '@stratusjs/runtime/stratus'
-import * as angular from 'angular'
-
-// Angular 1 Modules
-import 'angular-material'
-
-// Services
-// TODO: We don't need to force the stripe import here if the StripeService below is used
-import '@stratusjs/stripe/stripe'
-// tslint:disable-next-line:no-duplicate-imports
-import {StripeService} from '@stratusjs/stripe/stripe'
+import {keys} from 'ts-transformer-keys'
 
 // Stratus Dependencies
-// import {isJSON} from '@stratusjs/core/misc'
-import {cookie} from '@stratusjs/core/environment'
 import {
-    isJSON,
-    ObjectWithFunctions
-} from '@stratusjs/core/misc'
+    Stratus
+} from '@stratusjs/runtime/stratus'
+import {RootComponent} from '@stratusjs/angular/core/root.component'
 import {Collection} from '@stratusjs/angularjs/services/collection'
-// import {Model} from '@stratusjs/angularjs/services/model'
+import {cookie} from '@stratusjs/core/environment'
 
-// Component Preload
-import '@stratusjs/stripe/payment-method.component'
-import '@stratusjs/stripe/setup-intent.component'
+// Services
+import {StripeService} from '@stratusjs/stripe/stripe.service'
 
-
-// Environment
+// Local Setup
 const min = !cookie('env') ? '.min' : ''
 const packageName = 'stripe'
-// const moduleName = 'components'
 const componentName = 'payment-method-list'
 const localDir = `${Stratus.BaseUrl}${Stratus.DeploymentPath}@stratusjs/${packageName}/src/`
 
-export type StripePaymentMethodListScope = angular.IScope & ObjectWithFunctions & {
-    elementId: string
-    localDir: string
-    initialized: boolean
+/**
+ * @title Dialog for Nested Tree
+ */
+@Component({
+    selector: `sa-${packageName}-${componentName}`,
+    templateUrl: `${localDir}${componentName}.component${min}.html`,
+})
+export class StripePaymentMethodListComponent extends RootComponent implements OnInit {
+
+    // Basic Component Settings
+    title = `${packageName}_${componentName}_component`
+    uid: string
+    @Input() elementId: string
+
+    // States
+    styled = false
+    initialized = false
+
     collection: Collection
+    @Input() detailedBillingInfo?: boolean
+    paymentMethodApiPath = 'PaymentMethod'
 
-    detailedBillingInfo: boolean,
-
-    paymentMethodApiPath: string
-
-    fetchPaymentMethods(): Promise<void>
-}
-
-Stratus.Components.StripePaymentMethodList = {
-    bindings: {
-        // Basic Control for Designers
-        elementId: '@',
-        // When true, Requests for Name + Address to be added on PaymentMethod creation
-        detailedBillingInfo: '@',
-    },
-    controller(
-        $attrs: angular.IAttributes,
-        $element: angular.IRootElementService,
-        $mdDialog: angular.material.IDialogService,
-        // $sce: angular.ISCEService,
-        $scope: StripePaymentMethodListScope, // angular.IScope breaks references so far
-        // $timeout: angular.ITimeoutService,
-        // $window: angular.IWindowService,
-        Stripe: StripeService
+    constructor(
+        private elementRef: ElementRef,
+        private sanitizer: DomSanitizer,
+        private Stripe: StripeService,
     ) {
-        // Initialize
-        const $ctrl = this
-        $ctrl.uid = _.uniqueId(_.camelCase(packageName) + '_' + _.camelCase(componentName) + '_')
-        Stratus.Instances[$ctrl.uid] = $scope
-        $scope.elementId = $attrs.elementId || $ctrl.uid
-        $scope.localDir = localDir
+        // Chain constructor
+        super()
+
+        // Initialization
+        this.uid = _.uniqueId(`sa_${_.snakeCase(this.title)}_`)
+        Stratus.Instances[this.uid] = this
+        this.elementId = this.elementId || this.uid
+
+        // TODO: Assess & Possibly Remove when the System.js ecosystem is complete
+        // Load Component CSS until System.js can import CSS properly.
         Stratus.Internals.CssLoader(`${localDir}${componentName}.component${min}.css`)
+            .then(() => {
+                this.styled = true
+            })
+            .catch(() => {
+                console.error('CSS Failed to load for Component:', this)
+                this.styled = false
+            })
 
-        $scope.initialized = false
-
-        $scope.detailedBillingInfo = $attrs.detailedBillingInfo && isJSON($attrs.detailedBillingInfo) ?
-            JSON.parse($attrs.detailedBillingInfo) : false
-        $scope.paymentMethodApiPath = 'PaymentMethod' // FIXME allow this to be customizable
-
-        $scope.collection = new Collection({
+        // TODO needs to make use of Observables
+        this.collection = new Collection({
             autoSave: false,
-            // autoSaveInterval: 10000, // 10 secs
-            target: $scope.paymentMethodApiPath,
+            target: this.paymentMethodApiPath,
             watch: true
             // TODO remove pagination?
         })
 
-        /**
-         * On load, attempt to prepare and render the Card element
-         */
-        $ctrl.$onInit = async () => {
+        // Hydrate Root App Inputs
+        this.hydrate(this.elementRef, this.sanitizer, keys<StripePaymentMethodListComponent>())
+    }
 
-            await $scope.fetchPaymentMethods()
-            Stripe.registerCollection($scope.collection)
-            $scope.$applyAsync(() => {
-                $scope.initialized = true
-            })
-        }
+    /**
+     * On load, attempt to prepare and render the Card element
+     */
+    async ngOnInit() {
+        await this.fetchPaymentMethods()
+        this.Stripe.registerCollection(this.collection)
+        this.initialized = true
 
-        $scope.fetchPaymentMethods = async () => {
-            await $scope.collection.fetch()
-        }
+    }
 
-        /**
-         * Destroy this widget
-         */
-        $scope.remove = (): void => {
-            // delete setup-intent widgets?
-        }
-    },
-    templateUrl: (): string => `${localDir}${componentName}.component${min}.html`
+    async fetchPaymentMethods() {
+        await this.collection.fetch()
+    }
+
 }

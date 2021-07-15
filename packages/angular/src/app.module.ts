@@ -43,6 +43,9 @@ import {EditorComponent} from '@stratusjs/angular/editor/editor.component'
 import {MapComponent} from '@stratusjs/map/map.component'
 import {MediaSelectorComponent} from '@stratusjs/angular/media-selector/media-selector.component'
 import {SelectorComponent} from '@stratusjs/angular/selector/selector.component'
+import {StripePaymentMethodComponent} from '@stratusjs/stripe/payment-method.component'
+import {StripePaymentMethodListComponent} from '@stratusjs/stripe/payment-method-list.component'
+import {StripeSetupIntentComponent} from '@stratusjs/stripe/setup-intent.component'
 import {TreeComponent} from '@stratusjs/angular/tree/tree.component'
 import {TreeDialogComponent} from '@stratusjs/angular/tree/tree-dialog.component'
 import {TreeNodeComponent} from '@stratusjs/angular/tree/tree-node.component'
@@ -386,6 +389,9 @@ const monacoConfig: NgxMonacoEditorConfig = {
         MediaDialogComponent,
         MediaSelectorComponent,
         SelectorComponent,
+        StripePaymentMethodComponent,
+        StripePaymentMethodListComponent,
+        StripeSetupIntentComponent,
         TreeComponent,
         TreeDialogComponent,
         TreeNodeComponent,
@@ -400,6 +406,9 @@ const monacoConfig: NgxMonacoEditorConfig = {
         MediaDialogComponent,
         MediaSelectorComponent,
         SelectorComponent,
+        StripePaymentMethodComponent,
+        StripePaymentMethodListComponent,
+        StripeSetupIntentComponent,
         TreeComponent,
         TreeDialogComponent,
         TreeNodeComponent,
@@ -413,12 +422,14 @@ export class AppModule {
     // node: true || false
     initialTimeout = 1000
     instances = {}
+    // These modules will be hydrated directly in the HTML, and *cannot* load in a component template/dialog
     modules = {
         'sa-base': BaseComponent,
         'sa-editor': EditorComponent,
         'sa-map': MapComponent,
         'sa-media-selector': MediaSelectorComponent,
         'sa-selector': SelectorComponent,
+        'sa-stripe-payment-method-list': StripePaymentMethodListComponent,
         'sa-tree': TreeComponent
     }
 

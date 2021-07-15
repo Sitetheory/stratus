@@ -1,61 +1,95 @@
-<div id="{{ elementId }}">
-    <md-progress-linear ng-if="collection.pending" md-mode="indeterminate"></md-progress-linear>
-    <div data-ng-if="collection.completed && !collection.pending && collection.models.length === 0" class="no-results">
+<div [attr.id]="elementId">
+    <mat-progress-bar *ngIf="collection.pending" mode="indeterminate"></mat-progress-bar>
+    <div *ngIf="collection.completed && !collection.pending && collection.models.length === 0" class="no-results">
         No Payment Methods on file.
     </div>
-    <md-card
-            data-ng-repeat="paymentMethod in collection.models | toArray:false track by paymentMethod.data.id"
-            id="{{::elementId}}_{{::paymentMethod.data.id}}"
+    <mat-card
+            *ngFor="let paymentMethod of collection.models"
+            [attr.id]="elementId+'_'+paymentMethod.data.id"
             class="payment-method-container"
-            data-ng-class="{'model-changed': paymentMethod.changed, 'model-pending': paymentMethod.pending}"
+            [class.model-changed]="paymentMethod.changed"
+            [class.model-pending]="paymentMethod.pending"
             tabindex="{{paymentMethod.data.id}}"
-            data-ng-cloak
     >
         <!-- Delete button -->
-        <a href="javascript:void(0)"
+        <!--a href="javascript:void(0)"
            tabindex="-1"
            data-ng-controller="Dialogue" data-ng-model="paymentMethod" data-template="#delete-payment-method-dialogue"
-           data-ng-disabled="!collection.completed || collection.pending"
-           data-ng-click="show($event)"
+           [disabled]="!collection.completed || collection.pending"
+           (click)="show($event)"
            class="action-buttons delete-button default-border-radius"
+           matTooltip="Delete Payment Method"
         >
-            <md-tooltip>Delete Payment Method</md-tooltip>
-            <md-icon
-                    md-svg-src="{{ 'sitetheorycore/images/icons/actionButtons/delete.svg' | assetPath }}"
+            <mat-icon
+                    [svgIcon]="getSvg('sitetheorycore/images/icons/actionButtons/delete.svg') | async"
                     aria-hidden="true"
-            ></md-icon>
-        </a>
-        <md-card-content>
-            <p data-ng-bind="paymentMethod.data.name"></p>
+            ></mat-icon>
+        </a-->
+        <button href="javascript:void(0)"
+           tabindex="-1"
+           [disabled]="!collection.completed || collection.pending"
+           (click)="show($event)"
+           class="action-buttons delete-button default-border-radius"
+           matTooltip="Delete Payment Method"
+        >
+            Delete
+            <!--mat-icon
+                    [svgIcon]="getSvg('sitetheorycore/images/icons/actionButtons/delete.svg') | async"
+                    aria-hidden="true"
+            ></mat-icon-->
+        </button>
+        <!--mat-card-content>
+            <p [innerHTML]="paymentMethod.data.name"></p>
             <p>
-                <span data-ng-bind="paymentMethod.data.brand"></span> ...<span data-ng-bind="paymentMethod.data.last4"></span> - Expires <span data-ng-bind="paymentMethod.data.exp_month"></span>/<span data-ng-bind="paymentMethod.data.exp_year"></span>
+                <span [innerHTML]="paymentMethod.data.brand"></span> ...<span [innerHTML]="paymentMethod.data.last4"></span> - Expires <span [innerHTML]="paymentMethod.data.exp_month"></span>/<span [innerHTML]="paymentMethod.data.exp_year"></span>
             </p>
-        </md-card-content>
-    </md-card>
-    <stratus-stripe-setup-intent
-            data-ng-show="collection.completed && !collection.pending"
+        </mat-card-content-->
+        <mat-card-content>
+            <mat-grid-list cols="4" rowHeight="35px">
+                <mat-grid-tile colspan="4">
+                    <span [innerHTML]="paymentMethod.data.name" class="aligned-tile name" [style.justifyContent]="'flex-start'"></span>
+                </mat-grid-tile>
+                <mat-grid-tile colspan="1">
+                    <span [innerHTML]="paymentMethod.data.brand" class="aligned-tile brand" [style.justifyContent]="'flex-start'"></span>
+                </mat-grid-tile>
+                <mat-grid-tile colspan="2">
+                    <span class="aligned-tile last-four" [style.justifyContent]="'flex-end'">...<span [innerHTML]="paymentMethod.data.last4"></span></span>
+                </mat-grid-tile>
+                <mat-grid-tile colspan="1">
+                    <span class="aligned-tile expiration" [style.justifyContent]="'flex-end'">
+                        Expires <span [innerHTML]="paymentMethod.data.exp_month"></span>/<span [innerHTML]="paymentMethod.data.exp_year"></span>
+                    </span>
+                </mat-grid-tile>
+            </mat-grid-list>
+        </mat-card-content>
+    </mat-card>
+    <sa-stripe-setup-intent
+            [hidden]="!collection.completed || collection.pending"
             data-detailed-billing-info="true"
-    ></stratus-stripe-setup-intent>
+    ></sa-stripe-setup-intent>
 
     <!--delete dialogue popup -->
-    <script type="text/ng-template" id="delete-payment-method-dialogue">
+    <!--script type="text/ng-template" id="delete-payment-method-dialogue">
         <md-dialog aria-label="Delete Payment Method">
             <md-dialog-content class="md-dialog-content">
                 <h2 class="md-title">Warning</h2>
                 <p>Are you sure you want to delete this Payment Method? (this doesn't work yet)</p>
             </md-dialog-content>
             <md-dialog-actions>
-                <md-button class="md-icon-button btn-delete" aria-label="Confirm Delete"
-                           ng-click="hide();">
-                    <md-icon
-                            md-svg-src="{{ 'sitetheorycore/images/icons/actionButtons/delete.svg' | assetPath }}"
+                <button mat-button
+                        class="md-icon-button btn-delete"
+                        aria-label="Confirm Delete"
+                        (click)="hide()"
+                >
+                    <mat-icon
+                            [svgIcon]="getSvg('sitetheorycore/images/icons/actionButtons/delete.svg') | async"
                             aria-hidden="true"
-                    ></md-icon>
-                </md-button>
-                <md-button aria-label="Cancel" ng-click="hide()">
+                    ></mat-icon>
+                </button>
+                <button mat-button aria-label="Cancel" (click)="hide()">
                     Cancel
-                </md-button>
+                </button>
             </md-dialog-actions>
         </md-dialog>
-    </script>
+    </script-->
 </div>
