@@ -35,6 +35,7 @@ function angularBoot() {
         'sa-map',
         'sa-media-selector',
         'sa-selector',
+        'sa-stripe-payment-method-list',
         'sa-tree'
         // 'quill-editor'
     ]
