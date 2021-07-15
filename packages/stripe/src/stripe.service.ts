@@ -165,20 +165,22 @@ export class StripeService {
 
     mountElement(id: string, mountElement: any) {
         if (
-            !_.isEmpty(this.currentElement)
-            && this.currentElement.id === id
+            _.isEmpty(this.currentElement) ||
+            this.currentElement.id !== id
         ) {
-            this.currentElement.element.mount(mountElement)
+            return
         }
+        this.currentElement.element.mount(mountElement)
     }
 
     unmountElement(id: string) {
         if (
-            !_.isEmpty(this.currentElement)
-            && this.currentElement.id === id
+            _.isEmpty(this.currentElement) ||
+            this.currentElement.id !== id
         ) {
-            this.currentElement.element.unmount()
+            return
         }
+        this.currentElement.element.unmount()
     }
 
     elementAddEventListener(
