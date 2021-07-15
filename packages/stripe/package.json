@@ -1,7 +1,7 @@
 {
   "name": "@stratusjs/stripe",
-  "version": "0.1.0",
-  "description": "AngularJS Stripe Elements components to be used as an add on to StratusJS",
+  "version": "1.0.0",
+  "description": "Angular Stripe Elements components to be used as an add on to StratusJS",
   "main": "",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -13,7 +13,7 @@
   "keywords": [
     "sitetheory",
     "stratus",
-    "angularjs",
+    "angular",
     "lodash",
     "javascript",
     "typescript",
@@ -29,8 +29,7 @@
     "yarn": ">= 1.21.1"
   },
   "dependencies": {
-    "@stratusjs/angularjs": "^0.2.50",
-    "@stratusjs/angularjs-extras": "^0.8.0",
+    "@stratusjs/angular": "^0.2.79",
     "@stratusjs/runtime": "^0.11.9"
   }
 }
