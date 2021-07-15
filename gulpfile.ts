@@ -548,6 +548,7 @@ function compressTemplate() {
         }))
         /* */
         .pipe(htmlmin({
+            caseSensitive: true, // Angular+ uses case sensitive templates
             collapseWhitespace: true,
             removeComments: true,
             removeEmptyAttributes: true
