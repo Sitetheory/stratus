@@ -169,6 +169,7 @@ const codeMirrorPackage = 'codemirror'
 const moduleName = 'editor'
 
 // Directory Template
+const min = !cookie('env') ? '.min' : ''
 const localDir = `${installDir}/${boot.configuration.paths[`${systemPackage}/*`].replace(/[^\/]*$/, '')}`
 const codeMirrorDir = `${installDir}/${boot.configuration.paths[`${codeMirrorPackage}/*`].replace(/[^\/]*$/, '')}`
 const froalaDir = `${installDir}/${boot.configuration.paths[froalaPackage].replace(/js\/[^\/]*$/, '')}`
@@ -187,11 +188,11 @@ const has = (object: object, path: string) => _.has(object, path) && !_.isEmpty(
 @Component({
     // selector: 'sa-selector-component',
     selector: `sa-${moduleName}`,
-    templateUrl: `${localDir}/${moduleName}/${moduleName}.component.html`,
+    templateUrl: `${localDir}/${moduleName}/${moduleName}.component${min}.html`,
     // FIXME: This doesn't work, as it seems Angular attempts to use a System.js import instead of their own, so it will
     // require the steal-css module
     // styleUrls: [
-    //     `${localDir}/${moduleName}/${moduleName}.component.css`
+    //     `${localDir}/${moduleName}/${moduleName}.component${min}.css`
     // ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
@@ -882,14 +883,14 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
         // TODO: Assess & Possibly Remove when the System.js ecosystem is complete
         // Load Component CSS until System.js can import CSS properly.
         Stratus.Internals.LoadCss([
-            `${localDir}${moduleName}/${moduleName}.component${!this.dev ? '.min' : ''}.css`,
+            `${localDir}${moduleName}/${moduleName}.component${min}.css`,
             `${codeMirrorDir}lib/codemirror.css`,
-            `${froalaDir}css/froala_editor.pkgd${!this.dev ? '.min' : ''}.css`,
-            // `${froalaDir}css/froala_style${!this.dev ? '.min' : ''}.css`,
-            `${froalaDir}css/third_party/embedly${!this.dev ? '.min' : ''}.css`,
-            `${froalaDir}css/third_party/font_awesome${!this.dev ? '.min' : ''}.css`,
-            `${froalaDir}css/third_party/image_tui${!this.dev ? '.min' : ''}.css`,
-            // `${froalaDir}css/third_party/spell_checker${!this.dev ? '.min' : ''}.css`
+            `${froalaDir}css/froala_editor.pkgd${min}.css`,
+            // `${froalaDir}css/froala_style${min}.css`,
+            `${froalaDir}css/third_party/embedly${min}.css`,
+            `${froalaDir}css/third_party/font_awesome${min}.css`,
+            `${froalaDir}css/third_party/image_tui${min}.css`,
+            // `${froalaDir}css/third_party/spell_checker${min}.css`
         ]).then(() => {
             this.styled = true
             this.refresh()

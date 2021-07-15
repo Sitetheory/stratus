@@ -28,8 +28,6 @@ import {
 // External Dependencies
 import {Stratus} from '@stratusjs/runtime/stratus'
 import _ from 'lodash'
-
-// Stratus Core
 import {cookie} from '@stratusjs/core/environment'
 
 // Stratus Angular Core
@@ -44,6 +42,7 @@ const systemDir = '@stratusjs/angular'
 const moduleName = 'base'
 
 // Directory Template
+const min = !cookie('env') ? '.min' : ''
 const localDir = `${installDir}/${boot.configuration.paths[`${systemDir}/*`].replace(/[^/]*$/, '')}`
 
 /**
@@ -52,8 +51,8 @@ const localDir = `${installDir}/${boot.configuration.paths[`${systemDir}/*`].rep
 @Component({
     selector: 'sa-base',
     // template: '<ng-content></ng-content>',
-    templateUrl: `${localDir}/${moduleName}/${moduleName}.component.html`,
-    // styleUrls: [`${localDir}/base/base.component.css`],
+    templateUrl: `${localDir}/${moduleName}/${moduleName}.component${min}.html`,
+    // styleUrls: [`${localDir}/base/base.component${min}.css`],
     // viewProviders: [BaseComponent]
     changeDetection: ChangeDetectionStrategy.OnPush
 })

@@ -29,7 +29,7 @@
     "yarn": ">= 1.21.1"
   },
   "dependencies": {
-    "@stratusjs/angular": "^0.2.79",
+    "@stratusjs/angular": "^0.2.80",
     "@stratusjs/runtime": "^0.11.9"
   }
 }

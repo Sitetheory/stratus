@@ -37,6 +37,7 @@ import {
 // External
 import _ from 'lodash'
 import {Stratus} from '@stratusjs/runtime/stratus'
+import {cookie} from '@stratusjs/core/environment'
 import {IconOptions} from '@angular/material/icon/icon-registry'
 import {Observable} from 'rxjs'
 
@@ -52,6 +53,7 @@ const moduleName = 'tree-node'
 const parentModuleName = 'tree'
 
 // Directory Template
+const min = !cookie('env') ? '.min' : ''
 const localDir = `${installDir}/${boot.configuration.paths[`${systemDir}/*`].replace(/[^/]*$/, '')}`
 
 /**
@@ -59,7 +61,7 @@ const localDir = `${installDir}/${boot.configuration.paths[`${systemDir}/*`].rep
  */
 @Component({
     selector: `sa-${moduleName}`,
-    templateUrl: `${localDir}/${parentModuleName}/${moduleName}.component.html`,
+    templateUrl: `${localDir}/${parentModuleName}/${moduleName}.component${min}.html`,
     // changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TreeNodeComponent extends ResponsiveComponent implements OnInit, OnDestroy {
@@ -112,7 +114,7 @@ export class TreeNodeComponent extends ResponsiveComponent implements OnInit, On
 
         // TODO: Assess & Possibly Remove when the System.js ecosystem is complete
         // Load Component CSS until System.js can import CSS properly.
-        Stratus.Internals.CssLoader(`${localDir}/${parentModuleName}/${moduleName}.component.css`)
+        Stratus.Internals.CssLoader(`${localDir}/${parentModuleName}/${moduleName}.component${min}.css`)
             .then(() => {
                 this.isStyled = true
                 this.refresh()
