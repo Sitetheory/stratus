@@ -94,7 +94,10 @@
       //background: white;
       font-size: 14px;
       flex-grow: 1;
-      flex-basis: 0;
+      // this forces them all on one line,
+      // so they shrink instead of wrapping
+      //flex-basis: 0;
+      flex-wrap: wrap;
     }
     &-box:last-child {
       //border: none;
