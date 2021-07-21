@@ -1,0 +1,38 @@
+@white-color: #fff;
+@light-grey-color: #f5f5f5;
+sa-stripe-payment-method-item {
+  mat-card.payment-method-container {
+    position: relative;
+    margin: 5px 0;
+    background-color: @light-grey-color;
+    mat-card-content {
+      animation: background-color 2s ease-out both;
+      -webkit-animation: background-color 2s ease-out both;
+      white-space: pre;
+
+      /* padding-top: 20px; */
+    }
+    mat-grid-tile .aligned-tile {
+      display: flex;
+      width: 100%;
+    }
+    .action-buttons {
+      position: absolute;
+      animation: opacity 0.3s ease-out both;
+      -webkit-animation: opacity 0.3s ease-out both;
+      opacity: 0;
+      top: 4px;
+      &.save-button {
+        right: 28px;
+      }
+      &.delete-button {
+        right: 2px;
+      }
+    }
+    &:hover {
+      .action-buttons.delete-button {
+        opacity: 1;
+      }
+    }
+  }
+}

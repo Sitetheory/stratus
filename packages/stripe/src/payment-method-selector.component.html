@@ -1,0 +1,30 @@
+<div [attr.id]="elementId">
+    <mat-form-field style="width: 100%;">
+        <mat-label>Payment Method</mat-label>
+        <mat-select
+                [panelClass]="'sa-stripe-payment-method-selector-select-override'"
+                [(value)]="selectedId"
+                (selectionChange)="valueChanged($event)"
+        >
+            <mat-option
+                    class="no-results"
+                    *ngIf="paymentCollection.completed && !paymentCollection.pending && paymentCollection.models.length === 0"
+                    [disabled]="true"
+            >
+                No Payment Methods on file.
+            </mat-option>
+            <mat-option
+                    *ngFor="let paymentMethod of paymentCollection.models"
+                    [value]="paymentMethod.data.id"
+            >
+                <sa-stripe-payment-method-item [(model)]="paymentMethod"></sa-stripe-payment-method-item>
+            </mat-option>
+            <mat-option
+                    [hidden]="!paymentCollection.completed || paymentCollection.pending"
+                    [disabled]="true"
+            >
+                <sa-stripe-setup-intent data-detailed-billing-info="true"></sa-stripe-setup-intent>
+            </mat-option>
+        </mat-select>
+    </mat-form-field>
+</div>

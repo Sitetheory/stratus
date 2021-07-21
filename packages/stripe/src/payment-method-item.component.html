@@ -1,0 +1,39 @@
+<mat-card
+        class="payment-method-container"
+        [attr.id]="elementId"
+        [class.model-changed]="model.changed"
+        [class.model-pending]="model.pending"
+>
+    <button href="javascript:void(0)"
+            tabindex="-1"
+            [disabled]="!model.completed || model.pending"
+            (click)="show($event)"
+            class="action-buttons delete-button default-border-radius"
+            matTooltip="Delete Payment Method"
+    >
+        Delete
+        <!--mat-icon
+                [svgIcon]="getSvg('sitetheorycore/images/icons/actionButtons/delete.svg') | async"
+                aria-hidden="true"
+        ></mat-icon-->
+    </button>
+    <!-- TODO make look more like either credit card or check(ACH) -->
+    <mat-card-content>
+        <mat-grid-list cols="3" rowHeight="35px">
+            <mat-grid-tile colspan="3">
+                <span [innerHTML]="model.data.name" class="aligned-tile name" [style.justifyContent]="'flex-start'"></span>
+            </mat-grid-tile>
+            <mat-grid-tile colspan="1">
+                <span [innerHTML]="model.data.brand" class="aligned-tile brand" [style.justifyContent]="'flex-start'"></span>
+            </mat-grid-tile>
+            <mat-grid-tile colspan="2">
+                <span class="aligned-tile last-four" [style.justifyContent]="'flex-end'">...<span [innerHTML]="model.data.last4"></span></span>
+            </mat-grid-tile>
+            <mat-grid-tile colspan="3">
+                <span class="aligned-tile expiration" [style.justifyContent]="'flex-end'">
+                    Expires <span [innerHTML]="model.data.exp_month"></span>/<span [innerHTML]="model.data.exp_year"></span>
+                </span>
+            </mat-grid-tile>
+        </mat-grid-list>
+    </mat-card-content>
+</mat-card>

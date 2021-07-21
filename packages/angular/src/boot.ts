@@ -36,6 +36,7 @@ function angularBoot() {
         'sa-media-selector',
         'sa-selector',
         'sa-stripe-payment-method-list',
+        'sa-stripe-payment-method-selector',
         'sa-tree'
         // 'quill-editor'
     ]

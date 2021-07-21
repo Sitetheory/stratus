@@ -3,66 +3,11 @@
     <div *ngIf="collection.completed && !collection.pending && collection.models.length === 0" class="no-results">
         No Payment Methods on file.
     </div>
-    <mat-card
+    <sa-stripe-payment-method-item
             *ngFor="let paymentMethod of collection.models"
-            [attr.id]="elementId+'_'+paymentMethod.data.id"
-            class="payment-method-container"
-            [class.model-changed]="paymentMethod.changed"
-            [class.model-pending]="paymentMethod.pending"
-            tabindex="{{paymentMethod.data.id}}"
-    >
-        <!-- Delete button -->
-        <!--a href="javascript:void(0)"
-           tabindex="-1"
-           data-ng-controller="Dialogue" data-ng-model="paymentMethod" data-template="#delete-payment-method-dialogue"
-           [disabled]="!collection.completed || collection.pending"
-           (click)="show($event)"
-           class="action-buttons delete-button default-border-radius"
-           matTooltip="Delete Payment Method"
-        >
-            <mat-icon
-                    [svgIcon]="getSvg('sitetheorycore/images/icons/actionButtons/delete.svg') | async"
-                    aria-hidden="true"
-            ></mat-icon>
-        </a-->
-        <button href="javascript:void(0)"
-           tabindex="-1"
-           [disabled]="!collection.completed || collection.pending"
-           (click)="show($event)"
-           class="action-buttons delete-button default-border-radius"
-           matTooltip="Delete Payment Method"
-        >
-            Delete
-            <!--mat-icon
-                    [svgIcon]="getSvg('sitetheorycore/images/icons/actionButtons/delete.svg') | async"
-                    aria-hidden="true"
-            ></mat-icon-->
-        </button>
-        <!--mat-card-content>
-            <p [innerHTML]="paymentMethod.data.name"></p>
-            <p>
-                <span [innerHTML]="paymentMethod.data.brand"></span> ...<span [innerHTML]="paymentMethod.data.last4"></span> - Expires <span [innerHTML]="paymentMethod.data.exp_month"></span>/<span [innerHTML]="paymentMethod.data.exp_year"></span>
-            </p>
-        </mat-card-content-->
-        <mat-card-content>
-            <mat-grid-list cols="4" rowHeight="35px">
-                <mat-grid-tile colspan="4">
-                    <span [innerHTML]="paymentMethod.data.name" class="aligned-tile name" [style.justifyContent]="'flex-start'"></span>
-                </mat-grid-tile>
-                <mat-grid-tile colspan="1">
-                    <span [innerHTML]="paymentMethod.data.brand" class="aligned-tile brand" [style.justifyContent]="'flex-start'"></span>
-                </mat-grid-tile>
-                <mat-grid-tile colspan="2">
-                    <span class="aligned-tile last-four" [style.justifyContent]="'flex-end'">...<span [innerHTML]="paymentMethod.data.last4"></span></span>
-                </mat-grid-tile>
-                <mat-grid-tile colspan="1">
-                    <span class="aligned-tile expiration" [style.justifyContent]="'flex-end'">
-                        Expires <span [innerHTML]="paymentMethod.data.exp_month"></span>/<span [innerHTML]="paymentMethod.data.exp_year"></span>
-                    </span>
-                </mat-grid-tile>
-            </mat-grid-list>
-        </mat-card-content>
-    </mat-card>
+            [attr.tabindex]="paymentMethod.data.id"
+            [(model)]="paymentMethod"
+    ></sa-stripe-payment-method-item>
     <sa-stripe-setup-intent
             [hidden]="!collection.completed || collection.pending"
             data-detailed-billing-info="true"
