@@ -78,11 +78,12 @@ export class StripePaymentMethodSelectorComponent extends RootComponent implemen
     subscriber: Subscriber<any>
     // Note: It may be better to LifeCycle::tick(), but this works for now
     dataChangeLog: string[] = []
-    dataString = ''
+    // dataString = ''
+    dataNumber?: number
 
     // Component data
     paymentCollection: Collection
-    selectedId?: string
+    selectedId?: number|undefined
 
     // paymentItemComponentPortal: ComponentPortal<StripePaymentMethodItemComponent>
     paymentMethodApiPath = 'PaymentMethod'
@@ -182,20 +183,20 @@ export class StripePaymentMethodSelectorComponent extends RootComponent implemen
         )
     }
 
-    normalizeOut(data?: string): string {
+    normalizeOut(data?: number): number|null {
         if (
             data === null ||
-            !_.isString(data)
+            !_.isSafeInteger(data)
         ) {
-            return ''
+            return null
         }
         return data
     }
 
-    normalizeIn(data?: string): string {
-        // Normalize non-string values to strings.
-        if (!data || !_.isString(data)) {
-            return ''
+    normalizeIn(data?: number): number|null {
+        // Normalize non-int values to strings.
+        if (!data || !_.isSafeInteger(data)) {
+            return null
         }
     }
 
@@ -246,11 +247,12 @@ export class StripePaymentMethodSelectorComponent extends RootComponent implemen
         // TODO: Add a returned Promise to ensure async/await can use this defer directly.
     }
 
-    dataRef(): string {
+    dataRef(): number|null {
         if (!this.model) {
-            return ''
+            return null
         }
-        return this.dataString = this.normalizeIn(
+        // return this.dataString = this.normalizeIn(
+        return this.dataNumber = this.normalizeIn(
             this.model.get(this.property)
         )
     }
