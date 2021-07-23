@@ -260,6 +260,8 @@ export class MediaSelectorComponent extends RootComponent { // implements OnInit
         models.splice(index, 1)
         // this.prioritize();
         this.model.trigger('change')
+        // trigger event emission
+        this.removeFromSelected(model.id)
     }
 
     // Data Connections
