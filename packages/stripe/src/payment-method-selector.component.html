@@ -1,11 +1,17 @@
-<div [attr.id]="elementId">
+<div
+        [attr.id]="elementId"
+        [formGroup]="form"
+>
     <mat-form-field style="width: 100%;">
         <mat-label>Payment Method</mat-label>
         <mat-select
                 [panelClass]="'sa-stripe-payment-method-selector-select-override'"
-                [(value)]="selectedId"
-                (selectionChange)="valueChanged($event)"
+                formControlName="{{fieldName}}"
         >
+            <!-- TODO fine a way to display certain data formatted. `form.controls.dataNumber.value` is the saved id -->
+            <!--mat-select-trigger>
+                {{form.controls.dataNumber.value}}
+            </mat-select-trigger-->
             <mat-option
                     class="no-results"
                     *ngIf="paymentCollection.completed && !paymentCollection.pending && paymentCollection.models.length === 0"
