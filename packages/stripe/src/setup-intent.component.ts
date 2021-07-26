@@ -37,7 +37,7 @@ const componentName = 'setup-intent'
 @Component({
     selector: `sa-${packageName}-${componentName}`,
     // templateUrl: `${localDir}/${parentModuleName}/${moduleName}.component.html`,
-    template: '<button mat-button (click)="addPaymentMethod($event)" [disabled]="newPaymentMethodPending || newPaymentMethodPrompt">Add Payment Method</button>',
+    template: '<button mat-raised-button (click)="addPaymentMethod($event)" [disabled]="newPaymentMethodPending || newPaymentMethodPrompt">Add Payment Method</button>',
 })
 export class StripeSetupIntentComponent extends RootComponent implements OnInit {
 
