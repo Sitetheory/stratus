@@ -45,6 +45,7 @@ export class StripePaymentMethodItemComponent extends RootComponent implements O
     @Input() model: Model
 
     // States
+    @Input() editable = false
     styled = false
     initialized = false
 

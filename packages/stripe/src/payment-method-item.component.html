@@ -10,6 +10,7 @@
             (click)="show($event)"
             class="action-buttons delete-button default-border-radius"
             matTooltip="Delete Payment Method"
+            *ngIf="editable"
     >
         Delete
         <!--mat-icon
