@@ -29,9 +29,10 @@ import {Registry} from '@stratusjs/angularjs/services/registry'
 import {Collection} from '@stratusjs/angularjs/services/collection'
 import {Model} from '@stratusjs/angularjs/services/model'
 import {EventManager} from '@stratusjs/core/events/eventManager'
-import {Observable, ObservableInput, Subject, Subscriber, timer} from 'rxjs'
+import {Observable, ObservableInput, Subscriber, timer} from 'rxjs'
 import {catchError, debounce} from 'rxjs/operators'
 import {FormBuilder, FormControl, FormGroup} from '@angular/forms'
+import {LooseObject} from '@stratusjs/core/misc'
 // import {EventBase} from '@stratusjs/core/events/eventBase'
 
 // Local Setup
@@ -72,7 +73,7 @@ export class StripePaymentMethodSelectorComponent extends RootComponent implemen
     // Component Attributes
     @Input() property: string
     @Input() detailedBillingInfo?: boolean
-    fieldName = 'dataNumber'
+    fieldName = 'paymentSelection'
 
     // Stratus Data Connectivity
     registry = new Registry()
@@ -141,14 +142,14 @@ export class StripePaymentMethodSelectorComponent extends RootComponent implemen
                     console.warn('Unable to bind data from Registry!')
                     return
                 }
-                console.log('fetchData ran', data)
+                // console.log('fetchData ran', data)
                 // Manually render upon model change
                 // this.ref.detach();
                 const onDataChange = () => {
                     if (!data.completed) {
                         return
                     }
-                    console.log('onDataChange changing', data)
+                    // console.log('onDataChange changing', data)
                     // this.onDataChange();
                     this.dataDefer(this.subscriber)
                     // Halt UI Logic when payment input is Open
@@ -195,14 +196,16 @@ export class StripePaymentMethodSelectorComponent extends RootComponent implemen
     async ngOnInit() {
         // const dataControl = this.form.get('dataNumber')
         const dataControl = this.form.get(this.fieldName)
-        console.log('form', this.form)
+        // console.log('form', this.form)
 
         dataControl.valueChanges.forEach(
-            (value?: number) => {
+            // (value?: number) => {
+            (value?: Model) => {
                 // Avoid saving until the Model is truly available
-                /*if (!this.model.completed) {
+                if (!value.completed) {
+                // if (!this.model.completed) {
                     return
-                }*/
+                }
 
                 // Save the qualified change!
                 this.valueChanged(value)
@@ -218,7 +221,7 @@ export class StripePaymentMethodSelectorComponent extends RootComponent implemen
         this.initialized = true
 
         // TODO need a change watcher on the selector
-        console.log('inited selector, this is model', this.model)
+        // console.log('inited selector, this is model', this.model)
     }
 
     async fetchPaymentMethods() {
@@ -226,17 +229,18 @@ export class StripePaymentMethodSelectorComponent extends RootComponent implemen
         this.refresh()
     }
 
-    valueChanged(value: number) {
+    // valueChanged(value: number) {
+    valueChanged(value: Model) {
         if (
             !this.model ||
             !this.model.completed
         ) {
             // console.log('changed but no model for', this.selectedId)
-            console.log('changed but no model for', value)
+            // console.log('changed but no model for', value)
             return
         }
         // console.log('value changed to', this.selectedId)
-        console.log('value changed to', value)
+        // console.log('value changed to', value)
 
         // Save the qualified change!
         this.model.set(
@@ -245,19 +249,34 @@ export class StripePaymentMethodSelectorComponent extends RootComponent implemen
         )
     }
 
-    normalizeOut(data?: number): number|null {
-        if (!_.isSafeInteger(data)) {
+    // normalizeOut(data?: number): number|null {
+    normalizeOut(model?: Model): LooseObject|null {
+        // console.log('normalizeOut on', model)
+        /*if (
+            !model || !model.hasOwnProperty('id') ||
+            // !_.isSafeInteger(model.data.id)
+            !_.isSafeInteger(model.id)
+        ) {
             return null
-        }
-        return data
+        }*/
+        return model.data
+        // return data
+        // return model.get('id')
     }
 
-    normalizeIn(data?: number): number|null {
-        // Normalize non-int values to strings.
-        if (!data || !_.isSafeInteger(data)) {
+    // normalizeIn(data?: number): number|null {
+    normalizeIn(data?: LooseObject): Model|null {
+        // console.log('normalIn', data)
+        if (!data) {
             return null
         }
-        return data
+        return new Model({}, data)
+        // return data
+        // Normalize non-int values to strings.
+        /*if (!data || !_.isSafeInteger(data)) {
+            return null
+        }
+        return data*/
     }
 
     // Data Connections
@@ -281,9 +300,20 @@ export class StripePaymentMethodSelectorComponent extends RootComponent implemen
         // }, this)
     }
 
+    /**
+     * Used to compared the defaultPayment from the User/Site/Vendor and compare to which option to to select
+     */
+    objectComparisonFunction(option: Model, value: Model ) : boolean {
+        if (!option || !value) {
+            // console.warn('option/value is null', option, value)
+            return false
+        }
+        return option.data.id === value.data.id
+    }
+
     // Ensures Data is populated before hitting the Subscriber
     dataDefer(subscriber: Subscriber<any>) {
-        console.log('dataDefer running', subscriber)
+        // console.log('dataDefer running', subscriber)
         this.subscriber = this.subscriber || subscriber
         if (!this.subscriber) {
             return
@@ -309,9 +339,10 @@ export class StripePaymentMethodSelectorComponent extends RootComponent implemen
         // TODO: Add a returned Promise to ensure async/await can use this defer directly.
     }
 
-    dataRef(): number|null {
+    // dataRef(): number|null {
+    dataRef(): LooseObject|null {
         if (!this.model) {
-            console.log('dataRef cant read model')
+            // console.log('dataRef cant read model')
             return null
         }
         // return this.dataString = this.normalizeIn(

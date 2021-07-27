@@ -1,3 +1,4 @@
+@medium-grey-color: #c5c5c5;
 sa-stripe-payment-method-selector,
 .sa-stripe-payment-method-selector-select-override {
   /* select-override.mat-select is for controlling select popup options */
@@ -6,7 +7,17 @@ sa-stripe-payment-method-selector,
     .mat-option {
       height: unset;
       padding: 0 3px;
+      &.current-selection {
+        border-width: 2px;
+        border-color: @medium-grey-color;
+        border-style: dashed;
+      }
     }
+  }
+  .payment-selected.mat-form-field-appearance-legacy.mat-focused .mat-form-field-underline .mat-form-field-ripple,
+  .payment-selected.mat-form-field-appearance-legacy .mat-form-field-underline {
+    transition: none;
+    background-color: initial;
   }
   .no-results {
     text-align: center;
