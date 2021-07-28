@@ -44,7 +44,9 @@ import {MapComponent} from '@stratusjs/map/map.component'
 import {MediaSelectorComponent} from '@stratusjs/angular/media-selector/media-selector.component'
 import {SelectorComponent} from '@stratusjs/angular/selector/selector.component'
 import {StripePaymentMethodComponent} from '@stratusjs/stripe/payment-method.component'
+import {StripePaymentMethodItemComponent} from '@stratusjs/stripe/payment-method-item.component'
 import {StripePaymentMethodListComponent} from '@stratusjs/stripe/payment-method-list.component'
+import {StripePaymentMethodSelectorComponent} from '@stratusjs/stripe/payment-method-selector.component'
 import {StripeSetupIntentComponent} from '@stratusjs/stripe/setup-intent.component'
 import {TreeComponent} from '@stratusjs/angular/tree/tree.component'
 import {TreeDialogComponent} from '@stratusjs/angular/tree/tree-dialog.component'
@@ -390,7 +392,9 @@ const monacoConfig: NgxMonacoEditorConfig = {
         MediaSelectorComponent,
         SelectorComponent,
         StripePaymentMethodComponent,
+        StripePaymentMethodItemComponent,
         StripePaymentMethodListComponent,
+        StripePaymentMethodSelectorComponent,
         StripeSetupIntentComponent,
         TreeComponent,
         TreeDialogComponent,
@@ -407,7 +411,9 @@ const monacoConfig: NgxMonacoEditorConfig = {
         MediaSelectorComponent,
         SelectorComponent,
         StripePaymentMethodComponent,
+        StripePaymentMethodItemComponent,
         StripePaymentMethodListComponent,
+        StripePaymentMethodSelectorComponent,
         StripeSetupIntentComponent,
         TreeComponent,
         TreeDialogComponent,
@@ -430,6 +436,7 @@ export class AppModule {
         'sa-media-selector': MediaSelectorComponent,
         'sa-selector': SelectorComponent,
         'sa-stripe-payment-method-list': StripePaymentMethodListComponent,
+        'sa-stripe-payment-method-selector': StripePaymentMethodSelectorComponent,
         'sa-tree': TreeComponent
     }
 
