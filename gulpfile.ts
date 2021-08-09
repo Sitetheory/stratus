@@ -559,20 +559,10 @@ function compressTemplate() {
         .pipe(dest('.'))
 }
 
-// Module Exports
-exports.compile = parallel(
-    series(cleanLESS, compileLESS),
-    series(cleanSASS, compileSASS),
-    series(cleanCoffee, compileCoffee),
-    series(cleanTypeScript, compileTypeScript)
-)
-exports.compress = parallel(
-    series(cleanMangle, compressMangle),
-    series(cleanPreserve, compressPreserve),
-    series(cleanCSS, compressCSS),
-    series(cleanTemplate, compressTemplate)
-    // series(cleanExternal, compressExternal)
-)
+// Modules Exports
+// ---------------
+
+// clean all
 exports.clean = parallel(
     cleanMangle,
     cleanPreserve,
@@ -584,25 +574,86 @@ exports.clean = parallel(
     cleanTemplate
     // cleanExternal
 )
-exports.lint = lintJS
+
+// lint all
+exports.lint = parallel(
+    lintJS
+)
+
+// build distribution
 exports.dist = parallel(
     distBoot
     // distStratus
 )
 
-// Compilation Shortcuts
-exports.compileCSS = parallel(
-    series(cleanLESS, compileLESS),
-    series(cleanSASS, compileSASS),
-    series(cleanCSS, compressCSS)
-)
-exports.compileSass = series(cleanSASS, compileSASS)
+// specific compilations
+exports.compileLESS = series(cleanLESS, compileLESS)
+exports.compileSASS = series(cleanSASS, compileSASS)
 exports.compileTypeScript = series(cleanTypeScript, compileTypeScript)
+exports.compileCoffee = series(cleanCoffee, compileCoffee)
 
-// Compress Shortcuts
-exports.compressJavaScript = parallel(
-    series(cleanMangle, compressMangle),
-    series(cleanPreserve, compressPreserve),
-)
+// specific compressions
+exports.compressMangle = series(cleanMangle, compressMangle)
+exports.compressPreserve = series(cleanPreserve, compressPreserve)
 exports.compressCSS = series(cleanCSS, compressCSS)
 exports.compressTemplate = series(cleanTemplate, compressTemplate)
+
+// compile CSS extensions
+exports.compileCSS = parallel(
+    exports.compileLESS,
+    exports.compileSASS
+)
+
+// compress JavaScript files
+exports.compressJavaScript = parallel(
+    exports.compressMangle,
+    exports.compressPreserve
+)
+
+// compile and compress design files
+exports.design = series(
+    exports.compileCSS,
+    parallel(
+        exports.compressCSS,
+        exports.compressTemplate
+    )
+)
+
+// compile all files
+exports.compile = parallel(
+    exports.compileLESS,
+    exports.compileSASS,
+    exports.compileTypeScript,
+    exports.compileCoffee
+)
+
+// compress all files
+exports.compress = parallel(
+    exports.compressMangle,
+    exports.compressPreserve,
+    exports.compressCSS,
+    exports.compressTemplate
+    // series(cleanExternal, compressExternal)
+)
+
+// build all files
+exports.build = series(
+    exports.compile,
+    exports.compress
+)
+
+// test: build and lint
+exports.test = series(
+    exports.build,
+    exports.lint
+)
+
+// test quick: build and lint in parallel
+// note: a break in parallel linting may result in a partial build
+exports.testQuick = parallel(
+    exports.build,
+    exports.lint
+)
+
+// default: a full test (build and lint in series)
+exports.default = exports.test
