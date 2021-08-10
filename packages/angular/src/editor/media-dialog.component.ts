@@ -1,6 +1,6 @@
 // Angular Core
 import {
-    ChangeDetectionStrategy,
+    // ChangeDetectionStrategy,
     ChangeDetectorRef,
     Component,
     Inject,
@@ -75,7 +75,7 @@ const localDir = `${installDir}/${boot.configuration.paths[`${systemDir}/*`].rep
 @Component({
     selector: `sa-${moduleName}`,
     templateUrl: `${localDir}/${parentModuleName}/${moduleName}.component${min}.html`,
-    changeDetection: ChangeDetectionStrategy.OnPush
+    // changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class MediaDialogComponent extends ResponsiveComponent implements OnInit {
 

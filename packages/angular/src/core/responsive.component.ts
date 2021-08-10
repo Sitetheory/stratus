@@ -27,8 +27,9 @@ export class ResponsiveComponent implements OnDestroy, ResponsiveInterface, Base
     // identifiers
     uid: string
 
-    // private variables
+    // protected variables
     protected ref: ChangeDetectorRef
+    // protected disableRefresh = false
 
     // local flags
     reloading = false
@@ -38,6 +39,10 @@ export class ResponsiveComponent implements OnDestroy, ResponsiveInterface, Base
      */
     public refresh() {
         return new Promise((resolve, reject) => {
+            // if (this.disableRefresh) {
+            //     resolve()
+            //     return
+            // }
             if (!this.ref) {
                 console.error('ChangeDetectorRef not set:', this.uid)
                 reject()
@@ -54,9 +59,9 @@ export class ResponsiveComponent implements OnDestroy, ResponsiveInterface, Base
                 return
             }
             this.reloading = true
-            this.ref.detach()
+            // this.ref.detach()
             this.ref.detectChanges()
-            this.ref.reattach()
+            // this.ref.reattach()
             this.reloading = false
             resolve()
         })
