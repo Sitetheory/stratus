@@ -6,15 +6,22 @@
     <div class="media-component section-container selected-container border-default border-default-all border-radius-default">
         <p class="small-all-caps selected-media-label"
            [textContent]="'Selected ' + (type || 'Items')"></p>
-        <div class="selected-area media-content">
+        <!-- TODO: for styles from legacy selector, add class `selected-area` -->
+        <div class="media-content media-selected-container" cdkDropListGroup>
             <div class="selected-message-box" *ngIf="empty">
                 Nothing has been selected.
             </div>
-            <ul cdkDropList class="list-inline media-selected-list"
-                cdkDropListOrientation="horizontal"
-                (cdkDropListDropped)="drop($event)">
-                <li cdkDrag class="media-selected-list-row media-selected-box"
-                    *ngFor="let selectedModel of dataSub | async">
+            <div cdkDropList
+                 [cdkDropListEnterPredicate]="enterPredicate"
+                 (cdkDropListDropped)="drop($event)">
+            </div>
+            <!-- FIXME: the legacy selector used `list-inline`, but it causes problems -->
+            <div cdkDropList class="media-selected-list media-selected-list-grid"
+                 *ngFor="let selectedModel of dataSub | async"
+                 [cdkDropListEnterPredicate]="enterPredicate"
+                 (cdkDropListDropped)="drop($event)">
+                <div cdkDrag class="media-selected-list-row media-selected-box media-selected-box-grid"
+                    (cdkDragMoved)="move($event)">
                     <!--<div class="custom-ghost-placeholder" *cdkDragPlaceholder></div>-->
                     <div class="media-item selected-media-item" [id]="'libb_' + selectedModel.id">
                         <div class="image-draggable"
@@ -145,8 +152,10 @@
                             </div>
                         </div>
                     </div>
-                </li>
-                <li class="library-toggle">
+                </div>
+            </div>
+            <div class="media-selected-list media-selected-list-grid">
+                <div class="library-toggle media-selected-box media-selected-box-grid">
                     <a  class="position-anchor accent-background-hover border-default border-default-all color-primary"
                         [matTooltip]="(libraryDisplay ? 'Open' : 'Close') + ' Media Library'"
                         (click)="toggleLibrary()"
@@ -167,8 +176,8 @@
                                  src="/assets/1/0/bundles/sitetheorycore/images/shapeholder-square.png">
                         </div>
                     </a>
-                </li>
-            </ul>
+                </div>
+            </div>
         </div>
     </div>
 </div>
