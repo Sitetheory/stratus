@@ -1,6 +1,6 @@
 // Angular Core
 import {
-    ChangeDetectionStrategy,
+    // ChangeDetectionStrategy,
     ChangeDetectorRef,
     Component,
     ElementRef,
@@ -194,7 +194,7 @@ const has = (object: object, path: string) => _.has(object, path) && !_.isEmpty(
     // styleUrls: [
     //     `${localDir}/${moduleName}/${moduleName}.component${min}.css`
     // ],
-    changeDetection: ChangeDetectionStrategy.OnPush
+    // changeDetection: ChangeDetectionStrategy.OnPush
 })
 
 export class EditorComponent extends RootComponent implements OnInit, TriggerInterface { // implements OnInit, OnChanges
@@ -249,6 +249,7 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
     blurred = false
     focused = false
     codeViewIsOpen: boolean
+    // disableRefresh = true
 
     // Forms
     form: FormGroup = this.fb.group({
@@ -956,6 +957,9 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
         ).subscribe(evt => {
             // While the editor is focused, we skip the debounce updates to avoid cursor glitches
             if (this.focused) {
+                if (this.dev) {
+                    console.warn(`[subscriber] waiting on updates due to focus on ${this.uid}`)
+                }
                 return
             }
             // TODO: This may need to only work on blur and not focus, unless it is the initialization value
@@ -971,7 +975,7 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             }
             dataControl.patchValue(evt)
             // Note: A refresh may be necessary if things become less responsive
-            // this.refresh()
+            this.refresh()
         })
 
         // console.info('constructor!');

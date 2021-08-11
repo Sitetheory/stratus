@@ -48,10 +48,21 @@
   }
 }
 
+// the dragging class appears on the
+// placeholder of what is being dragged
+.cdk-drop-list {
+  &.cdk-drop-list-dragging {
+    .shapeholder {
+      width: 80px;
+      display: block;
+    }
+  }
+}
+
 /* Draggable Media Selected List */
 
 .media-selector-wrapper {
-  background: rgba(255,255,255,.4);
+  background: rgba(255, 255, 255, .4);
   margin-top: 20px;
   padding: 40px;
 }
@@ -65,44 +76,94 @@
       transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
     }
   }
+  .media-selected,
   ul.media-selected {
+    &-container {
+      display:flex;
+      flex-wrap: wrap;
+    }
     &-list {
-      width: 1000px;
+      //width: 1000px;
       max-width: 100%;
       //border: solid 1px #ccc;
       min-height: 60px;
       display: flex;
       flex-direction: row;
-      flex-wrap: wrap;
       //background: white;
       //border-radius: 4px;
       //overflow: hidden;
+      &-grid {
+        flex-wrap: wrap;
+      }
+      .shapeholder {
+        width: 80px;
+        display: block;
+      }
     }
   }
+  .media-selected,
   li.media-selected {
     &-box {
-      padding: 20px 10px;
+      //width: 75px;
+      //height: 75px;
+      //padding: 20px 10px;
+      //width: 12.5%;
+      padding: 4px;
       //border-right: solid 1px #ccc;
       color: rgba(0, 0, 0, 0.87);
       // FIXME: when this uses display:flex, the box collapses
-      //display: flex;
+      display: flex;
       flex-direction: row;
-      align-items: center;
-      justify-content: space-between;
+      //align-items: center;
+      //justify-content: center;
+      //justify-content: space-between;
+      text-align: center;
+      //border-radius: 4px;
+      //position: relative;
       //box-sizing: border-box;
       cursor: move;
       //background: white;
       font-size: 14px;
-      flex-grow: 1;
-      flex-basis: 0;
+      transition: box-shadow 200ms cubic-bezier(0, 0, 0.2, 1);
+      //box-shadow: 0 3px 1px -2px rgba(0, 0, 0, 0.2),
+      //0 2px 2px 0 rgba(0, 0, 0, 0.14),
+      //0 1px 5px 0 rgba(0, 0, 0, 0.12);
+      // this forces the cells to grow to fit the row
+      &-grow {
+        flex-grow: 1;
+      }
+      // this forces all cells to wrap
+      &-grid {
+        flex-wrap: wrap;
+      }
+      // this forces all cells on one line instead of wrapping
+      &-row {
+        flex-basis: 0;
+      }
+    }
+    &-box:active {
+      //box-shadow: 0 5px 5px -3px rgba(0, 0, 0, 0.2),
+      //0 8px 10px 1px rgba(0, 0, 0, 0.14),
+      //0 3px 14px 2px rgba(0, 0, 0, 0.12);
+      opacity: 0.6;
     }
     &-box:last-child {
       //border: none;
     }
   }
 }
+
+.cdk-drop {
+  &-list {
+    display: flex;
+    //padding-right: 10px;
+    //padding-bottom: 10px;
+  }
+}
+
 .cdk-drag {
   &-preview {
+    // Note: these are the original drag preview styles Angular+
     //box-sizing: border-box;
     //border-radius: 4px;
     //box-shadow: 2px 2px 4px rgba(0,0,0,.3)
@@ -111,7 +172,8 @@
     //0 3px 14px 2px rgba(0, 0, 0, 0.12);
   }
   &-placeholder {
-    opacity: 0.7;
+    opacity: 0.3;
+    //opacity: 0.7;
     //opacity: 0;
   }
   &-animating {
@@ -122,10 +184,12 @@
     .info-hover-container {
       display: none;
     }
+    list-style: none;
   }
 }
+
 .custom-ghost-placeholder {
-  background: rgba(0,0,0,.4);
+  background: rgba(0, 0, 0, .4);
   min-height: 60px;
   transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
 }

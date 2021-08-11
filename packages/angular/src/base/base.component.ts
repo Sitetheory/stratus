@@ -10,7 +10,7 @@
 
 // Angular Core
 import {
-    ChangeDetectionStrategy,
+    // ChangeDetectionStrategy,
     ChangeDetectorRef,
     Component,
     ElementRef,
@@ -54,7 +54,7 @@ const localDir = `${installDir}/${boot.configuration.paths[`${systemDir}/*`].rep
     templateUrl: `${localDir}/${moduleName}/${moduleName}.component${min}.html`,
     // styleUrls: [`${localDir}/base/base.component${min}.css`],
     // viewProviders: [BaseComponent]
-    changeDetection: ChangeDetectionStrategy.OnPush
+    // changeDetection: ChangeDetectionStrategy.OnPush
 })
 // @Injectable()
 export class BaseComponent extends RootComponent implements OnInit, OnChanges {

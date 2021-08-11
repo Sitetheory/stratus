@@ -3,12 +3,20 @@ import {
     ChangeDetectorRef,
     Component,
     ElementRef,
-    Input
+    Input,
+    ViewChild
 } from '@angular/core'
 import {FormControl} from '@angular/forms'
 
 // CDK
-import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop'
+import {
+    moveItemInArray,
+    CdkDropList,
+    CdkDropListGroup,
+    CdkDrag,
+    CdkDragDrop,
+    CdkDragMove
+} from '@angular/cdk/drag-drop'
 
 // RXJS
 import {
@@ -42,6 +50,7 @@ import {EventBase} from '@stratusjs/core/events/eventBase'
 // AngularJS Classes
 import {Model} from '@stratusjs/angularjs/services/model'
 import {Collection} from '@stratusjs/angularjs/services/collection'
+import {ViewportRuler} from '@angular/cdk/scrolling'
 
 // Local Setup
 const installDir = '/assets/1/0/bundles'
@@ -127,12 +136,27 @@ export class MediaSelectorComponent extends RootComponent { // implements OnInit
     empty = false
     libraryDisplay = false
     isSelector = true
+    isGrid = true
+    disableRefresh = true
 
+    // Drop List
+    @ViewChild(CdkDropListGroup) listGroup: CdkDropListGroup<CdkDropList>
+    @ViewChild(CdkDropList) placeholder: CdkDropList
+
+    public targetList: CdkDropList
+    public targetIndex: number
+    public sourceList: CdkDropList
+    public sourceIndex: number
+    public dragIndex: number
+    public activeContainer: any
+
+    // Construct
     constructor(
         private iconRegistry: MatIconRegistry,
         private sanitizer: DomSanitizer,
         protected ref: ChangeDetectorRef,
-        private elementRef: ElementRef
+        private elementRef: ElementRef,
+        private viewportRuler: ViewportRuler
     ) {
         // Chain constructor
         super()
@@ -143,6 +167,10 @@ export class MediaSelectorComponent extends RootComponent { // implements OnInit
 
         // Declare Observable with Subscriber (Only Happens Once)
         this.dataSub = new Observable(subscriber => this.dataDefer(subscriber))
+
+        // Initialize Lists
+        this.targetList = null
+        this.sourceList = null
 
         // SVG Icons
         _.forEach({
@@ -199,6 +227,8 @@ export class MediaSelectorComponent extends RootComponent { // implements OnInit
                 }
                 // Manually render upon model change
                 // this.ref.detach();
+                // TODO: We need to check if the data actually changed before causing a whole render and pipe change
+                // TODO: Look into the Model, as it fires a lot of change events...
                 const onDataChange = () => {
                     if (!data.completed) {
                         return
@@ -218,7 +248,28 @@ export class MediaSelectorComponent extends RootComponent { // implements OnInit
         if (!models || !models.length) {
             return
         }
-        moveItemInArray(models, event.previousIndex, event.currentIndex)
+        // This injects the Grid Movement Workaround, if enabled, otherwise it
+        // uses `moveItemInArray` for basic movements or as a fallback.
+        if (!this.isGrid || !this.moveItemInGrid(models)) {
+            if (this.isGrid && cookie('env')) {
+                console.warn('moving item in grid failed. attempting fallback.')
+            }
+            moveItemInArray(models, event.previousIndex, event.currentIndex)
+        }
+        let priority = 0
+        _.forEach(models, (model: any) => model.priority = priority++)
+        this.model.trigger('change')
+    }
+
+    /**
+     * This function is only for directly testing movements via console commands
+     */
+    moveModel(previousIndex: number, currentIndex: number) {
+        const models = this.dataRef()
+        if (!models || !models.length) {
+            return
+        }
+        moveItemInArray(models, previousIndex, currentIndex)
         let priority = 0
         _.forEach(models, (model: any) => model.priority = priority++)
         this.model.trigger('change')
@@ -260,6 +311,8 @@ export class MediaSelectorComponent extends RootComponent { // implements OnInit
         models.splice(index, 1)
         // this.prioritize();
         this.model.trigger('change')
+        // trigger event emission
+        this.removeFromSelected(model.id)
     }
 
     // Data Connections
@@ -390,4 +443,140 @@ export class MediaSelectorComponent extends RootComponent { // implements OnInit
         Stratus.Environment.trigger(this.eventID, 'removeFromSelected')
         Stratus.Environment.trigger(`${this.eventID}:removeFromSelected`, model)
     }
+
+    /**
+     * This functionality is based on the workaround present below:
+     * https://stackoverflow.com/questions/53675661/angular-material-7-use-grid-with-drag-and-drop
+     */
+    move(event: CdkDragMove) {
+        const point = this.getPointerPositionOnPage(event.event)
+
+        if (_.isUndefined(this.listGroup) || !this.listGroup) {
+            console.warn('this.listGroup does not exist:', this)
+            return
+        }
+        if (_.isUndefined(this.listGroup._items)) {
+            console.warn('this.listGroup._items does not exist:', this.listGroup)
+            return
+        }
+        this.listGroup._items.forEach((dropList: CdkDropList) => {
+            if (!__isInsideDropListClientRect(dropList, point.x, point.y)) {
+                return
+            }
+            this.activeContainer = dropList
+        })
+    }
+
+    /**
+     * This functionality is based on the workaround present below:
+     * https://stackoverflow.com/questions/53675661/angular-material-7-use-grid-with-drag-and-drop
+     */
+    moveItemInGrid(collection: Array<any>): boolean {
+        if (!this.targetList) {
+            return false
+        }
+
+        const placeholderElement = this.placeholder.element.nativeElement
+        const parentElement = placeholderElement.parentElement
+
+        placeholderElement.style.display = 'none'
+
+        parentElement.removeChild(placeholderElement)
+        parentElement.appendChild(placeholderElement)
+        parentElement.insertBefore(
+            this.sourceList.element.nativeElement,
+            parentElement.children[this.sourceIndex]
+        )
+
+        this.targetList = null
+        this.sourceList = null
+
+        if (this.sourceIndex === this.targetIndex) {
+            return false
+        }
+        moveItemInArray(collection, this.sourceIndex, this.targetIndex)
+        return true
+    }
+
+    /**
+     * This functionality is based on the workaround present below:
+     * https://stackoverflow.com/questions/53675661/angular-material-7-use-grid-with-drag-and-drop
+     */
+    enterPredicate = (drag: CdkDrag, drop: CdkDropList) => {
+        if (drop === this.placeholder) {
+            return true
+        }
+
+        if (drop !== this.activeContainer) {
+            return false
+        }
+
+        const placeholderElement = this.placeholder.element.nativeElement
+        const sourceElement = drag.dropContainer.element.nativeElement
+        const dropElement = drop.element.nativeElement
+
+        const dragIndex = __indexOf(dropElement.parentElement.children, (this.sourceList ? placeholderElement : sourceElement))
+        const dropIndex = __indexOf(dropElement.parentElement.children, dropElement)
+
+        if (!this.sourceList) {
+            this.sourceIndex = dragIndex
+            this.sourceList = drag.dropContainer
+
+            placeholderElement.style.width = sourceElement.clientWidth + 'px'
+            placeholderElement.style.height = sourceElement.clientHeight + 'px'
+
+            sourceElement.parentElement.removeChild(sourceElement)
+        }
+
+        this.targetIndex = dropIndex
+        this.targetList = drop
+
+        placeholderElement.style.display = ''
+        dropElement.parentElement.insertBefore(
+            placeholderElement,
+            dropIndex > dragIndex ? dropElement.nextSibling : dropElement
+        )
+
+        this.placeholder._dropListRef.enter(
+            drag._dragRef,
+            drag.element.nativeElement.offsetLeft,
+            drag.element.nativeElement.offsetTop
+        )
+        return false
+    }
+
+    /**
+     * This functionality is based on the workaround present below:
+     * https://stackoverflow.com/questions/53675661/angular-material-7-use-grid-with-drag-and-drop
+     */
+    getPointerPositionOnPage(event: MouseEvent | TouchEvent) {
+        // start/end events will have empty `touches`, but `changedTouches` will be filled
+        const point = __isTouchEvent(event) ? (event.touches[0] || event.changedTouches[0]) : event
+        const scrollPosition = this.viewportRuler.getViewportScrollPosition()
+
+        return {
+            x: point.pageX - scrollPosition.left,
+            y: point.pageY - scrollPosition.top
+        }
+    }
+}
+
+// -------------------------------------------------------------
+//  Utility Functions (will move to Stratus Core at some point)
+// -------------------------------------------------------------
+
+// This functionality is based on the workaround present below:
+// https://stackoverflow.com/questions/53675661/angular-material-7-use-grid-with-drag-and-drop
+
+function __indexOf(collection: HTMLCollection, node: HTMLElement) {
+    return Array.prototype.indexOf.call(collection, node)
+}
+
+function __isTouchEvent(event: MouseEvent | TouchEvent): event is TouchEvent {
+    return event.type.startsWith('touch')
+}
+
+function __isInsideDropListClientRect(dropList: CdkDropList, x: number, y: number) {
+    const {top, bottom, left, right} = dropList.element.nativeElement.getBoundingClientRect()
+    return y >= top && y <= bottom && x >= left && x <= right
 }
