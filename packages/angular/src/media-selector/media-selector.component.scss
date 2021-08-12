@@ -1,10 +1,8 @@
 
 /* Styles for Both Media Selector and Media Selected Areas */
 
-.admin-media-select-content,
-.autocomplete-option,
-.sa-media-selector,
-.cdk-drag-preview {
+sa-media-selector,
+.media-selected-box.cdk-drag-preview {
   .content-type {
     margin-bottom: 2px;
     md-icon,
@@ -39,9 +37,7 @@
     display: block;
   }
 }
-.content-media-selector-autocomplete,
-.admin-media-select-content,
-.cdk-drag-preview {
+.media-selected-box.cdk-drag-preview {
   .column-title h3 {
     margin: 0 0 5px;
     font-size: 16px;
@@ -50,11 +46,13 @@
 
 // the dragging class appears on the
 // placeholder of what is being dragged
-.cdk-drop-list {
-  &.cdk-drop-list-dragging {
-    .shapeholder {
-      width: 80px;
-      display: block;
+.media-selector {
+  .cdk-drop-list {
+    &.cdk-drop-list-dragging {
+      .shapeholder {
+        width: 80px;
+        display: block;
+      }
     }
   }
 }
@@ -121,7 +119,6 @@
       //border-radius: 4px;
       //position: relative;
       //box-sizing: border-box;
-      cursor: move;
       //background: white;
       font-size: 14px;
       transition: box-shadow 200ms cubic-bezier(0, 0, 0.2, 1);
@@ -140,6 +137,12 @@
       &-row {
         flex-basis: 0;
       }
+      // this is the default cursor for boxes
+      cursor: pointer;
+      // this changes the cursor for movable boxes
+      &.cdk-drag {
+        cursor: move;
+      }
     }
     &-box:active {
       //box-shadow: 0 5px 5px -3px rgba(0, 0, 0, 0.2),
@@ -151,13 +154,12 @@
       //border: none;
     }
   }
-}
-
-.cdk-drop {
-  &-list {
-    display: flex;
-    //padding-right: 10px;
-    //padding-bottom: 10px;
+  .cdk-drop {
+    &-list {
+      display: flex;
+      //padding-right: 10px;
+      //padding-bottom: 10px;
+    }
   }
 }
 
@@ -198,7 +200,7 @@
 /* Selected List Custom */
 
 sa-media-selector,
-.cdk-drag-preview {
+.media-selected-box.cdk-drag-preview {
   .column-image,
   .column-title,
   .column-action {

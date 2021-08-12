@@ -4,7 +4,7 @@
 .admin-select-content,
 .autocomplete-option,
 .sa-selector,
-.cdk-drag-preview {
+.selected-box.cdk-drag-preview {
   .content-type {
     margin-bottom: 2px;
     md-icon,
@@ -41,7 +41,7 @@
 }
 .content-selector-autocomplete,
 .admin-select-content,
-.cdk-drag-preview {
+.selected-box.cdk-drag-preview {
   .column-title h3 {
     margin: 0 0 5px;
     font-size: 16px;
@@ -134,7 +134,7 @@ md-autocomplete,
   background: white;
   font-size: 14px;
 }
-.cdk-drag-preview {
+.selected-box.cdk-drag-preview {
   box-sizing: border-box;
   border-radius: 4px;
   box-shadow: 2px 2px 4px rgba(0,0,0,.3)
@@ -159,7 +159,7 @@ md-autocomplete,
 
 
 sa-selector,
-.cdk-drag-preview {
+.selected-box.cdk-drag-preview {
   .column-image,
   .column-title,
   .column-action {
@@ -191,7 +191,7 @@ sa-selector {
     }
   }
 }
-.cdk-drag-preview {
+.selected-box.cdk-drag-preview {
   .column-image {
     width: 15%;
   }
