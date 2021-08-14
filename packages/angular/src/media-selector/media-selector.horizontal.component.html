@@ -7,9 +7,9 @@
         <p class="small-all-caps selected-media-label"
            [textContent]="'Selected ' + (type || 'Items')"></p>
         <div class="selected-area media-content">
-            <div class="selected-message-box" *ngIf="empty">
-                Nothing has been selected.
-            </div>
+            <!--<div class="selected-message-box" *ngIf="empty">-->
+            <!--    Nothing has been selected.-->
+            <!--</div>-->
             <ul cdkDropList class="list-inline media-selected-list"
                 cdkDropListOrientation="horizontal"
                 (cdkDropListDropped)="drop($event)">

@@ -8,9 +8,9 @@
            [textContent]="'Selected ' + (type || 'Items')"></p>
         <!-- TODO: for styles from legacy selector, add class `selected-area` -->
         <div class="media-content media-selected-container" cdkDropListGroup>
-            <div class="selected-message-box" *ngIf="empty">
-                Nothing has been selected.
-            </div>
+            <!--<div class="selected-message-box" *ngIf="empty">-->
+            <!--    Nothing has been selected.-->
+            <!--</div>-->
             <div cdkDropList
                  [cdkDropListEnterPredicate]="enterPredicate"
                  (cdkDropListDropped)="drop($event)">
