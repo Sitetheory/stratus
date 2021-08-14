@@ -60,14 +60,13 @@ import {
 } from '@stratusjs/angular/core/responsive.component'
 
 // Local Setup
-const installDir = '/assets/1/0/bundles'
 const systemDir = '@stratusjs/angular'
 const moduleName = 'media-dialog'
 const parentModuleName = 'editor'
 
 // Directory Template
 const min = !cookie('env') ? '.min' : ''
-const localDir = `${installDir}/${boot.configuration.paths[`${systemDir}/*`].replace(/[^/]*$/, '')}`
+const localDir = `${Stratus.BaseUrl}${boot.configuration.paths[`${systemDir}/*`].replace(/[^/]*$/, '')}`
 
 /**
  * @title Dialog for Nested Tree

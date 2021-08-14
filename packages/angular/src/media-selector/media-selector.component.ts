@@ -53,13 +53,12 @@ import {Collection} from '@stratusjs/angularjs/services/collection'
 import {ViewportRuler} from '@angular/cdk/scrolling'
 
 // Local Setup
-const installDir = '/assets/1/0/bundles'
 const systemDir = '@stratusjs/angular'
 const moduleName = 'media-selector'
 
 // Directory Template
 const min = !cookie('env') ? '.min' : ''
-const localDir = `${installDir}/${boot.configuration.paths[`${systemDir}/*`].replace(/[^/]*$/, '')}`
+const localDir = `${Stratus.BaseUrl}${boot.configuration.paths[`${systemDir}/*`].replace(/[^/]*$/, '')}`
 
 // Utility Functions
 const has = (object: object, path: string) => _.has(object, path) && !_.isEmpty(_.get(object, path))
@@ -175,16 +174,16 @@ export class MediaSelectorComponent extends RootComponent { // implements OnInit
         // SVG Icons
         _.forEach({
             // action buttons
-            media_selector_add: '/assets/1/0/bundles/sitetheorycore/images/icons/actionButtons/add.svg',
-            media_selector_clear: '/assets/1/0/bundles/sitetheorycore/images/icons/actionButtons/clear.svg',
-            media_selector_delete: '/assets/1/0/bundles/sitetheorycore/images/icons/actionButtons/delete.svg',
-            media_selector_edit: '/assets/1/0/bundles/sitetheorycore/images/icons/actionButtons/edit.svg',
-            media_selector_info: '/assets/1/0/bundles/sitetheorycore/images/icons/actionButtons/info.svg',
+            media_selector_add: `${Stratus.BaseUrl}sitetheorycore/images/icons/actionButtons/add.svg`,
+            media_selector_clear: `${Stratus.BaseUrl}sitetheorycore/images/icons/actionButtons/clear.svg`,
+            media_selector_delete: `${Stratus.BaseUrl}sitetheorycore/images/icons/actionButtons/delete.svg`,
+            media_selector_edit: `${Stratus.BaseUrl}sitetheorycore/images/icons/actionButtons/edit.svg`,
+            media_selector_info: `${Stratus.BaseUrl}sitetheorycore/images/icons/actionButtons/info.svg`,
             // type icons
-            media_selector_image: '/assets/1/0/bundles/sitetheorymedia/images/mediaTypeIcons/media-icon-image.svg',
-            media_selector_video: '/assets/1/0/bundles/sitetheorymedia/images/mediaTypeIcons/media-icon-video.svg',
-            media_selector_audio: '/assets/1/0/bundles/sitetheorymedia/images/mediaTypeIcons/media-icon-audio.svg',
-            media_selector_document: '/assets/1/0/bundles/sitetheorymedia/images/mediaTypeIcons/media-icon-document.svg'
+            media_selector_image: `${Stratus.BaseUrl}sitetheorymedia/images/mediaTypeIcons/media-icon-image.svg`,
+            media_selector_video: `${Stratus.BaseUrl}sitetheorymedia/images/mediaTypeIcons/media-icon-video.svg`,
+            media_selector_audio: `${Stratus.BaseUrl}sitetheorymedia/images/mediaTypeIcons/media-icon-audio.svg`,
+            media_selector_document: `${Stratus.BaseUrl}sitetheorymedia/images/mediaTypeIcons/media-icon-document.svg`
         }, (value, key) => iconRegistry.addSvgIcon(key, sanitizer.bypassSecurityTrustResourceUrl(value)).getNamedSvgIcon(key))
 
         // TODO: Assess & Possibly Remove when the System.js ecosystem is complete

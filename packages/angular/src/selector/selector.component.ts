@@ -51,13 +51,12 @@ import {Model} from '@stratusjs/angularjs/services/model'
 import {Collection} from '@stratusjs/angularjs/services/collection'
 
 // Local Setup
-const installDir = '/assets/1/0/bundles'
 const systemDir = '@stratusjs/angular'
 const moduleName = 'selector'
 
 // Directory Template
 const min = !cookie('env') ? '.min' : ''
-const localDir = `${installDir}/${boot.configuration.paths[`${systemDir}/*`].replace(/[^/]*$/, '')}`
+const localDir = `${Stratus.BaseUrl}${boot.configuration.paths[`${systemDir}/*`].replace(/[^/]*$/, '')}`
 
 // Utility Functions
 const has = (object: object, path: string) => _.has(object, path) && !_.isEmpty(_.get(object, path))
@@ -154,8 +153,8 @@ export class SelectorComponent extends RootComponent { // implements OnInit, OnC
 
         // SVG Icons
         _.forEach({
-            selector_delete: '/assets/1/0/bundles/sitetheorycore/images/icons/actionButtons/delete.svg',
-            selector_edit: '/assets/1/0/bundles/sitetheorycore/images/icons/actionButtons/edit.svg'
+            selector_delete: `${Stratus.BaseUrl}sitetheorycore/images/icons/actionButtons/delete.svg`,
+            selector_edit: `${Stratus.BaseUrl}sitetheorycore/images/icons/actionButtons/edit.svg`
         }, (value, key) => iconRegistry.addSvgIcon(key, sanitizer.bypassSecurityTrustResourceUrl(value)).getNamedSvgIcon(key))
 
         // TODO: Assess & Possibly Remove when the System.js ecosystem is complete

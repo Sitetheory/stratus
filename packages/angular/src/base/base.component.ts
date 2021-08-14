@@ -37,13 +37,12 @@ import {RootComponent} from '@stratusjs/angular/core/root.component'
 import {keys} from 'ts-transformer-keys'
 
 // Local Setup
-const installDir = '/assets/1/0/bundles'
 const systemDir = '@stratusjs/angular'
 const moduleName = 'base'
 
 // Directory Template
 const min = !cookie('env') ? '.min' : ''
-const localDir = `${installDir}/${boot.configuration.paths[`${systemDir}/*`].replace(/[^/]*$/, '')}`
+const localDir = `${Stratus.BaseUrl}${boot.configuration.paths[`${systemDir}/*`].replace(/[^/]*$/, '')}`
 
 /**
  * @title Basic Load
