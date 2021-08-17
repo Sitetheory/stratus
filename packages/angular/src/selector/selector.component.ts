@@ -106,6 +106,9 @@ export class SelectorComponent extends RootComponent { // implements OnInit, OnC
     _ = _
     has = has
     log = console.log
+    Stratus = Stratus
+
+    // Forms
     selectCtrl = new FormControl()
 
     // Stratus Data Connectivity

@@ -74,7 +74,7 @@
                                       && mediaEntity.mime === 'video'">
                     <ng-container *ngIf="mediaEntity.service === 'vimeo'">
                         <ng-container *ngIf="mediaEntity.meta && mediaEntity.meta.thumbnail_large; else basicVimeoButton">
-                            <!-- [src]="mediaEntity.meta.thumbnail_large || '/assets/1/0/bundles/sitetheorymedia/images/mediaTypeIcons/media-icon-video.png'" -->
+                            <!-- [src]="mediaEntity.meta.thumbnail_large || Stratus.BaseUrl + 'sitetheorymedia/images/mediaTypeIcons/media-icon-video.png'" -->
                             <img mat-card-image
                                  class="vimeo"
                                  [src]="mediaEntity.meta.thumbnail_large"
@@ -87,7 +87,7 @@
                             <!-- TODO: make this a local file -->
                             <img mat-card-image
                                  class="vimeo basic-image"
-                                 src="/assets/1/0/bundles/sitetheorymedia/images/mediaTypeIcons/media-icon-video.png"
+                                 [src]="Stratus.BaseUrl + 'sitetheorymedia/images/mediaTypeIcons/media-icon-video.png'"
                                  style="background: #4e4e4e;"
                                  [alt]="mediaEntity.name"
                                  [ngClass]="{'selected' : isSelected(mediaEntity)}">
@@ -107,7 +107,7 @@
                             <!-- TODO: make this a local file -->
                             <img mat-card-image
                                  class="youtube basic-image"
-                                 src="/assets/1/0/bundles/sitetheorymedia/images/mediaTypeIcons/media-icon-video.png"
+                                 [src]="Stratus.BaseUrl + 'sitetheorymedia/images/mediaTypeIcons/media-icon-video.png'"
                                  style="background: #4e4e4e;"
                                  [alt]="mediaEntity.name"
                                  [ngClass]="{'selected' : isSelected(mediaEntity)}">
@@ -119,7 +119,7 @@
                         <!-- TODO: make this a local file -->
                         <img mat-card-image
                              class="facebook-video basic-image"
-                             src="/assets/1/0/bundles/sitetheorymedia/images/mediaTypeIcons/media-icon-video.png"
+                             [src]="Stratus.BaseUrl + 'sitetheorymedia/images/mediaTypeIcons/media-icon-video.png'"
                              style="background: #4e4e4e;"
                              [alt]="mediaEntity.name"
                              [ngClass]="{'selected' : isSelected(mediaEntity)}">
@@ -129,7 +129,7 @@
                         <!-- TODO: make this a local file -->
                         <img mat-card-image
                              class="generic-video basic-image"
-                             src="/assets/1/0/bundles/sitetheorymedia/images/mediaTypeIcons/media-icon-video.png"
+                             [src]="Stratus.BaseUrl + 'sitetheorymedia/images/mediaTypeIcons/media-icon-video.png'"
                              style="background: #4e4e4e;"
                              [alt]="mediaEntity.name"
                              [ngClass]="{'selected' : isSelected(mediaEntity)}">
@@ -140,7 +140,7 @@
                     <!-- TODO: make this a local file -->
                     <img mat-card-image
                          class="generic-audio"
-                         src="/assets/1/0/bundles/sitetheorymedia/images/mediaTypeGraphics/media-graphic-audio.png"
+                         [src]="Stratus.BaseUrl + 'sitetheorymedia/images/mediaTypeGraphics/media-graphic-audio.png'"
                          style="background: #4e4e4e;"
                          [alt]="mediaEntity.name"
                          [ngClass]="{'selected' : isSelected(mediaEntity)}">
@@ -150,7 +150,7 @@
                     <!-- TODO: make this a local file -->
                     <img mat-card-image
                          class="generic-pdf basic-image"
-                         src="/assets/1/0/bundles/sitetheorymedia/images/mediaTypeGraphics/media-graphic-pdf.png"
+                         [src]="Stratus.BaseUrl + 'sitetheorymedia/images/mediaTypeGraphics/media-graphic-pdf.png'"
                          [alt]="mediaEntity.name"
                          [ngClass]="{'selected' : isSelected(mediaEntity)}">
                 </ng-container>
@@ -159,7 +159,7 @@
                     <!-- TODO: make this a local file -->
                     <img mat-card-image
                          class="generic-word basic-image"
-                         src="/assets/1/0/bundles/sitetheorymedia/images/mediaTypeGraphics/media-graphic-doc.png"
+                         [src]="Stratus.BaseUrl + 'sitetheorymedia/images/mediaTypeGraphics/media-graphic-doc.png'"
                          [alt]="mediaEntity.name"
                          [ngClass]="{'selected' : isSelected(mediaEntity)}">
                 </ng-container>

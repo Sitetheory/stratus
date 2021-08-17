@@ -115,7 +115,8 @@ export class TreeDialogComponent extends ResponsiveComponent implements OnInit, 
     isStyled = false
 
     // Dependencies
-    _: any
+    _ = _
+    Stratus = Stratus
 
     // Root Component
     tree: TreeComponent
@@ -163,9 +164,6 @@ export class TreeDialogComponent extends ResponsiveComponent implements OnInit, 
         // Initialization
         this.uid = _.uniqueId(`sa_${_.snakeCase(moduleName)}_component_`)
         Stratus.Instances[this.uid] = this
-
-        // Dependencies
-        this._ = _
 
         // TODO: Assess & Possibly Remove when the System.js ecosystem is complete
         // Load Component CSS until System.js can import CSS properly.

@@ -39,7 +39,7 @@
                     <!--<div class="image" no-flex stratus-src-->
                     <!--[ngStyle]="{'background': 'url(' + findImage(selectedModel) + ') no-repeat center center', 'background-size': 'cover'}"-->
                     <!--&gt;-->
-                    <!--<img class="shapeholder" src="/assets/1/0/bundles/sitetheorycore/images/shapeholder-square.png">-->
+                    <!--<img class="shapeholder" [src]="Stratus.BaseUrl + 'sitetheorycore/images/shapeholder-square.png'">-->
                     <!--</div>-->
 
                     <!-- This only shows the bestImage if this isn't a Video, since images for Videos are not hosted by us, thus cannot lazy load a proper size -->
@@ -70,13 +70,13 @@
                          [ngClass]="_.get(selectedModel, 'contentType.class') + '-background-color'">
 
                         <mat-icon class="content-type-icon position-center"
-                                  [svgIcon]="getSvg('/assets/1/0/bundles/' + (_.get(selectedModel, 'contentType.iconResourcePath') || _.get(selectedModel, 'iconResourcePath'))) | async">
+                                  [svgIcon]="getSvg(Stratus.BaseUrl + (_.get(selectedModel, 'contentType.iconResourcePath') || _.get(selectedModel, 'iconResourcePath'))) | async">
                             Icon
                         </mat-icon>
                     </div>
 
                     <!-- Shapeholder -->
-                    <img class="shapeholder" src="/assets/1/0/bundles/sitetheorycore/images/shapeholder-square.png">
+                    <img class="shapeholder" [src]="Stratus.BaseUrl + 'sitetheorycore/images/shapeholder-square.png'">
 
                     <!--(click)="remove(selectedModel)"-->
                     <!--(click)="mediaDetails(selectedModel)"-->
@@ -90,7 +90,7 @@
                 <!--        to break away from the div and float to the top of the selector container-->
                 <!--        &ndash;&gt;-->
                 <!--        <mat-icon class="content-type-icon"-->
-                <!--                  [svgIcon]="getSvg('/assets/1/0/bundles/' + _.get(selectedModel, 'contentType.iconResourcePath')) | async">-->
+                <!--                  [svgIcon]="getSvg(Stratus.BaseUrl + _.get(selectedModel, 'contentType.iconResourcePath')) | async">-->
                 <!--            ContentType Icon-->
                 <!--        </mat-icon>-->
                 <!--        <span class="comment content-type-name font-body"-->

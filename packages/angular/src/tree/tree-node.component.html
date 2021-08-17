@@ -31,14 +31,14 @@
     <mat-icon class="type-icon hover-box"
               aria-hidden="true"
               *ngIf="node.model.get('content.contentType.iconResourcePath')"
-              [svgIcon]="getSvg('/assets/1/0/bundles/' + node.model.get('content.contentType.iconResourcePath')) | async">
+              [svgIcon]="getSvg(Stratus.BaseUrl + node.model.get('content.contentType.iconResourcePath')) | async">
     </mat-icon>
 
     <!-- Default Content Type Icon -->
     <mat-icon class="type-icon hover-box"
               aria-hidden="true"
               *ngIf="!node.model.get('content.contentType.iconResourcePath')"
-              [svgIcon]="getSvg('/assets/1/0/bundles/sitetheorycore/images/menuTypeIcon/default.svg') | async">
+              [svgIcon]="getSvg(Stratus.BaseUrl + 'sitetheorycore/images/menuTypeIcon/default.svg') | async">
     </mat-icon>
 
     <!-- clickable name is also the drag handle -->

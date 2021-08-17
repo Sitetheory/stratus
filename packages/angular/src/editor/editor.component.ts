@@ -222,6 +222,7 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
     _ = _
     has = has
     log = console.log
+    Stratus = Stratus
 
     // Stratus Data Connectivity
     registry = new Registry()

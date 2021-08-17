@@ -13,7 +13,6 @@ import _ from 'lodash'
 
 
 // Local Setup
-// const installDir = '/assets/1/0/bundles'
 // const systemDir = '@stratusjs/angular'
 const moduleName = 'test'
 

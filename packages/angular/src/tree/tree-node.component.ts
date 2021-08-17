@@ -75,7 +75,8 @@ export class TreeNodeComponent extends ResponsiveComponent implements OnInit, On
     isStyled = false
 
     // Dependencies
-    _: any
+    _ = _
+    Stratus = Stratus
 
     // Inputs
     @Input() tree: TreeComponent
@@ -107,9 +108,6 @@ export class TreeNodeComponent extends ResponsiveComponent implements OnInit, On
         // Initialization
         this.uid = _.uniqueId(`sa_${_.snakeCase(moduleName)}_component_`)
         Stratus.Instances[this.uid] = this
-
-        // Dependencies
-        this._ = _
 
         // TODO: Assess & Possibly Remove when the System.js ecosystem is complete
         // Load Component CSS until System.js can import CSS properly.

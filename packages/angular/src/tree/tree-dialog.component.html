@@ -86,7 +86,7 @@
                         <span class="no-image-icon position-all"
                               *ngIf="model.contentType.iconResource">
                             <mat-icon aria-hidden="true"
-                                      [svgIcon]="getSvg('/assets/1/0/bundles/' + model.contentType.iconResourcePath) | async">
+                                      [svgIcon]="getSvg(Stratus.BaseUrl + model.contentType.iconResourcePath) | async">
                                 Icon
                             </mat-icon>
                         </span>
@@ -95,7 +95,7 @@
                         <!-- Content Type Icon -->
                         <mat-icon aria-hidden="true"
                                   *ngIf="model.contentType.iconResourcePath"
-                                  [svgIcon]="getSvg('/assets/1/0/bundles/' + model.contentType.iconResourcePath) | async">
+                                  [svgIcon]="getSvg(Stratus.BaseUrl + model.contentType.iconResourcePath) | async">
                             Icon
                         </mat-icon>
 

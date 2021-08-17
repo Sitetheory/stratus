@@ -170,6 +170,7 @@ export class TreeComponent extends RootComponent implements OnInit, OnDestroy {
 
     // Dependencies
     _ = _
+    Stratus = Stratus
 
     // Stratus Data Connectivity
     registry = new Registry()

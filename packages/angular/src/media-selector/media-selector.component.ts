@@ -6,7 +6,7 @@ import {
     Input,
     ViewChild
 } from '@angular/core'
-import {FormControl} from '@angular/forms'
+// import {FormControl} from '@angular/forms'
 
 // CDK
 import {
@@ -102,7 +102,7 @@ export class MediaSelectorComponent extends RootComponent { // implements OnInit
     _ = _
     has = has
     log = console.log
-    selectCtrl = new FormControl()
+    Stratus = Stratus
 
     // Stratus Data Connectivity
     registry = new Registry()
@@ -142,6 +142,7 @@ export class MediaSelectorComponent extends RootComponent { // implements OnInit
     @ViewChild(CdkDropListGroup) listGroup: CdkDropListGroup<CdkDropList>
     @ViewChild(CdkDropList) placeholder: CdkDropList
 
+    // Grid Workaround
     public targetList: CdkDropList
     public targetIndex: number
     public sourceList: CdkDropList
