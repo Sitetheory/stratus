@@ -7,9 +7,9 @@
         <p class="small-all-caps selected-media-label"
            [textContent]="'Selected ' + (type || 'Items')"></p>
         <div class="selected-area media-content">
-            <div class="selected-message-box" *ngIf="empty">
-                Nothing has been selected.
-            </div>
+            <!--<div class="selected-message-box" *ngIf="empty">-->
+            <!--    Nothing has been selected.-->
+            <!--</div>-->
             <ul cdkDropList class="list-inline media-selected-list"
                 cdkDropListOrientation="horizontal"
                 (cdkDropListDropped)="drop($event)">
@@ -34,7 +34,7 @@
                              }"
                              [ngStyle]="{'background': 'url(' + (_.get(selectedModel, '_thumbSrc') || _.get(selectedModel, 'bestImage.thumb') || _.get(selectedModel, 'meta.thumbnail_small')) + ') no-repeat center center', 'background-size': 'cover'}">
 
-                            <img class="shapeholder" src="/assets/1/0/bundles/sitetheorycore/images/shapeholder-square.png">
+                            <img class="shapeholder" [src]="Stratus.BaseUrl + 'sitetheorycore/images/shapeholder-square.png'">
 
                             <div class="thumb-gradient">&nbsp;</div>
 
@@ -164,7 +164,7 @@
                                 Close Library
                             </div>
                             <img class="shapeholder"
-                                 src="/assets/1/0/bundles/sitetheorycore/images/shapeholder-square.png">
+                                 [src]="Stratus.BaseUrl + 'sitetheorycore/images/shapeholder-square.png'">
                         </div>
                     </a>
                 </li>

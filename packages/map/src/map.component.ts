@@ -34,7 +34,7 @@ import {
 // Local Setup
 const packageName = 'map'
 const systemDir = `@stratusjs/${packageName}`
-const localDir = `/assets/1/0/bundles/${boot.configuration.paths[`${systemDir}/*`].replace(/[^/]*$/, '')}`
+const localDir = `${Stratus.BaseUrl}${boot.configuration.paths[`${systemDir}/*`].replace(/[^/]*$/, '')}`
 const moduleName = 'map'
 
 // Static Variables

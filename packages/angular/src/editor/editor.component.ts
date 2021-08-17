@@ -162,7 +162,6 @@ import {FroalaEditorDirective} from 'angular-froala-wysiwyg'
 // import '@stratusjs/angular/froala/plugins/menuButton'
 
 // Local Setup
-const installDir = '/assets/1/0/bundles'
 const systemPackage = '@stratusjs/angular'
 const froalaPackage = 'froala-editor'
 const codeMirrorPackage = 'codemirror'
@@ -170,9 +169,9 @@ const moduleName = 'editor'
 
 // Directory Template
 const min = !cookie('env') ? '.min' : ''
-const localDir = `${installDir}/${boot.configuration.paths[`${systemPackage}/*`].replace(/[^\/]*$/, '')}`
-const codeMirrorDir = `${installDir}/${boot.configuration.paths[`${codeMirrorPackage}/*`].replace(/[^\/]*$/, '')}`
-const froalaDir = `${installDir}/${boot.configuration.paths[froalaPackage].replace(/js\/[^\/]*$/, '')}`
+const localDir = `${Stratus.BaseUrl}${boot.configuration.paths[`${systemPackage}/*`].replace(/[^\/]*$/, '')}`
+const codeMirrorDir = `${Stratus.BaseUrl}${boot.configuration.paths[`${codeMirrorPackage}/*`].replace(/[^\/]*$/, '')}`
+const froalaDir = `${Stratus.BaseUrl}${boot.configuration.paths[froalaPackage].replace(/js\/[^\/]*$/, '')}`
 
 // Utility Functions
 const has = (object: object, path: string) => _.has(object, path) && !_.isEmpty(_.get(object, path))
@@ -223,6 +222,7 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
     _ = _
     has = has
     log = console.log
+    Stratus = Stratus
 
     // Stratus Data Connectivity
     registry = new Registry()
@@ -907,7 +907,7 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
         // TODO: Allow more CSS files to get pulled and mark this.styled appropriately
         /* *
         if (_.has(boot.configuration.paths, 'quill')) {
-            const quillDir = `/assets/1/0/bundles/${boot.configuration.paths.quill.replace(/[^/]*$/, '')}`
+            const quillDir = `${Stratus.BaseUrl}${boot.configuration.paths.quill.replace(/[^/]*$/, '')}`
             Stratus.Internals.CssLoader(`${quillDir}quill.core.css`)
             // Stratus.Internals.CssLoader(`${quillDir}quill.bubble.css`)
             Stratus.Internals.CssLoader(`${quillDir}quill.snow.css`)

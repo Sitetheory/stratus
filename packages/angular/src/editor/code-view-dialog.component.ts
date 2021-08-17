@@ -47,14 +47,13 @@ import {
 } from '@stratusjs/angular/core/responsive.component'
 
 // Local Setup
-const installDir = '/assets/1/0/bundles'
 const systemDir = '@stratusjs/angular'
 const moduleName = 'code-view-dialog'
 const parentModuleName = 'editor'
 
 // Directory Template
 const min = !cookie('env') ? '.min' : ''
-const localDir = `${installDir}/${boot.configuration.paths[`${systemDir}/*`].replace(/[^/]*$/, '')}`
+const localDir = `${Stratus.BaseUrl}${boot.configuration.paths[`${systemDir}/*`].replace(/[^/]*$/, '')}`
 
 /**
  * @title Dialog for Nested Tree
@@ -71,7 +70,8 @@ export class CodeViewDialogComponent extends ResponsiveComponent implements OnIn
     uid: string
 
     // Dependencies
-    _: any
+    _ = _
+    Stratus = Stratus
 
     // Forms
     form: FormGroup = this.fb.group({
@@ -110,9 +110,6 @@ export class CodeViewDialogComponent extends ResponsiveComponent implements OnIn
         // Initialization
         this.uid = _.uniqueId(`sa_${_.snakeCase(moduleName)}_component_`)
         Stratus.Instances[this.uid] = this
-
-        // Dependencies
-        this._ = _
 
         // TODO: Assess & Possibly Remove when the System.js ecosystem is complete
         // Load Component CSS until System.js can import CSS properly.

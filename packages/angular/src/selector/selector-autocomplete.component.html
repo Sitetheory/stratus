@@ -40,14 +40,14 @@
                     <div *ngIf="!isSelected(model) && model.contentType.iconResource">
                         <mat-icon class="content-type-icon position-center"
                                   aria-hidden="true"
-                                  [svgIcon]="getSvg('/assets/1/0/bundles/' + model.contentType.iconResourcePath) | async">
+                                  [svgIcon]="getSvg(Stratus.BaseUrl + model.contentType.iconResourcePath) | async">
                             ContentType Icon
                         </mat-icon>
                     </div>
                 </div>
 
                 <!-- Shapeholder -->
-                <img class="shapeholder" src="/assets/1/0/bundles/sitetheorycore/images/shapeholder-square.png">
+                <img class="shapeholder" [src]="Stratus.BaseUrl + 'sitetheorycore/images/shapeholder-square.png'">
             </div>
         </div>
         <div class="column-title st-grid column80">

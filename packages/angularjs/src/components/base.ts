@@ -88,7 +88,7 @@ Stratus.Components.Base = {
         Stratus.Instances[$ctrl.uid] = $scope
         $scope.elementId = $attrs.elementId || $ctrl.uid
         Stratus.Internals.CssLoader(
-            Stratus.BaseUrl + Stratus.BundlePath + localPath + '/' + name + min + '.css'
+            `${Stratus.BaseUrl + Stratus.BundlePath + localPath}/${name}${min}.css`
         )
         $scope.initialized = false
 
@@ -164,5 +164,5 @@ Stratus.Components.Base = {
     //             <stratus-pagination></stratus-pagination> \
     //         </ul> \
     //     </div>',
-    templateUrl: Stratus.BaseUrl + Stratus.DeploymentPath + localPath + '/' + name + min + '.html'
+    templateUrl: `${Stratus.BaseUrl}${Stratus.DeploymentPath}${localPath}/${name}${min}.html`
 }

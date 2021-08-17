@@ -87,14 +87,13 @@ export interface DialogData {
 }
 
 // Local Setup
-const installDir = '/assets/1/0/bundles'
 const systemDir = '@stratusjs/angular'
 const moduleName = 'tree-dialog'
 const parentModuleName = 'tree'
 
 // Directory Template
 const min = !cookie('env') ? '.min' : ''
-const localDir = `${installDir}/${boot.configuration.paths[`${systemDir}/*`].replace(/[^/]*$/, '')}`
+const localDir = `${Stratus.BaseUrl}${boot.configuration.paths[`${systemDir}/*`].replace(/[^/]*$/, '')}`
 
 /**
  * @title Dialog for Nested Tree
@@ -116,7 +115,8 @@ export class TreeDialogComponent extends ResponsiveComponent implements OnInit, 
     isStyled = false
 
     // Dependencies
-    _: any
+    _ = _
+    Stratus = Stratus
 
     // Root Component
     tree: TreeComponent
@@ -164,9 +164,6 @@ export class TreeDialogComponent extends ResponsiveComponent implements OnInit, 
         // Initialization
         this.uid = _.uniqueId(`sa_${_.snakeCase(moduleName)}_component_`)
         Stratus.Instances[this.uid] = this
-
-        // Dependencies
-        this._ = _
 
         // TODO: Assess & Possibly Remove when the System.js ecosystem is complete
         // Load Component CSS until System.js can import CSS properly.

@@ -47,14 +47,13 @@ import {
 } from '@stratusjs/angular/core/responsive.component'
 
 // Local Setup
-const installDir = '/assets/1/0/bundles'
 const systemDir = '@stratusjs/angular'
 const moduleName = 'tree-node'
 const parentModuleName = 'tree'
 
 // Directory Template
 const min = !cookie('env') ? '.min' : ''
-const localDir = `${installDir}/${boot.configuration.paths[`${systemDir}/*`].replace(/[^/]*$/, '')}`
+const localDir = `${Stratus.BaseUrl}${boot.configuration.paths[`${systemDir}/*`].replace(/[^/]*$/, '')}`
 
 /**
  * @title Node for Nested Tree
@@ -76,7 +75,8 @@ export class TreeNodeComponent extends ResponsiveComponent implements OnInit, On
     isStyled = false
 
     // Dependencies
-    _: any
+    _ = _
+    Stratus = Stratus
 
     // Inputs
     @Input() tree: TreeComponent
@@ -108,9 +108,6 @@ export class TreeNodeComponent extends ResponsiveComponent implements OnInit, On
         // Initialization
         this.uid = _.uniqueId(`sa_${_.snakeCase(moduleName)}_component_`)
         Stratus.Instances[this.uid] = this
-
-        // Dependencies
-        this._ = _
 
         // TODO: Assess & Possibly Remove when the System.js ecosystem is complete
         // Load Component CSS until System.js can import CSS properly.

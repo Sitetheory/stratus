@@ -121,13 +121,12 @@ export interface NodePatch {
 // }
 
 // Local Setup
-const installDir = '/assets/1/0/bundles'
 const systemDir = '@stratusjs/angular'
 const moduleName = 'tree'
 
 // Directory Template
 const min = !cookie('env') ? '.min' : ''
-const localDir = `${installDir}/${boot.configuration.paths[`${systemDir}/*`].replace(/[^/]*$/, '')}`
+const localDir = `${Stratus.BaseUrl}${boot.configuration.paths[`${systemDir}/*`].replace(/[^/]*$/, '')}`
 
 /**
  * @title Tree with Nested Drag & Drop
@@ -171,6 +170,7 @@ export class TreeComponent extends RootComponent implements OnInit, OnDestroy {
 
     // Dependencies
     _ = _
+    Stratus = Stratus
 
     // Stratus Data Connectivity
     registry = new Registry()
@@ -256,11 +256,11 @@ export class TreeComponent extends RootComponent implements OnInit, OnDestroy {
         // SVG Icons
         // TODO: Make this into a single service
         _.forEach({
-            tree_check: '/assets/1/0/bundles/sitetheorycore/images/icons/check.svg',
-            tree_add: '/assets/1/0/bundles/sitetheorycore/images/icons/actionButtons/add.svg',
-            tree_delete: '/assets/1/0/bundles/sitetheorycore/images/icons/actionButtons/delete.svg',
-            tree_edit: '/assets/1/0/bundles/sitetheorycore/images/icons/actionButtons/edit.svg',
-            tree_visibility: '/assets/1/0/bundles/sitetheorycore/images/icons/actionButtons/visibility.svg',
+            tree_check: `${Stratus.BaseUrl}sitetheorycore/images/icons/check.svg`,
+            tree_add: `${Stratus.BaseUrl}sitetheorycore/images/icons/actionButtons/add.svg`,
+            tree_delete: `${Stratus.BaseUrl}sitetheorycore/images/icons/actionButtons/delete.svg`,
+            tree_edit: `${Stratus.BaseUrl}sitetheorycore/images/icons/actionButtons/edit.svg`,
+            tree_visibility: `${Stratus.BaseUrl}sitetheorycore/images/icons/actionButtons/visibility.svg`,
         }, (value, key) => this.iconRegistry.addSvgIcon(key, this.sanitizer.bypassSecurityTrustResourceUrl(value)).getNamedSvgIcon(key))
 
         // Data Connections
