@@ -296,6 +296,7 @@
                         For Sale
                 </md-checkbox>
                 <md-checkbox
+                        data-ng-checked="inArray('Closed', options.query.where.Status)"
                         data-ng-click="toggleArrayElement('Closed', options.query.where.Status); search()"
                         data-md-prevent-menu-close
                         aria-label="Sold">
