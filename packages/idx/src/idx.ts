@@ -1445,7 +1445,8 @@ const angularJsService = (
         originalCollection.pending = true
         originalCollection.completed = false
 
-        let totalCount = 0
+        let maxCount = 0 // Total records possible to grab with this query (can be less than totalCount)
+        let totalCount = 0 // Total records in db with this query (can be more than maxCount)
 
         // Make Promises that each of the collections shall fetch their results
         const fetchPromises: any[] = []
@@ -1477,9 +1478,16 @@ const angularJsService = (
                                 session.services[collection.serviceId].fetchTime[modelName] = new Date(fetchTime)
                             }*/
                             updateFetchTime(collection, modelName, collection.serviceId)
+                            const maxRecords = collection.header.get('x-max-count')
                             const countRecords = collection.header.get('x-total-count')
+                            if (maxRecords) {
+                                maxCount += parseInt(maxRecords, 10)
+                            }
                             if (countRecords) {
                                 totalCount += parseInt(countRecords, 10)
+                                if (!maxRecords) {
+                                    maxCount += parseInt(countRecords, 10)
+                                }
                             }
                         })
                 })
@@ -1505,6 +1513,7 @@ const angularJsService = (
                 }
             )
             .then(() => {
+                originalCollection.header.set('x-max-count', maxCount)
                 originalCollection.header.set('x-total-count', totalCount)
                 originalCollection.meta.set('fetchDate', new Date())
 
@@ -2612,9 +2621,11 @@ const angularJsService = (
 
             // If the query as updated, adjust the TotalRecords available
             if (refresh) {
+                const maxRecords = collection.header.get('x-max-count') || 0
                 const totalRecords = collection.header.get('x-total-count') || 0
+                collection.meta.set('maxRecords', maxRecords)
                 collection.meta.set('totalRecords', totalRecords)
-                collection.meta.set('totalPages', Math.ceil(totalRecords / options.perPage))
+                collection.meta.set('totalPages', Math.ceil((maxRecords || totalRecords) / options.perPage))
             }
 
             // Sort once more on the front end to ensure it's ordered correctly
