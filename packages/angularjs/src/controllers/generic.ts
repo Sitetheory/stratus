@@ -40,6 +40,7 @@ Stratus.Controllers.Generic = [
     '$log',
     '$sce',
     '$parse',
+    '$window',
     'Registry',
     async (
         $scope: angular.IScope|any,
@@ -47,6 +48,7 @@ Stratus.Controllers.Generic = [
         $log: angular.ILogService,
         $sce: angular.ISCEService,
         $parse: angular.IParseService,
+        $window: angular.IWindowService,
         R: Registry
     ) => {
         // Store Instance
@@ -64,6 +66,7 @@ Stratus.Controllers.Generic = [
         $scope.ctrlParent = $scope.$parent
         $scope.Stratus = Stratus
         $scope._ = _
+        $scope.$window = $window
         $scope.setUrlParams = (options: any) => {
             if (!_.isObject(options)) {
                 return
