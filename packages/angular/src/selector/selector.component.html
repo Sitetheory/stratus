@@ -1,6 +1,6 @@
  <!--
 <mat-form-field class="full-width">
-    <input matInput [placeholder]="'Add ' + target + ': Not Connected Yet!'" aria-label="Selector AutoComplete" [matAutocomplete]="auto" [formControl]="selectCtrl">
+    <input matInput [placeholder]="'Add ' + (_.get(selectedModel, 'contentType.name') || _.get(selectedModel, 'name')) + ': Not Connected Yet!'" aria-label="Selector AutoComplete" [matAutocomplete]="auto" [formControl]="selectCtrl">
     <mat-autocomplete #auto="matAutocomplete">
         <mat-option *ngFor="let selectModel of filteredModels | async" [value]="selectModel">
             {{ selectModel.version.title }}
@@ -102,7 +102,7 @@
                 </div>
                 <div class="column-action">
                     <a mat-button
-                            [matTooltip]="'Delete ' + target"
+                            [matTooltip]="'Delete ' + (_.get(selectedModel, 'contentType.name') || _.get(selectedModel, 'name'))"
                             aria-label="Delete Item"
                             class="btn btn-delete"
                             (click)="remove(selectedModel)">
@@ -110,7 +110,7 @@
                     </a>
                     <a mat-button
                             *ngIf="has(selectedModel, 'contentType.editUrl')"
-                            [matTooltip]="'Edit ' + target"
+                            [matTooltip]="'Edit ' + (_.get(selectedModel, 'contentType.name') || _.get(selectedModel, 'name'))"
                             aria-label="Edit Item in New Window"
                             class="btn btn-edit"
                             (click)="goToUrl(selectedModel, '_blank');">
