@@ -1071,38 +1071,61 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
         if (!size || !_.isString(size)) {
             return data
         }
+        // TODO: This currently peels back the image, but we can either do more here or add this format down below
         const imgRegex: RegExp = /<img([\w\W]+?)>/gi
         let imgMatch: RegExpExecArray
         // console.log('imgRegex:', data, imgRegex)
         // tslint:disable-next-line:no-conditional-assignment
         while (imgMatch = imgRegex.exec(data)) {
-            const src: string = imgMatch[0]
+            // Store the entire element for later use
+            const el: string = imgMatch[0]
+
             // This skips elements with the entire image data in the src
-            if (src.includes('data:image')) {
+            if (el.includes('data:image')) {
                 continue
             }
+
             // TODO: Analyze whether we will need to ensure `data-stratus-src` is available for all Sitetheory Assets.
             // if (src.includes('cdn.sitetheory.io')) {
             //     console.log('sitetheory image:', src)
             // }
+
             // This skips image sizing for elements without lazy loading
             // TODO: Enable this after things are normalized
             // if (!src.includes('data-stratus-src')) {
             //     continue
             // }
-            const srcRegex: RegExp = /^(.+?)(-[A-Z]{2})?\.(?=[^.]*$)(.+)/gi
-            const srcMatch: RegExpExecArray = srcRegex.exec(src)
+
+            // Note: This regex may need further enhancements as more images enter the system.
+            const srcRegex: RegExp = /^<img\s(.+?)(-[A-Z]{2})?\.(?=[^.]*$)(.+)>/gi
+            const srcMatch: RegExpExecArray = srcRegex.exec(el)
             if (srcMatch === null) {
-                console.warn('Unable to find file name for image src:', src)
+                console.warn('Unable to find file name for image src:', el)
                 continue
             }
-            // This removes image sizing from elements without lazy loading
-            // TODO: Disable this after things are normalized
-            if (!src.includes('data-stratus-src')) {
-                data = data.replace(src, `${srcMatch[1]}.${srcMatch[3]}`)
+            // Handle Images without Lazy Loading
+            if (!el.includes('data-stratus-src')) {
+                // Ensure we only normalize images from our CDN
+                if (!el.includes('cdn.sitetheory.io')) {
+                    continue
+                }
+                // Ensure we only normalize images with our sizing format
+                if (_.isEmpty(srcMatch[2])) {
+                    continue
+                }
+                // console.log('data-stratus-src not found:', {
+                //     data,
+                //     imgMatch,
+                //     el,
+                //     srcMatch
+                // })
+                // This adds lazy loading to elements that need it
+                data = data.replace(el, `<img data-stratus-src ${srcMatch[1]}-${size}.${srcMatch[3]}>`)
+                // This removes image sizing from elements without lazy loading
+                // data = data.replace(el, `${srcMatch[1]}.${srcMatch[3]}`)
                 continue
             }
-            data = data.replace(src, `${srcMatch[1]}-${size}.${srcMatch[3]}`)
+            data = data.replace(el, `<img ${srcMatch[1]}-${size}.${srcMatch[3]}>`)
         }
         return data
     }
