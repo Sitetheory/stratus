@@ -23,20 +23,20 @@
                 <div cdkDrag class="media-selected-list-row media-selected-box media-selected-box-grid"
                     (cdkDragMoved)="move($event)">
                     <!--<div class="custom-ghost-placeholder" *cdkDragPlaceholder></div>-->
-                    <div class="media-item selected-media-item" [id]="'libb_' + selectedModel.id">
+                    <div class="media-item selected-media-item" [id]="'libb_' + _.get(selectedModel, 'id') || id || uid">
                         <div class="image-draggable"
                              [ngClass]="{
-                                'image-thumb': selectedModel.mime && selectedModel.mime.includes('image'),
-                                'video-thumb' : selectedModel.mime && selectedModel.mime.includes('video'),
-                                'audio-thumb' : selectedModel.mime && selectedModel.mime.includes('audio'),
-                                'document-thumb' : selectedModel.mime && selectedModel.mime.includes('application'),
-                                'word' : selectedModel.extension && selectedModel.extension.includes('doc'),
-                                'pdf' :  selectedModel.extension && selectedModel.extension.includes('pdf'),
-                                'generic-thumb' : !selectedModel.mime || (
-                                    !selectedModel.mime.includes('image')
-                                    && !selectedModel.mime.includes('video')
-                                    && !selectedModel.mime.includes('audio')
-                                    && !selectedModel.mime.includes('application')
+                                'image-thumb': _.get(selectedModel, 'mime') && _.get(selectedModel, 'mime').includes('image'),
+                                'video-thumb' : _.get(selectedModel, 'mime') && _.get(selectedModel, 'mime').includes('video'),
+                                'audio-thumb' : _.get(selectedModel, 'mime') && _.get(selectedModel, 'mime').includes('audio'),
+                                'document-thumb' : _.get(selectedModel, 'mime') && _.get(selectedModel, 'mime').includes('application'),
+                                'word' : _.get(selectedModel, 'extension') && _.get(selectedModel, 'extension').includes('doc'),
+                                'pdf' :  _.get(selectedModel, 'extension') && _.get(selectedModel, 'extension').includes('pdf'),
+                                'generic-thumb' : !_.get(selectedModel, 'mime') || (
+                                    !_.get(selectedModel, 'mime').includes('image')
+                                    && !_.get(selectedModel, 'mime').includes('video')
+                                    && !_.get(selectedModel, 'mime').includes('audio')
+                                    && !_.get(selectedModel, 'mime').includes('application')
                                 )
                              }"
                              [ngStyle]="{'background': 'url(' + (_.get(selectedModel, '_thumbSrc') || _.get(selectedModel, 'bestImage.thumb') || _.get(selectedModel, 'meta.thumbnail_small')) + ') no-repeat center center', 'background-size': 'cover'}">
@@ -46,30 +46,30 @@
                             <div class="thumb-gradient">&nbsp;</div>
 
                             <!-- This is a fallback for a blank ngStyle on the parent -->
-                            <h4 *ngIf="!selectedModel._thumbSrc && !selectedModel.bestImage.thumb && !selectedModel.meta.thumbnail_small"
+                            <h4 *ngIf="!_.get(selectedModel, '_thumbSrc') && !_.get(selectedModel, 'bestImage.thumb') && !_.get(selectedModel, 'meta.thumbnail_small')"
                                 class="thumb-title position-center"
-                                [innerText]="selectedModel.name"></h4>
+                                [innerText]="_.get(selectedModel, 'name')"></h4>
 
                             <div class="thumb-icon">
-                                <mat-icon *ngIf="selectedModel.mime.includes('image')"
+                                <mat-icon *ngIf="_.get(selectedModel, 'mime') && _.get(selectedModel, 'mime').includes('image')"
                                           svgIcon="media_selector_image"
                                           aria-hidden="true"
                                           aria-label="Image">
                                     Image
                                 </mat-icon>
-                                <mat-icon *ngIf="selectedModel.mime.includes('video')"
+                                <mat-icon *ngIf="_.get(selectedModel, 'mime') && _.get(selectedModel, 'mime').includes('video')"
                                           svgIcon="media_selector_video"
                                           aria-hidden="true"
                                           aria-label="Video">
                                     Video
                                 </mat-icon>
-                                <mat-icon *ngIf="selectedModel.mime.includes('audio')"
+                                <mat-icon *ngIf="_.get(selectedModel, 'mime') && _.get(selectedModel, 'mime').includes('audio')"
                                           svgIcon="media_selector_audio"
                                           aria-hidden="true"
                                           aria-label="Audio">
                                     Audio
                                 </mat-icon>
-                                <mat-icon *ngIf="selectedModel.mime.includes('document')"
+                                <mat-icon *ngIf="_.get(selectedModel, 'mime') && _.get(selectedModel, 'mime').includes('document')"
                                           svgIcon="media_selector_document"
                                           aria-hidden="true"
                                           aria-label="Document">
@@ -89,17 +89,17 @@
                                 <div class="format-size">
                                     <div class="small-all-caps file-details">
                                         <span class="file-type uppercase"
-                                              [innerText]="selectedModel.extension || selectedModel.service || (selectedModel._embedCode ? 'Embedded Video' : '')">
+                                              [innerText]="_.get(selectedModel, 'extension') || _.get(selectedModel, 'service') || (_.get(selectedModel, '_embedCode') ? 'Embedded Video' : '')">
                                         </span>
                                         <!-- TODO: evaluate the possibility of an ng-container here instead -->
                                         <span class="delimiter"
-                                              *ngIf="selectedModel.bytesHuman && selectedModel.bytesHuman !== 'Empty'"></span>
+                                              *ngIf="_.get(selectedModel, 'bytesHuman') && _.get(selectedModel, 'bytesHuman') !== 'Empty'"></span>
                                         <span class="file-size"
-                                              [innerText]="(selectedModel.bytesHuman && selectedModel.bytesHuman !== 'Empty') ? selectedModel.bytesHuman : ''"></span>
+                                              [innerText]="(_.get(selectedModel, 'bytesHuman') && _.get(selectedModel, 'bytesHuman') !== 'Empty') ? _.get(selectedModel, 'bytesHuman') : ''"></span>
                                     </div>
                                 </div>
-                                <p class="font-body image-title" [innerText]="selectedModel.name || 'No title'">
-                                    <!--{{ ((selectedModel.data ? selectedModel.data.name : selectedModel.name) || 'No title')  | limitTo:34 }}-->
+                                <p class="font-body image-title" [innerText]="_.get(selectedModel, 'name') || 'No title'">
+                                    <!--{{ (_.get(selectedModel, 'data.name') || _.get(selectedModel, 'name') || 'No title')  | limitTo:34 }}-->
                                 </p>
                                 <div class="position-action-area">
                                     <div class="action-btns">
@@ -119,7 +119,7 @@
                                                 </a>
                                             </div>
                                             <!--md-grid-tile-->
-                                            <!--<div (click)="!isSelector ? deleteMedia(selectedModel) : removeFromSelected(selectedModel.id)">-->
+                                            <!--<div (click)="!isSelector ? deleteMedia(selectedModel) : removeFromSelected(_.get(selectedModel, 'id'))">-->
                                             <div (click)="remove(selectedModel)">
                                                 <a class="border-radius-default"
                                                    href="#"
