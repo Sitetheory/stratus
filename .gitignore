@@ -75,6 +75,8 @@ packages/swiper/src/**/*.js.map
 packages/swiper/src/**/*.css
 
 # TypeScript Supercedes
+packages/angularjs-extras/src/directives/baseNew.js
+packages/angularjs-extras/src/directives/baseNew.js.map
 packages/angularjs-extras/src/components/calendar/calendar.js
 packages/angularjs-extras/src/components/calendar/calendar.js.map
 packages/angularjs-extras/src/components/calendar/customView.js
