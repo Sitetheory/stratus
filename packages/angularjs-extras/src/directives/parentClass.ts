@@ -17,6 +17,9 @@ import {
 import 'angular-material'
 
 // Stratus Core
+import {LooseObject} from '@stratusjs/core/misc'
+
+// Stratus Core
 // import {cookie} from '@stratusjs/core/environment'
 
 // Environment
@@ -39,9 +42,9 @@ Stratus.Directives.ParentClass = (
         limitBelow: '@',
     },
     link: (
-        $scope: IScope & any,
-        $element: JQLite & any,
-        $attrs: IAttributes & any,
+        $scope: IScope & LooseObject,
+        $element: JQLite & {elementId?: string},
+        $attrs: IAttributes,
         // ngModel: INgModelController
     ) => {
         // Initialize
@@ -88,9 +91,3 @@ Stratus.Directives.ParentClass = (
         $scope.addParentClass(Stratus.Select($element), $attrs.stratusParentClass)
     }
 })
-
-// AngularJS-Extras 0.8.3: Add ParentClass Directive
-//
-// Adds:
-//
-// - ParentClass Directive (Fixes Parallax Targeting)

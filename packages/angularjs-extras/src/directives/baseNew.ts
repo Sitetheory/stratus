@@ -18,6 +18,7 @@ import 'angular-material'
 
 // Stratus Core
 import {cookie} from '@stratusjs/core/environment'
+import {LooseObject} from '@stratusjs/core/misc'
 
 // Environment
 const min = !cookie('env') ? '.min' : ''
@@ -35,9 +36,9 @@ Stratus.Directives.BaseNew = (
         stratusBaseNew: '='
     },
     link: (
-        $scope: IScope & any,
-        $element: JQLite & any,
-        $attrs: IAttributes & any,
+        $scope: IScope & LooseObject,
+        $element: JQLite & {elementId?: string},
+        $attrs: IAttributes,
         ngModel: INgModelController
     ) => {
         // Initialize
