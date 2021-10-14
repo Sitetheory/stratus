@@ -41,10 +41,9 @@ Stratus.Directives.BaseNew = (
         ngModel: INgModelController
     ) => {
         // Initialize
-        const $ctrl: any = this
-        $ctrl.uid = _.uniqueId(_.snakeCase(name) + '_')
-        Stratus.Instances[$ctrl.uid] = $scope
-        $scope.elementId = $element.elementId || $ctrl.uid
+        $scope.uid = _.uniqueId(_.snakeCase(name) + '_')
+        Stratus.Instances[$scope.uid] = $scope
+        $scope.elementId = $element.elementId || $scope.uid
         $scope.initialized = false
 
         // Inject CSS
@@ -53,7 +52,7 @@ Stratus.Directives.BaseNew = (
         ).then(() => $scope.initialized = true)
 
         // Begin
-        console.log(`${name} directive:`, {$ctrl, $scope, $element, $attrs, ngModel})
+        console.log(`${name} directive:`, {$scope, $element, $attrs, ngModel})
     },
     template: '<div id="{{ elementId }}" class="no-template"></div>',
     // templateUrl: `${Stratus.BaseUrl}${Stratus.BundlePath}${localPath}${name}${min}.html`
