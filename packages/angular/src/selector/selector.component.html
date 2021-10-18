@@ -50,20 +50,20 @@
 
                     <!-- This only shows the bestImage if this isn't a Video, since images for Videos are not hosted by us, thus cannot lazy load a proper size -->
                     <div class="image position-all"
-                         *ngIf="has(selectedModel, 'version.bestImage._thumbSrc') && !has(selectedModel, 'version.videos')"
+                         *ngIf="has(selectedModel, 'version.bestImage._thumbnailUrl') && !has(selectedModel, 'version.videos')"
                          data-stratus-src
-                         [ngStyle]="{'background': 'url(' + _.get(selectedModel, 'version.bestImage._thumbSrc') + ') no-repeat center center', 'background-size': 'cover'}">
+                         [ngStyle]="{'background': 'url(' + _.get(selectedModel, 'version.bestImage._thumbnailUrl') + ') no-repeat center center', 'background-size': 'cover'}">
                     </div>
 
                     <!-- This is here because images for Videos are not hosted by us, so we cannot include stratus-src with it -->
                     <div class="image position-all"
-                         *ngIf="!has(selectedModel, 'version.bestImage._thumbSrc') && has(selectedModel, 'version.videos')"
+                         *ngIf="!has(selectedModel, 'version.bestImage._thumbnailUrl') && has(selectedModel, 'version.videos')"
                          [ngStyle]="{'background': 'url(' + _.get(selectedModel, 'version.videos[0].src') + ') no-repeat center center', 'background-size': 'cover'}">
                     </div>
 
                     <!-- Icon for items with no image -->
                     <div class="no-image-icon position-all"
-                         *ngIf="!has(selectedModel, 'version.bestImage._thumbSrc') && !has(selectedModel, 'version.videos')"
+                         *ngIf="!has(selectedModel, 'version.bestImage._thumbnailUrl') && !has(selectedModel, 'version.videos')"
                          [ngClass]="_.get(selectedModel, 'contentType.class') + '-background-color'">
 
                         <mat-icon class="content-type-icon position-center"
