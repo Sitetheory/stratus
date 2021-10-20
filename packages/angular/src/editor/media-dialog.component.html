@@ -63,14 +63,14 @@
                         </ng-container>
                     </mat-card-subtitle>
                 </mat-card-header>
-                <ng-container *ngIf="mediaEntity._thumbSrc">
+                <ng-container *ngIf="mediaEntity._thumbnailUrl">
                     <img mat-card-image
                          class="generic-thumb basic-image"
-                         [src]="mediaEntity.mime !== 'image/gif' ? mediaEntity._thumbSrc : mediaEntity._directUrl"
+                         [src]="mediaEntity.mime !== 'image/gif' ? mediaEntity._thumbnailUrl : mediaEntity._directUrl"
                          [alt]="mediaEntity.name"
                          [ngClass]="{'selected' : isSelected(mediaEntity)}">
                 </ng-container>
-                <ng-container *ngIf="!mediaEntity._thumbSrc
+                <ng-container *ngIf="!mediaEntity._thumbnailUrl
                                       && mediaEntity.mime === 'video'">
                     <ng-container *ngIf="mediaEntity.service === 'vimeo'">
                         <ng-container *ngIf="mediaEntity.meta && mediaEntity.meta.thumbnail_large; else basicVimeoButton">
@@ -135,7 +135,7 @@
                              [ngClass]="{'selected' : isSelected(mediaEntity)}">
                     </ng-container>
                 </ng-container>
-                <ng-container *ngIf="!mediaEntity._thumbSrc
+                <ng-container *ngIf="!mediaEntity._thumbnailUrl
                                       && _.startsWith(mediaEntity.mime, 'audio')">
                     <!-- TODO: make this a local file -->
                     <img mat-card-image
@@ -145,7 +145,7 @@
                          [alt]="mediaEntity.name"
                          [ngClass]="{'selected' : isSelected(mediaEntity)}">
                 </ng-container>
-                <ng-container *ngIf="!mediaEntity._thumbSrc
+                <ng-container *ngIf="!mediaEntity._thumbnailUrl
                                       && mediaEntity.mime === 'application/pdf'">
                     <!-- TODO: make this a local file -->
                     <img mat-card-image
@@ -154,7 +154,7 @@
                          [alt]="mediaEntity.name"
                          [ngClass]="{'selected' : isSelected(mediaEntity)}">
                 </ng-container>
-                <ng-container *ngIf="!mediaEntity._thumbSrc
+                <ng-container *ngIf="!mediaEntity._thumbnailUrl
                                       && mediaEntity.mime === 'application/msword'">
                     <!-- TODO: make this a local file -->
                     <img mat-card-image
@@ -163,10 +163,10 @@
                          [alt]="mediaEntity.name"
                          [ngClass]="{'selected' : isSelected(mediaEntity)}">
                 </ng-container>
-                <ng-container *ngIf="!mediaEntity._thumbSrc
-                                      && mediaEntity.service === 'directlink'
+                <ng-container *ngIf="!mediaEntity._thumbnailUrl
+                                      && mediaEntity.service === 'directLink'
                                       && mediaEntity.file">
-                    <!-- In some cases, there are external images with a service of 'directlink' -->
+                    <!-- In some cases, there are external images with a service of 'directLink' -->
                     <img mat-card-image
                          class="direct-link"
                          [src]="mediaEntity.file"
@@ -176,10 +176,10 @@
 
                 <!-- Note: This shows info for entities that don't have a proper display -->
                 <!--
-                <ng-container *ngIf="!mediaEntity._thumbSrc
+                <ng-container *ngIf="!mediaEntity._thumbnailUrl
                                       && !_.startsWith(mediaEntity.mime, 'audio')
                                       && !['application/pdf', 'application/msword', 'video'].includes(mediaEntity.mime)
-                                      && !(mediaEntity.service === 'directlink' && mediaEntity.file)">
+                                      && !(mediaEntity.service === 'directLink' && mediaEntity.file)">
                     <mat-card-content>
                         <p>
                             ID: <span [innerText]="mediaEntity.id"></span>

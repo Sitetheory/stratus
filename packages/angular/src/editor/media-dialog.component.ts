@@ -281,11 +281,11 @@ export class MediaDialogComponent extends ResponsiveComponent implements OnInit 
             return media._embedCode
         }
         if (_.startsWith(media.mime, 'image')) {
-            if (!media._thumbSrc || (media.service === 'directlink' && !media.file)) {
+            if (!media._thumbnailUrl || (media.service === 'directLink' && !media.file)) {
                 console.warn(`media-dialog: unable to determine image source for media id: ${media.id}`)
                 return null
             }
-            return `<img src="${media._thumbSrc||media.file}" alt="${media.name || media.filename} ${media.mime !== 'image/gif' ? 'data-stratus-src' : ''}">`
+            return `<img src="${media._thumbnailUrl||media.file}" alt="${media.name || media.filename} ${media.mime !== 'image/gif' ? 'data-stratus-src' : ''}">`
         }
         if (media.mime === 'video') {
             // Use the embed code if we can't standardize.
@@ -422,7 +422,7 @@ export interface Media extends LooseObject {
     serviceMediaId?: number
     meta?: Array<any>
     src: string
-    _thumbSrc: string
+    _thumbnailUrl: string
     bestImage?: any
     duration?: any
     autoPlay: boolean

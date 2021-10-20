@@ -39,14 +39,14 @@
                                     && !_.get(selectedModel, 'mime').includes('application')
                                 )
                              }"
-                             [ngStyle]="{'background': 'url(' + (_.get(selectedModel, '_thumbSrc') || _.get(selectedModel, 'bestImage.thumb') || _.get(selectedModel, 'meta.thumbnail_small')) + ') no-repeat center center', 'background-size': 'cover'}">
+                             [ngStyle]="{'background': 'url(' + (_.get(selectedModel, '_thumbnailUrl') || _.get(selectedModel, 'bestImage.thumb') || _.get(selectedModel, 'meta.thumbnail_small')) + ') no-repeat center center', 'background-size': 'cover'}">
 
                             <img class="shapeholder" [src]="Stratus.BaseUrl + 'sitetheorycore/images/shapeholder-square.png'">
 
                             <div class="thumb-gradient">&nbsp;</div>
 
                             <!-- This is a fallback for a blank ngStyle on the parent -->
-                            <h4 *ngIf="!_.get(selectedModel, '_thumbSrc') && !_.get(selectedModel, 'bestImage.thumb') && !_.get(selectedModel, 'meta.thumbnail_small')"
+                            <h4 *ngIf="!_.get(selectedModel, '_thumbnailUrl') && !_.get(selectedModel, 'bestImage.thumb') && !_.get(selectedModel, 'meta.thumbnail_small')"
                                 class="thumb-title position-center"
                                 [innerText]="_.get(selectedModel, 'name')"></h4>
 

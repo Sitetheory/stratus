@@ -44,29 +44,29 @@
 
                     <!-- This only shows the bestImage if this isn't a Video, since images for Videos are not hosted by us, thus cannot lazy load a proper size -->
                     <div class="image position-all full-width full-height"
-                         *ngIf="has(selectedModel, '_thumbSrc') && !has(selectedModel, 'service')"
+                         *ngIf="has(selectedModel, '_thumbnailUrl') && !has(selectedModel, 'service')"
                          data-stratus-src
-                         [ngStyle]="{'background': 'url(' + _.get(selectedModel, '_thumbSrc') + ') no-repeat center center', 'background-size': 'cover'}">
+                         [ngStyle]="{'background': 'url(' + _.get(selectedModel, '_thumbnailUrl') + ') no-repeat center center', 'background-size': 'cover'}">
                     </div>
 
                     <!-- The services below are not hosted by us, so we cannot include stratus-src with it -->
 
                     <!-- Vimeo Service -->
                     <div class="image position-all full-width full-height"
-                         *ngIf="!has(selectedModel, '_thumbSrc') && has(selectedModel, 'service') && _.get(selectedModel, 'service') === 'vimeo'"
+                         *ngIf="!has(selectedModel, '_thumbnailUrl') && has(selectedModel, 'service') && _.get(selectedModel, 'service') === 'vimeo'"
                          [ngStyle]="{'background': 'url(' + _.get(selectedModel, 'meta.thumbnail_medium') + ') no-repeat center center', 'background-size': 'cover'}">
                     </div>
 
                     <!-- Youtube Service -->
                     <div class="image position-all full-width full-height"
-                         *ngIf="!has(selectedModel, '_thumbSrc') && has(selectedModel, 'service') && _.get(selectedModel, 'service') === 'youtube'"
+                         *ngIf="!has(selectedModel, '_thumbnailUrl') && has(selectedModel, 'service') && _.get(selectedModel, 'service') === 'youtube'"
                          [ngStyle]="{'background': 'url(' + 'https://img.youtube.com/vi/' + _.get(selectedModel, 'serviceMediaId') + '/0.jpg' + ') no-repeat center center', 'background-size': 'cover'}">
                     </div>
 
                     <!-- Icon for items with no image -->
                     <!-- !has(service) || service not in ['vimeo', 'youtube']-->
                     <div class="no-image-icon position-all full-width full-height"
-                         *ngIf="!has(selectedModel, '_thumbSrc') && !has(selectedModel, 'service')"
+                         *ngIf="!has(selectedModel, '_thumbnailUrl') && !has(selectedModel, 'service')"
                          [ngClass]="_.get(selectedModel, 'contentType.class') + '-background-color'">
 
                         <mat-icon class="content-type-icon position-center"
