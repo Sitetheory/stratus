@@ -17,7 +17,7 @@
 }(this, function (Stratus, _, angular) {
   // This Controller handles simple dialog display
   // with bindings for the associated model
-  Stratus.Controllers.dialog = [
+  Stratus.Controllers.Dialog = [
     '$attrs',
     '$mdDialog',
     '$parse',
