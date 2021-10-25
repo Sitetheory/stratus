@@ -62,7 +62,7 @@
         $mdPanel.open({
           attachTo: angular.element(document.body),
           template: $scope.template || 'Template Not Found!',
-          panelClass: 'dialogueContainer',
+          panelClass: 'dialogContainer',
           position: position,
           openFrom: $event,
           clickOutsideToClose: true,

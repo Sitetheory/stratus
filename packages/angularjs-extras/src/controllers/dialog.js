@@ -1,4 +1,4 @@
-// Dialogue Controller
+// dialog Controller
 // -------------------
 
 /* global define */
@@ -15,16 +15,16 @@
     factory(root.Stratus, root._, root.angular)
   }
 }(this, function (Stratus, _, angular) {
-  // This Controller handles simple dialogue display
+  // This Controller handles simple dialog display
   // with bindings for the associated model
-  Stratus.Controllers.Dialogue = [
+  Stratus.Controllers.dialog = [
     '$attrs',
     '$mdDialog',
     '$parse',
     '$scope',
     function ($attrs, $mdDialog, $parse, $scope) {
       // Store Instance
-      const uid = _.uniqueId('dialogue_')
+      const uid = _.uniqueId('dialog_')
       Stratus.Instances[uid] = $scope
 
       // Digest Template
@@ -41,7 +41,7 @@
         }
       })
 
-      // Handle Dialogue
+      // Handle dialog
       $scope.show = function ($event) {
         $mdDialog.show({
           parent: angular.element(document.body),

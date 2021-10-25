@@ -84,7 +84,7 @@
       /* STRATUS CONTROLLERS */
 
       /* STRATUS CONTROLLERS: Angular */
-      // 'stratus.controllers.dialogue': boot.deployment + '@stratusjs/angularjs-extras/src/controllers/dialogue' + boot.suffix,
+      // 'stratus.controllers.dialog': boot.deployment + '@stratusjs/angularjs-extras/src/controllers/dialog' + boot.suffix,
       // 'stratus.controllers.panel': boot.deployment + '@stratusjs/angularjs-extras/src/controllers/panel' + boot.suffix,
 
       /* STRATUS DIRECTIVES: */
