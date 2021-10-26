@@ -214,7 +214,7 @@
                     </div>
 
                     <!-- Only Include if these were preset in a Property Filter pages and we need the ability to remove them -->
-                    <div ng-if="options.query.where.City.length || options.query.where.CountyOrParish.length || options.query.where.MLSAreaMajor.length || options.query.where.PostalCode.length">
+                    <div data-ng-if="options.query.where.City.length || options.query.where.CountyOrParish.length || options.query.where.MLSAreaMajor.length || options.query.where.PostalCode.length">
                         <div class="sale-status-border dotted-spaced-underline"></div>
                         <h3 data-layout-align="space-around center">Preset Filters</h3>
                         <div class="specific-filters" data-layout="row" data-layout-align="space-around center" aria-label="Specific Areas">
@@ -299,7 +299,7 @@
             </div>
         </div>
 
-        <a class="open-filters" ng-click="showInlinePopup($event, '.stratus-idx-property-search-menu')">
+        <a class="open-filters" data-ng-click="showInlinePopup($event, '.stratus-idx-property-search-menu')">
         Advanced Filters
         </a>
 

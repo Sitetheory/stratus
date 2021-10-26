@@ -29,7 +29,7 @@ import {
     setUrlParams
 } from '@stratusjs/core/misc'
 
-// Require this to Sanitize all ng-bind-html instances
+// Require this to Sanitize all data-ng-bind-html instances
 Stratus.Modules.ngSanitize = true
 
 // This Controller handles simple element binding
@@ -58,10 +58,10 @@ Stratus.Controllers.Generic = [
         await R.fetch($element, $scope)
 
         // Wrappers
-        // NOTE: parent is overwritten in nested controllers every time you have an ng-if statement (it silently
+        // NOTE: parent is overwritten in nested controllers every time you have an data-ng-if statement (it silently
         // creates a new scope that inherits the variables of the current scope, but overwrites parent, so that you have
-        // to do $parent.$parent.$parent everytime you need to access the parent inside nested ng-if statements. So we set
-        // the realParent to a permanent variable here that can be accessed at any level of ng-if, because the parent variable
+        // to do $parent.$parent.$parent everytime you need to access the parent inside nested data-ng-if statements. So we set
+        // the realParent to a permanent variable here that can be accessed at any level of data-ng-if, because the parent variable
         // does not get modified
         $scope.ctrlParent = $scope.$parent
         $scope.Stratus = Stratus

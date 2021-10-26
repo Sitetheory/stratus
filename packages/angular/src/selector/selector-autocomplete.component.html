@@ -4,7 +4,7 @@
     due to styling.
 -->
 
-<!-- ng-disabled="itemDisabled = isSelected(model)" -->
+<!-- data-ng-disabled="itemDisabled = isSelected(model)" -->
 <div class="autocomplete-option"
      [class]="model.contentType.class"
      [class.selected]="isSelected(model)">
@@ -57,8 +57,8 @@
                           aria-hidden="true"
                           svgIcon="{{ model.contentType.iconResourcePath | assetPath }}"></mat-icon>
                 <span class="comment content-type-name font-body"
-                      ng-class="(model.contentType.name | lowercase) + '-color'"
-                      ng-bind="model.contentType.name"></span>
+                      data-ng-class="(model.contentType.name | lowercase) + '-color'"
+                      data-ng-bind="model.contentType.name"></span>
             </div>
             -->
             <h3 class="title">

@@ -1,13 +1,13 @@
 <div id='{{ elementId }}'>
-  <div ng-if='model' ng-transclude='model' style='list-style-type: none;'>
-    <span ng-bind='(property ? model.get(property) : model.data) | json' />
+  <div data-ng-if='model' data-ng-transclude='model' style='list-style-type: none;'>
+    <span data-ng-bind='(property ? model.get(property) : model.data) | json' />
   </div>
 
-  <div ng-if='collection' ng-cloak>
+  <div data-ng-if='collection' data-ng-cloak>
     <stratus-search data-display='true' />
     <ul>
-      <li ng-repeat='model in collection.models' ng-transclude='model'>
-        <span ng-bind='(property ? model.get(property) : model.data) | json' />
+      <li data-ng-repeat='model in collection.models' data-ng-transclude='model'>
+        <span data-ng-bind='(property ? model.get(property) : model.data) | json' />
       </li>
     </ul>
     <stratus-pagination />

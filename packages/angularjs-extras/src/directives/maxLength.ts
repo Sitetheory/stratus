@@ -23,7 +23,7 @@ const name = 'maxLength'
 
 // This directive blocks input beyond the md-maxlength limit,
 // which solves a core issue in Angular Material where data
-// bound by an ng-model directive gets completely removed if
+// bound by an data-ng-model directive gets completely removed if
 // the input field goes beyond the maxlength character limit.
 Stratus.Directives.MaxLength = (
     $parse: IParseService

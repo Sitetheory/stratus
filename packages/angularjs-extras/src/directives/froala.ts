@@ -219,7 +219,7 @@ Stratus.Directives.Froala = () => {
                         ctrl.listeningEvents.push('keyup')
                     }
 
-                    // flush means to load ng-model into editor
+                    // flush means to load data-ng-model into editor
                     const flushNgModel: any = () => {
                         ctrl.editorInitialized = true
                         ngModel.$render()

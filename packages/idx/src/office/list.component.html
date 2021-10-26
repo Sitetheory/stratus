@@ -32,7 +32,7 @@
 
 	<div class="list-container">
 		<md-list>
-			<md-list-item class="md-1-line office-container" ng-if="collection.pending">
+			<md-list-item class="md-1-line office-container" data-ng-if="collection.pending">
 				<md-progress-circular md-mode="indeterminate"></md-progress-circular>
 			</md-list-item>
 			<md-list-item class="md-1-line office-container" data-ng-repeat="office in collection.models | limitTo:options.perPage:(options.page-1)*options.perPage" id="{{::elementId}}_{{::office._id}}" data-ng-cloak>

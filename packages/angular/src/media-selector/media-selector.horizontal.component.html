@@ -84,7 +84,7 @@
                                         <span class="file-type uppercase"
                                               [innerText]="selectedModel.extension || selectedModel.service || (selectedModel._embedCode ? 'Embedded Video' : '')">
                                         </span>
-                                        <!-- TODO: evaluate the possibility of an ng-container here instead -->
+                                        <!-- TODO: evaluate the possibility of an data-ng-container here instead -->
                                         <span class="delimiter"
                                               *ngIf="selectedModel.bytesHuman && selectedModel.bytesHuman !== 'Empty'"></span>
                                         <span class="file-size"

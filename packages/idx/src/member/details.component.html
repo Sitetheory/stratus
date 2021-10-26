@@ -1,6 +1,6 @@
 <!-- TODO needs a close button for small resolutions -->
 <div id="{{elementId}}" data-ng-cloak>
-	<div ng-if="collection.pending" data-layout="row" data-layout-padding data-layout-margin data-layout-align="space-around center" data-layout-wrap>
+	<div data-ng-if="collection.pending" data-layout="row" data-layout-padding data-layout-margin data-layout-align="space-around center" data-layout-wrap>
 		<md-progress-circular md-mode="indeterminate"></md-progress-circular>
 	</div>
 	<div data-ng-repeat="member in collection.models">

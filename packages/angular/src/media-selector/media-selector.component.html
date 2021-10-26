@@ -91,7 +91,7 @@
                                         <span class="file-type uppercase"
                                               [innerText]="_.get(selectedModel, 'extension') || _.get(selectedModel, 'service') || (_.get(selectedModel, '_embedCode') ? 'Embedded Video' : '')">
                                         </span>
-                                        <!-- TODO: evaluate the possibility of an ng-container here instead -->
+                                        <!-- TODO: evaluate the possibility of an data-ng-container here instead -->
                                         <span class="delimiter"
                                               *ngIf="_.get(selectedModel, 'bytesHuman') && _.get(selectedModel, 'bytesHuman') !== 'Empty'"></span>
                                         <span class="file-size"
