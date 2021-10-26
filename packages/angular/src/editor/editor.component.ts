@@ -509,6 +509,7 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             // Regex Options
             'aria-.+',
             'data-.+',
+            'ng-.+',
             // Common Attributes
             'accept', 'accept-charset', 'accesskey', 'action', 'align', 'allowfullscreen',
             'allowtransparency', 'alt', 'async', 'autocomplete', 'autofocus',
