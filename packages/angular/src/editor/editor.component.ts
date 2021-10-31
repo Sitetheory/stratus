@@ -510,6 +510,8 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             'aria-.+',
             'data-.+',
             'ng-.+',
+            'stratus-.+',
+            'sa-.+',
             // Common Attributes
             'accept', 'accept-charset', 'accesskey', 'action', 'align', 'allowfullscreen',
             'allowtransparency', 'alt', 'async', 'autocomplete', 'autofocus',
@@ -694,6 +696,15 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             'md-virtual-repeat', 'md-virtual-repeat-container', 'md-whiteframe',
             // AngularJS Material Secondary Tags
             'md-svg-src',
+            // Stratus Angular+ Tags
+            'sa-boot',
+            'sa-editor',
+            'sa-map',
+            'sa-media-selector',
+            'sa-selector',
+            'sa-stripe-payment-method-list',
+            'sa-stripe-payment-method-selector',
+            'sa-tree',
         ],
         // @ts-ignore
         htmlRemoveTags: [],
@@ -742,7 +753,9 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             'dir',
             'data-.+',
             'aria-.+',
-            'ng-.+'
+            'ng-.+',
+            'stratus-.+',
+            'sa-.+'
         ],
         pasteDeniedTags: [
             'form', 'input', 'label',
