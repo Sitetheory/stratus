@@ -42,31 +42,34 @@
                     <ul class="details-specs primary_font">
                         <li>
                             <!-- TODO need a prettier word for the status and a detail of real status -->
-                            <span data-ng-bind="::Idx.getFullStatus(model.data, preferredStatus)" aria-label="Status"></span>
+                            <span data-ng-bind="::Idx.getFullStatus(model.data, preferredStatus)" aria-label="Property Status"></span>
                         </li>
-                        <li data-ng-if="::model.data.BedroomsTotal && model.data.BedroomsTotal > 0">
+                        <li data-ng-if="::model.data.BedroomsTotal && model.data.BedroomsTotal > 0" aria-label="Number of Bedrooms">
                             <span data-ng-bind="::model.data.BedroomsTotal"></span> Beds
                         </li>
-                        <li data-ng-if="::(model.data.BathroomsFull && model.data.BathroomsFull > 0) || (model.data.BathroomsTotalInteger && model.data.BathroomsTotalInteger > 0)">
+                        <li
+                                data-ng-if="::(model.data.BathroomsFull && model.data.BathroomsFull > 0) || (model.data.BathroomsTotalInteger && model.data.BathroomsTotalInteger > 0)"
+                                aria-label="Number of Bathrooms"
+                        >
                             <span data-ng-bind="::model.data.BathroomsFull || model.data.BathroomsTotalInteger"></span>
                             Baths
                         </li>
-                        <li data-ng-if="::model.data.BathroomsHalf && model.data.BathroomsHalf > 0">
+                        <li data-ng-if="::model.data.BathroomsHalf && model.data.BathroomsHalf > 0" aria-label="Number of Half Bathrooms">
                             <span data-ng-bind="::model.data.BathroomsHalf"></span> Half Baths
                         </li>
-                        <li data-ng-if="::model.data.BathroomsOneQuarter && model.data.BathroomsOneQuarter > 0">
+                        <li data-ng-if="::model.data.BathroomsOneQuarter && model.data.BathroomsOneQuarter > 0" aria-label="Number of Quarter Bathrooms">
                             <span data-ng-bind="::model.data.BathroomsOneQuarter"></span> Quarter Baths
                         </li>
-                        <li data-ng-if="::model.data.BathroomsPartial && model.data.BathroomsPartial > 0">
+                        <li data-ng-if="::model.data.BathroomsPartial && model.data.BathroomsPartial > 0" aria-label="Number of Partial Bathrooms">
                             <span data-ng-bind="::model.data.BathroomsPartial"></span> Partial Baths
                         </li>
-                        <li data-ng-if="::model.data.CloseDate && Idx.getFriendlyStatus(model.data) == 'Closed'">
+                        <li data-ng-if="::model.data.CloseDate && Idx.getFriendlyStatus(model.data) == 'Closed'" aria-label="Date Closed">
                             <span data-ng-bind="::Idx.getFriendlyStatus(model.data, preferredStatus)"></span> on
-                            <span data-ng-bind="::model.data.CloseDate | moment:{unix:false,format:'MMM Do YYYY'}"></span>
+                            <time data-ng-bind="::model.data.CloseDate | moment:{unix:false,format:'MMM Do YYYY'}" datetime="{{::model.data.CloseDate}}"></time>
                         </li>
-                        <li data-ng-if="::model.data.OnMarketDate">
+                        <li data-ng-if="::model.data.OnMarketDate" aria-label="Date Listed">
                             Listed on
-                            <span data-ng-bind="::model.data.OnMarketDate | moment:{unix:false,format:'MMM Do YYYY'}"></span>
+                            <time data-ng-bind="::model.data.OnMarketDate | moment:{unix:false,format:'MMM Do YYYY'}" datetime="{{::model.data.OnMarketDate}}"></time>
                         </li>
                         <li data-ng-if="::model.data.CloseDate && model.data.ClosePrice && model.data.ListPrice">
                             Listed at <span data-ng-bind="'$' + (model.data.ListPrice | number)"></span>
@@ -85,13 +88,13 @@
                             <!-- MLS provides DaysOnMarket, but we weren't given a Start time, use MLS provided times (may be inaccurate) -->
                             Days on Market: <span data-ng-bind="::model.data.DaysOnMarket | number"></span>
                         </li>
-                        <li data-ng-if="::model.data.ArchitecturalStyle">
+                        <li data-ng-if="::model.data.ArchitecturalStyle" aria-label="Architectural Style(s)">
                             Style: <span data-ng-repeat="item in ::model.data.ArchitecturalStyle" class="repeatedArray"><span data-ng-bind="::item"></span><span class="hideLastChild">,&nbsp;</span></span>
                         </li>
-                        <li data-ng-if="::model.data.YearBuilt">
+                        <li data-ng-if="::model.data.YearBuilt" aria-label="Year Built">
                             Built in <span data-ng-bind="::model.data.YearBuilt"></span>
                         </li>
-                        <li data-ng-if="::model.data.LivingArea && model.data.LivingArea > 0" aria-label="Living Area">
+                        <li data-ng-if="::model.data.LivingArea && model.data.LivingArea > 0" aria-label="Living Area Size">
                             Living Area:
                             <span data-ng-bind="::model.data.LivingArea | number"></span>
                             <span data-ng-if="::model.data.LivingAreaUnits">
@@ -101,7 +104,7 @@
 								Square Feet
 							</span>
                         </li>
-                        <li data-ng-if="::model.data.LeasableArea && model.data.LeasableArea > 0" aria-label="Leasable Area">
+                        <li data-ng-if="::model.data.LeasableArea && model.data.LeasableArea > 0" aria-label="Leasable Area Size">
                             Leasable:
                             <span data-ng-bind="::model.data.LeasableArea | number"></span>
                             <span data-ng-if="::model.data.LeasableAreaUnits">
@@ -111,7 +114,7 @@
 								Square Feet
 							</span>
                         </li>
-                        <li data-ng-if="::model.data.BuildingAreaTotal && model.data.BuildingAreaTotal > 0" aria-label="Building Area">
+                        <li data-ng-if="::model.data.BuildingAreaTotal && model.data.BuildingAreaTotal > 0" aria-label="Building Area Size">
                             Building:
                             <span data-ng-bind="::model.data.BuildingAreaTotal | number"></span>
                             <span data-ng-if="::model.data.BuildingAreaUnits">
@@ -139,7 +142,7 @@
                         <li data-ng-if="::model.data.PoolPrivateYN">
                             With Pool
                         </li>
-                        <li data-ng-if="::model.data.Stories && model.data.Stories > 0">
+                        <li data-ng-if="::model.data.Stories && model.data.Stories > 0" aria-label="Number of Stories">
                             Stories: <span data-ng-bind="::model.data.Stories"></span>
                         </li>
                         <li data-ng-if="::model.data.PropertyType">
@@ -151,9 +154,9 @@
                         <li data-ng-if="::!model.data.PropertyType && !model.data.PropertySubType">
                             <span data-ng-bind="::model.data._Class" aria-label="Property Class (Type)"></span>
                         </li>
-                        <li class="mls-service" data-ng-if="::model.data.ListingId || model.data.ListingKey" aria-label="MLS Number">
-                            <span data-ng-bind="getMLSName()"></span>#
-                            <span data-ng-bind="::model.data.ListingId || model.data.ListingKey"></span>
+                        <li class="mls-service" data-ng-if="::model.data.ListingId || model.data.ListingKey">
+                            <span data-ng-bind="getMLSName()" aria-label="Providing MLS"></span>#
+                            <span data-ng-bind="::model.data.ListingId || model.data.ListingKey" aria-label="Property MLS Id or Number"></span>
                         </li>
                     </ul>
 
@@ -161,7 +164,7 @@
                 <div class="details-right">
                     <div class="list-price font-secondary" data-ng-if="::model.data.ClosePrice || model.data.ListPrice">
                         <span class="list-price-label" data-ng-bind="model.data.ClosePrice ? Idx.getFriendlyStatus(model.data, preferredStatus) + ' for' : 'Listed at'"></span>
-                        <span class="list-price" data-ng-bind="'$' + (model.data.ClosePrice || model.data.ListPrice | number)"></span>
+                        <span class="list-price" data-ng-bind="'$' + (model.data.ClosePrice || model.data.ListPrice | number)" aria-label="Property Price"></span>
                     </div>
                     <!-- TODO need a decent way to make a title for Property listings -->
                     <!--h3 class="property-title">An exclusive haven destined for modern, indoor-outdoor entertaining</h3-->
@@ -207,22 +210,22 @@
                         >
                             <!-- FIXME Daniela, do we wish to show the Open House descriptions that are possible on each open house? -->
                             <div class="month primary_font"
-                                 data-ng-bind="::openHouse.OpenHouseStartTime | moment:{unix:false,format:'MMMM'}"
-                                 aria-label="Open House Start Date and Time"
+                                  data-ng-bind="::openHouse.OpenHouseStartTime | moment:{unix:false,format:'MMMM'}"
+                                  aria-label="Open House Month"
                             ></div>
                             <div data-layout-gt-xs="row" data-layout-align-gt-xs="space-between center">
                                 <div class="primary_font" data-layout="row" data-layout-align="space-between center">
                                     <div class="day" data-ng-bind="::openHouse.OpenHouseStartTime | moment:{unix:false,format:'D'}"></div>
                                     <div class="day-weekday-time-agent">
-                                        <span data-ng-bind="::openHouse.OpenHouseStartTime | moment:{unix:false,format:'dddd MMM Do, h:mm a'}"></span>
+                                        <time data-ng-bind="::openHouse.OpenHouseStartTime | moment:{unix:false,format:'dddd MMM Do, h:mm a'}" datetime="{{::openHouse.OpenHouseStartTime}}"></time>
                                         <span data-ng-if="::openHouse.OpenHouseEndTime"> —
-                                            <span data-ng-bind="::openHouse.OpenHouseEndTime | moment:{unix:false,format:'h:mm a'}"></span>
+                                            <time data-ng-bind="::openHouse.OpenHouseEndTime | moment:{unix:false,format:'h:mm a'}" datetime="{{::openHouse.OpenHouseEndTime}}"></time>
                                         </span>
-                                        <span data-ng-if="::openHouse.OpenHouseStatus && openHouse.OpenHouseStatus !== 'Active'"> (<span data-ng-bind="::openHouse.OpenHouseStatus"></span>)</span>
+                                        <span data-ng-if="::openHouse.OpenHouseStatus && openHouse.OpenHouseStatus !== 'Active'"> (<span data-ng-bind="::openHouse.OpenHouseStatus" aria-label="Open House Status"></span>)</span>
                                         <br/>
                                         <!-- openHouse._unmapped.OpenHouseType && openHouse._unmapped.OpenHouseType === 'Virtual' -->
                                         <span data-ng-if="::openHouse._unmapped.VirtualOpenHouseURL" aria-label="Virtual Open House">
-                                            <a data-ng-href="{{::openHouse._unmapped.VirtualOpenHouseURL}}" target="_blank" data-ng-bind="::(openHouse._unmapped.VirtualOpenHouseURLLinkText || 'Virtual Open House')"></a>
+                                            <a data-ng-href="{{::openHouse._unmapped.VirtualOpenHouseURL}}" target="_blank" data-ng-bind="::(openHouse._unmapped.VirtualOpenHouseURLLinkText || 'Virtual Open House')" aria-label="Open House Virtual Tour Link"></a>
                                         </span>
                                         <span data-ng-if="::openHouse.ShowingAgentFirstName" aria-label="Open House Shown by Agent">
                                             with <span data-ng-bind="::openHouse.ShowingAgentFirstName"></span> <span data-ng-bind="::openHouse.ShowingAgentLastName"></span>
@@ -248,11 +251,11 @@
             <!-- TODO MLSL requires listrac: data-ng-click="return cms.obj.listtrac.track('lead');"-->
             <a class="btn btn-alt btn-contact" data-ng-show="::contactUrl || Idx.sharedValues.contactUrl"
                target="_blank" data-ng-href="{{::contactUrl || Idx.sharedValues.contactUrl}}{{(Idx.sharedValues.contactCommentVariable ? '?' + Idx.sharedValues.contactCommentVariable + '=' + getFullAddress(true) : '')}}"
-               aria-label="Contact an Agent Link"
+               aria-label="Contact Website Agent Link"
             >
                 Contact
             </a>
-            <div class="image-dimmer"></div>
+            <div class="image-dimmer" aria-hidden="true"></div>
             <!-- parallax-content disabled, cannot use height altering on the entire widget -->
             <!-- FIXME {} can't be used in inline styles as it won't resolve before the page loads (or may not exist) -->
             <div class="image-wrapper"
@@ -305,19 +308,19 @@
                             <div class="section-name">Agent</div>
                             <div class="sub-detail" data-ng-if="getListAgentName()">
                                 <span class="item-label">Listing Agent: </span>
-                                <span data-ng-bind="::getListAgentName()"></span><span data-ng-if="::model.data.ListAgentStateLicense"> (DRE# <span data-ng-bind="::model.data.ListAgentStateLicense"></span>)</span><span data-ng-if="::model.data.ListAgentKey && !model.data.ListAgentStateLicense"> (Agent # <span data-ng-bind="::model.data.ListAgentKey"></span>)</span><span data-ng-if="::model.data.ListOfficeName" aria-label="Listing Office">, <span data-ng-bind="::model.data.ListOfficeName"></span></span>
+                                <span data-ng-bind="::getListAgentName()" aria-label="List Agent NAme"></span><span data-ng-if="::model.data.ListAgentStateLicense"> (DRE# <span data-ng-bind="::model.data.ListAgentStateLicense" aria-label="List Agent State License"></span>)</span><span data-ng-if="::model.data.ListAgentKey && !model.data.ListAgentStateLicense"> (Agent # <span data-ng-bind="::model.data.ListAgentKey" aria-label="List Agent MLS Key"></span>)</span><span data-ng-if="::model.data.ListOfficeName">, <span data-ng-bind="::model.data.ListOfficeName" aria-label="List Office Name"></span></span>
                             </div>
                             <div class="sub-detail" data-ng-if="getCoListAgentName()">
                                 <span class="item-label">Co-Listing Agent: </span>
-                                <span data-ng-bind="::getCoListAgentName()"></span><span data-ng-if="::model.data.CoListAgentStateLicense"> (DRE# <span data-ng-bind="::model.data.CoListAgentStateLicense"></span>)</span><span data-ng-if="::model.data.CoListAgentKey && !model.data.CoListAgentStateLicense"> (Agent # <span data-ng-bind="::model.data.CoListAgentKey"></span>)</span><span data-ng-if="::model.data.CoListOfficeName" aria-label="Co-Listing Office">, <span data-ng-bind="::model.data.CoListOfficeName"></span></span>
+                                <span data-ng-bind="::getCoListAgentName()" aria-label="CoList Agent Name"></span><span data-ng-if="::model.data.CoListAgentStateLicense"> (DRE# <span data-ng-bind="::model.data.CoListAgentStateLicense" aria-label="CoList Agent State License"></span>)</span><span data-ng-if="::model.data.CoListAgentKey && !model.data.CoListAgentStateLicense"> (Agent # <span data-ng-bind="::model.data.CoListAgentKey" aria-label="CoList Agent MLS Key"></span>)</span><span data-ng-if="::model.data.CoListOfficeName">, <span data-ng-bind="::model.data.CoListOfficeName" aria-label="CoList Office Name"></span></span>
                             </div>
                             <div class="sub-detail" data-ng-if="getBuyerAgentName()">
                                 <span class="item-label">Buyer Agent: </span>
-                                <span data-ng-bind="::getBuyerAgentName()"></span><span data-ng-if="::model.data.BuyerAgentStateLicense"> (DRE# <span data-ng-bind="::model.data.BuyerAgentStateLicense"></span>)</span><span data-ng-if="::model.data.BuyerAgentKey && !model.data.BuyerAgentStateLicense"> (Agent # <span data-ng-bind="::model.data.BuyerAgentKey"></span>)</span><span data-ng-if="::model.data.BuyerOfficeName" aria-label="Buyer Office">, <span data-ng-bind="::model.data.BuyerOfficeName"></span></span>
+                                <span data-ng-bind="::getBuyerAgentName()" aria-label="Buyer Agent Name"></span><span data-ng-if="::model.data.BuyerAgentStateLicense"> (DRE# <span data-ng-bind="::model.data.BuyerAgentStateLicense" aria-label="Buyer Agent State License"></span>)</span><span data-ng-if="::model.data.BuyerAgentKey && !model.data.BuyerAgentStateLicense"> (Agent # <span data-ng-bind="::model.data.BuyerAgentKey" aria-label="Buyer Agent MLS Key"></span>)</span><span data-ng-if="::model.data.BuyerOfficeName">, <span data-ng-bind="::model.data.BuyerOfficeName" aria-label="Buyer Office Name"></span></span>
                             </div>
                             <div class="sub-detail" data-ng-if="getCoBuyerAgentName()">
                                 <span class="item-label">Co-Buyer Agent: </span>
-                                <span data-ng-bind="::getCoBuyerAgentName()"></span><span data-ng-if="::model.data.CoBuyerAgentStateLicense"> (DRE# <span data-ng-bind="::model.data.CoBuyerAgentStateLicense"></span>)</span><span data-ng-if="::model.data.CoBuyerAgentKey && !model.data.CoBuyerAgentStateLicense"> (Agent # <span data-ng-bind="::model.data.CoBuyerAgentKey"></span>)</span><span data-ng-if="::model.data.CoBuyerOfficeName" aria-label="Co-Buyer Office">, <span data-ng-bind="::model.data.CoBuyerOfficeName"></span></span>
+                                <span data-ng-bind="::getCoBuyerAgentName()" aria-label="CoBuyer Agent Name"></span><span data-ng-if="::model.data.CoBuyerAgentStateLicense"> (DRE# <span data-ng-bind="::model.data.CoBuyerAgentStateLicense" aria-label="CoBuyer Agent State License"></span>)</span><span data-ng-if="::model.data.CoBuyerAgentKey && !model.data.CoBuyerAgentStateLicense"> (Agent # <span data-ng-bind="::model.data.CoBuyerAgentKey" aria-label="CoBuyer Agent MLS Key"></span>)</span><span data-ng-if="::model.data.CoBuyerOfficeName">, <span data-ng-bind="::model.data.CoBuyerOfficeName" aria-label="CoBuyer Office Name"></span></span>
                             </div>
                         </div>
                     </div>
@@ -354,13 +357,13 @@
         >
             <h2>Contact</h2>
 
-            <h4 class="site-name" data-ng-show="::contact.name || (Idx.sharedValues.contact && Idx.sharedValues.contact.name)" data-ng-bind="::contact.name || Idx.sharedValues.contact.name"></h4>
+            <h4 class="site-name" data-ng-show="::contact.name || (Idx.sharedValues.contact && Idx.sharedValues.contact.name)" data-ng-bind="::contact.name || Idx.sharedValues.contact.name" aria-label="Site Name"></h4>
 
             <p class="phone" data-ng-show="(contact.phones && contact.phones.Main) || (Idx.sharedValues.contact.phones && Idx.sharedValues.contact.phones.Main)">
-                <a data-ng-href="tel:{{::contact.phones.Main || Idx.sharedValues.contact.phones.Main}}" data-ng-bind="::contact.phones.Main || Idx.sharedValues.contact.phones.Main"></a>
+                <a data-ng-href="tel:{{::contact.phones.Main || Idx.sharedValues.contact.phones.Main}}" data-ng-bind="::contact.phones.Main || Idx.sharedValues.contact.phones.Main" aria-label="Site Phone Contact"></a>
             </p>
             <p class="email" data-ng-show="(contact.emails && contact.emails.Main) || (Idx.sharedValues.contact.emails && Idx.sharedValues.contact.emails.Main)">
-                <a data-ng-href="mailto:{{::contact.emails.Main || Idx.sharedValues.contact.emails.Main}}" data-ng-bind="::contact.emails.Main || Idx.sharedValues.contact.emails.Main" target="_blank"></a>
+                <a data-ng-href="mailto:{{::contact.emails.Main || Idx.sharedValues.contact.emails.Main}}" data-ng-bind="::contact.emails.Main || Idx.sharedValues.contact.emails.Main" target="_blank" aria-label="Site Emal Contact"></a>
             </p>
 
         </div>
