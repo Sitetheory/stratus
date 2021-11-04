@@ -37,13 +37,13 @@
 				<div class="open-house-container dotted-spaced-sideline">
 					<span class="description" data-ng-if="::model.data.OpenHouses[0].OpenHouseRemarks" data-ng-bind="::model.data.OpenHouses[0].OpenHouseRemarks" aria-label="Open House Description"></span>
 					<div class="open-house" id="{{'open_house_' + openHouse.OpenHouseId}}" data-ng-repeat="openHouse in model.data.OpenHouses">
-						<span data-ng-bind="::openHouse.OpenHouseStartTime | moment:{unix:false,format:'dddd MMM Do, h:mm a'}" aria-label="Open House Start Time"></span>
+						<time data-ng-bind="::openHouse.OpenHouseStartTime | moment:{unix:false,format:'dddd MMM Do, h:mm a'}" aria-label="Open House Start Time" datetime="{{::openHouse.OpenHouseStartTime}}"></time>
 						<span data-ng-if="::openHouse.OpenHouseEndTime"> —
-							<span data-ng-bind="::openHouse.OpenHouseEndTime | moment:{unix:false,format:'h:mm a'}" aria-label="Open House End Time"></span>
+							<time data-ng-bind="::openHouse.OpenHouseEndTime | moment:{unix:false,format:'h:mm a'}" aria-label="Open House End Time" datetime="{{::openHouse.OpenHouseEndTime}}"></time>
 						</span>
                         <!-- openHouse._unmapped.OpenHouseType && openHouse._unmapped.OpenHouseType === 'Virtual' -->
                         <span data-ng-if="::openHouse._unmapped.VirtualOpenHouseURL" aria-label="Virtual Open House">
-                            <a data-ng-href="{{::openHouse._unmapped.VirtualOpenHouseURL}}" target="_blank" data-ng-bind="::(openHouse._unmapped.VirtualOpenHouseURLLinkText || 'Virtual Open House')"></a>
+                            <a data-ng-href="{{::openHouse._unmapped.VirtualOpenHouseURL}}" target="_blank" data-ng-bind="::(openHouse._unmapped.VirtualOpenHouseURLLinkText || 'Virtual Open House')" aria-label="Open House Virtual Tour Link"></a>
                         </span>
 						<span data-ng-if="::openHouse.ShowingAgentFirstName" aria-label="Showing Agent Name">
 							with <span data-ng-bind="::openHouse.ShowingAgentFirstName"></span> <span data-ng-bind="::openHouse.ShowingAgentLastName"></span>
