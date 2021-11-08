@@ -2791,6 +2791,7 @@ const angularJsService = (
             'PropertyType',
             'PropertySubType',
             'UnparsedAddress',
+            'StreetNumber',
             'StreetNumberNumeric',
             'StreetName',
             'StreetSuffix',

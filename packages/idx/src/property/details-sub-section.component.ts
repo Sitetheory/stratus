@@ -81,8 +81,6 @@ Stratus.Components.IdxPropertyDetailsSubSection = {
                         $scope.model.data[item] === false &&
                         _.get($scope.items[item], 'false') === ''
                     )) {
-                        $scope.visibleFields = true
-
                         // Adjust the text being appended if there is a appendField being set
                         if (
                             Object.prototype.hasOwnProperty.call($scope.items[item], 'appendField') &&
@@ -96,6 +94,15 @@ Stratus.Components.IdxPropertyDetailsSubSection = {
                             $scope.model.data[$scope.items[item].appendFieldBackup] !== ''
                         ) {
                             $scope.items[item].append = ' ' + $scope.model.data[$scope.items[item].appendFieldBackup]
+                        }
+
+                        if (
+                            _.get($scope.items[item], 'hideEmpty') !== false &&
+                            (_.isArray($scope.model.data[item]) && $scope.model.data[item].length <= 0) // skip empty array
+                        ) {
+                            $scope.items[item].hide = true
+                        } else {
+                            $scope.visibleFields = true
                         }
 
                     } else if (

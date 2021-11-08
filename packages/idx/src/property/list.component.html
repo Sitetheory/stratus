@@ -29,11 +29,11 @@
             >
                 <md-card class="property-item" data-ng-class="{highlight: property._unmapped._highlight}">
                     <div class="property-image">
-                        <div class="property-status font-body" data-ng-bind="::Idx.getFriendlyStatus(property, preferredStatus)" aria-label="Status"></div>
+                        <div class="property-status font-body" data-ng-bind="::Idx.getFriendlyStatus(property, preferredStatus)" aria-label="Property Status"></div>
                         <div class="button btn" data-ng-href="{{::getDetailsURL(property)}}">
                             Details
                         </div>
-                        <a data-ng-click="displayModelDetails(property, $event)" data-ng-href="{{::getDetailsURL(property)}}">
+                        <a data-ng-click="displayModelDetails(property, $event)" data-ng-href="{{::getDetailsURL(property)}}" target="popup">
                             <div class="image-wrapper"
                                  data-stratus-src-version="{{::(property.Images[0].Lazy == 'stratus-src' ? 'best' : 'false')}}"
                                  data-stratus-src="{{::property.Images[0].MediaURL}}"
@@ -47,22 +47,22 @@
                         <div class="property-address dotted-spaced-underline">
                             <div aria-label="Address" id="{{::elementId}}_{{::property._id}}_address">
                                 <h4>
-                                    <a data-ng-click="displayModelDetails(property, $event)" data-ng-href="{{::getDetailsURL(property)}}" data-ng-bind="::getStreetAddress(property)"></a>
+                                    <a data-ng-click="displayModelDetails(property, $event)" data-ng-href="{{::getDetailsURL(property)}}" data-ng-bind="::getStreetAddress(property)" aria-label="Street Address" target="popup"></a>
                                     <br/>
-                                    <span class="city" data-ng-bind="::property.City"></span>
+                                    <span class="city" data-ng-bind="::property.City" aria-label="City"></span>
                                 </h4>
                             </div>
                         </div>
                         <div class="property-data">
                             <div class="property-type font-body">
-                                <span data-ng-if="::property.BedroomsTotal > 0" aria-label="Beds">
+                                <span data-ng-if="::property.BedroomsTotal > 0" aria-label="Number of Beds">
                                     <span data-ng-bind="::property.BedroomsTotal"></span> Beds
                                 </span>
-                                <span data-ng-if="::property.BathroomsFull > 0 || property.BathroomsTotalInteger > 0" aria-label="Bathrooms">
+                                <span data-ng-if="::property.BathroomsFull > 0 || property.BathroomsTotalInteger > 0" aria-label="Number of Bathrooms">
                                     <span data-ng-bind="::property.BathroomsFull || property.BathroomsTotalInteger"></span><span data-ng-if="::property.BathroomsHalf || property.BathroomsOneQuarter || property.BathroomsPartial">+</span>
                                     Baths
                                     </span>
-                                <span data-ng-bind="::property.PropertySubType || property.PropertyType || property._Class" aria-label="Type"></span>
+                                <span data-ng-bind="::property.PropertySubType || property.PropertyType || property._Class" aria-label="Property Type"></span>
                                 <span class="property-price" data-ng-if="::property.ClosePrice || property.ListPrice" aria-label="Price">
                                     $<span data-ng-bind="::property.ClosePrice || property.ListPrice | number"></span>
                                 </span>

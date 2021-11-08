@@ -141,8 +141,10 @@ Stratus.Components.IdxPropertyDetails = {
             $scope.pageTitle = $attrs.pageTitle && isJSON($attrs.pageTitle) ? JSON.parse($attrs.pageTitle) : false
             $scope.options = $attrs.options && isJSON($attrs.options) ? JSON.parse($attrs.options) : {}
             $scope.options.service = $attrs.service && isJSON($attrs.service) ? JSON.parse($attrs.service) : null
-            $scope.options.ListingKey = $attrs.listingKey && isJSON($attrs.listingKey) ? JSON.parse($attrs.listingKey) : null
-            $scope.options.ListingId = $attrs.listingId && isJSON($attrs.listingId) ? JSON.parse($attrs.listingId) : null
+            $scope.options.ListingKey = $attrs.listingKey && isJSON($attrs.listingKey) ?
+                JSON.parse($attrs.listingKey) : $attrs.listingKey || null
+            $scope.options.ListingId = $attrs.listingId && isJSON($attrs.listingId) ?
+                JSON.parse($attrs.listingId) : $attrs.listingId || null
             // Set default images and fields
             $scope.options.images = $attrs.images && isJSON($attrs.images) ? JSON.parse($attrs.images) : {
                 fields: [
