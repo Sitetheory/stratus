@@ -195,6 +195,36 @@
 					</div>
 				</div>
 			</div>
+
+            <div class="listing-credit-container" data-layout="row" data-layout-xs="column" data-layout-align="space-around stretch">
+                <div class="presenting-agent-container" data-ng-if="::Idx.sharedValues.contact.name" data-flex data-layout="column" aria-label="Advertising Broker">
+                    <h4 class="listing-credit-title">Presented By</h4>
+                    <!--p class="listing-credit-contact">Realtor Name | Brokerage Name</p-->
+                    <p class="listing-credit-contact" data-ng-bind="::Idx.sharedValues.contact.name"></p>
+                    <p class="listing-credit-contact" data-ng-if="::Idx.sharedValues.contact.emails && Idx.sharedValues.contact.emails.Main" aria-label="Advertising Broker Contact">
+                        <!--a href="mailto:email@address.com">email@address.com</a-->
+                        <a data-ng-href="mailto:{{::Idx.sharedValues.contact.emails.Main}}" target="_blank" data-ng-bind="::Idx.sharedValues.contact.emails.Main"></a>
+                    </p>
+                    <p class="listing-credit-contact" data-ng-if="::(Idx.sharedValues.contact.phones && Idx.sharedValues.contact.phones.Main) && !(Idx.sharedValues.contact.email && Idx.sharedValues.contact.emails.Main)" aria-label="Advertising Broker Contact">
+                        <a data-ng-href="tel:{{::Idx.sharedValues.contact.phones.Main}}" data-ng-bind="::Idx.sharedValues.contact.phones.Main"></a>
+                    </p>
+                </div>
+                <div class="listing-credit-divider" data-ng-if="getListAgentName() && Idx.sharedValues.contact.name" data-flex="10" data-hide-xs></div>
+                <div class="listing-agent-container" data-ng-if="getListAgentName()" data-flex data-layout="column" aria-label="Listing Broker">
+                    <h4 class="listing-credit-title">Listing Agent</h4>
+                    <p class="listing-credit-contact">
+                        <span data-ng-bind="::getListAgentName()"></span> | <span data-ng-bind="::model.data.ListOfficeName"></span>
+                    </p>
+                    <p class="listing-credit-contact" data-ng-if="model.data.ListAgentEmail" aria-label="Listing Broker Contact">
+                        <!--a href="mailto:email@address.com">email@address.com</a-->
+                        <a data-ng-href="mailto:{{::model.data.ListAgentEmail}}" target="_blank" data-ng-bind="::model.data.ListAgentEmail"></a>
+                    </p>
+                    <p class="listing-credit-contact" data-ng-if="getListAgentPhone() && !model.data.ListAgentEmail" aria-label="Listing Broker Contact">
+                        <a data-ng-href="tel:{{::getListAgentPhone()}}" data-ng-bind="::getListAgentPhone()"></a>
+                    </p>
+                </div>
+
+            </div>
 		</div>
 
 		<div class="additional-photos details-container" data-ng-if="model.data.Images && model.data.Images.length > 0" data-md-whiteframe="1">

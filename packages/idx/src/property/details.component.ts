@@ -1386,6 +1386,8 @@ Stratus.Components.IdxPropertyDetails = {
         $scope.getListAgentName = (): string => $scope.model.data.ListAgentFullName || ($scope.model.data.ListAgentFirstName ?
             $scope.model.data.ListAgentFirstName + ' ' + $scope.model.data.ListAgentLastName : null)
 
+        $scope.getListAgentPhone = (): string => $scope.model.data.ListAgentDirectPhone || $scope.model.data.ListAgentOfficePhone || null
+
         $scope.getCoListAgentName = (): string => $scope.model.data.CoListAgentFullName || ($scope.model.data.CoListAgentFirstName ?
             $scope.model.data.CoListAgentFirstName + ' ' + $scope.model.data.CoListAgentLastName : null)
 
