@@ -21,6 +21,18 @@ export class XHR {
     public error: (response: any) => any
     private xhr: XMLHttpRequest
 
+    // XHR Properties
+    readonly response?: any
+    readonly responseText?: string
+    readonly responseType?: string
+    readonly responseURL?: string
+    readonly responseXML?: Document
+    readonly status?: number
+    readonly statusText?: string
+    readonly timeout?: number
+    readonly upload?: XMLHttpRequestUpload
+    readonly withCredentials?: boolean
+
     // TODO: Make the constructor optional, and allow the send to provide options instead (for class reuse)
     constructor(request?: XHRRequest) {
         // Defaults
@@ -42,8 +54,18 @@ export class XHR {
         _.extend(this, request)
     }
 
-    // todo: allow this to pass in options like the constructor
-    send() {
+    // This is just a wrapper for the internal XHR
+    getAllResponseHeaders(): string {
+        return this.xhr.getAllResponseHeaders()
+    }
+
+    // This is just a wrapper for the internal XHR
+    getResponseHeader(name: string): string | null {
+        return this.xhr.getResponseHeader(name)
+    }
+
+    // TODO: allow this to pass in options like the constructor
+    send(): Promise<LooseObject|Array<LooseObject>|XMLHttpRequest|string> {
         // Make Request
         // TODO: Make this possibly store a const and store each reference in an array (simultaneous calls as an option)
         this.xhr = new XMLHttpRequest()
@@ -59,18 +81,29 @@ export class XHR {
             }
 
             this.xhr.onload = () => {
-                // todo: make this 1 deep
-                if (this.xhr.status >= 200 && this.xhr.status < 400) {
-                    let response: any = this.xhr.responseText
-                    if (isJSON(response)) {
-                        response = JSON.parse(response)
-                    }
-                    resolve(response)
-                    return
-                } else {
+                // hoist properties
+                _.forEach([
+                    'response',
+                    'responseText',
+                    'responseType',
+                    'responseURL',
+                    'responseXML',
+                    'status',
+                    'statusText',
+                    'timeout',
+                    'upload',
+                    'withCredentials'
+                ],(p) => _.set(this, p, _.get(this.xhr, p)))
+                if (this.xhr.status < 200 || this.xhr.status >= 400) {
                     reject(this.xhr)
                     return
                 }
+                const response = this.xhr.responseText
+                if (isJSON(response)) {
+                    resolve(JSON.parse(response))
+                    return
+                }
+                resolve(response)
             }
 
             this.xhr.onerror = () => {
