@@ -205,7 +205,7 @@
                         <!--a href="mailto:email@address.com">email@address.com</a-->
                         <a data-ng-href="mailto:{{::Idx.sharedValues.contact.emails.Main}}" target="_blank" data-ng-bind="::Idx.sharedValues.contact.emails.Main"></a>
                     </p>
-                    <p class="listing-credit-contact" data-ng-if="::(Idx.sharedValues.contact.phones && Idx.sharedValues.contact.phones.Main) && !(Idx.sharedValues.contact.email && Idx.sharedValues.contact.emails.Main)" aria-label="Advertising Broker Contact">
+                    <p class="listing-credit-contact" data-ng-if="::(Idx.sharedValues.contact.phones && Idx.sharedValues.contact.phones.Main) && !(Idx.sharedValues.contact.emails && Idx.sharedValues.contact.emails.Main)" aria-label="Advertising Broker Contact">
                         <a data-ng-href="tel:{{::Idx.sharedValues.contact.phones.Main}}" data-ng-bind="::Idx.sharedValues.contact.phones.Main"></a>
                     </p>
                 </div>
