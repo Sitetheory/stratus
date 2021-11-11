@@ -13,7 +13,7 @@ import '@stratusjs/angularjs/services/model' // Needed as $provider
 import {Model, ModelOptions} from '@stratusjs/angularjs/services/model' // Needed as Class
 import '@stratusjs/angularjs/services/collection' // Needed as $provider
 // tslint:disable-next-line:no-duplicate-imports
-import {Collection} from '@stratusjs/angularjs/services/collection' // Needed as Class
+import {Collection, SyncOptions} from '@stratusjs/angularjs/services/collection' // Needed as Class
 import '@stratusjs/idx/listTrac'
 
 // Stratus Dependencies
@@ -1451,9 +1451,7 @@ const angularJsService = (
         // Make Promises that each of the collections shall fetch their results
         const fetchPromises: any[] = []
         collections.forEach(collection => {
-            const options: {
-                headers?: object
-            } = {}
+            const options: SyncOptions = {}
             if (session.services[collection.serviceId].token !== null) {
                 options.headers = {
                     Authorization: session.services[collection.serviceId].token

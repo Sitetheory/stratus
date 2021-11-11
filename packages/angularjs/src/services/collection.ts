@@ -13,7 +13,8 @@ import {Stratus} from '@stratusjs/runtime/stratus'
 import {ModelBase} from '@stratusjs/core/datastore/modelBase'
 import {EventManager} from '@stratusjs/core/events/eventManager'
 import {cookie} from '@stratusjs/core/environment'
-import {LooseObject, ucfirst} from '@stratusjs/core/misc'
+import {AnyFunction, LooseObject, ucfirst} from '@stratusjs/core/misc'
+import {XHR, XHRRequest} from '@stratusjs/core/datastore/xhr'
 
 // Modules
 import 'angular-material' // Reliant for $mdToast
@@ -28,15 +29,13 @@ import {Model, ModelOptions} from '@stratusjs/angularjs/services/model'
 let injector = getInjector()
 
 // Angular Services
-// let $http: angular.IHttpService = injector ? injector.get('$http') : null
-let $http: angular.IHttpService
 // let $mdToast: angular.material.IToastService = injector ? injector.get('$mdToast') : null
 let $mdToast: angular.material.IToastService
 
 // Service Verification Function
 const serviceVerify = async () => {
     return new Promise(async (resolve, reject) => {
-        if ($http && $mdToast) {
+        if ($mdToast) {
             resolve(true)
             return
         }
@@ -44,17 +43,15 @@ const serviceVerify = async () => {
             injector = getInjector()
         }
         if (injector) {
-            $http = injector.get('$http')
             $mdToast = injector.get('$mdToast')
         }
-        if ($http && $mdToast) {
+        if ($mdToast) {
             resolve(true)
             return
         }
         setTimeout(() => {
             if (cookie('env')) {
-                console.log('wait for $http & $mdToast service:', {
-                    $http,
+                console.log('wait for $mdToast service:', {
                     $mdToast
                 })
             }
@@ -98,6 +95,11 @@ export interface CollectionModelOptions extends ModelOptions {
 
 export const CollectionOptionKeys = keys<CollectionOptions>()
 
+export interface SyncOptions {
+    headers?: LooseObject<string>
+    nocache?: boolean
+}
+
 export class Collection<T = LooseObject> extends EventManager {
     // Base Information
     name = 'Collection'
@@ -123,7 +125,9 @@ export class Collection<T = LooseObject> extends EventManager {
     model = Model
     models: Model<T>[] | (Model<T>['data'])[] = []
     types: any = []
-    cacheRequest: any = {}
+    xhr: XHR
+    cacheResponse: LooseObject<LooseObject|Array<LooseObject>|string> = {}
+    cacheHeaders: LooseObject<LooseObject<string>> = {}
 
     // Internals
     cache = false
@@ -194,7 +198,7 @@ export class Collection<T = LooseObject> extends EventManager {
         //     fetchMoreItems_: function(index) {
         //         // For demo purposes, we simulate loading more items with a timed
         //         // promise. In real code, this function would likely contain an
-        //         // $http request.
+        //         // XHR request.
         //         if (this.toLoad_ < index) {
         //             this.toLoad_ += 20
         //             $timeout(angular.noop, 300).then(angular.bind(this, function() {
@@ -258,14 +262,14 @@ export class Collection<T = LooseObject> extends EventManager {
     }
 
     // TODO: Abstract this deeper
-    sync(action: string, data: any, options: any) {
+    sync(action?: string, data?: LooseObject, options?: SyncOptions) {
         // XHR Flags
         this.pending = true
 
         return new Promise(async (resolve: any, reject: any) => {
             action = action || 'GET'
             options = options || {}
-            const prototype: HttpPrototype = {
+            const request: XHRRequest = {
                 method: action,
                 url: this.url(),
                 headers: {}
@@ -273,79 +277,45 @@ export class Collection<T = LooseObject> extends EventManager {
             if (!_.isUndefined(data)) {
                 if (action === 'GET') {
                     if (_.isObject(data) && Object.keys(data).length) {
-                        prototype.url += prototype.url.includes('?') ? '&' : '?'
-                        prototype.url += this.serialize(data)
+                        request.url += request.url.includes('?') ? '&' : '?'
+                        request.url += this.serialize(data)
                     }
                 } else {
-                    prototype.headers['Content-Type'] = 'application/json'
-                    prototype.data = JSON.stringify(data)
+                    request.headers['Content-Type'] = 'application/json'
+                    request.data = JSON.stringify(data)
                 }
             }
 
             if (Object.prototype.hasOwnProperty.call(options, 'headers') && typeof options.headers === 'object') {
-                Object.keys(options.headers).forEach((headerKey: any) => {
-                    prototype.headers[headerKey] = options.headers[headerKey]
+                Object.keys(options.headers).forEach((headerKey: string) => {
+                    request.headers[headerKey] = options.headers[headerKey]
                 })
             }
 
-            const queryHash = `${prototype.method}:${prototype.url}`
-            const handler = (response: any) => {
-                if (response.status === 200 && _.isObject(response.data)) {
-                    // TODO: Make this into an over-writable function
+            // Create QueryHash for Responses
+            const queryHash = `${request.method}:${request.url}`
 
-                    // Cache reference
-                    if (this.cache && prototype.method === 'GET' && !(queryHash in this.cacheRequest)) {
-                        this.cacheRequest[queryHash] = response
-                    }
+            // Clear Cache upon Request
+            if (options.nocache) {
+                if (queryHash in this.cacheResponse) {
+                    delete this.cacheResponse[queryHash]
+                }
+                if (queryHash in this.cacheHeaders) {
+                    delete this.cacheHeaders[queryHash]
+                }
+            }
 
-                    // Data
-                    this.header.set(response.headers() || {})
-                    this.meta.set(response.data.meta || {})
-                    this.models = []
-                    const recv = response.data.payload || response.data
-                    if (this.direct) {
-                        this.models = recv
-                    } else if (_.isArray(recv)) {
-                        this.inject(recv)
-                    } else if (_.isObject(recv)) {
-                        // Note: this is explicitly stated due to context binding
-                        _.forEach(recv, (value: any, key: any) => {
-                            this.inject(value, key)
-                        })
-                    } else {
-                        console.error('malformed payload:', recv)
-                    }
+            // begin request
+            this.xhr = new XHR(request)
 
-                    // XHR Flags
-                    this.pending = false
-                    this.completed = true
-                    this.error = false
-
-                    // Action Flags
-                    this.filtering = false
-                    this.paginate = false
-
-                    // Trigger Change Event
-                    this.throttleTrigger('change')
-
-                    // Promise
-                    resolve(this.models)
-                } else {
-                    // XHR Flags
-                    this.pending = false
-
-
+            // TODO: Make this into an over-writable function
+            const handler = (response: LooseObject|Array<LooseObject>|string) => {
+                if (!_.isObject(response) && !_.isArray(response)) {
                     // Build Report
                     const error = new Stratus.Prototypes.Error({
-                        payload: _.isObject(response.data) ? response.data : response
+                        payload: response,
+                        message: `Invalid Payload: ${request.method} ${request.url}`
                     }, {})
-                    if (response.statusText && response.statusText !== 'OK') {
-                        error.message = response.statusText
-                    } else if (!_.isObject(response.data)) {
-                        error.message = `Invalid Payload: ${prototype.method} ${prototype.url}`
-                    } else {
-                        error.message = 'Unknown AngularCollection error!'
-                    }
 
                     // XHR Flags
                     this.pending = false
@@ -357,25 +327,75 @@ export class Collection<T = LooseObject> extends EventManager {
 
                     // Promise
                     reject(error)
+
+                    return
                 }
+
+                // TODO: Make this able to wipe the cache
+                let responseHeaders: LooseObject<string> = null
+
+                // Handle Cache on GET methods
+                if (this.cache && request.method === 'GET') {
+                    // Cache Request
+                    if (!(queryHash in this.cacheResponse)) {
+                        this.cacheResponse[queryHash] = response
+                    }
+                    // Cache Headers
+                    if (!(queryHash in this.cacheHeaders)) {
+                        this.cacheHeaders[queryHash] = this.xhr.getAllResponseHeaders()
+                    } else {
+                        responseHeaders = this.cacheHeaders[queryHash]
+                    }
+                }
+
+                // Data
+                this.header.set(responseHeaders || this.xhr.getAllResponseHeaders())
+                this.meta.set(response.meta || {})
+                this.models = []
+                const payload = response.payload || response
+
+                // XHR Flags
+                this.error = false
+
+                if (this.direct) {
+                    this.models = payload
+                } else if (_.isArray(payload)) {
+                    this.inject(payload)
+                } else if (_.isObject(payload)) {
+                    // Note: this is explicitly stated due to context binding
+                    _.forEach(payload, (value: any, key: any) => {
+                        this.inject(value, key)
+                    })
+                } else {
+                    this.error = true
+                    console.error('malformed payload:', payload)
+                }
+
+                // XHR Flags
+                this.pending = false
+                this.completed = true
+
+                // Action Flags
+                this.filtering = false
+                this.paginate = false
 
                 // Trigger Change Event
                 this.throttleTrigger('change')
+
+                // Promise
+                resolve(this.models)
             }
-            if (this.cache && prototype.method === 'GET' && queryHash in this.cacheRequest) {
-                handler(this.cacheRequest[queryHash])
+            // handle response cache (headers are cached in the handler)
+            if (this.cache && request.method === 'GET' && queryHash in this.cacheResponse) {
+                handler(this.cacheResponse[queryHash])
                 return
             }
-            if (!$http) {
-                // TODO: Verify the whether the const is necessity
-                // tslint:disable-next-line:no-unused-variable
-                const wait = await serviceVerify()
-            }
-            $http(prototype)
+            // make the call!
+            this.xhr.send()
                 .then(handler)
                 .catch((error: any) => {
                     // (/(.*)\sReceived/i).exec(error.message)[1]
-                    console.error(`XHR: ${prototype.method} ${prototype.url}`)
+                    console.error(`XHR: ${request.method} ${request.url}`)
                     this.throttleTrigger('change')
                     reject(error)
                     throw error
@@ -383,7 +403,7 @@ export class Collection<T = LooseObject> extends EventManager {
         })
     }
 
-    fetch(action?: string, data?: any, options?: any) {
+    fetch(action?: string, data?: LooseObject, options?: SyncOptions) {
         return this.sync(action, data || this.meta.get('api'), options)
             .catch(async (error: any) => {
                     console.error('FETCH:', error)
@@ -488,7 +508,7 @@ export class Collection<T = LooseObject> extends EventManager {
         return this
     }
 
-    find(predicate: string) {
+    find(predicate: string|number|AnyFunction) {
         return _.find(this.models, _.isFunction(predicate) ? predicate : (model: Model) => model.get('id') === predicate)
     }
 
@@ -506,28 +526,13 @@ export class Collection<T = LooseObject> extends EventManager {
     }
 }
 
+// TODO: Build out the query-only structure here as a separate set
 // This Collection Service handles data binding for multiple objects with the
-// $http Service
-// TODO: Build out the query-only structure here as a separate set of
 // registered collections and models
-// RAJ Added $qProvide to handle unhandleExceptions in angular 1.6
 Stratus.Services.Collection = [
     '$provide',
     ($provide: angular.auto.IProvideService) => {
-        $provide.factory('Collection', [
-            // '$http',
-            // '$mdToast',
-            // 'Model',
-            (
-                // $h: angular.IHttpService,
-                // $m: angular.material.IToastService,
-                // M: Model
-            ) => {
-                // $http = $h
-                // $mdToast = $m
-                return Collection
-            }
-        ])
+        $provide.factory('Collection', [() => Collection])
     }
 ]
 Stratus.Data.Collection = Collection
