@@ -10,9 +10,11 @@ import * as angular from 'angular'
 
 // Services
 import '@stratusjs/angularjs/services/model'
+// tslint:disable-next-line:no-duplicate-imports
+import {Model} from '@stratusjs/angularjs/services/model'
 
 // Stratus Dependencies
-import {isJSON} from '@stratusjs/core/misc'
+import {isJSON, ObjectWithFunctions} from '@stratusjs/core/misc'
 import {cookie} from '@stratusjs/core/environment'
 
 // Environment
@@ -28,21 +30,39 @@ export interface SubSectionOptions {
     items: SubSectionOptionItems
 }
 
+interface SubSectionOptionItem {
+    name?: string,
+    prepend?: string, // Adds a text string to the front of a value
+    append?: string, // Adds a text string to the end of a value (appendField/appendFieldBackup defaults to this)
+    appendField?: string, // Attempts to find this Field and append it to end of a value (if it exists)
+    // If appendField is not found, attempts to find this Field and append it to end of a value (if it exists)
+    appendFieldBackup?: string,
+    comma?: boolean, // Only for Numbers, If true, will add a grammatical comma for thousands
+    true?: string, // Only used for booleans. If true, display this text. Defaults to 'Yes'
+    false?: string, // Only used for booleans. If true, display this text. Defaults to 'No'
+    // Only used for booleans. If value is false text is empty (''), hide the element. Enabled by default
+    hideEmpty?: false
+    hide?: true // Only to be used by this component to forcible hide this element at all times (set with hideEmpty)
+}
+
 interface SubSectionOptionItems {
-    [key: string]: string | {
-        name?: string,
-        prepend?: string, // Adds a text string to the front of a value
-        append?: string, // Adds a text string to the end of a value (appendField/appendFieldBackup defaults to this)
-        appendField?: string, // Attempts to find this Field and append it to end of a value (if it exists)
-        // If appendField is not found, attempts to find this Field and append it to end of a value (if it exists)
-        appendFieldBackup?: string,
-        comma?: boolean, // Only for Numbers, If true, will add a grammatical comma for thousands
-        true?: string, // Only used for booleans. If true, display this text. Defaults to 'Yes'
-        false?: string, // Only used for booleans. If true, display this text. Defaults to 'No'
-        // Only used for booleans. If value is false text is empty (''), hide the element. Enabled by default
-        hideEmpty?: false
-        hide?: true // Only to be used by this component to forcible hide this element at all times (set with hideEmpty)
-    }
+    [key: string]: string | SubSectionOptionItem
+}
+
+export type IdxPropertyDetailsSubSectionScope = angular.IScope & ObjectWithFunctions & {
+    elementId: string
+    initialized: boolean
+    model: Model
+
+    className: string
+    sectionName: string
+    sectionNameId: string
+    items: SubSectionOptionItems
+    visibleFields: boolean
+
+    convertItemsToObject(): void
+    typeOf(item: any): string
+    isArray(item: any): boolean
 }
 
 Stratus.Components.IdxPropertyDetailsSubSection = {
@@ -55,14 +75,18 @@ Stratus.Components.IdxPropertyDetailsSubSection = {
     },
     controller(
         $attrs: angular.IAttributes,
-        $scope: object | any, // angular.IScope breaks references so far
+        $scope: IdxPropertyDetailsSubSectionScope,
+        // tslint:disable-next-line:no-shadowed-variable
         Model: any,
     ) {
         // Initialize
         const $ctrl = this
 
+        $ctrl.uid = _.uniqueId(_.camelCase(packageName) + '_' + _.camelCase(moduleName) + '_' + _.camelCase(componentName) + '_')
+        $scope.elementId = $attrs.elementId || $ctrl.uid
         $scope.className = $attrs.className || 'sub-detail-section'
         $scope.sectionName = $attrs.sectionName || ''
+        $scope.sectionNameId = _.camelCase($scope.sectionName) + '_' + $scope.elementId
         const defaultItems: SubSectionOptionItems = {} // Simply to type cast into SubSectionOptionItems
         $scope.items = $attrs.items && isJSON($attrs.items) ? JSON.parse($attrs.items) : defaultItems
 
@@ -75,7 +99,8 @@ Stratus.Components.IdxPropertyDetailsSubSection = {
                     Object.prototype.hasOwnProperty.call($scope.model.data, item) &&
                     $scope.model.data[item] !== 0 && // ensure we skip 0 or empty sections that can appear
                     $scope.model.data[item] !== '' && // ensure we skip "0" sections that can appear
-                    $scope.model.data[item] !== '0' // ensure we skip blanks or empty sections that can appear
+                    $scope.model.data[item] !== '0' && // ensure we skip blanks or empty sections that can appear
+                    !_.isString($scope.items[item]) // skip SubSectionOptionItems that are just a string
                 ) {
                     if (!(
                         $scope.model.data[item] === false &&
@@ -84,23 +109,29 @@ Stratus.Components.IdxPropertyDetailsSubSection = {
                         // Adjust the text being appended if there is a appendField being set
                         if (
                             Object.prototype.hasOwnProperty.call($scope.items[item], 'appendField') &&
-                            Object.prototype.hasOwnProperty.call($scope.model.data, $scope.items[item].appendField) &&
-                            $scope.model.data[$scope.items[item].appendField] !== ''
+                            Object.prototype.hasOwnProperty.call(
+                                $scope.model.data, ($scope.items[item] as SubSectionOptionItem).appendField
+                            ) &&
+                            $scope.model.data[($scope.items[item] as SubSectionOptionItem).appendField] !== ''
                         ) {
-                            $scope.items[item].append = ' ' + $scope.model.data[$scope.items[item].appendField]
+                            ($scope.items[item] as SubSectionOptionItem).append =
+                                ' ' + $scope.model.data[($scope.items[item] as SubSectionOptionItem).appendField]
                         } else if (
                             Object.prototype.hasOwnProperty.call($scope.items[item], 'appendFieldBackup') &&
-                            Object.prototype.hasOwnProperty.call($scope.model.data, $scope.items[item].appendFieldBackup) &&
-                            $scope.model.data[$scope.items[item].appendFieldBackup] !== ''
+                            Object.prototype.hasOwnProperty.call(
+                                $scope.model.data, ($scope.items[item] as SubSectionOptionItem).appendFieldBackup
+                            ) &&
+                            $scope.model.data[($scope.items[item] as SubSectionOptionItem).appendFieldBackup] !== ''
                         ) {
-                            $scope.items[item].append = ' ' + $scope.model.data[$scope.items[item].appendFieldBackup]
+                            ($scope.items[item] as SubSectionOptionItem).append =
+                                ' ' + $scope.model.data[($scope.items[item] as SubSectionOptionItem).appendFieldBackup]
                         }
 
                         if (
                             _.get($scope.items[item], 'hideEmpty') !== false &&
                             (_.isArray($scope.model.data[item]) && $scope.model.data[item].length <= 0) // skip empty array
                         ) {
-                            $scope.items[item].hide = true
+                            ($scope.items[item] as SubSectionOptionItem).hide = true
                         } else {
                             $scope.visibleFields = true
                         }
@@ -109,36 +140,37 @@ Stratus.Components.IdxPropertyDetailsSubSection = {
                         $scope.model.data[item] === false &&
                         _.get($scope.items[item], 'hideEmpty') !== false
                     ) {
-                        $scope.items[item].hide = true
+                        ($scope.items[item] as SubSectionOptionItem).hide = true
                     }
                 }
             })
         }
 
         if ($scope.sectionName.startsWith('{')) {
-            $scope.stopWatchingSectionName = $scope.$watch('$ctrl.sectionName', (data: string) => {
+            $ctrl.stopWatchingSectionName = $scope.$watch('$ctrl.sectionName', (data: string) => {
                 $scope.sectionName = data
-                $scope.stopWatchingSectionName()
+                $scope.sectionNameId = _.camelCase($scope.sectionName) + '_' + $scope.elementId
+                $ctrl.stopWatchingSectionName()
             })
         }
 
         if (Object.keys($scope.items).length === 0) {
-            $scope.stopWatchingItems = $scope.$watch('$ctrl.items', (data: string) => {
+            $ctrl.stopWatchingItems = $scope.$watch('$ctrl.items', (data: string) => {
                 if (Object.keys($scope.items).length === 0) {
                     const blankItems: SubSectionOptionItems = {} // Simply to type cast into SubSectionOptionItems
                     $scope.items = data && isJSON(data) ? JSON.parse(data) : blankItems
                     $scope.convertItemsToObject()
                 }
-                $scope.stopWatchingItems()
+                $ctrl.stopWatchingItems()
             })
         }
 
-        $scope.stopWatchingModel = $scope.$watch('$ctrl.ngModel', (data: any) => {
+        $ctrl.stopWatchingModel = $scope.$watch('$ctrl.ngModel', (data: any) => {
             // TODO might wanna check something else just to not import Model
             if (data instanceof Model && data !== $scope.model) {
                 $scope.model = data
                 checkForVisibleFields()
-                $scope.stopWatchingModel()
+                $ctrl.stopWatchingModel()
             }
         })
 
