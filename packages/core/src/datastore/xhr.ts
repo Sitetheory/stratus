@@ -56,6 +56,7 @@ export class XHR {
 
     // This is just a wrapper for the internal XHR
     getAllResponseHeaders(): LooseObject<string> {
+        // TODO: @Optimize! Add a cache for header objects, keyed by the header string
         return Object.fromEntries(
             this.xhr.getAllResponseHeaders()
                 .split(/\r?\n/)
