@@ -292,9 +292,9 @@
                  data-ng-if="model.data.Images && model.data.Images[0]"
                  data-stratus-src-version="{{::(model.data.Images[0].Lazy == 'stratus-src' ? 'best' : 'false')}}"
                  data-stratus-src="{{::model.data.Images[0].MediaURL}}"
-                 aria-label="Background Image of the Listing"
+                 aria-label="Background Image of Listing"
             >
-                <img data-ng-if="model.data.Images && model.data.Images.length > 0" data-ng-src="{{::localDir}}images/stratus-property-shapeholder.png" alt="{{::model.data.InternetAddressDisplayYN === false ? 'Address Not Disclosed' : getStreetAddress()}}"/>
+                <img data-ng-if="model.data.Images && model.data.Images.length > 0" data-ng-src="{{::localDir}}images/stratus-property-shapeholder.png" alt="Image Shapeholder" aria-hidden="true"/>
                 <img data-ng-if="!model.data.Images" data-ng-src="{{::localDir}}images/no-image-simple.jpg" alt="No Image Available"/>
             </div>
         </div>

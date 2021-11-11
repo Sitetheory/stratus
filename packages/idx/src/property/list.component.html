@@ -37,9 +37,10 @@
                             <div class="image-wrapper"
                                  data-stratus-src-version="{{::(property.Images[0].Lazy == 'stratus-src' ? 'best' : 'false')}}"
                                  data-stratus-src="{{::property.Images[0].MediaURL}}"
+                                 aria-label="Main Image of Listing"
                             >
-                                <img data-ng-if="::property.Images.length > 0" data-ng-src="{{::localDir}}images/stratus-property-shapeholder.png" alt="shapeholder"/>
-                                <img data-ng-if="::property.Images.length === 0 || !property.Images" data-ng-src="{{::localDir}}images/no-image.jpg"/>
+                                <img data-ng-if="::property.Images.length > 0" data-ng-src="{{::localDir}}images/stratus-property-shapeholder.png" alt="Image Shapeholder" aria-hidden="true" />
+                                <img data-ng-if="::property.Images.length === 0 || !property.Images" data-ng-src="{{::localDir}}images/no-image.jpg" alt="No Main Image Available"/>
                             </div>
                         </a>
                     </div>
