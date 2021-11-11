@@ -55,8 +55,13 @@ export class XHR {
     }
 
     // This is just a wrapper for the internal XHR
-    getAllResponseHeaders(): string {
-        return this.xhr.getAllResponseHeaders()
+    getAllResponseHeaders(): LooseObject<string> {
+        return Object.fromEntries(
+            this.xhr.getAllResponseHeaders()
+                .split(/\r?\n/)
+                .filter((e: string) => e.length)
+                .map((e: string) => e.split(': '))
+        )
     }
 
     // This is just a wrapper for the internal XHR
