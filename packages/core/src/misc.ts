@@ -407,8 +407,8 @@ export function truncate(target: any, limit?: any, suffix?: any) {
 }
 
 // Interfaces
-export interface LooseObject {
-    [key: string]: any
+export interface LooseObject<T=any> {
+    [key: string]: T
 }
 export type AnyFunction = (...args: any) => any
 export interface ObjectWithFunctions {
