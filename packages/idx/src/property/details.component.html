@@ -335,7 +335,7 @@
                          data-ng-if="::getListAgentName() || getCoListAgentName() || getBuyerAgentName() || getCoBuyerAgentName()"
                     >
                         <div class="sub-detail-section" role="region" aria-label="Source Agents">
-                            <div class="section-name">Agent</div>
+                            <strong class="section-name">Agent</strong>
                             <div class="sub-detail" data-ng-if="getListAgentName()" role="text">
                                 <span class="item-label">Listing Agent: </span>
                                 <span data-ng-bind="::getListAgentName()" aria-label="List Agent NAme"></span><span data-ng-if="::model.data.ListAgentStateLicense"> (DRE# <span data-ng-bind="::model.data.ListAgentStateLicense" aria-label="List Agent State License"></span>)</span><span data-ng-if="::model.data.ListAgentKey && !model.data.ListAgentStateLicense"> (Agent # <span data-ng-bind="::model.data.ListAgentKey" aria-label="List Agent MLS Key"></span>)</span><span data-ng-if="::model.data.ListOfficeName">, <span data-ng-bind="::model.data.ListOfficeName" aria-label="List Office Name"></span></span>
