@@ -23,10 +23,12 @@
 						<span data-ng-bind="::model.data.Country" aria-label="Country"></span>
 					</div>
 				</div>
-				<div class="contact-container" data-flex="100" data-flex-gt-xs="20">
+				<div class="contact-container" data-flex="100" data-flex-gt-xs="20" data-ng-show="::contactUrl || Idx.sharedValues.contactUrl">
 					<!-- TODO data-ng-click="return cms.obj.listtrac.track('lead');"-->
 					<!--a data-ng-href="/site/contact?comments={{::getFullAddress(true)}}" target="_blank">Contact</a-->
-					<md-button class="button" target="_blank" data-ng-href="/site/contact?subject={{::getFullAddress(true)}}" aria-label="Website Contact">
+					<md-button class="button" target="_blank" aria-label="Website Contact"
+                               data-ng-href="{{::contactUrl || Idx.sharedValues.contactUrl}}{{(Idx.sharedValues.contactCommentVariable ? '?' + Idx.sharedValues.contactCommentVariable + '=' + getFullAddress(true) : '')}}"
+                    >
 						Contact
 					</md-button>
 				</div>
