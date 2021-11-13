@@ -285,7 +285,7 @@ export class MediaDialogComponent extends ResponsiveComponent implements OnInit 
                 console.warn(`media-dialog: unable to determine image source for media id: ${media.id}`)
                 return null
             }
-            return `<img src="${media._thumbnailUrl||media.file}" alt="${media.name || media.filename} ${media.mime !== 'image/gif' ? 'data-stratus-src' : ''}">`
+            return `<img src="${media._thumbnailUrl||media.file}" alt="${media.name || media.filename}" ${media.mime !== 'image/gif' ? 'data-stratus-src' : ''}">`
         }
         if (media.mime === 'video') {
             // Use the embed code if we can't standardize.
