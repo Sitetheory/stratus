@@ -915,7 +915,7 @@ Stratus.Components.IdxPropertyList = {
                 }
 
                 let template =
-                    `<md-dialog aria-label="${model.ListingKey}" class="stratus-idx-property-list-dialog">` +
+                    `<md-dialog class="stratus-idx-property-list-dialog" aria-label="${$scope.getStreetAddress(model)} Details">` +
                     `<div class="popup-close-button-container">` +
                     `<div aria-label="Close Popup" class="close-button" data-ng-click="closePopup()" aria-label="Close Details Popup"></div>` +
                     `</div>` +

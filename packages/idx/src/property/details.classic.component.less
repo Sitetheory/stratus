@@ -2,9 +2,9 @@
 Nothing should be outside 'stratus-idx-property-details' or it will leak into other modules
 */
 
-/* FIXME @desktop-only and @phone have been reversed, need to adjust all css */
-@phone: ~"(min-width: 600px)";
-@desktop-only: ~"(max-width: 599px)";
+/* these numbers are based on what angularjs does */
+@phone: ~"(max-width: 599px)";
+@desktop-only: ~"(min-width: 600px)";
 stratus-idx-property-details {
   /* Generic Button */
   .button {
@@ -68,7 +68,7 @@ stratus-idx-property-details {
           font-size: 12px;
           padding-bottom: 22px;
 
-          @media @phone {
+          @media @desktop-only {
             padding-bottom: 30px;
           }
         }
@@ -76,7 +76,7 @@ stratus-idx-property-details {
       .contact-container {
         padding-bottom: 35px;
 
-        @media @phone {
+        @media @desktop-only {
           padding-bottom: 0;
           .button {
             float: right;
@@ -84,7 +84,7 @@ stratus-idx-property-details {
         }
       }
 
-      @media @phone {
+      @media @desktop-only {
         text-align: left;
         margin-bottom: 35px;
       }
@@ -103,7 +103,7 @@ stratus-idx-property-details {
         letter-spacing: 1px;
         margin: 25px auto;
 
-        @media @phone {
+        @media @desktop-only {
           padding: 0;
           margin-top: 0;
           text-align: left;
@@ -125,12 +125,12 @@ stratus-idx-property-details {
           }
         }
 
-        @media @phone {
+        @media @desktop-only {
           padding-left: 25px;
           text-align: left;
         }
 
-        @media @desktop-only {
+        @media @phone {
           background: none;
         }
       }
@@ -191,7 +191,7 @@ stratus-idx-property-details {
         line-height: 2;
         text-align: center;
 
-        @media @phone {
+        @media @desktop-only {
           text-align: left;
         }
       }
@@ -203,13 +203,13 @@ stratus-idx-property-details {
           font-size: 11px;
           text-transform: uppercase;
 
-          @media @phone {
+          @media @desktop-only {
             padding-top: 6px;
             margin-bottom: 9px;
           }
         }
 
-        @media @phone {
+        @media @desktop-only {
           margin: 25px 0;
           padding-bottom: 15px;
           text-align: left;
@@ -222,15 +222,36 @@ stratus-idx-property-details {
           text-align: center;
           margin: 15px 0;
 
-          @media @phone {
+          @media @desktop-only {
             text-align: left;
             margin-bottom: 0;
           }
         }
       }
 
+      @media @desktop-only {
+        margin-top: 0;
+      }
+    }
+
+    /* Listing Credit for Presented By / List Agent */
+    .listing-credit-container {
+      margin-top: 20px;
+      .listing-credit-divider {
+        border-left: 1px solid rgba(0, 0, 0, 0.2);
+      }
+      .listing-credit-title {
+        font-size: 12px;
+        letter-spacing: 2px;
+      }
+      .listing-credit-contact {
+        margin: 0 0 10px 0;
+        font-size: 13px;
+      }
+
       @media @phone {
         margin-top: 0;
+        text-align: center;
       }
     }
 
@@ -281,6 +302,7 @@ stratus-idx-property-details {
           margin: 0 0 1em;
           width: 100%;
           .section-name {
+            display: block;
             color: #222;
             text-transform: uppercase;
             font-size: 13px;
@@ -304,7 +326,7 @@ stratus-idx-property-details {
         }
       }
 
-      @media @phone {
+      @media @desktop-only {
         text-align: left;
       }
     }

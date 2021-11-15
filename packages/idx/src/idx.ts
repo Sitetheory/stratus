@@ -545,6 +545,8 @@ export interface Property extends LooseObject {
     ListAgentFullName?: string
     ListAgentFirstName?: string
     ListAgentLastName?: string
+    ListAgentDirectPhone?: string
+    ListAgentOfficePhone?: string
     CoListAgentFullName?: string
     CoListAgentFirstName?: string
     CoListAgentLastName?: string
@@ -1237,34 +1239,39 @@ const angularJsService = (
                 sharedValues.contact.name = response.data.contactName
             }
             if (
-                Object.prototype.hasOwnProperty.call(response.data.contact, 'emails')
-                && _.isPlainObject(response.data.contact.emails)
+                Object.prototype.hasOwnProperty.call(response.data, 'contact')
+                && _.isPlainObject(response.data.contact)
             ) {
-                sharedValues.contact.emails = response.data.contact.emails
-            }
-            if (
-                Object.prototype.hasOwnProperty.call(response.data.contact, 'locations')
-                && _.isPlainObject(response.data.contact.locations)
-            ) {
-                sharedValues.contact.locations = response.data.contact.locations
-            }
-            if (
-                Object.prototype.hasOwnProperty.call(response.data.contact, 'phones')
-                && _.isPlainObject(response.data.contact.phones)
-            ) {
-                sharedValues.contact.phones = response.data.contact.phones
-            }
-            if (
-                Object.prototype.hasOwnProperty.call(response.data.contact, 'socialUrls')
-                && _.isPlainObject(response.data.contact.socialUrls)
-            ) {
-                sharedValues.contact.socialUrls = response.data.contact.socialUrls
-            }
-            if (
-                Object.prototype.hasOwnProperty.call(response.data.contact, 'urls')
-                && _.isPlainObject(response.data.contact.urls)
-            ) {
-                sharedValues.contact.urls = response.data.contact.urls
+                if (
+                    Object.prototype.hasOwnProperty.call(response.data.contact, 'emails')
+                    && _.isPlainObject(response.data.contact.emails)
+                ) {
+                    sharedValues.contact.emails = response.data.contact.emails
+                }
+                if (
+                    Object.prototype.hasOwnProperty.call(response.data.contact, 'locations')
+                    && _.isPlainObject(response.data.contact.locations)
+                ) {
+                    sharedValues.contact.locations = response.data.contact.locations
+                }
+                if (
+                    Object.prototype.hasOwnProperty.call(response.data.contact, 'phones')
+                    && _.isPlainObject(response.data.contact.phones)
+                ) {
+                    sharedValues.contact.phones = response.data.contact.phones
+                }
+                if (
+                    Object.prototype.hasOwnProperty.call(response.data.contact, 'socialUrls')
+                    && _.isPlainObject(response.data.contact.socialUrls)
+                ) {
+                    sharedValues.contact.socialUrls = response.data.contact.socialUrls
+                }
+                if (
+                    Object.prototype.hasOwnProperty.call(response.data.contact, 'urls')
+                    && _.isPlainObject(response.data.contact.urls)
+                ) {
+                    sharedValues.contact.urls = response.data.contact.urls
+                }
             }
         }
 
@@ -3178,6 +3185,38 @@ const angularJsService = (
         return googleMapsKey
     }
 
+    function getWebsiteMainContact(): {
+        name: string
+        email: string | null
+        phone: string | null
+    } | null {
+        const contact: {
+            name: string | null
+            email: string | null
+            phone: string | null
+        } = {
+            name: null,
+            email: null,
+            phone: null,
+        }
+
+        if (_.isPlainObject(sharedValues.contact)) {
+            contact.name = _.clone(sharedValues.contact.name)
+            if (sharedValues.contact.emails.hasOwnProperty('Main')) {
+                contact.email = _.clone(sharedValues.contact.emails.Main)
+            }
+            if (sharedValues.contact.phones.hasOwnProperty('Main')) {
+                contact.phone = _.clone(sharedValues.contact.phones.Main)
+            }
+        }
+
+        if (!_.isString(contact.name) || contact.name === '') {
+            // Don't return an empty object. (or one withg a name, as a a basic item)
+            return null
+        }
+        return contact
+    }
+
     /**
      * Get the Input element of a specified ID
      */
@@ -3304,6 +3343,7 @@ const angularJsService = (
         getStreetAddress,
         getUrlOptions,
         getUrlOptionsPath,
+        getWebsiteMainContact,
         on,
         registerDetailsInstance,
         registerDisclaimerInstance,

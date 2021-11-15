@@ -251,5 +251,5 @@ Stratus.Components.IdxDisclaimer = {
             $scope.onWatchers.forEach(killOnWatcher => killOnWatcher())
         }
     },
-    template: '<div id="{{::elementId}}" class="disclaimer-outer-container" data-ng-cloak data-ng-show="idxService.length > 0 && !hideMe" aria-label="Disclaimers"><div class="disclaimer-container" data-ng-repeat="service in idxService" data-ng-bind-html="service.disclaimerHTML"></div><div class="mls-logos-container" aria-label="Logos"><img class="mls-service-logo" data-ng-show="service.logo.default" data-ng-repeat="service in idxService" aria-label="{{service.name}}" data-ng-src="{{service.logo.medium || service.logo.default}}"></div></div>'
+    template: '<div id="{{::elementId}}" class="disclaimer-outer-container" data-ng-cloak data-ng-show="idxService.length > 0 && !hideMe" role="contentinfo" aria-label="IDX Disclaimers"><div class="disclaimer-container" data-ng-repeat="service in idxService" data-ng-bind-html="service.disclaimerHTML"></div><div class="mls-logos-container" aria-label="Logos"><img class="mls-service-logo" data-ng-show="service.logo.default" data-ng-repeat="service in idxService" aria-label="{{service.name}}" data-ng-src="{{service.logo.medium || service.logo.default}}"></div></div>'
 }

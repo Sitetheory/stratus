@@ -1,4 +1,4 @@
-<div id="{{elementId}}" class="search-mini font-primary" data-ng-cloak>
+<div id="{{elementId}}" class="search-mini font-primary" role="search" aria-label="Property" data-ng-cloak>
     <div class="search-row">
         <h2 data-ng-show="widgetName" data-ng-bind="widgetName"></h2>
         <div class="search-input">
@@ -170,7 +170,7 @@
                     </div>
 
                     <!-- Only Include if these were preset in a Property Filter pages and we need the ability to remove them -->
-                    <div ng-if="options.query.where.City.length || options.query.where.MLSAreaMajor.length || options.PostalCode.length">
+                    <div data-ng-if="options.query.where.City.length || options.query.where.MLSAreaMajor.length || options.PostalCode.length">
                         <div class="sale-status-border dotted-spaced-underline"></div>
                         <h3 data-layout-align="space-around center">Preset Filters</h3>
                         <div class="specific-filters" data-layout="row" data-layout-align="space-around center" aria-label="Specific Areas">
@@ -234,20 +234,23 @@
                     <div class="sale-status-border dotted-spaced-underline"></div>
 
                     <div data-layout="row" data-layout-align="space-around center">
-                        <a class="btn" data-ng-click="search();filterMenu.close();">Search</a>
+                        <a class="btn" data-ng-click="search();filterMenu.close();" aria-label="Search Submission">Search</a>
                     </div>
 
                 </div>
             </div>
         </div>
 
-        <a class="open-filters" ng-click="showInlinePopup($event, '.stratus-idx-property-search-menu')">
+        <a
+                class="open-filters" data-ng-click="showInlinePopup($event, '.stratus-idx-property-search-menu')"
+                aria-label="Open Additional Search Options"
+        >
         Advanced Filters
         </a>
 
     </div>
 
     <div class="search-row" data-layout="row" data-layout-align="space-around center">
-        <a class="btn btn-submit" data-ng-click="search()">Search Now</a>
+        <a class="btn btn-submit" data-ng-click="search()" aria-label="Search Submission">Search Now</a>
     </div>
 </div>
