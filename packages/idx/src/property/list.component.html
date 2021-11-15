@@ -4,7 +4,7 @@
         <div class="header-section clearfix" data-ng-if="displayOrderOptions">
             <div class="sort-options-container" data-ng-if="collection.meta.data.totalRecords">
                 <md-menu data-md-position-mode="target-right target" data-md-offset="0 30">
-                    <div class=" options-button" data-ng-click="$mdMenu.open()" aria-label="Sort Options">
+                    <div class=" options-button" data-ng-click="$mdMenu.open()" aria-label="Sort Options - {{getOrderName()}}">
                         <i class="arrow small down grey"></i> <span class="options-name"><a href="" data-ng-bind="getOrderName() || 'Sort Options'"></a></span>
                     </div>
                     <md-menu-content data-ng-click="$mdMenu.close()">
@@ -20,94 +20,100 @@
         <div data-ng-show="collection.completed && !collection.pending && collection.models.length === 0" class="no-results">
             We didn't find any properties that fit your criteria.<span> You might want to try a broader search.</span>
         </div>
-        <div data-ng-show="collection.completed && !collection.pending && collection.models.length > 0"
-             class="list-container clearfix"
-             data-ng-class="displayPerRowText + '-per-row'"
-        >
-            <div data-ng-repeat="property in collection.models | limitTo:query.perPage:(query.page-1)*query.perPage" id="{{::elementId}}_{{::property._id}}"
-                 class="property-container" aria-labelledby="{{::elementId}}_{{::property._id}}_address" data-ng-cloak
+        <section role="region" aria-label="Property Results List">
+            <div data-ng-show="collection.completed && !collection.pending && collection.models.length > 0"
+                 class="list-container clearfix"
+                 data-ng-class="displayPerRowText + '-per-row'"
+                 role="list"
+                 aria-label="Property Results"
+                 aria-live="polite"
             >
-                <md-card class="property-item" data-ng-class="{highlight: property._unmapped._highlight}">
-                    <div class="property-image">
-                        <div class="property-status font-body" data-ng-bind="::Idx.getFriendlyStatus(property, preferredStatus)" aria-label="Property Status"></div>
-                        <div class="button btn" data-ng-href="{{::getDetailsURL(property)}}">
-                            Details
-                        </div>
-                        <a data-ng-click="displayModelDetails(property, $event)" data-ng-href="{{::getDetailsURL(property)}}" target="popup">
-                            <div class="image-wrapper"
-                                 data-stratus-src-version="{{::(property.Images[0].Lazy == 'stratus-src' ? 'best' : 'false')}}"
-                                 data-stratus-src="{{::property.Images[0].MediaURL}}"
-                                 aria-label="Main Image of Listing"
-                            >
-                                <img data-ng-if="::property.Images.length > 0" data-ng-src="{{::localDir}}images/stratus-property-shapeholder.png" alt="Image Shapeholder" aria-hidden="true" />
-                                <img data-ng-if="::property.Images.length === 0 || !property.Images" data-ng-src="{{::localDir}}images/no-image.jpg" alt="No Main Image Available"/>
+                <div data-ng-repeat="property in collection.models | limitTo:query.perPage:(query.page-1)*query.perPage" id="{{::elementId}}_{{::property._id}}"
+                     class="property-container" aria-labelledby="{{::elementId}}_{{::property._id}}_address"
+                     role="listitem" data-ng-cloak
+                >
+                    <md-card class="property-item" data-ng-class="{highlight: property._unmapped._highlight}">
+                        <div class="property-image">
+                            <div class="property-status font-body" data-ng-bind="::Idx.getFriendlyStatus(property, preferredStatus)"></div>
+                            <!-- This button is hidden in the CSS -->
+                            <div class="button btn" data-ng-href="{{::getDetailsURL(property)}}" aria-hidden="true">
+                                Details
                             </div>
-                        </a>
-                    </div>
-                    <div class="property-content">
-                        <div class="property-address dotted-spaced-underline">
-                            <div aria-label="Address" id="{{::elementId}}_{{::property._id}}_address">
-                                <h4>
-                                    <a data-ng-click="displayModelDetails(property, $event)" data-ng-href="{{::getDetailsURL(property)}}" data-ng-bind="::getStreetAddress(property)" aria-label="Street Address" target="popup"></a>
-                                    <br/>
-                                    <span class="city" data-ng-bind="::property.City" aria-label="City"></span>
-                                </h4>
-                            </div>
+                            <a data-ng-click="displayModelDetails(property, $event)" data-ng-href="{{::getDetailsURL(property)}}" target="popup">
+                                <div class="image-wrapper"
+                                     data-stratus-src-version="{{::(property.Images[0].Lazy == 'stratus-src' ? 'best' : 'false')}}"
+                                     data-stratus-src="{{::property.Images[0].MediaURL}}"
+                                     aria-label="Main Image of Listing"
+                                >
+                                    <img data-ng-if="::property.Images.length > 0" data-ng-src="{{::localDir}}images/stratus-property-shapeholder.png" alt="Image Shapeholder" aria-hidden="true" />
+                                    <img data-ng-if="::property.Images.length === 0 || !property.Images" data-ng-src="{{::localDir}}images/no-image.jpg" alt="No Main Image Available"/>
+                                </div>
+                            </a>
                         </div>
-                        <div class="property-data">
-                            <div class="property-type font-body">
-                                <span data-ng-if="::property.BedroomsTotal > 0" aria-label="Number of Beds">
-                                    <span data-ng-bind="::property.BedroomsTotal"></span> Beds
-                                </span>
-                                <span data-ng-if="::property.BathroomsFull > 0 || property.BathroomsTotalInteger > 0" aria-label="Number of Bathrooms">
-                                    <span data-ng-bind="::property.BathroomsFull || property.BathroomsTotalInteger"></span><span data-ng-if="::property.BathroomsHalf || property.BathroomsOneQuarter || property.BathroomsPartial">+</span>
-                                    Baths
+                        <div class="property-content">
+                            <div class="property-address dotted-spaced-underline">
+                                <div id="{{::elementId}}_{{::property._id}}_address" role="text">
+                                    <h4>
+                                        <a data-ng-click="displayModelDetails(property, $event)" data-ng-href="{{::getDetailsURL(property)}}" data-ng-bind="::getStreetAddress(property)" target="popup"></a>
+                                        <br/>
+                                        <span class="city" data-ng-bind="::property.City"></span>
+                                    </h4>
+                                </div>
+                            </div>
+                            <div class="property-data">
+                                <div class="property-type font-body">
+                                    <span data-ng-if="::property.BedroomsTotal > 0" role="text">
+                                        <span data-ng-bind="::property.BedroomsTotal"></span> Beds
                                     </span>
-                                <span data-ng-bind="::property.PropertySubType || property.PropertyType || property._Class" aria-label="Property Type"></span>
-                                <span class="property-price" data-ng-if="::property.ClosePrice || property.ListPrice" aria-label="Price">
-                                    $<span data-ng-bind="::property.ClosePrice || property.ListPrice | number"></span>
-                                </span>
+                                    <span data-ng-if="::property.BathroomsFull > 0 || property.BathroomsTotalInteger > 0" role="text">
+                                        <span data-ng-bind="::property.BathroomsFull || property.BathroomsTotalInteger"></span><span data-ng-if="::property.BathroomsHalf || property.BathroomsOneQuarter || property.BathroomsPartial">+</span>
+                                        Baths
+                                        </span>
+                                    <span data-ng-bind="::property.PropertySubType || property.PropertyType || property._Class"></span>
+                                    <span class="property-price" data-ng-if="::property.ClosePrice || property.ListPrice" role="text">
+                                        $<span data-ng-bind="::property.ClosePrice || property.ListPrice | number"></span>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="mls-service-name" role="text">
+                                <span data-ng-bind="::getMLSName(property._ServiceId)"></span>#
+                                <span data-ng-bind="::property.ListingId || property.ListingKey"></span>
                             </div>
                         </div>
-                        <!--<md-card-icon-actions>-->
-                        <!--<div class="property-button-container">-->
-                        <!--<md-button class="button btn" data-ng-click="displayModelDetails(property, $event)" data-ng-href="{{::getDetailsURL(property)}}">-->
-                        <!--Details-->
-                        <!--</md-button>-->
-                        <!--</div>-->
-                        <!--</md-card-icon-actions>-->
-                        <div class="mls-service-name" aria-label="MLS Number">
-                            <span data-ng-bind="::getMLSName(property._ServiceId)"></span>#
-                            <span data-ng-bind="::property.ListingId || property.ListingKey"></span>
-                        </div>
-                    </div>
-                </md-card>
+                    </md-card>
+                </div>
             </div>
-        </div>
+        </section>
         <div class="pager-container clearfix" data-ng-if="displayPager && collection.meta.data.totalPages >= 2">
-            <div class="pager-section">
+            <nav class="pager-section" role="navigation" aria-label="Property List Nav">
                 <div class="pager-count" data-ng-if="collection.meta.data.totalRecords">
-                    <span data-ng-bind="query.page"></span>/<span data-ng-bind="collection.meta.data.totalPages"></span>
+                    <span data-ng-bind="query.page" aria-current="page" aria-live=polite></span>/<span data-ng-bind="collection.meta.data.totalPages"></span>
                     Pages
                     <span class="pager-totals">
                     (
                         <!--<span data-ng-bind="(query.page-1)*query.perPage+1"></span>-<span data-ng-bind="(query.page*query.perPage)|min:collection.meta.data.totalRecords"></span> of --><span data-ng-bind="collection.meta.data.totalRecords"></span> properties )
                     </span>
                 </div>
-                <a class="pager-button {{query.page > 1 && collection.completed ? '' : 'disabled'}}" data-ng-click="pagePrevious($event)" aria-label="Previous Page">
+                <a class="pager-button {{query.page > 1 && collection.completed ? '' : 'disabled'}}"
+                   data-ng-disabled="!(query.page > 1 && collection.completed)"
+                   data-ng-click="pagePrevious($event)" aria-label="Previous Page"
+                >
                     <i class="arrow small left"></i>
                 </a>
-                <a class="pager-button {{query.page < collection.meta.data.totalPages && collection.completed ? '' : 'disabled'}}" data-ng-click="pageNext($event)" aria-label="Next Page">
+                <md-button class="pager-button {{query.page < collection.meta.data.totalPages && collection.completed ? '' : 'disabled'}}"
+                   data-ng-disabled="!(query.page < collection.meta.data.totalPages && collection.completed)"
+                   data-ng-click="pageNext($event)" aria-label="Next Page"
+                >
                     <i class="arrow small right"></i>
-                </a>
-                <div class="search-more-filters advanced-search-link" data-ng-if="advancedSearchUrl">
+                </md-button>
+                <md-button class="search-more-filters advanced-search-link" data-ng-if="advancedSearchUrl">
                     <a class="open-filters-link"
                        data-ng-href="{{ advancedSearchUrl }}">
                         <md-icon md-svg-src="{{ localDir + 'images/icons/actionButtons/filters.svg' }}"></md-icon>
                         <span class="btn-text"><span data-ng-bind="advancedSearchLinkName"></span></span>
                     </a>
-                </div>
-            </div>
+                </md-button>
+            </nav>
 
         </div>
         <stratus-idx-disclaimer data-init-now="collection.completed" data-hide-on-duplicate="{{hideDisclaimer}}"></stratus-idx-disclaimer>
