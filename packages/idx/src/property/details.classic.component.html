@@ -12,7 +12,7 @@
 	<div data-ng-if="model.completed && (model.data.ListingId || model.data.ListingKey)">
 		<div class="details-container" data-md-whiteframe="1">
 			<div class="details-header dotted-spaced-underline" data-layout="row" data-layout-align="space-between start" data-layout-wrap>
-				<div class="address-container" data-flex="100" data-flex-gt-xs="80" aria-label="Address">
+				<div class="address-container" data-flex="100" data-flex-gt-xs="80">
 					<h3 class="address">
 						<!--span data-ng-bind="::model.data.UnparsedAddress"></span-->
 						<span data-ng-bind="::model.data.InternetAddressDisplayYN === false ? 'Address Not Disclosed' : getStreetAddress()"></span><!--Address not yet available-->
@@ -60,7 +60,7 @@
 						<div class="price-banner-corner" aria-hidden="true"></div>
 						<div class="list-price-container" role="text">
 							<span class="list-price-label" data-ng-bind="model.data.ClosePrice ? 'Sold for' : 'Listed at'"></span>
-							<span class="list-price" data-ng-bind="'$' + (model.data.ClosePrice || model.data.ListPrice | number)" aria-label="Listing Price"></span>
+							<span class="list-price" data-ng-bind="'$' + (model.data.ClosePrice || model.data.ListPrice | number)"></span>
 						</div>
 					</div>
 					<div class="details-image">
@@ -75,32 +75,32 @@
 
 				<section class="details-specs-container" data-flex="100" data-flex-gt-xs="20" role="region" aria-label="Detail Highlights">
 					<div class="details-specs">
-                        <span role="text" aria-label="Property Status">Status: <span data-ng-bind="::Idx.getFullStatus(model.data, preferredStatus)"></span></span>
-						<span data-ng-if="::model.data.BedroomsTotal > 0" role="text" aria-label="Number of Bedrooms"><br><span data-ng-bind="::model.data.BedroomsTotal"></span> Beds</span>
-                        <span data-ng-if="::model.data.BathroomsFull > 0 || model.data.BathroomsTotalInteger > 0" role="text" aria-label="Number of Bathrooms">
+                        <span role="text">Status: <span data-ng-bind="::Idx.getFullStatus(model.data, preferredStatus)"></span></span>
+						<span data-ng-if="::model.data.BedroomsTotal > 0" role="text"><br><span data-ng-bind="::model.data.BedroomsTotal"></span> Beds</span>
+                        <span data-ng-if="::model.data.BathroomsFull > 0 || model.data.BathroomsTotalInteger > 0" role="text">
                             <br><span data-ng-bind="::model.data.BathroomsFull || model.data.BathroomsTotalInteger"></span> Baths
                         </span>
-                        <span data-ng-if="::model.data.BathroomsHalf > 0" role="text" aria-label="Number of Half Bathrooms">
+                        <span data-ng-if="::model.data.BathroomsHalf > 0" role="text">
                             <br><span data-ng-bind="::model.data.BathroomsHalf"></span> Half Baths
                         </span>
-                        <span data-ng-if="::model.data.BathroomsOneQuarter > 0" role="text" aria-label="Number of Quarter Bathrooms">
+                        <span data-ng-if="::model.data.BathroomsOneQuarter > 0" role="text">
                             <br><span data-ng-bind="::model.data.BathroomsOneQuarter"></span> Quarter Baths
                         </span>
-                        <span data-ng-if="::model.data.BathroomsPartial > 0" role="text" aria-label="Number of Partial Bathrooms">
+                        <span data-ng-if="::model.data.BathroomsPartial > 0" role="text">
                             <br><span data-ng-bind="::model.data.BathroomsPartial"></span> Partial Baths
                         </span>
-                        <span data-ng-if="::model.data.CloseDate && Idx.getFriendlyStatus(model.data) == 'Closed'" role="text" aria-label="Date Closed">
+                        <span data-ng-if="::model.data.CloseDate && Idx.getFriendlyStatus(model.data) == 'Closed'" role="text">
                             <br><span data-ng-bind="::Idx.getFriendlyStatus(model.data, preferredStatus)"></span> on
                             <time data-ng-bind="::model.data.CloseDate | moment:{unix:false,format:'MMM Do YYYY'}" datetime="{{::model.data.CloseDate}}"></time>
                         </span>
-                        <span data-ng-if="::model.data.OnMarketDate" role="text" aria-label="Date Listed">
+                        <span data-ng-if="::model.data.OnMarketDate" role="text">
                             <br>Listed on
                             <time data-ng-bind="::model.data.OnMarketDate | moment:{unix:false,format:'MMM Do YYYY'}" datetime="{{::model.data.OnMarketDate}}"></time>
                         </span>
-                        <span data-ng-if="::model.data.CloseDate && model.data.ClosePrice && model.data.ListPrice" role="text" aria-label="List Price">
+                        <span data-ng-if="::model.data.CloseDate && model.data.ClosePrice && model.data.ListPrice" role="text">
                             <br>Listed at <span data-ng-bind="'$' + (model.data.ListPrice | number)"></span>
                         </span>
-                        <span data-ng-if="::model.data.OnMarketDate && Idx.getFriendlyStatus(model.data) === 'Closed' && model.data.CloseDate" role="text">
+                        <span data-ng-if="::model.data.OnMarketDate && Idx.getFriendlyStatus(model.data) === 'Closed' && model.data.CloseDate">
                             <!-- Closed with start and end Dates. Give number of days between -->
                             <br>Days on Market:
                             <span data-ng-bind="::model.data.OnMarketDate | moment:{unix:false,diff:model.data.CloseDate,duration:'days'}"></span>
@@ -114,13 +114,13 @@
                             <!-- MLS provides DaysOnMarket, but we weren't given a Start time, use MLS provided times (may be inaccurate) -->
                             <br>Days on Market: <span data-ng-bind="::model.data.DaysOnMarket | number"></span>
                         </span>
-                        <span data-ng-if="::model.data.ArchitecturalStyle" role="text" aria-label="Architectural Style">
+                        <span data-ng-if="::model.data.ArchitecturalStyle" role="text">
                             <br>Style: <span data-ng-repeat="item in ::model.data.ArchitecturalStyle" class="repeatedArray"><span data-ng-bind="::item"></span><span class="hideLastChild">,&nbsp;</span></span>
                         </span>
-                        <span data-ng-if="::model.data.YearBuilt" role="text" aria-label="Year Built">
+                        <span data-ng-if="::model.data.YearBuilt" role="text">
                             <br>Built in <span data-ng-bind="::model.data.YearBuilt"></span>
                         </span>
-                        <span data-ng-if="::model.data.LivingArea" role="text" aria-label="Living Area Size">
+                        <span data-ng-if="::model.data.LivingArea" role="text">
                             <br>Living Area:
                             <span data-ng-bind="::model.data.LivingArea | number"></span>
                             <span data-ng-if="::model.data.LivingAreaUnits">
@@ -130,7 +130,7 @@
 								Square Feet
 							</span>
                         </span>
-                        <span data-ng-if="::model.data.LeasableArea" role="text" aria-label="Leasable Area Size">
+                        <span data-ng-if="::model.data.LeasableArea" role="text">
                             <br>Leasable:
                             <span data-ng-bind="::model.data.LeasableArea | number"></span>
                             <span data-ng-if="::model.data.LeasableAreaUnits">
@@ -140,7 +140,7 @@
 								Square Feet
 							</span>
                         </span>
-                        <span data-ng-if="::model.data.BuildingAreaTotal" role="text" aria-label="Building Area Size">
+                        <span data-ng-if="::model.data.BuildingAreaTotal" role="text">
                             <br>Building:
                             <span data-ng-bind="::model.data.BuildingAreaTotal | number"></span>
                             <span data-ng-if="::model.data.BuildingAreaUnits">
@@ -150,7 +150,7 @@
 								Square Feet
 							</span>
                         </span>
-                        <span data-ng-if="::model.data.LotSizeArea" role="text" aria-label="Lot Size">
+                        <span data-ng-if="::model.data.LotSizeArea" role="text">
                             <br>Lot: <span data-ng-bind="::model.data.LotSizeArea | number"></span>
                             <span data-ng-if="::model.data.LotSizeUnits">
 								<span data-ng-bind="::model.data.LotSizeUnits"></span>
@@ -159,14 +159,14 @@
 								Square Feet
 							</span>
                         </span>
-                        <span data-ng-if="!model.data.LotSizeArea && model.data.LotSizeAcres" role="text" aria-label="Lot Size Acres">
+                        <span data-ng-if="!model.data.LotSizeArea && model.data.LotSizeAcres" role="text">
                             <br>Lot: <span data-ng-bind="::model.data.LotSizeAcres"></span> Acres
                         </span>
-                        <span data-ng-if="!model.data.LotSizeArea && model.data.LotSizeSquareFeet" role="text" aria-label="Lot Size Square Feet">
+                        <span data-ng-if="!model.data.LotSizeArea && model.data.LotSizeSquareFeet" role="text">
                             <br>Lot: <span data-ng-bind="::model.data.LotSizeSquareFeet  | number"></span> SqFt
                         </span>
-                        <span data-ng-if="::model.data.PoolPrivateYN" role="text" aria-label="Listing Contains Pool"><br>With Pool</span>
-                        <span data-ng-if="::model.data.Stories" role="text" aria-label="Number of Stories"><br>Stories: <span data-ng-bind="::model.data.Stories"></span></span>
+                        <span data-ng-if="::model.data.PoolPrivateYN" role="text"><br>With Pool</span>
+                        <span data-ng-if="::model.data.Stories" role="text"><br>Stories: <span data-ng-bind="::model.data.Stories"></span></span>
 
 						<!--{if !empty($data.standard.subdivision)}<br/>Subdivision: {$data.standard.subdivision}{/if}-->
 
@@ -177,8 +177,8 @@
 							</ul>
 						</span-->
 						<!--{if !empty($data.standard.sale_type) && !empty($data.standard.sale_type && $data.standard.sale_type != "NONE")}<br/>Sale Condition: {$data.standard.sale_type}{/if}-->
-						<span data-ng-if="::model.data.PropertyType"><br><span data-ng-bind="::model.data.PropertyType" aria-label="Property Type"></span></span>
-						<span data-ng-if="::model.data.PropertySubType"><br><span data-ng-bind="::model.data.PropertySubType" aria-label="Property Sub Type"></span></span>
+						<span data-ng-if="::model.data.PropertyType"><br><span data-ng-bind="::model.data.PropertyType"></span></span>
+						<span data-ng-if="::model.data.PropertySubType"><br><span data-ng-bind="::model.data.PropertySubType"></span></span>
 					</div>
 
 
