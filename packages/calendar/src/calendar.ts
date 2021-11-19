@@ -1,6 +1,6 @@
 // Calendar Component
 // --------------
-// See https://fullcalendar.io/docs/v4/release-notes
+// See https://fullcalendar.io/docs/v5/release-notes
 // https://www.gracedover.com/Connect/General-Calendar
 // https://gracedover.ccbchurch.com/w_calendar_sub.ics?campus_id=1
 // TODO later when implementing new data source types, refer to https://fullcalendar.io/docs/google-calendar as a plugin example
@@ -35,12 +35,7 @@ import '@stratusjs/angularjs/services/collection'
 import '@stratusjs/angularjs/services/registry'
 import '@stratusjs/calendar/iCal'
 
-// Services
-// import {Model} from '@stratusjs/angularjs/services/model'
-// import {Collection} from '@stratusjs/angularjs/services/collection'
-// import {Registry} from '@stratusjs/angularjs/services/registry'
 // Components
-// import * as fullCalendarCustomViewPlugin from '@stratusjs/calendar/customView'
 import { customViewPluginConstructor } from '@stratusjs/calendar/customView'
 
 // Stratus Utilities
@@ -53,9 +48,7 @@ import {ICalExpander} from '@stratusjs/calendar/iCal'
 
 // Environment
 const min = !cookie('env') ? '.min' : ''
-// const name = 'calendar'
 const packageName = 'calendar'
-// const localPath = '@stratusjs/calendar/src'
 const localDir = `${Stratus.BaseUrl}${Stratus.DeploymentPath}@stratusjs/${packageName}/src`
 
 export type CalendarScope = angular.IScope & {
@@ -101,7 +94,7 @@ export type CalendarScope = angular.IScope & {
         }
         defaultView: string // 'dayGridMonth'
         possibleViews: string[] // ['dayGridMonth', 'timeGridWeek', 'timeGridDay']
-        defaultDate: any
+        defaultDate: Date
         nowIndicator: boolean
         timeZone: string // 'local'
         eventForceAllDay: boolean
@@ -149,10 +142,11 @@ Stratus.Components.Calendar = {
     ) {
         // Initialize
         const $ctrl = this
-        $ctrl.uid = _.uniqueId(_.snakeCase(packageName) + '_')
+        $ctrl.uid = _.uniqueId(_.camelCase(packageName) + '_')
         Stratus.Instances[$ctrl.uid] = $scope
         $scope.elementId = $attrs.elementId || $ctrl.uid
 
+        // noinspection JSIgnoredPromiseFromCall
         Stratus.Internals.CssLoader(`${localDir}/${packageName}${min}.css`)
         $scope.initialized = false
 
@@ -223,7 +217,6 @@ Stratus.Components.Calendar = {
             fullCalendarDayGridPlugin.default, // Plugins are ES6 imports and return with 'default'
             fullCalendarTimeGridPlugin.default, // Plugins are ES6 imports and return with 'default'
             fullCalendarListPlugin.default, // Plugins are ES6 imports and return with 'default'
-            // fullCalendarCustomViewPlugin.default // Plugins are ES6 imports and return with 'default'
             customViewPluginConstructor($scope, $compile, $sce) // Plugins are ES6 imports and return with 'default'
         ]
 
@@ -235,25 +228,27 @@ Stratus.Components.Calendar = {
 
         /** This function builds the URL for a CSS Resource based on configuration path. */
         const resourceUrl = (resource: string) => `${Stratus.BaseUrl}${Stratus.DeploymentPath}${resource}/main.css`
-        // const resourceUrl = (resource: any) => Stratus.BaseUrl + boot.configuration.paths[resource].replace(/\.[^.]+$/, '.css')
 
         // CSS Loading depends on Views possible
 
         // Base CSS always required
-        // Stratus.Internals.CssLoader(resourceUrl('@fullcalendar/core'))
+        // noinspection JSIgnoredPromiseFromCall
         Stratus.Internals.CssLoader(resourceUrl('@fullcalendar/common'))
-        // Check if dayGrid is used and load the CSS. TODO load here as well rather than at init
+        // Check if dayGrid is used and load the CSS. load here as well rather than at init
         if ($scope.options.possibleViews.some((r: any) => ['dayGrid', 'dayGridDay', 'dayGridWeek', 'dayGridMonth'].includes(r))) {
+            // noinspection JSIgnoredPromiseFromCall
             Stratus.Internals.CssLoader(resourceUrl('@fullcalendar/daygrid'))
         }
-        // Check if timeGrid is used and load the CSS. TODO load here as well rather than at init
+        // Check if timeGrid is used and load the CSS. load here as well rather than at init
         if ($scope.options.possibleViews.some((r: any) => ['timeGrid', 'timeGridDay', 'timeGridWeek'].includes(r))) {
+            // noinspection JSIgnoredPromiseFromCall
             Stratus.Internals.CssLoader(
                 resourceUrl('@fullcalendar/timegrid')
             )
         }
-        // Check if dayGrid is used and load the CSS. TODO load here as well rather than at init
+        // Check if dayGrid is used and load the CSS. load here as well rather than at init
         if ($scope.options.possibleViews.some((r: any) => ['list', 'listDay', 'listWeek', 'listMonth', 'listYear'].includes(r))) {
+            // noinspection JSIgnoredPromiseFromCall
             Stratus.Internals.CssLoader(
                 resourceUrl('@fullcalendar/list')
             )

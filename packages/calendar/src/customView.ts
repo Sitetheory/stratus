@@ -35,8 +35,6 @@ import { CalendarScope } from '@stratusjs/calendar/calendar'
 
 // Stratus Utilities
 import {cookie} from '@stratusjs/core/environment'
-// import {LooseObject} from '@stratusjs/core/misc'
-// import {EventUiHash} from '@fullcalendar/core/component/event-ui'
 
 type  EventApiExtended = EventApi & {
     descriptionHTML?: any
@@ -46,7 +44,6 @@ type  EventApiExtended = EventApi & {
 const min = !cookie('env') ? '.min' : ''
 const packageName = 'calendar'
 const componentName = 'customView'
-// const localPath = '@stratusjs/calendar/src'
 const localDir = `${Stratus.BaseUrl}${Stratus.DeploymentPath}@stratusjs/${packageName}/src/${componentName}`
 const defaultTemplate = 'default'
 

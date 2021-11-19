@@ -10,6 +10,7 @@ import angular from 'angular'
 // tslint:disable-next-line:no-duplicate-imports
 import 'angular'
 import 'ical.js' // Global ICAL variable.... not able to be sandboxed yet
+import {LooseObject} from '@stratusjs/core/misc'
 
 // Globals
 declare var ICAL: any
@@ -25,7 +26,7 @@ export class ICalExpander {
 
     [key: string]: any
 
-    constructor(icsData: any, opts?: { [key: string]: any }) {
+    constructor(icsData: any, opts?: LooseObject) {
         // Hydrate Options
         opts = opts || {}
         // Only populate non-null values
