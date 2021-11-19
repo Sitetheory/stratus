@@ -95,7 +95,7 @@ export interface CollectionModelOptions extends ModelOptions {
 
 export const CollectionOptionKeys = keys<CollectionOptions>()
 
-export interface SyncOptions {
+export interface CollectionSyncOptions {
     headers?: LooseObject<string>
     nocache?: boolean
 }
@@ -124,7 +124,7 @@ export class Collection<T = LooseObject> extends EventManager {
     meta = new ModelBase<T>()
     model = Model
     models: Model<T>[] | (Model<T>['data'])[] = []
-    types: any = []
+    types: Array<string> = []
     xhr: XHR
     cacheResponse: LooseObject<LooseObject|Array<LooseObject>|string> = {}
     cacheHeaders: LooseObject<LooseObject<string>> = {}
@@ -237,7 +237,7 @@ export class Collection<T = LooseObject> extends EventManager {
         return this.urlRoot + (this.targetSuffix || '')
     }
 
-    inject(data: any, type?: any) {
+    inject(data: Array<LooseObject>, type?: string) {
         if (!_.isArray(data)) {
             return
         }
@@ -262,7 +262,7 @@ export class Collection<T = LooseObject> extends EventManager {
     }
 
     // TODO: Abstract this deeper
-    sync(action?: string, data?: LooseObject, options?: SyncOptions) {
+    sync(action?: string, data?: LooseObject, options?: CollectionSyncOptions) {
         // XHR Flags
         this.pending = true
 
@@ -309,7 +309,7 @@ export class Collection<T = LooseObject> extends EventManager {
             this.xhr = new XHR(request)
 
             // TODO: Make this into an over-writable function
-            const handler = (response: LooseObject|Array<LooseObject>|string) => {
+            const handler = (response: LooseObject | Array<LooseObject> | string) => {
                 if (!_.isObject(response) && !_.isArray(response)) {
                     // Build Report
                     const error = new Stratus.Prototypes.Error({
@@ -318,9 +318,15 @@ export class Collection<T = LooseObject> extends EventManager {
                     }, {})
 
                     // XHR Flags
-                    this.pending = false
-                    this.completed = true
                     this.error = true
+                    this.pending = false
+
+                    // Note: I've disabled this because a model should not be marked
+                    // as completed if it hasn't received a proper entity or prototype
+                    // initially.  This is to ensure we don't save entities with the
+                    // possibility of nullified fields due to a broken retrieval,
+                    // resulting in the replacement of good data for bad.
+                    // this.completed = true
 
                     // Trigger Change Event
                     this.throttleTrigger('change')
@@ -403,7 +409,7 @@ export class Collection<T = LooseObject> extends EventManager {
         })
     }
 
-    fetch(action?: string, data?: LooseObject, options?: SyncOptions) {
+    fetch(action?: string, data?: LooseObject, options?: CollectionSyncOptions) {
         return this.sync(action, data || this.meta.get('api'), options)
             .catch(async (error: any) => {
                     console.error('FETCH:', error)
