@@ -71,7 +71,7 @@ export class XHR {
     }
 
     // TODO: allow this to pass in options like the constructor
-    send(): Promise<LooseObject|Array<LooseObject>|XMLHttpRequest|string> {
+    send(): Promise<LooseObject|Array<LooseObject>|string> {
         // Make Request
         // TODO: Make this possibly store a const and store each reference in an array (simultaneous calls as an option)
         this.xhr = new XMLHttpRequest()
