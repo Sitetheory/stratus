@@ -237,7 +237,7 @@ export class ICalExpander {
             organizer: e.organizer,
             id: e.uid,
             location: e.location,
-            url: e.url,
+            url: e.url || '',
             allDay: e.allDay,
             image: e.image // Custom item
         }
