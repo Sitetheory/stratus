@@ -15,12 +15,11 @@ import _ from 'lodash'
 import angular from 'angular'
 // tslint:disable-next-line:no-duplicate-imports
 import 'angular'
-import 'jquery'
 import * as moment from 'moment'
 import 'moment-range'
 
 // FullCalendar
-import '@fullcalendar/core'
+import '@fullcalendar/core/vdom.cjs'
 import * as momentPlugin from '@fullcalendar/moment'
 import * as momentTimezonePlugin from '@fullcalendar/moment-timezone'
 import * as fullCalendarDayGridPlugin from '@fullcalendar/daygrid'
@@ -41,7 +40,8 @@ import '@stratusjs/calendar/iCal'
 // import {Collection} from '@stratusjs/angularjs/services/collection'
 // import {Registry} from '@stratusjs/angularjs/services/registry'
 // Components
-import * as fullCalendarCustomViewPlugin from '@stratusjs/calendar/customView'
+// import * as fullCalendarCustomViewPlugin from '@stratusjs/calendar/customView'
+import { customViewPluginConstructor } from '@stratusjs/calendar/customView'
 
 // Stratus Utilities
 import {cookie} from '@stratusjs/core/environment'
@@ -53,8 +53,82 @@ import {ICalExpander} from '@stratusjs/calendar/iCal'
 
 // Environment
 const min = !cookie('env') ? '.min' : ''
-const name = 'calendar'
-const localPath = '@stratusjs/calendar/src'
+// const name = 'calendar'
+const packageName = 'calendar'
+// const localPath = '@stratusjs/calendar/src'
+const localDir = `${Stratus.BaseUrl}${Stratus.DeploymentPath}@stratusjs/${packageName}/src`
+
+export type CalendarScope = angular.IScope & {
+    elementId: string
+    calendarId: string
+    initialized: boolean
+    fetched: boolean
+    calendar: Calendar
+    calendarEl: HTMLElement
+
+    startRange: unknown // moment
+    endRange: unknown// moment
+    options: {
+        customButtons: any
+        buttonIcons: {
+            prev: string // 'left-single-arrow',
+            next: string // 'right-single-arrow',
+            prevYear: string // 'left-double-arrow',
+            nextYear: string // 'right-double-arrow'
+        }
+        buttonText: {
+            today: string // 'today',
+
+            dayGridMonth: string // 'month',
+            listMonth: string // 'month list',
+            timeGridWeek: string // 'week agenda',
+            dayGridWeek: string // 'week',
+            listWeek: string // 'week list',
+            timeGridDay: string // 'day agenda',
+            dayGridDay: string // 'day',
+            listDay: string // 'day list',
+            listYear: string // 'year',
+
+            customArticleDay: string // 'article',
+            customArticleWeek: string // 'article',
+            customArticleMonth: string // 'article',
+            customArticleYear: string // 'article'
+        }
+        header: {
+            left: string // 'prev,next today'
+            center: string // 'title'
+            right: string // 'month,weekGrid,dayGrid'
+        }
+        defaultView: string // 'dayGridMonth'
+        possibleViews: string[] // ['dayGridMonth', 'timeGridWeek', 'timeGridDay']
+        defaultDate: any
+        nowIndicator: boolean
+        timeZone: string // 'local'
+        eventForceAllDay: boolean
+        eventLimit: number // 7
+        eventLimitClick: 'popover' | 'week' | 'day' | string // 'popover'
+        fixedWeekCount: boolean
+        firstDay: number // 0
+        weekends: boolean // true
+        hiddenDays: number[] // []
+        weekNumbers: boolean
+        weekNumberCalculation: 'local' | 'ISO' | ((m: Date) => number) // string // 'local'
+        businessHours: boolean
+        RTL: boolean
+        height: number | 'auto' | 'parent' // string | number
+        contentHeight: number | 'auto' // string | number
+        aspectRatio: number // 1.35
+        handleWindowResize: boolean // true
+        windowResizeDelay: number // 100
+        eventSources: string[] // urls
+        plugins: any[] // imports
+    }
+    customViews: {[viewUid: string]: string}
+
+    addEventICSSource(url: string): Promise<unknown>
+    handleEventClick(clickEvent: any): false
+    displayEventDialog(calEvent: EventApi, clickEvent: MouseEvent): void
+}
 
 // This component is a simple calendar at this time.
 Stratus.Components.Calendar = {
@@ -64,7 +138,7 @@ Stratus.Components.Calendar = {
         options: '@'
     },
     controller(
-        $scope: angular.IScope & any,
+        $scope: CalendarScope, // angular.IScope & any, // CalendarScope
         $attrs: angular.IAttributes & any,
         $element: JQLite,
         $sce: angular.ISCEService,
@@ -75,13 +149,11 @@ Stratus.Components.Calendar = {
     ) {
         // Initialize
         const $ctrl = this
-        $ctrl.uid = _.uniqueId(_.snakeCase(name) + '_')
+        $ctrl.uid = _.uniqueId(_.snakeCase(packageName) + '_')
         Stratus.Instances[$ctrl.uid] = $scope
         $scope.elementId = $attrs.elementId || $ctrl.uid
 
-        Stratus.Internals.CssLoader(
-            `${Stratus.BaseUrl}${Stratus.BundlePath}${localPath}/${name}${min}.css`
-        )
+        Stratus.Internals.CssLoader(`${localDir}/${packageName}${min}.css`)
         $scope.initialized = false
 
         // FullCalendar
@@ -138,8 +210,8 @@ Stratus.Components.Calendar = {
         $scope.options.weekNumberCalculation = $scope.options.weekNumberCalculation || 'local'
         $scope.options.businessHours = $scope.options.businessHours || false
         $scope.options.RTL = $scope.options.RTL || false
-        $scope.options.height = $scope.options.height || null
-        $scope.options.contentHeight = $scope.options.contentHeight || null
+        $scope.options.height = $scope.options.height || 'auto'
+        $scope.options.contentHeight = $scope.options.contentHeight || 'auto'
         $scope.options.aspectRatio = $scope.options.aspectRatio || 1.35
         $scope.options.handleWindowResize = $scope.options.handleWindowResize || true
         $scope.options.windowResizeDelay = $scope.options.windowResizeDelay || 100
@@ -151,7 +223,8 @@ Stratus.Components.Calendar = {
             fullCalendarDayGridPlugin.default, // Plugins are ES6 imports and return with 'default'
             fullCalendarTimeGridPlugin.default, // Plugins are ES6 imports and return with 'default'
             fullCalendarListPlugin.default, // Plugins are ES6 imports and return with 'default'
-            fullCalendarCustomViewPlugin.default // Plugins are ES6 imports and return with 'default'
+            // fullCalendarCustomViewPlugin.default // Plugins are ES6 imports and return with 'default'
+            customViewPluginConstructor($scope, $compile, $sce) // Plugins are ES6 imports and return with 'default'
         ]
 
         $scope.initialized = false
@@ -160,24 +233,18 @@ Stratus.Components.Calendar = {
         $scope.endRange = moment.default()
         $scope.customViews = {} // Filled by the customPlugin to hold any custom Views currently displayed for storage and reuse
 
-        /**
-         * This function builds the URL for a CSS Resource based on configuration path.
-         *
-         */
-        const resourceUrl = (resource: any) => Stratus.BaseUrl + boot.configuration.paths[resource].replace(/\.[^.]+$/, '.css')
+        /** This function builds the URL for a CSS Resource based on configuration path. */
+        const resourceUrl = (resource: string) => `${Stratus.BaseUrl}${Stratus.DeploymentPath}${resource}/main.css`
+        // const resourceUrl = (resource: any) => Stratus.BaseUrl + boot.configuration.paths[resource].replace(/\.[^.]+$/, '.css')
 
         // CSS Loading depends on Views possible
 
         // Base CSS always required
-
-        Stratus.Internals.CssLoader(
-            resourceUrl('@fullcalendar/core')
-        )
+        // Stratus.Internals.CssLoader(resourceUrl('@fullcalendar/core'))
+        Stratus.Internals.CssLoader(resourceUrl('@fullcalendar/common'))
         // Check if dayGrid is used and load the CSS. TODO load here as well rather than at init
         if ($scope.options.possibleViews.some((r: any) => ['dayGrid', 'dayGridDay', 'dayGridWeek', 'dayGridMonth'].includes(r))) {
-            Stratus.Internals.CssLoader(
-                resourceUrl('@fullcalendar/daygrid')
-            )
+            Stratus.Internals.CssLoader(resourceUrl('@fullcalendar/daygrid'))
         }
         // Check if timeGrid is used and load the CSS. TODO load here as well rather than at init
         if ($scope.options.possibleViews.some((r: any) => ['timeGrid', 'timeGridDay', 'timeGridWeek'].includes(r))) {
@@ -224,7 +291,7 @@ Stratus.Components.Calendar = {
         }
 
         // Fetch a ics source via URL and load into rendered fullcalendar
-        $scope.addEventICSSource = async (url: any) => {
+        $scope.addEventICSSource = async (url: string) => {
             // TODO handle bad fetch softly (throw)
             // FIXME cors-anywhere.herokuapp.com is no longer accepting all traffic anymore. disabling until there is another solution
             /*if (fullUrl.startsWith('http')) {
@@ -235,11 +302,15 @@ Stratus.Components.Calendar = {
             if (cookie('env')) {
                 console.log('fetched the events from:', url)
             }
-            const iCalExpander: any = new ICalExpander(response.data, {maxIterations: 0})
+            const iCalExpander = new ICalExpander(response.data, {maxIterations: 0})
             // TODO need options oh how to handle a date range.
             // Note that accepting ALL events could lead to running out of memory due to the vast size of some calendars
             // or the fact they could have infinite reoccurring events
-            const events: any = iCalExpander.jsonEventsForFullCalendar(new Date('2018-01-24T00:00:00.000Z'), new Date('2023-01-26T00:00:00.000Z'))
+            const twoYearsPast = new Date()
+            twoYearsPast.setDate(twoYearsPast.getDate() - (365 * 2)) // minus 2 years
+            const twoYearsFuture = new Date()
+            twoYearsFuture.setDate(twoYearsFuture.getDate() + (365 * 2)) // add 2 years
+            const events = iCalExpander.jsonEventsForFullCalendar(twoYearsPast, twoYearsFuture)
             $scope.calendar.addEventSource({
                 events
                 // TODO give Sitetheory options to color each event source
@@ -261,7 +332,7 @@ Stratus.Components.Calendar = {
         // Create MDDialog popup for an event
         $scope.displayEventDialog = (calEvent: EventApi, clickEvent: MouseEvent) => {
             $mdDialog.show({
-                templateUrl: `${Stratus.BaseUrl}${Stratus.BundlePath}${localPath}/eventDialog${min}.html`,
+                templateUrl: `${localDir}/eventDialog${min}.html`,
                 parent: angular.element(document.body),
                 targetEvent: clickEvent,
                 clickOutsideToClose: true,
@@ -346,21 +417,14 @@ Stratus.Components.Calendar = {
             $scope.calendarEl = document.getElementById($scope.calendarId)
 
             $scope.calendar = new Calendar($scope.calendarEl, {
-                // @ts-ignore
-                $scope,
-                $compile,
-                $sce,
-                // customViewScope: customViewScope,
-                // customViewComponent: compiledComponent,
-
                 plugins: $scope.options.plugins,
-                header: $scope.options.header,
-                defaultView: $scope.options.defaultView,
-                defaultDate: $scope.options.defaultDate,
+                headerToolbar: $scope.options.header,
+                initialView: $scope.options.defaultView,
+                initialDate: $scope.options.defaultDate,
                 nowIndicator: $scope.options.nowIndicator,
                 timeZone: $scope.options.timeZone,
-                eventLimit: $scope.options.eventLimit,
-                eventLimitClick: $scope.options.eventLimitClick,
+                dayMaxEventRows: $scope.options.eventLimit,
+                moreLinkClick: $scope.options.eventLimitClick,
                 buttonText: $scope.options.buttonText,
                 customButtons: $scope.options.customButtons,
                 fixedWeekCount: $scope.options.fixedWeekCount,
@@ -370,23 +434,20 @@ Stratus.Components.Calendar = {
                 weekNumbers: $scope.options.weekNumbers,
                 weekNumberCalculation: $scope.options.weekNumberCalculation,
                 businessHours: $scope.options.businessHours,
-                isRTL: $scope.options.RTL,
+                // isRTL: $scope.options.RTL, TODO this option was removed?
                 height: $scope.options.height,
                 contentHeight: $scope.options.contentHeight,
                 aspectRatio: $scope.options.aspectRatio,
                 handleWindowResize: $scope.options.handleWindowResize,
                 windowResizeDelay: $scope.options.windowResizeDelay,
                 eventClick: $scope.handleEventClick // Handles what happens when an event is clicked
-                /* eventRender: (info: any) => {
-                 console.log(info.event.extendedProps)
-                 } */
             })
             $scope.calendar.render()
             return $scope.calendar
         }
     },
-    template: '<div id="{{ elementId }}">' +
+    template: '<div id="{{ ::elementId }}">' +
         '<md-progress-linear md-mode="indeterminate" data-ng-if="!initialized"></md-progress-linear>' +
-        '<div id="{{ calendarId }}"></div>' +
+        '<div id="{{ ::calendarId }}"></div>' +
         '</div>'
 }

@@ -21,13 +21,14 @@ export class ICalExpander {
     skipInvalidDates = false
     jCalData: any
     component: any
-    events: any
+    events: any[]
 
     [key: string]: any
 
     constructor(icsData: any, opts?: { [key: string]: any }) {
         // Hydrate Options
         opts = opts || {}
+        // Only populate non-null values
         _.forEach(opts, (key: string, value: any) => {
             if (value === null) {
                 return
@@ -44,6 +45,7 @@ export class ICalExpander {
         if (this.skipInvalidDates) {
             this.events = this.events.filter((evt: any) => {
                 try {
+                    // Ensure these are proper Dates
                     evt.startDate.toJSDate()
                     evt.endDate.toJSDate()
                     return true
@@ -55,7 +57,7 @@ export class ICalExpander {
         }
     }
 
-    isEventWithinRange(after: any, before: any, startTime: any, endTime: any) {
+    isEventWithinRange(after: Date, before: Date, startTime: number, endTime: number) {
         return (!after || endTime >= after.getTime()) && (!before || startTime <= before.getTime())
     }
 
