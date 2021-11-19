@@ -30,7 +30,7 @@
 
 
                 <div class="clearfix event-content">
-                    <section class="st-grid column45 event-left-column">
+                    <section class="st-grid column45 event-left-column" aria-label="Time and Location">
                         <!-- If there is no event image, the time and location go here. Otherwise in the right column -->
                         <div data-ng-if="::!ctrl.eventData.extendedProps.image">
                             <p class="event-time" role="text">
@@ -55,7 +55,7 @@
                         <img class="event-image"  data-ng-if="::ctrl.eventData.extendedProps.image" data-ng-src="::ctrl.eventData.extendedProps.image" alt="{{::ctrl.eventData.title}}" />
                     </section>
                     <div class="st-grid column10" aria-hidden="true">&nbsp;</div>
-                    <section class="st-grid column45 event-right-column">
+                    <section class="st-grid column45 event-right-column" aria-label="Event Description">
 
                         <!-- If there is an event image, the time and location go here. Otherwise in the left column -->
                         <div data-ng-if="::ctrl.eventData.extendedProps.image">
