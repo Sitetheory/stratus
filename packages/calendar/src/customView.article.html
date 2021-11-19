@@ -1,6 +1,6 @@
 <md-content id="{{ elementId }}" class="{{ template }}-layout" layout-padding>
 
-	<md-card ng-repeat="eventData in events">
+	<md-card data-ng-repeat="eventData in events">
 		<div class="clearfix">
 			<div class="event-image-container" data-ng-if="::eventData.extendedProps.image">
 				<img class="event-image" data-ng-src="::eventData.extendedProps.image"/>

@@ -5,14 +5,13 @@
 		<div class="dialog-content">
 
 			<!-- Close Button -->
-			<button type="button" class="btn-close" ng-click="ctrl.close();">
+			<button type="button" class="btn-close" data-ng-click="ctrl.close();">
 				<span class="sr-only">Close Dialogue</span>
 				<md-icon md-svg-src="{{ 'sitetheorycore/images/icons/actionButtons/close.svg' | assetPath }}" aria-hidden="true"></md-icon>
 			</button>
 
 			<div class="title-container">
-				<h1 class="event-date" data-ng-bind="::ctrl.eventData.start | moment:{unix:false, format:'MMMM DD', tz:ctrl.timeZone}">
-				</h1>
+				<h1 class="event-date" data-ng-bind="::ctrl.eventData.start | moment:{unix:false, format:'MMMM DD', tz:ctrl.timeZone}"></h1>
 				<div class="title-table div-table">
 					<div class="div-table-row">
 						<div class="div-table-cell">
