@@ -435,6 +435,7 @@ Stratus.Components.Calendar = {
                 aspectRatio: $scope.options.aspectRatio,
                 handleWindowResize: $scope.options.handleWindowResize,
                 windowResizeDelay: $scope.options.windowResizeDelay,
+                eventInteractive: true,
                 eventClick: $scope.handleEventClick // Handles what happens when an event is clicked
             })
             $scope.calendar.render()
