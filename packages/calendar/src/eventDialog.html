@@ -1,91 +1,93 @@
-<div id="calendar-event-dialogue" class="initialize-dialogue dialogue-container background-light default-border-radius default-shadow">
-	<div class="background-color-pop event-border"></div>
-	<md-content layout-padding>
+<md-dialog aria-label="{{::ctrl.eventData.title + ' Event Dialog'}}">
+    <article id="calendar-event-dialogue" class="initialize-dialogue dialogue-container background-light default-border-radius default-shadow">
+        <div class="background-color-pop event-border"></div>
+        <md-content layout-padding>
 
-		<div class="dialog-content">
+            <div class="dialog-content">
 
-			<!-- Close Button -->
-			<button type="button" class="btn-close" data-ng-click="ctrl.close();">
-				<span class="sr-only">Close Dialogue</span>
-				<md-icon md-svg-src="{{ 'sitetheorycore/images/icons/actionButtons/close.svg' | assetPath }}" aria-hidden="true"></md-icon>
-			</button>
+                <!-- Close Button -->
+                <button type="button" class="btn-close" data-ng-click="ctrl.close();">
+                    <span class="sr-only">Close Event Dialog</span>
+                    <md-icon md-svg-src="{{ 'sitetheorycore/images/icons/actionButtons/close.svg' | assetPath }}" aria-hidden="true"></md-icon>
+                </button>
 
-			<div class="title-container">
-				<h1 class="event-date" data-ng-bind="::ctrl.eventData.start | moment:{unix:false, format:'MMMM DD', tz:ctrl.timeZone}"></h1>
-				<div class="title-table div-table">
-					<div class="div-table-row">
-						<div class="div-table-cell">
-							<div class="title-border accent-border"></div>
-						</div>
-						<div class="div-table-cell title-column">
-							<h3 class="event-title" data-ng-if="::ctrl.eventData.title" data-ng-bind="::ctrl.eventData.title"></h3>
-						</div>
-						<div class="div-table-cell">
-							<div class="title-border accent-border"></div>
-						</div>
-					</div>
-				</div>
-			</div>
+                <header class="title-container">
+                    <h1 class="event-date" data-ng-bind="::ctrl.eventData.start | moment:{unix:false, format:'MMMM DD', tz:ctrl.timeZone}"></h1>
+                    <div class="title-table div-table" role="text">
+                        <div class="div-table-row">
+                            <div class="div-table-cell" aria-hidden="true">
+                                <div class="title-border accent-border"></div>
+                            </div>
+                            <div class="div-table-cell title-column">
+                                <h3 class="event-title" data-ng-if="::ctrl.eventData.title" data-ng-bind="::ctrl.eventData.title"></h3>
+                            </div>
+                            <div class="div-table-cell" aria-hidden="true">
+                                <div class="title-border accent-border"></div>
+                            </div>
+                        </div>
+                    </div>
+                </header>
 
 
-			<div class="clearfix event-content">
-				<div class="st-grid column45 event-left-column">
-					<!-- If there is no event image, the time and location go here. Otherwise in the right column -->
-					<div  data-ng-if="::!ctrl.eventData.extendedProps.image">
-						<p class="event-time">
-							<strong>
-								<span class="accent-font-color event-time-label label">Time: </span>
-								<!-- TODO if AllDay, remove time stamps and show day only? -->
-								<span class="event-time-start" data-ng-bind="::ctrl.eventData.start | moment:{unix:false, format:'h:mm a', tz:ctrl.timeZone}"></span>
-								<span class="event-time-end" data-ng-if="::ctrl.eventData.end != null">
-								- <span data-ng-bind="::ctrl.eventData.end | moment:{unix:false,format:'h:mm a', tz:ctrl.timeZone}"></span>
-									<!-- TODO detect if it's not in the same day to add the day to the end time again -->
-							</span>
-							</strong>
-						</p>
-						<p class="event-location" data-ng-if="::ctrl.eventData.extendedProps.location">
-							<strong>
-								<span class="accent-font-color event-location-label label">Location: </span>
-								<span class="event-location-text" data-ng-bind="::ctrl.eventData.extendedProps.location"></span>
-							</strong>
-						</p>
-					</div>
+                <div class="clearfix event-content">
+                    <section class="st-grid column45 event-left-column">
+                        <!-- If there is no event image, the time and location go here. Otherwise in the right column -->
+                        <div data-ng-if="::!ctrl.eventData.extendedProps.image">
+                            <p class="event-time" role="text">
+                                <strong>
+                                    <span class="accent-font-color event-time-label label">Time: </span>
+                                    <!-- TODO if AllDay, remove time stamps and show day only? -->
+                                    <time class="event-time-start" data-ng-bind="::ctrl.eventData.start | moment:{unix:false, format:'h:mm a', tz:ctrl.timeZone}" datetime="{{::ctrl.eventData.start}}"></time>
+                                    <span class="event-time-end" data-ng-if="::ctrl.eventData.end != null">
+                                    - <time data-ng-bind="::ctrl.eventData.end | moment:{unix:false,format:'h:mm a', tz:ctrl.timeZone}" datetime="{{::ctrl.eventData.end}}"></time>
+                                        <!-- TODO detect if it's not in the same day to add the day to the end time again -->
+                                    </span>
+                                </strong>
+                            </p>
+                            <p class="event-location" data-ng-if="::ctrl.eventData.extendedProps.location" role="text">
+                                <strong>
+                                    <span class="accent-font-color event-location-label label">Location: </span>
+                                    <span class="event-location-text" data-ng-bind="::ctrl.eventData.extendedProps.location"></span>
+                                </strong>
+                            </p>
+                        </div>
 
-					<img class="event-image"  data-ng-if="::ctrl.eventData.extendedProps.image" data-ng-src="::ctrl.eventData.extendedProps.image" />
-				</div>
-				<div class="st-grid column10">&nbsp;</div>
-				<div class="st-grid column45 event-right-column">
+                        <img class="event-image"  data-ng-if="::ctrl.eventData.extendedProps.image" data-ng-src="::ctrl.eventData.extendedProps.image" alt="{{::ctrl.eventData.title}}" />
+                    </section>
+                    <div class="st-grid column10" aria-hidden="true">&nbsp;</div>
+                    <section class="st-grid column45 event-right-column">
 
-					<!-- If there is an event image, the time and location go here. Otherwise in the left column -->
-					<div  data-ng-if="::ctrl.eventData.extendedProps.image">
-						<p class="event-time">
-							<strong>
-							<span class="accent-font-color event-time-label label">Time: </span>
-							<!-- TODO if AllDay, remove time stamps and show day only? -->
-							<span class="event-time-start" data-ng-bind="::ctrl.eventData.start | moment:{unix:false, format:'h:mm a', tz:ctrl.timeZone}"></span>
-							<span class="event-time-end" data-ng-if="::ctrl.eventData.end != null">
-								- <span data-ng-bind="::ctrl.eventData.end | moment:{unix:false,format:'h:mm a', tz:ctrl.timeZone}"></span>
-								<!-- TODO detect if it's not in the same day to add the day to the end time again -->
-							</span>
-						</strong>
-						</p>
-						<p class="event-location" data-ng-if="::ctrl.eventData.extendedProps.location">
-							<strong>
-								<span class="accent-font-color event-location-label label">Location: </span>
-								<span class="event-location-text" data-ng-bind="::ctrl.eventData.extendedProps.location"></span>
-							</strong>
-						</p>
-					</div>
+                        <!-- If there is an event image, the time and location go here. Otherwise in the left column -->
+                        <div data-ng-if="::ctrl.eventData.extendedProps.image">
+                            <p class="event-time" role="text">
+                                <strong>
+                                <span class="accent-font-color event-time-label label">Time: </span>
+                                <!-- TODO if AllDay, remove time stamps and show day only? -->
+                                <time class="event-time-start" data-ng-bind="::ctrl.eventData.start | moment:{unix:false, format:'h:mm a', tz:ctrl.timeZone}" datetime="{{::ctrl.eventData.start}}"></time>
+                                <span class="event-time-end" data-ng-if="::ctrl.eventData.end != null">
+                                    - <time data-ng-bind="::ctrl.eventData.end | moment:{unix:false,format:'h:mm a', tz:ctrl.timeZone}" datetime="{{::ctrl.eventData.end}}"></time>
+                                    <!-- TODO detect if it's not in the same day to add the day to the end time again -->
+                                </span>
+                            </strong>
+                            </p>
+                            <p class="event-location" data-ng-if="::ctrl.eventData.extendedProps.location" role="text">
+                                <strong>
+                                    <span class="accent-font-color event-location-label label">Location: </span>
+                                    <span class="event-location-text" data-ng-bind="::ctrl.eventData.extendedProps.location"></span>
+                                </strong>
+                            </p>
+                        </div>
 
-					<!-- Perhaps we should wrap the description into something so it separate from everything else? -->
-					<p class="event-description" data-ng-if="::ctrl.eventData.descriptionHTML" data-ng-bind-html="::ctrl.eventData.descriptionHTML"></p>
+                        <!-- Perhaps we should wrap the description into something so it separate from everything else? -->
+                        <p class="event-description" data-ng-if="::ctrl.eventData.descriptionHTML" data-ng-bind-html="::ctrl.eventData.descriptionHTML"></p>
 
-					<p class="event-organizer" data-ng-if="::ctrl.eventData.extendedProps.organizer">
-						<span class="event-organizer-label label">Organizer: </span>
-						<span class="event-organizer-text" data-ng-bind="::ctrl.eventData.extendedProps.organizer"></span>
-					</p>
-				</div>
-			</div>
-		</div>
-	</md-content>
-</div>
+                        <p class="event-organizer" data-ng-if="::ctrl.eventData.extendedProps.organizer" role="text">
+                            <span class="event-organizer-label label">Organizer: </span>
+                            <span class="event-organizer-text" data-ng-bind="::ctrl.eventData.extendedProps.organizer"></span>
+                        </p>
+                    </section>
+                </div>
+            </div>
+        </md-content>
+    </article>
+</md-dialog>
