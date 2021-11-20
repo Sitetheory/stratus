@@ -411,9 +411,6 @@ export interface LooseObject<T=any> {
     [key: string]: T
 }
 export type LooseFunction<T=any> = (...args: any) => T
-export interface ObjectWithFunctions {
-    [key: string]: LooseFunction
-}
 
 // TODO: Add a PushState Handler for document.location.hash
 // https://developer.mozilla.org/en-US/docs/Web/API/Window/hashchange_event

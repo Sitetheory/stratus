@@ -22,7 +22,7 @@ const componentName = 'fullHeight'
 // There is not a very consistent way of pathing in Stratus at the moment
 // const localDir = `${Stratus.BaseUrl}${Stratus.DeploymentPath}@stratusjs/${packageName}/src/${moduleName}/`
 
-export type FullHeightScope = angular.IScope & { // & ObjectWithFunctions
+export type FullHeightScope = angular.IScope & { // & LooseObject<LooseFunction>
     initialized: boolean
 
     height: string
