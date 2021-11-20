@@ -14,7 +14,11 @@ import '@stratusjs/angularjs/services/model'
 import {Model} from '@stratusjs/angularjs/services/model'
 
 // Stratus Dependencies
-import {isJSON, ObjectWithFunctions} from '@stratusjs/core/misc'
+import {
+    isJSON,
+    LooseFunction,
+    LooseObject
+} from '@stratusjs/core/misc'
 import {cookie} from '@stratusjs/core/environment'
 
 // Environment
@@ -49,7 +53,7 @@ interface SubSectionOptionItems {
     [key: string]: string | SubSectionOptionItem
 }
 
-export type IdxPropertyDetailsSubSectionScope = angular.IScope & ObjectWithFunctions & {
+export type IdxPropertyDetailsSubSectionScope = angular.IScope & LooseObject<LooseFunction> & {
     elementId: string
     initialized: boolean
     model: Model

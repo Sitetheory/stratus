@@ -410,10 +410,7 @@ export function truncate(target: any, limit?: any, suffix?: any) {
 export interface LooseObject<T=any> {
     [key: string]: T
 }
-export type AnyFunction = (...args: any) => any
-export interface ObjectWithFunctions {
-    [key: string]: AnyFunction
-}
+export type LooseFunction<T=any> = (...args: any) => T
 
 // TODO: Add a PushState Handler for document.location.hash
 // https://developer.mozilla.org/en-US/docs/Web/API/Window/hashchange_event
