@@ -30,13 +30,12 @@ import {getInjector} from '@stratusjs/angularjs/injector'
 
 // AngularJS Services
 import {Collection} from '@stratusjs/angularjs/services/collection'
+import {XHR, XHRRequest} from '@stratusjs/core/datastore/xhr'
 
 // Instantiate Injector
 let injector = getInjector()
 
 // Angular Services
-// let $http: angular.IHttpService = injector ? injector.get('$http') : null
-let $http: angular.IHttpService
 // let $rootScope: angular.IRootScopeService = injector ? injector.get('$rootScope') : null
 let $rootScope: angular.IRootScopeService
 // let $mdToast: angular.material.IToastService = injector ? injector.get('$mdToast') : null
@@ -45,7 +44,7 @@ let $mdToast: angular.material.IToastService
 // Service Verification Function
 const serviceVerify = async () => {
     return new Promise(async (resolve, reject) => {
-        if ($http && $rootScope && $mdToast) {
+        if ($rootScope && $mdToast) {
             resolve(true)
             return
         }
@@ -53,18 +52,18 @@ const serviceVerify = async () => {
             injector = getInjector()
         }
         if (injector) {
-            $http = injector.get('$http')
+            // TODO: this is only used for the watcher (find a native replacement)
             $rootScope = injector.get('$rootScope')
+            // TODO: this is only used in 4 places to respond to errors (find a native replacement)
             $mdToast = injector.get('$mdToast')
         }
-        if ($http && $rootScope && $mdToast) {
+        if ($rootScope && $mdToast) {
             resolve(true)
             return
         }
         setTimeout(() => {
             if (cookie('env')) {
-                console.log('wait for $http, $rootScope, & $mdToast service:', {
-                    $http,
+                console.log('wait for $rootScope, & $mdToast service:', {
                     $rootScope,
                     $mdToast
                 })
@@ -74,6 +73,7 @@ const serviceVerify = async () => {
     })
 }
 
+// TODO: Remove this interface (replaced by XHRRequest)
 export interface HttpPrototype {
     headers: LooseObject
     method: string
@@ -100,6 +100,10 @@ export interface ModelOptions extends ModelBaseOptions {
 
 export const ModelOptionKeys = keys<ModelOptions>()
 
+export interface ModelSyncOptions {
+    headers?: LooseObject<string>
+}
+
 export class Model<T = LooseObject> extends ModelBase<T> {
     // Base Information
     name = 'Model'
@@ -120,6 +124,7 @@ export class Model<T = LooseObject> extends ModelBase<T> {
     meta = new ModelBase()
     route = new ModelBase()
     collection?: Collection = null
+    xhr: XHR
 
     // XHR Flags
     pending = false
@@ -365,7 +370,7 @@ export class Model<T = LooseObject> extends ModelBase<T> {
     }
 
     url() {
-        let url = this.getIdentifier() ? this.urlRoot + '/' + this.getIdentifier() : this.urlRoot + (this.targetSuffix || '')
+        let url = this.getIdentifier() ? `${this.urlRoot}/${this.getIdentifier()}` : `${this.urlRoot}${this.targetSuffix || ''}`
 
         // add further param to specific version
         if (getUrlParams('version')) {
@@ -401,7 +406,7 @@ export class Model<T = LooseObject> extends ModelBase<T> {
     }
 
     // TODO: Abstract this deeper
-    sync(action?: any, data?: any, options?: any): Promise<any> {
+    sync(action?: string, data?: LooseObject, options?: ModelSyncOptions): Promise<any> {
         // XHR Flags
         this.pending = true
 
@@ -415,10 +420,11 @@ export class Model<T = LooseObject> extends ModelBase<T> {
         this.sent = _.cloneDeep(this.data)
 
         // Execute XHR
+        // TODO: Get this in-line with Collection logic
         return new Promise(async (resolve: any, reject: any) => {
             action = action || 'GET'
             options = options || {}
-            const prototype: HttpPrototype = {
+            const request: XHRRequest = {
                 method: action,
                 url: this.url(),
                 headers: {}
@@ -426,35 +432,34 @@ export class Model<T = LooseObject> extends ModelBase<T> {
             if (!_.isUndefined(data)) {
                 if (action === 'GET') {
                     if (_.isObject(data) && Object.keys(data).length) {
-                        prototype.url += prototype.url.includes('?') ? '&' : '?'
-                        prototype.url += this.serialize(data)
+                        request.url += request.url.includes('?') ? '&' : '?'
+                        request.url += this.serialize(data)
                     }
                 } else {
-                    prototype.headers['Content-Type'] = 'application/json'
-                    prototype.data = JSON.stringify(data)
+                    request.headers['Content-Type'] = 'application/json'
+                    request.data = data
                 }
             }
 
             if (cookie('env')) {
-                console.log('Prototype:', prototype)
+                console.log('Prototype:', request)
             }
 
             if (Object.prototype.hasOwnProperty.call(options, 'headers') && typeof options.headers === 'object') {
                 Object.keys(options.headers).forEach((headerKey: any) => {
-                    prototype.headers[headerKey] = options.headers[headerKey]
+                    request.headers[headerKey] = options.headers[headerKey]
                 })
             }
 
-            if (!$http) {
-                // TODO: Verify the whether the const is necessity
-                // tslint:disable-next-line:no-unused-variable
-                const wait = await serviceVerify()
-            }
-            $http(prototype).then((response: any) => {
-                // Data Stores
-                this.status = response.status
+            // Example XHR
+            this.xhr = new XHR(request)
 
-                // Begin Watching
+            // Call XHR
+            this.xhr.send().then((response: LooseObject | Array<LooseObject> | string) => {
+                // Data Stores
+                this.status = this.xhr.status
+
+                // Begin Watching (this.watcher is a singleton)
                 if (this.watch || this.autoSave) {
                     this.watcher()
                 }
@@ -469,95 +474,10 @@ export class Model<T = LooseObject> extends ModelBase<T> {
                 //     }
                 // }, 100)
 
-                if (response.status === 200 && _.isObject(response.data)) {
-                    // TODO: Make this into an over-writable function
-                    // Data
-                    this.header.set(response.headers() || {})
-                    this.meta.set(response.data.meta || {})
-                    this.route.set(response.data.route || {})
-                    const convoy = response.data.payload || response.data
-                    const status: { code: string }[] = this.meta.get('status')
-                    if (this.meta.has('status') && _.first(status).code !== 'SUCCESS') {
-                        this.error = true
-                    } else if (_.isArray(convoy) && convoy.length) {
-                        this.recv = _.first(convoy)
-                        this.error = false
-                    } else if (_.isObject(convoy) && !_.isArray(convoy)) {
-                        this.recv = convoy
-                        this.error = false
-                    } else {
-                        this.error = true
-                    }
-
-                    // Diff Settings
-                    if (!this.error) {
-                        // This is the ChangeSet coming from alterations between what is sent and received (i.e. new version)
-                        // const recvChangeSet = _.cloneDeep(patch(this.recv, this.sent))
-                        // console.log('recvChangeSet:', recvChangeSet)
-
-                        // This is the ChangeSet generated from what has changed during the save
-                        const intermediateData = _.cloneDeep(this.recv)
-                        const intermediateChangeSet = _.cloneDeep(patch(this.data, this.sent))
-                        if (!_.isEmpty(intermediateChangeSet)) {
-                            if (cookie('env')) {
-                                console.log('Intermediate ChangeSet detected:',
-                                    cookie('debug_change_set')
-                                        ? JSON.stringify(intermediateChangeSet)
-                                        : intermediateChangeSet
-                                )
-                            }
-                            _.forEach(intermediateChangeSet, (element: any, key: any) => {
-                                _.set(intermediateData, key, element)
-                            })
-                        }
-
-                        // Propagate Changes
-                        this.data = _.cloneDeep(intermediateData) as T
-                        this.changed = false
-                        this.saving = false
-                        this.handleChanges()
-                        this.patch = {}
-                    }
-
-                    // XHR Flags
-                    this.pending = false
-                    this.completed = true
-
-                    // XHR Flags for Collection
-                    if (this.collection) {
-                        // TODO: Change to a Model ID Register
-                        this.collection.pending = false
-                    }
-
-                    // Events
-                    this.trigger('success', this)
-                    this.trigger('change', this)
-                    this.trigger('complete', this)
-
-                    // Propagate Collection Change Event
-                    if (this.collection instanceof Collection) {
-                        this.collection.throttleTrigger('change')
-                    }
-
-                    // Promise
-                    // extendDeep(this.data, this.initData)
-                    resolve(this.data)
-                } else {
+                // Set Flags & Propagate Events on Error
+                const propagateError = () => {
                     // XHR Flags
                     this.error = true
-
-                    // Build Report
-                    const error = new Stratus.Prototypes.Error()
-                    error.payload = _.isObject(response.data) ? response.data : response
-                    if (response.statusText && response.statusText !== 'OK') {
-                        error.message = response.statusText
-                    } else if (!_.isObject(response.data)) {
-                        error.message = `Invalid Payload: ${prototype.method} ${prototype.url}`
-                    } else {
-                        error.message = 'Unknown Model error!'
-                    }
-
-                    // XHR Flags
                     this.pending = false
 
                     // Note: I've disabled this because a model should not be marked
@@ -569,7 +489,7 @@ export class Model<T = LooseObject> extends ModelBase<T> {
 
                     // XHR Flags for Collection
                     if (this.collection) {
-                        // TODO: Change to a Model ID Register
+                        // TODO: Change to a Model ID Register to account for all Models in a Collection
                         this.collection.pending = false
                     }
 
@@ -581,27 +501,142 @@ export class Model<T = LooseObject> extends ModelBase<T> {
                     if (this.collection instanceof Collection) {
                         this.collection.throttleTrigger('change')
                     }
+                }
+
+                // Evaluate Response
+                if (!_.isObject(response) && !_.isArray(response)) {
+                    // Build Report
+                    const error = new Stratus.Prototypes.Error({
+                        payload: response,
+                        message: `Invalid Payload: ${request.method} ${request.url}`
+                    }, {})
+
+                    // Set Flags & Propagate Events
+                    propagateError()
 
                     // Promise
                     reject(error)
+
+                    return
                 }
-            }).catch((message: any) => {
+
+                // TODO: Make this into an over-writable function
+                // Gather Data
+                this.header.set(this.xhr.getAllResponseHeaders() || {})
+                this.meta.set(response.meta || {})
+                this.route.set(response.route || {})
+                const payload = response.payload || response
+                const status: { code: string }[] = this.meta.get('status')
+
+                // Evaluate Payload
+                if (this.meta.has('status') && _.first(status).code !== 'SUCCESS') {
+                    this.error = true
+                } else if (_.isArray(payload) && payload.length) {
+                    this.recv = _.first(payload)
+                    this.error = false
+                } else if (_.isObject(payload) && !_.isArray(payload)) {
+                    this.recv = payload
+                    this.error = false
+                } else {
+                    this.error = true
+                }
+
+                // Report Invalid Payloads
+                if (this.error) {
+                    // Build Report
+                    const error = new Stratus.Prototypes.Error({
+                        payload,
+                        message: `Invalid Payload: ${request.method} ${request.url}`
+                    }, {})
+
+                    // Set Flags & Propagate Events
+                    propagateError()
+
+                    // Promise
+                    reject(error)
+
+                    return
+                }
+
+                // Diff Settings
+                // This is the ChangeSet coming from alterations between what is sent and received (i.e. new version)
+                // const recvChangeSet = _.cloneDeep(patch(this.recv, this.sent))
+                // console.log('recvChangeSet:', recvChangeSet)
+
+                // This is the ChangeSet generated from what has changed during the save
+                const intermediateData = _.cloneDeep(
+                    this.recv
+                )
+                const intermediateChangeSet = _.cloneDeep(
+                    patch(this.data, this.sent)
+                )
+                if (!_.isEmpty(intermediateChangeSet)) {
+                    if (cookie('env')) {
+                        console.log('Intermediate ChangeSet detected:',
+                            cookie('debug_change_set')
+                                ? JSON.stringify(intermediateChangeSet)
+                                : intermediateChangeSet
+                        )
+                    }
+                    _.forEach(intermediateChangeSet, (element: any, key: any) => {
+                        _.set(intermediateData, key, element)
+                    })
+                }
+
+                // Propagate Changes
+                this.data = _.cloneDeep(intermediateData) as T
+                this.changed = false
+                this.saving = false
+                this.handleChanges()
+                this.patch = {}
+
+                // TODO: Handle the remainder here, which was encapsulated after the if (!this.error) {
+
+                // XHR Flags
+                this.pending = false
+                this.completed = true
+
+                // XHR Flags for Collection
+                if (this.collection) {
+                    // TODO: Change to a Model ID Register
+                    this.collection.pending = false
+                }
+
+                // Events
+                this.trigger('success', this)
+                this.trigger('change', this)
+                this.trigger('complete', this)
+
+                // Propagate Collection Change Event
+                if (this.collection instanceof Collection) {
+                    this.collection.throttleTrigger('change')
+                }
+
+                // Promise
+                // extendDeep(this.data, this.initData)
+                resolve(this.data)
+
+                return
+            })
+            .catch((error: any) => {
                 // (/(.*)\sReceived/i).exec(error.message)[1]
                 // Treat a fatal error like 500 (our UI code relies on this distinction)
                 this.status = 500
                 this.error = true
-                console.error(`XHR: ${prototype.method} ${prototype.url}`, message)
-                reject.call(message)
+                console.error(`XHR: ${request.method} ${request.url}`, error)
+                reject(error)
+                throw error
             })
         })
     }
 
-    fetch(action?: any, data?: any, options?: any) {
+    fetch(action?: string, data?: LooseObject, options?: ModelSyncOptions) {
         return this.sync(action, data || this.meta.get('api'), options)
             .catch(async (message: any) => {
                 this.status = 500
                 this.error = true
                 console.error('FETCH:', message)
+                // TODO: Move toast to something external (outside of Stratus scope)
                 if (!this.toast) {
                     return
                 }
@@ -622,6 +657,7 @@ export class Model<T = LooseObject> extends ModelBase<T> {
 
     save(options?: any): Promise<any> {
         this.saving = true
+        // TODO: store the promise locally so if it's in the middle of saving it returns the pending promise instead of adding another...
         options = options || {}
         if (!_.isObject(options)) {
             console.warn('invalid options supplied:', options)
@@ -663,6 +699,7 @@ export class Model<T = LooseObject> extends ModelBase<T> {
             .catch(async (message: any) => {
                 this.error = true
                 console.error('SAVE:', message)
+                // TODO: Move toast to something external (outside of Stratus scope)
                 if (!this.toast) {
                     return
                 }
@@ -812,23 +849,20 @@ export class Model<T = LooseObject> extends ModelBase<T> {
         return !_.isArray(attr) ? attr : attr.find((obj: any) => obj[key] === value)
     }
 
-    set(attr: any, value: any) {
+    set(attr: string | LooseObject, value: any) {
         if (!attr) {
             console.warn('No attr for model.set()!')
             return this
         }
         if (typeof attr === 'object') {
-
-            _.forEach(attr, (valueChain: any, attrChain: any) => {
-                this.setAttribute(attrChain, valueChain)
-            })
+            _.forEach(attr, (v: any, k: string) => this.setAttribute(k, v))
             return this
         }
         this.setAttribute(attr, value)
         return this
     }
 
-    setAttribute(attr: any, value: any) {
+    setAttribute(attr: string, value: any) {
         if (typeof attr !== 'string') {
             console.warn('Malformed attr for model.setAttribute()!')
             return false
@@ -981,6 +1015,7 @@ export class Model<T = LooseObject> extends ModelBase<T> {
             })
             .catch(async (message: any) => {
                 console.error('DESTROY:', message)
+                // TODO: Move toast to something external (outside of Stratus scope)
                 if (!this.toast) {
                     return
                 }
@@ -1000,12 +1035,11 @@ export class Model<T = LooseObject> extends ModelBase<T> {
     }
 }
 
-// This Model Service handles data binding for a single object with the $http
-// Service
+// This Model Service handles data binding
+// for a single object with a RESTful API.
 Stratus.Services.Model = [
     '$provide', ($provide: any) => {
         $provide.factory('Model', [
-            // '$http',
             // '$rootScope',
             // '$mdToast',
             (
@@ -1013,7 +1047,6 @@ Stratus.Services.Model = [
                 // $r: angular.IRootScopeService,
                 // $m: angular.material.IToastService
             ) => {
-                // $http = $h
                 // $rootScope = $r
                 // $mdToast = $m
                 return Model

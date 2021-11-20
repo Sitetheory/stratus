@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "target": "es6",
+    "target": "es2019",
     "module": "system",
     "moduleResolution": "node",
 //    "outDir": "dist",
@@ -17,7 +17,7 @@
       "node_modules/@types"
     ],
     "lib": [
-      "es2018",
+      "es2019",
       "dom"
     ],
     "paths": {
