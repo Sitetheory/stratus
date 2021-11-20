@@ -410,9 +410,9 @@ export function truncate(target: any, limit?: any, suffix?: any) {
 export interface LooseObject<T=any> {
     [key: string]: T
 }
-export type AnyFunction = (...args: any) => any
+export type LooseFunction<T=any> = (...args: any) => T
 export interface ObjectWithFunctions {
-    [key: string]: AnyFunction
+    [key: string]: LooseFunction
 }
 
 // TODO: Add a PushState Handler for document.location.hash
