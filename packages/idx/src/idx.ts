@@ -18,10 +18,9 @@ import '@stratusjs/idx/listTrac'
 
 // Stratus Dependencies
 import {
-    AnyFunction,
     isJSON,
-    LooseObject,
-    ObjectWithFunctions
+    LooseFunction,
+    LooseObject
 } from '@stratusjs/core/misc'
 import {cookie} from '@stratusjs/core/environment'
 import {IdxDisclaimerScope} from '@stratusjs/idx/disclaimer/disclaimer.component'
@@ -39,7 +38,7 @@ import {IdxMemberListScope} from '@stratusjs/idx/member/list.component'
 // const localDir = `/${boot.bundle}node_modules/@stratusjs/${packageName}/src/${moduleName}/`
 
 export interface IdxService {
-    [key: string]: AnyFunction | IdxSharedValue
+    [key: string]: LooseFunction | IdxSharedValue
 
     // Variables
     sharedValues: IdxSharedValue
@@ -177,7 +176,7 @@ export interface IdxService {
     updateScopeValuePath(scope: IScope, scopeVarPath: string, value: any): Promise<string | any>
 }
 
-export type IdxComponentScope = angular.IScope & ObjectWithFunctions & {
+export type IdxComponentScope = angular.IScope & LooseObject<LooseFunction> & {
     elementId: string
     localDir: string
     Idx: IdxService
