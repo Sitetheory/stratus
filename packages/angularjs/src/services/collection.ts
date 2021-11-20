@@ -13,7 +13,11 @@ import {Stratus} from '@stratusjs/runtime/stratus'
 import {ModelBase} from '@stratusjs/core/datastore/modelBase'
 import {EventManager} from '@stratusjs/core/events/eventManager'
 import {cookie} from '@stratusjs/core/environment'
-import {AnyFunction, LooseObject, ucfirst} from '@stratusjs/core/misc'
+import {
+    LooseFunction,
+    LooseObject,
+    ucfirst
+} from '@stratusjs/core/misc'
 import {XHR, XHRRequest} from '@stratusjs/core/datastore/xhr'
 
 // Modules
@@ -514,7 +518,7 @@ export class Collection<T = LooseObject> extends EventManager {
         return this
     }
 
-    find(predicate: string|number|AnyFunction) {
+    find(predicate: string|number|LooseFunction<boolean>) {
         return _.find(this.models, _.isFunction(predicate) ? predicate : (model: Model) => model.get('id') === predicate)
     }
 

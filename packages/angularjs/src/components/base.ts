@@ -24,7 +24,8 @@ import {Registry} from '@stratusjs/angularjs/services/registry'
 
 // Stratus Utilities
 import {
-    ObjectWithFunctions
+    LooseFunction,
+    LooseObject
 } from '@stratusjs/core/misc'
 import {cookie} from '@stratusjs/core/environment'
 
@@ -34,7 +35,7 @@ const name = 'base'
 const localPath = '@stratusjs/angularjs/src/components'
 
 // This is a typed scope for the component below
-export type BaseScope = angular.IScope & ObjectWithFunctions & {
+export type BaseScope = angular.IScope & LooseObject<LooseFunction> & {
     initialized: boolean
     model: Model
     collection: Collection
