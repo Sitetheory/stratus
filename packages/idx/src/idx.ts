@@ -10,18 +10,17 @@ import {IPromise, IScope} from 'angular'
 // Services
 import '@stratusjs/angularjs/services/model' // Needed as $provider
 // tslint:disable-next-line:no-duplicate-imports
-import {Model, ModelOptions} from '@stratusjs/angularjs/services/model' // Needed as Class
+import {Model, ModelOptions, ModelSyncOptions} from '@stratusjs/angularjs/services/model' // Needed as Class
 import '@stratusjs/angularjs/services/collection' // Needed as $provider
 // tslint:disable-next-line:no-duplicate-imports
-import {Collection} from '@stratusjs/angularjs/services/collection' // Needed as Class
+import {Collection, CollectionSyncOptions} from '@stratusjs/angularjs/services/collection' // Needed as Class
 import '@stratusjs/idx/listTrac'
 
 // Stratus Dependencies
 import {
-    AnyFunction,
     isJSON,
-    LooseObject,
-    ObjectWithFunctions
+    LooseFunction,
+    LooseObject
 } from '@stratusjs/core/misc'
 import {cookie} from '@stratusjs/core/environment'
 import {IdxDisclaimerScope} from '@stratusjs/idx/disclaimer/disclaimer.component'
@@ -39,7 +38,7 @@ import {IdxMemberListScope} from '@stratusjs/idx/member/list.component'
 // const localDir = `/${boot.bundle}node_modules/@stratusjs/${packageName}/src/${moduleName}/`
 
 export interface IdxService {
-    [key: string]: AnyFunction | IdxSharedValue
+    [key: string]: LooseFunction | IdxSharedValue
 
     // Variables
     sharedValues: IdxSharedValue
@@ -177,7 +176,7 @@ export interface IdxService {
     updateScopeValuePath(scope: IScope, scopeVarPath: string, value: any): Promise<string | any>
 }
 
-export type IdxComponentScope = angular.IScope & ObjectWithFunctions & {
+export type IdxComponentScope = angular.IScope & LooseObject<LooseFunction> & {
     elementId: string
     localDir: string
     Idx: IdxService
@@ -1458,9 +1457,7 @@ const angularJsService = (
         // Make Promises that each of the collections shall fetch their results
         const fetchPromises: any[] = []
         collections.forEach(collection => {
-            const options: {
-                headers?: object
-            } = {}
+            const options: CollectionSyncOptions = {}
             if (session.services[collection.serviceId].token !== null) {
                 options.headers = {
                     Authorization: session.services[collection.serviceId].token
@@ -1552,9 +1549,7 @@ const angularJsService = (
 
         // Make Promises that each of the Models shall fetch their results. We're only using a single one here
         const fetchPromises = []
-        const options: {
-            headers?: object
-        } = {}
+        const options: ModelSyncOptions = {}
         if (session.services[newModel.serviceId].token !== null) {
             options.headers = {
                 Authorization: session.services[newModel.serviceId].token

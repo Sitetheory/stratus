@@ -102,6 +102,7 @@ export class ModelBase<T = LooseObject> extends EventManager {
         return _.clone(this.data)
     }
 
+    // TODO: Collapse this into toObject()
     toJSON(options?: any) {
         options = options || {}
         return _.clone(options.patch ? (this.toPatch() || {}) : this.data)
@@ -122,6 +123,7 @@ export class ModelBase<T = LooseObject> extends EventManager {
             _.union([this.data], arguments))
     }
 
+    // TODO: Change this into the _.get function...
     get(attr: any) {
         return _.reduce(typeof attr === 'string' ? attr.split('.') : [],
             (attrs: any, a: any) => {
@@ -129,6 +131,7 @@ export class ModelBase<T = LooseObject> extends EventManager {
             }, this.data)
     }
 
+    // TODO: Change this into the _.has function...
     has(attr: any) {
         return typeof this.get(attr) !== 'undefined'
     }
@@ -147,6 +150,7 @@ export class ModelBase<T = LooseObject> extends EventManager {
         }
     }
 
+    // TODO: Change this into the _.set function...
     setAttribute(attr: any, value: any) {
         // TODO: Code golf this function to be only 1 level
         if (typeof attr === 'string') {

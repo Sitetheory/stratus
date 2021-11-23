@@ -430,6 +430,7 @@ export class MediaSelectorComponent extends RootComponent { // implements OnInit
     }
 
     showDetails(model: any) {
+        // TODO: @Optimize! At some point, we can hydrate and cache the model here for reference externally.
         Stratus.Environment.trigger(this.eventID, 'showDetails')
         Stratus.Environment.trigger(`${this.eventID}:showDetails`, model)
     }

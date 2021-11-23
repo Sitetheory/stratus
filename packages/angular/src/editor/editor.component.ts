@@ -509,6 +509,9 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             // Regex Options
             'aria-.+',
             'data-.+',
+            'ng-.+',
+            'stratus-.+',
+            'sa-.+',
             // Common Attributes
             'accept', 'accept-charset', 'accesskey', 'action', 'align', 'allowfullscreen',
             'allowtransparency', 'alt', 'async', 'autocomplete', 'autofocus',
@@ -598,6 +601,36 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             'filter', 'foreignObject', 'g', 'image', 'line', 'linearGradient', 'marker', 'mask', 'metadata', 'mpath',
             'path', 'pattern', 'polygon', 'polyline', 'radialGradient', 'rect', 'set', 'stop', 'svg', 'switch',
             'symbol', 'text', 'textPath', 'tspan', 'unknown', 'use', 'view',
+            // AngularJS Tags
+            'ng-app', 'ng-bind', 'ng-bind-html', 'ng-bind-template', 'ng-blur', 'ng-change', 'ng-checked', 'ng-class', 'ng-class-even',
+            'ng-class-odd', 'ng-click', 'ng-cloak', 'ng-controller', 'ng-copy', 'ng-csp', 'ng-cut', 'ng-dblclick', 'ng-disabled',
+            'ng-focus', 'ng-form', 'ng-hide', 'ng-href', 'ng-if', 'ng-include', 'ng-init', 'ng-jq', 'ng-keydown', 'ng-keypress', 'ng-keyup',
+            'ng-list', 'ng-maxlength', 'ng-minlength', 'ng-model', 'ng-model-options', 'ng-mousedown', 'ng-mouseenter', 'ng-mouseleave',
+            'ng-mousemove', 'ng-mouseover', 'ng-mouseup', 'ng-non-bindable', 'ng-on', 'ng-open', 'ng-options', 'ng-paste', 'ng-pattern',
+            'ng-pluralize', 'ng-prop', 'ng-readonly', 'ng-ref', 'ng-repeat', 'ng-required', 'ng-selected', 'ng-show', 'ng-src', 'ng-srcset',
+            'ng-style', 'ng-submit', 'ng-switch', 'ng-transclude', 'ng-value', 'ng-animate-children', 'ng-animate-swap', 'ng-outlet',
+            'ng-message', 'ng-message-default', 'ng-message-exp', 'ng-messages', 'ng-messages-include', 'ng-view', 'ng-swipe-left',
+            'ng-swipe-right',
+            // AngularJS Material Tags
+            'md-autocomplete', 'md-autofocus', 'md-button', 'md-calendar', 'md-card', 'md-checkbox', 'md-chip', 'md-chip-remove',
+            'md-chips', 'md-colors', 'md-contact-chips', 'md-content', 'md-datepicker', 'md-dialog', 'md-divider', 'md-fab-actions',
+            'md-fab-speed-dial', 'md-fab-toolbar', 'md-force-height', 'md-grid-list', 'md-grid-tile', 'md-highlight-text', 'md-icon',
+            'md-ink-ripple', 'md-input', 'md-input-container', 'md-list', 'md-list-item', 'md-menu', 'md-menu-bar', 'md-nav-bar',
+            'md-nav-item', 'md-optgroup', 'md-option', 'md-progress-circular', 'md-progress-linear', 'md-radio-button', 'md-radio-group',
+            'md-select', 'md-select-on-focus', 'md-sidenav', 'md-slider', 'md-slider-container', 'md-subheader', 'md-swipe-down',
+            'md-swipe-left', 'md-swipe-right', 'md-swipe-up', 'md-switch', 'md-tab', 'md-tabs', 'md-toolbar', 'md-tooltip', 'md-truncate',
+            'md-virtual-repeat', 'md-virtual-repeat-container', 'md-whiteframe',
+            // AngularJS Material Secondary Tags
+            'md-svg-src',
+            // Stratus Angular+ Tags
+            'sa-boot',
+            'sa-editor',
+            'sa-map',
+            'sa-media-selector',
+            'sa-selector',
+            'sa-stripe-payment-method-list',
+            'sa-stripe-payment-method-selector',
+            'sa-tree',
         ],
         htmlAllowedStyleProps: [
             '.*'
@@ -672,6 +705,36 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             'filter', 'foreignObject', 'g', 'image', 'line', 'linearGradient', 'marker', 'mask', 'metadata', 'mpath',
             'path', 'pattern', 'polygon', 'polyline', 'radialGradient', 'rect', 'set', 'stop', 'svg', 'switch',
             'symbol', 'text', 'textPath', 'tspan', 'unknown', 'use', 'view',
+            // AngularJS Tags
+            'ng-app', 'ng-bind', 'ng-bind-html', 'ng-bind-template', 'ng-blur', 'ng-change', 'ng-checked', 'ng-class', 'ng-class-even',
+            'ng-class-odd', 'ng-click', 'ng-cloak', 'ng-controller', 'ng-copy', 'ng-csp', 'ng-cut', 'ng-dblclick', 'ng-disabled',
+            'ng-focus', 'ng-form', 'ng-hide', 'ng-href', 'ng-if', 'ng-include', 'ng-init', 'ng-jq', 'ng-keydown', 'ng-keypress', 'ng-keyup',
+            'ng-list', 'ng-maxlength', 'ng-minlength', 'ng-model', 'ng-model-options', 'ng-mousedown', 'ng-mouseenter', 'ng-mouseleave',
+            'ng-mousemove', 'ng-mouseover', 'ng-mouseup', 'ng-non-bindable', 'ng-on', 'ng-open', 'ng-options', 'ng-paste', 'ng-pattern',
+            'ng-pluralize', 'ng-prop', 'ng-readonly', 'ng-ref', 'ng-repeat', 'ng-required', 'ng-selected', 'ng-show', 'ng-src', 'ng-srcset',
+            'ng-style', 'ng-submit', 'ng-switch', 'ng-transclude', 'ng-value', 'ng-animate-children', 'ng-animate-swap', 'ng-outlet',
+            'ng-message', 'ng-message-default', 'ng-message-exp', 'ng-messages', 'ng-messages-include', 'ng-view', 'ng-swipe-left',
+            'ng-swipe-right',
+            // AngularJS Material Tags
+            'md-autocomplete', 'md-autofocus', 'md-button', 'md-calendar', 'md-card', 'md-checkbox', 'md-chip', 'md-chip-remove',
+            'md-chips', 'md-colors', 'md-contact-chips', 'md-content', 'md-datepicker', 'md-dialog', 'md-divider', 'md-fab-actions',
+            'md-fab-speed-dial', 'md-fab-toolbar', 'md-force-height', 'md-grid-list', 'md-grid-tile', 'md-highlight-text', 'md-icon',
+            'md-ink-ripple', 'md-input', 'md-input-container', 'md-list', 'md-list-item', 'md-menu', 'md-menu-bar', 'md-nav-bar',
+            'md-nav-item', 'md-optgroup', 'md-option', 'md-progress-circular', 'md-progress-linear', 'md-radio-button', 'md-radio-group',
+            'md-select', 'md-select-on-focus', 'md-sidenav', 'md-slider', 'md-slider-container', 'md-subheader', 'md-swipe-down',
+            'md-swipe-left', 'md-swipe-right', 'md-swipe-up', 'md-switch', 'md-tab', 'md-tabs', 'md-toolbar', 'md-tooltip', 'md-truncate',
+            'md-virtual-repeat', 'md-virtual-repeat-container', 'md-whiteframe',
+            // AngularJS Material Secondary Tags
+            'md-svg-src',
+            // Stratus Angular+ Tags
+            'sa-boot',
+            'sa-editor',
+            'sa-map',
+            'sa-media-selector',
+            'sa-selector',
+            'sa-stripe-payment-method-list',
+            'sa-stripe-payment-method-selector',
+            'sa-tree',
         ],
         // @ts-ignore
         htmlRemoveTags: [],
@@ -720,7 +783,9 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             'dir',
             'data-.+',
             'aria-.+',
-            'ng-.+'
+            'ng-.+',
+            'stratus-.+',
+            'sa-.+'
         ],
         pasteDeniedTags: [
             'form', 'input', 'label',
