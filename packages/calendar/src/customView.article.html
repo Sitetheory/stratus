@@ -1,7 +1,7 @@
 <md-content id="{{ elementId }}" class="{{ template }}-layout" layout-padding>
 
-	<md-card ng-repeat="eventData in events">
-		<div class="clearfix">
+	<md-card data-ng-repeat="eventData in events">
+		<article class="clearfix">
 			<div class="event-image-container" data-ng-if="::eventData.extendedProps.image">
 				<img class="event-image" data-ng-src="::eventData.extendedProps.image"/>
 			</div>
@@ -10,11 +10,11 @@
 			<div class="clearfix">
 				<div class="st-grid column45">
 					<h4 class="event-time-label">Time</h4>
-					<p class="event-time font-primary">
+					<p class="event-time font-primary" role="text">
 						<!-- TODO if AllDay, remove time stamps and show day only? -->
-						<span class="event-time-start" data-ng-bind="::eventData.start | moment:{unix:false, format:'dddd MMM Do, h:mm a', tz:options.timeZone}"></span>
+						<time class="event-time-start" data-ng-bind="::eventData.start | moment:{unix:false, format:'dddd MMM Do, h:mm a', tz:options.timeZone}" datetime="{{::eventData.start}}"></time>
 						<span class="event-time-end" data-ng-if="::eventData.end != null"> <!-- data-ng-if="::eventData.end" causes digest errors..? -->
-							- <span data-ng-bind="eventData.end  | moment:{unix:false, format:'h:mm a', tz:options.timeZone}"></span>
+							- <time data-ng-bind="eventData.end  | moment:{unix:false, format:'h:mm a', tz:options.timeZone}" datetime="{{::eventData.end}}"></time>
 						<!-- TODO detect if it's not in the same day to add the day to the end time again -->
 						</span>
 					</p>
@@ -39,7 +39,7 @@
 			</p>
 
 			<!-- We don't need a read more button unless we are going to truncate the text -->
-		</div>
+		</article>
 
 	</md-card>
 </md-content>

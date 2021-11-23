@@ -10,6 +10,7 @@ import angular from 'angular'
 // tslint:disable-next-line:no-duplicate-imports
 import 'angular'
 import 'ical.js' // Global ICAL variable.... not able to be sandboxed yet
+import {LooseObject} from '@stratusjs/core/misc'
 
 // Globals
 declare var ICAL: any
@@ -21,13 +22,14 @@ export class ICalExpander {
     skipInvalidDates = false
     jCalData: any
     component: any
-    events: any
+    events: any[]
 
     [key: string]: any
 
-    constructor(icsData: any, opts?: { [key: string]: any }) {
+    constructor(icsData: any, opts?: LooseObject) {
         // Hydrate Options
         opts = opts || {}
+        // Only populate non-null values
         _.forEach(opts, (key: string, value: any) => {
             if (value === null) {
                 return
@@ -44,6 +46,7 @@ export class ICalExpander {
         if (this.skipInvalidDates) {
             this.events = this.events.filter((evt: any) => {
                 try {
+                    // Ensure these are proper Dates
                     evt.startDate.toJSDate()
                     evt.endDate.toJSDate()
                     return true
@@ -55,7 +58,7 @@ export class ICalExpander {
         }
     }
 
-    isEventWithinRange(after: any, before: any, startTime: any, endTime: any) {
+    isEventWithinRange(after: Date, before: Date, startTime: number, endTime: number) {
         return (!after || endTime >= after.getTime()) && (!before || startTime <= before.getTime())
     }
 
@@ -234,7 +237,7 @@ export class ICalExpander {
             organizer: e.organizer,
             id: e.uid,
             location: e.location,
-            url: e.url,
+            url: e.url || '',
             allDay: e.allDay,
             image: e.image // Custom item
         }
