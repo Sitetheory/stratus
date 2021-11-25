@@ -1,6 +1,6 @@
 {
   "name": "@stratusjs/core",
-  "version": "0.2.24",
+  "version": "0.2.25",
   "description": "This is the core package for StratusJS.",
   "scripts": {},
   "repository": {
@@ -16,7 +16,6 @@
   "keywords": [
     "sitetheory",
     "stratus",
-    "underscore",
     "lodash",
     "javascript",
     "typescript"
