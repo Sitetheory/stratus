@@ -82,7 +82,7 @@ export class XHR {
                 this.xhr.setRequestHeader('Content-Type', this.type)
             }
 
-            if (typeof this.headers === 'object' && this.headers && this.headers.length) {
+            if (_.isPlainObject(this.headers)) {
                 _.forEach(this.headers, (v, k) => this.xhr.setRequestHeader(k, v))
             }
 
