@@ -237,7 +237,7 @@
                         <div class="open-house-item"
                              data-ng-repeat="openHouse in model.data.OpenHouses"
                              id="{{'open_house_' + openHouse.OpenHouseKey}}"
-                             role="listitem" aria-label="{{::openHouse.OpenHouseStartTime | moment:{unix:false,format:'dddd MMM Do, h:mm a'}}"
+                             role="listitem" aria-label="{{::(openHouse.OpenHouseStartTime | moment:{unix:false,format:'dddd MMM Do, h:mm a'})}}"
                         >
                             <!-- FIXME Daniela, do we wish to show the Open House descriptions that are possible on each open house? -->
                             <div class="month primary_font"
