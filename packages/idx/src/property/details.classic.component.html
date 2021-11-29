@@ -37,17 +37,17 @@
 			<section class="open-house-section dotted-spaced-underline" data-ng-if="model.data.OpenHouses && model.data.OpenHouses.length" role="region" aria-label="Open Houses">
 				<h4 class="section-title">Open House</h4>
 				<div class="open-house-container dotted-spaced-sideline" role="list" aria-label="Open Houses">
-					<span class="description" data-ng-if="::model.data.OpenHouses[0].OpenHouseRemarks" data-ng-bind="::model.data.OpenHouses[0].OpenHouseRemarks" aria-label="Open House Description"></span>
+					<span class="description" data-ng-if="::model.data.OpenHouses[0].OpenHouseRemarks" data-ng-bind="::model.data.OpenHouses[0].OpenHouseRemarks"></span>
 					<div class="open-house" id="{{'open_house_' + openHouse.OpenHouseId}}" data-ng-repeat="openHouse in model.data.OpenHouses" role="listitem" aria-label="{{::(openHouse.OpenHouseStartTime | moment:{unix:false,format:'dddd MMM Do, h:mm a'})}}">
-						<time data-ng-bind="::openHouse.OpenHouseStartTime | moment:{unix:false,format:'dddd MMM Do, h:mm a'}" aria-label="Open House Start Time" datetime="{{::openHouse.OpenHouseStartTime}}"></time>
+						<time data-ng-bind="::openHouse.OpenHouseStartTime | moment:{unix:false,format:'dddd MMM Do, h:mm a'}" datetime="{{::openHouse.OpenHouseStartTime}}"></time>
 						<span data-ng-if="::openHouse.OpenHouseEndTime"> —
-							<time data-ng-bind="::openHouse.OpenHouseEndTime | moment:{unix:false,format:'h:mm a'}" aria-label="Open House End Time" datetime="{{::openHouse.OpenHouseEndTime}}"></time>
+							<time data-ng-bind="::openHouse.OpenHouseEndTime | moment:{unix:false,format:'h:mm a'}" datetime="{{::openHouse.OpenHouseEndTime}}"></time>
 						</span>
                         <!-- openHouse._unmapped.OpenHouseType && openHouse._unmapped.OpenHouseType === 'Virtual' -->
-                        <span data-ng-if="::openHouse._unmapped.VirtualOpenHouseURL" aria-label="Virtual Open House">
+                        <span data-ng-if="::openHouse._unmapped.VirtualOpenHouseURL">
                             <a data-ng-href="{{::openHouse._unmapped.VirtualOpenHouseURL}}" target="_blank" data-ng-bind="::(openHouse._unmapped.VirtualOpenHouseURLLinkText || 'Virtual Open House')" aria-label="Open House Virtual Tour Link"></a>
                         </span>
-						<span data-ng-if="::openHouse.ShowingAgentFirstName" aria-label="Showing Agent Name">
+						<span data-ng-if="::openHouse.ShowingAgentFirstName">
 							with <span data-ng-bind="::openHouse.ShowingAgentFirstName"></span> <span data-ng-bind="::openHouse.ShowingAgentLastName"></span>
 						</span>
 					</div>
