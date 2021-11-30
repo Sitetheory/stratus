@@ -29,7 +29,7 @@
                    autocomplete="false"
             >
         </md-input-container>
-        <md-chips ng-model="selectionGroup.group" readonly="true" md-removable="true" md-on-remove="toggleSelected($chip, true)">
+        <md-chips data-ng-model="selectionGroup.group" readonly="true" md-removable="true" md-on-remove="toggleSelected($chip, true)">
             <md-chip-template>
                 {{$chip}}
             </md-chip-template>
@@ -37,7 +37,7 @@
 
         <div>
             <div class="selectables" data-ng-repeat="item in itemsSelectable">
-                <md-checkbox ng-checked="item.selected" ng-click="toggleSelected(item.listing._OfficeNumber)">
+                <md-checkbox data-ng-checked="item.selected" data-ng-click="toggleSelected(item.listing._OfficeNumber)">
                     {{ item.listing.OfficeName }} - {{ item.listing.OfficeMlsId || item.listing.OfficeKey }}
                 </md-checkbox>
             </div>

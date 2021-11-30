@@ -1,15 +1,15 @@
-<ul ng-if="model && property && model.get(property)" style="list-style-type: none;">
-  <li ng-repeat="target in model.get(property)" style="float: left; padding: 5px;">
-    <md-button aria-label="{{ target.data.name }}" ng-class="{ 'md-accent': model.exists(property, target.data.id) }"
-               ng-click="model.toggle(property, target.data || target, toggleOptions)" class="md-raised">
-        <span ng-if="target.data.mime && target.data.mime.indexOf('image') == 0" ng-transclude="image">
-            <img ng-src="{{ target.data.url }}"/>
+<ul data-ng-if="model && property && model.get(property)" style="list-style-type: none;">
+  <li data-ng-repeat="target in model.get(property)" style="float: left; padding: 5px;">
+    <md-button aria-label="{{ target.data.name }}" data-ng-class="{ 'md-accent': model.exists(property, target.data.id) }"
+               data-ng-click="model.toggle(property, target.data || target, toggleOptions)" class="md-raised">
+        <span data-ng-if="target.data.mime && target.data.mime.indexOf('image') == 0" data-ng-transclude="image">
+            <img data-ng-src="{{ target.data.url }}"/>
         </span>
-      <span ng-if="!target.data.mime || target.data.mime.indexOf('image') != 0" ng-transclude="label">
+      <span data-ng-if="!target.data.mime || target.data.mime.indexOf('image') != 0" data-ng-transclude="label">
             {{ target.data.name || target.data.title || target.name || target.title || target.data || target }}
         </span>
       <md-tooltip>
-            <span ng-transclude="label">
+            <span data-ng-transclude="label">
                 {{ target.data.name || target.data.title || target.name || target.title || target.data || target }}
             </span>
       </md-tooltip>
@@ -19,18 +19,18 @@
 
 <stratus-search></stratus-search>
 
-<span ng-if="collection && model && property" ng-repeat="target in collection.models" ng-cloak>
-    <md-button aria-label="{{ target.data.name }}" ng-class="{ 'md-accent': model.exists(property, target.data.id) }"
-               ng-click="model.toggle(property, model.find(property, 'id', target.data.id) || target.data, toggleOptions)"
+<span data-ng-if="collection && model && property" data-ng-repeat="target in collection.models" data-ng-cloak>
+    <md-button aria-label="{{ target.data.name }}" data-ng-class="{ 'md-accent': model.exists(property, target.data.id) }"
+               data-ng-click="model.toggle(property, model.find(property, 'id', target.data.id) || target.data, toggleOptions)"
                class="md-raised">
-        <span ng-if="target.data.mime && target.data.mime.indexOf('image') == 0" ng-transclude="image">
-            <img ng-src="{{ target.data.url }}"/>
+        <span data-ng-if="target.data.mime && target.data.mime.indexOf('image') == 0" data-ng-transclude="image">
+            <img data-ng-src="{{ target.data.url }}"/>
         </span>
-        <span ng-if="!target.data.mime || target.data.mime.indexOf('image') != 0" ng-transclude="label">
+        <span data-ng-if="!target.data.mime || target.data.mime.indexOf('image') != 0" data-ng-transclude="label">
             {{ target.data.name || target.data.title || target.name || target.title || target.data || target }}
         </span>
         <md-tooltip>
-            <span ng-transclude="label">
+            <span data-ng-transclude="label">
                 {{ target.data.name || target.data.title || target.name || target.title || target.data || target }}
             </span>
         </md-tooltip>

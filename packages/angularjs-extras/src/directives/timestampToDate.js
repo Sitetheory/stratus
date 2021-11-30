@@ -13,7 +13,7 @@
   }
 }(this, function (Stratus, _, angular) {
   // This directive intends to handle binding of a model to convert value as
-  // timestamp to date, the value is persisted into ng-model still timestamp
+  // timestamp to date, the value is persisted into data-ng-model still timestamp
   // type.
   Stratus.Directives.TimestampToDate = function () {
     return {

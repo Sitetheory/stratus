@@ -34,8 +34,8 @@
 
       // Digest Model Bindings
       $scope.model = null
-      if ($element.attr('ng-model')) {
-        $scope.$parent.$watch($element.attr('ng-model'), function (model) {
+      if ($element.attr('data-ng-model')) {
+        $scope.$parent.$watch($element.attr('data-ng-model'), function (model) {
           if (model && typeof model === 'object') {
             $scope.model = model
           }
@@ -44,8 +44,8 @@
 
       // Digest Collection Bindings
       $scope.collection = null
-      if ($element.attr('ng-collection')) {
-        $scope.$parent.$watch($element.attr('ng-collection'),
+      if ($element.attr('data-ng-collection')) {
+        $scope.$parent.$watch($element.attr('data-ng-collection'),
           function (collection) {
             if (collection && typeof collection === 'object') {
               $scope.collection = collection
@@ -62,7 +62,7 @@
         $mdPanel.open({
           attachTo: angular.element(document.body),
           template: $scope.template || 'Template Not Found!',
-          panelClass: 'dialogueContainer',
+          panelClass: 'dialogContainer',
           position: position,
           openFrom: $event,
           clickOutsideToClose: true,

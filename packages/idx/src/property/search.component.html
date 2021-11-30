@@ -32,8 +32,8 @@
                     data-ng-if="!(options.query.where.City || options.query.where.CountyOrParish.length || options.query.where.MLSAreaMajor.length || options.query.where.PostalCode.length)">
                 <label>City, Neighborhood, Zip</label>
 
-                <!-- NOTE: the ng-keyup should not be setting: && options.query.where.Location (seems useless???) -->
-                <!-- NOTE: ng-keyup will run $event.keyCode == 13 && search(). If $event.keyCode is not Enter, search() cannot be reached -->
+                <!-- NOTE: the data-ng-keyup should not be setting: && options.query.where.Location (seems useless???) -->
+                <!-- NOTE: data-ng-keyup will run $event.keyCode == 13 && search(). If $event.keyCode is not Enter, search() cannot be reached -->
                 <input
                        data-ng-model="options.query.where.Location"
                        data-ng-blur="search()"
@@ -169,7 +169,7 @@
             </a>
         </div>
 
-        <!-- NO LONGER NEEDED because ng-change gives instant results -->
+        <!-- NO LONGER NEEDED because data-ng-change gives instant results -->
         <!--<div class="submit-row">-->
             <!--<a class="btn btn-submit" data-ng-click="search()">Search</a>-->
         <!--</div>-->
@@ -185,7 +185,7 @@
 
             <!-- Close Button -->
             <button type="button" class="btn-close" data-ng-click="$parent.advancedFiltersStatus = !$parent.advancedFiltersStatus">
-                <span class="sr-only">Close Dialogue</span>
+                <span class="sr-only">Close Dialog</span>
                 <md-icon md-svg-src="{{ localDir + 'images/icons/actionButtons/close.svg' }}" aria-hidden="true"></md-icon>
             </button>
 

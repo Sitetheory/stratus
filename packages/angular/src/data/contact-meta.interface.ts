@@ -198,7 +198,7 @@ export interface Options {
     signup: string
 }
 export interface RowAttributes {
-    'ng-if': string
+    'data-ng-if': string
 }
 export interface Attributes {
     rows: number

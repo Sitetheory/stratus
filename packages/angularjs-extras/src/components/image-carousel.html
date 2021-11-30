@@ -1,17 +1,17 @@
 <div id="{{elementId}}" data-ng-cloak>
-    <div ng-if="!initialized">
+    <div data-ng-if="!initialized">
         <md-progress-circular md-mode="indeterminate"></md-progress-circular>
     </div>
-    <div ng-if="initialized">
+    <div data-ng-if="initialized">
 
         <div class="projector-wrapper-outer"
-             ng-class="clearfix"
-             ng-if="!_.isEmpty(model.version.images) && model.version.images.length > 1"
+             data-ng-class="clearfix"
+             data-ng-if="!_.isEmpty(model.version.images) && model.version.images.length > 1"
         >
 
             <div class="projector position-anchor"
-                 ng-init="slidesToShow = model.data.version.carouselOptions.slidesPerView > 0 ? model.data.version.carouselOptions.slidesPerView : 1; slideNumber = slidesToShow; slideTotal = {{ slideTotal }}"
-                 ng-class="[model.data.version.carouselOptions.slidesPerView > 1 ? 'multiples' : 'singles',
+                 data-ng-init="slidesToShow = model.data.version.carouselOptions.slidesPerView > 0 ? model.data.version.carouselOptions.slidesPerView : 1; slideNumber = slidesToShow; slideTotal = {{ slideTotal }}"
+                 data-ng-class="[model.data.version.carouselOptions.slidesPerView > 1 ? 'multiples' : 'singles',
              carouselType + '-carousel',
              'slide' + slideNumber,
              'view-' + slidesToShow,
@@ -24,7 +24,7 @@
              'image-ratio-' + model.data.version.imageRatio ]">
 
 
-                <!-- ng-if="model.data.version.carouselOptions.play !== 0" -->
+                <!-- data-ng-if="model.data.version.carouselOptions.play !== 0" -->
                 <!-- AUTOPLAY ON (default) -->
                 <div class="projector-autoplay"
                      ng-controller="Counter"
@@ -34,33 +34,33 @@
                      data-limit="model.data.version.modules.length">
 
                     <!-- SINGLE ITEM COUNTER -->
-                    <div class="projector-counter" ng-if="model.data.version.carouselOptions.counter !== 'hidden' && slidesToShow === 1" ng-class="model.data.version.carouselOptions.counter == 'numbers' ? 'numbers' : slidesToShow === 1 && model.data.version.carouselOptions.counter == 'fraction' ? 'fraction' : 'markers'">
+                    <div class="projector-counter" data-ng-if="model.data.version.carouselOptions.counter !== 'hidden' && slidesToShow === 1" data-ng-class="model.data.version.carouselOptions.counter == 'numbers' ? 'numbers' : slidesToShow === 1 && model.data.version.carouselOptions.counter == 'fraction' ? 'fraction' : 'markers'">
                         <ul class="clickable-counter list-inline">
-                            <li ng-repeat="ngRepeat">
+                            <li data-ng-repeat="ngRepeat">
 
-                                <a ng-click="$parent.$parent.slideNumber = ($index + 1)" ng-class="{ 'active-counter' : ($index + 1) == slideNumber }">
-                                    <span class="counter-number font-secondary" ng-bind="$index"></span>
+                                <a data-ng-click="$parent.$parent.slideNumber = ($index + 1)" data-ng-class="{ 'active-counter' : ($index + 1) == slideNumber }">
+                                    <span class="counter-number font-secondary" data-ng-bind="$index"></span>
                                 </a>
                             </li>
                         </ul>
                         <p class="fraction-counter font-primary">
-                            <span class="current-number" ng-bind="slideNumber"></span>
+                            <span class="current-number" data-ng-bind="slideNumber"></span>
                             <span class="delimiter"></span>
-                            <span class="total-number" ng-bind="slideTotal"></span>
+                            <span class="total-number" data-ng-bind="slideTotal"></span>
                         </p>
                     </div>
 
                     <!-- MULTIPLE ITEM COUNTER -->
-                    <div class="projector-counter" ng-if="model.data.version.carouselOptions.counter !== 'hidden' && slidesToShow > 1" ng-class="model.data.version.carouselOptions.counter === 'numbers' ? 'numbers' : 'markers'">
+                    <div class="projector-counter" data-ng-if="model.data.version.carouselOptions.counter !== 'hidden' && slidesToShow > 1" data-ng-class="model.data.version.carouselOptions.counter === 'numbers' ? 'numbers' : 'markers'">
                         <ul class="clickable-counter list-inline">
-                            <li ng-repeat="ngRepeat"
-                                ng-sanitize="true">
+                            <li data-ng-repeat="ngRepeat"
+                                data-ng-sanitize="true">
                                 <a class="background-dark"
-                                   ng-click="$parent.$parent.$parent.multiCounterSkip = $index > (slideNumber) || $index < (slideNumber - (slidesToShow + 1)) ? 'multiCounterSkip' : null;
+                                   data-ng-click="$parent.$parent.$parent.multiCounterSkip = $index > (slideNumber) || $index < (slideNumber - (slidesToShow + 1)) ? 'multiCounterSkip' : null;
                        $parent.$parent.$parent.slideNumber = $index > (slideNumber - 1) ? ($index + 1) : $index < (slideNumber - slidesToShow) ? ($index + slidesToShow) : slideNumber;"
-                                   ng-mouseenter="$parent.$parent.$parent.slideWaitPosition = $index > (slideNumber - 1) ? 'slidesWaitRight' : $index < (slideNumber - slidesToShow) ? 'slidesWaitLeft' : null"
-                                   ng-mouseleave="$parent.$parent.$parent.multiCounterSkip = null"
-                                   ng-class="{ 'color-pop active-counter' :
+                                   data-ng-mouseenter="$parent.$parent.$parent.slideWaitPosition = $index > (slideNumber - 1) ? 'slidesWaitRight' : $index < (slideNumber - slidesToShow) ? 'slidesWaitLeft' : null"
+                                   data-ng-mouseleave="$parent.$parent.$parent.multiCounterSkip = null"
+                                   data-ng-class="{ 'color-pop active-counter' :
                     $index == (slideNumber - slidesToShow)
                     || $index == (slideNumber + (slideTotal - (slidesToShow)))
                     || $index == (slideNumber - (slidesToShow - 1))
@@ -78,7 +78,7 @@
                     <!-- If the carousel has only one slide per view, we use much larger active areas for the buttons so it's easy to navigate -->
 
                     <div class="slide-buttons">
-                        <a class="btn-previous-area" ng-click="$parent.slideNumber = slideNumber > 1 ? (slideNumber - 1) : slideTotal" ng-mouseenter="$parent.slideWaitPosition = 'slidesWaitLeft'">
+                        <a class="btn-previous-area" data-ng-click="$parent.slideNumber = slideNumber > 1 ? (slideNumber - 1) : slideTotal" data-ng-mouseenter="$parent.slideWaitPosition = 'slidesWaitLeft'">
                             <div class="btn-previous">
                                 <!--
                                 {
@@ -88,8 +88,8 @@
                             </div>
                         </a>
                         <a class="btn-next-area"
-                           ng-click="$parent.slideNumber = slideNumber < slideTotal ? slideNumber + 1 : 1"
-                           ng-mouseenter="$parent.slideWaitPosition = 'slidesWaitRight'"
+                           data-ng-click="$parent.slideNumber = slideNumber < slideTotal ? slideNumber + 1 : 1"
+                           data-ng-mouseenter="$parent.slideWaitPosition = 'slidesWaitRight'"
                         >
                             <div class="btn-next">
                                 <!--
@@ -104,30 +104,30 @@
 
                         <!-- For Testing Multiple Slide Carousel -->
 
-                        <!-- <p> Slide Number: <span ng-bind="slideNumber"></span></p> -->
-                        <!-- <p> Slide total: <span ng-bind="slideTotal"></span></p> -->
+                        <!-- <p> Slide Number: <span data-ng-bind="slideNumber"></span></p> -->
+                        <!-- <p> Slide total: <span data-ng-bind="slideTotal"></span></p> -->
 
-                        <!-- <p>A. Off stage left if: <span ng-bind="slideNumber - (slidesToShow + 1)"></span></p> -->
-                        <!--<p ng-if="slideNumber <= slidesToShow">B. Or off stage left if equals: <span ng-bind="(slideTotal - (slidesToShow - (slideNumber - 1)))"></span></p> -->
+                        <!-- <p>A. Off stage left if: <span data-ng-bind="slideNumber - (slidesToShow + 1)"></span></p> -->
+                        <!--<p data-ng-if="slideNumber <= slidesToShow">B. Or off stage left if equals: <span data-ng-bind="(slideTotal - (slidesToShow - (slideNumber - 1)))"></span></p> -->
 
-                        <!--<p>A. Off stage right if smaller than: <span ng-bind="slideNumber - (slidesToShow + 1)"></span></p> -->
-                        <!--<p ng-if="slideNumber > slidesToShow">B. Off stage right if larger than: <span ng-bind="slideNumber - 1"></span></p> -->
-                        <!-- <p ng-if="slideNumber <= slidesToShow">C. Off stage right if larger than <span ng-bind="slideNumber - 1"></span> and smaller than: <span ng-bind="(slideTotal - 1) - (slidesToShow - slideNumber)"></span></p> -->
+                        <!--<p>A. Off stage right if smaller than: <span data-ng-bind="slideNumber - (slidesToShow + 1)"></span></p> -->
+                        <!--<p data-ng-if="slideNumber > slidesToShow">B. Off stage right if larger than: <span data-ng-bind="slideNumber - 1"></span></p> -->
+                        <!-- <p data-ng-if="slideNumber <= slidesToShow">C. Off stage right if larger than <span data-ng-bind="slideNumber - 1"></span> and smaller than: <span data-ng-bind="(slideTotal - 1) - (slidesToShow - slideNumber)"></span></p> -->
 
 
                         <!-- PROJECTOR -->
-                        <div class="projector-mask" ng-class="{'position-anchor' : slidesToShow > 1}">
+                        <div class="projector-mask" data-ng-class="{'position-anchor' : slidesToShow > 1}">
 
                             <div class="slide-projector">
 
                                 <!-- standardize the submodel.data (from API) with submodel (content modules) -->
                                 <!-- If images (that are not positioned) exist and text exists, slide displays with columns. If the image is set to bakground or parallax, the image because a static background image. If no text exists, image becomes a background image. -->
                                 <div class="item-wrapper"
-                                     ng-attr-id="{{ 'landing-item-' + submodelData.id }}"
-                                     ng-repeat="ngRepeat"
-                                     ng-sanitize="true"
-                                     ng-init="ngInit"
-                                     ng-class="slidesToShow === 1 ?
+                                     data-ng-attr-id="{{ 'landing-item-' + submodelData.id }}"
+                                     data-ng-repeat="ngRepeat"
+                                     data-ng-sanitize="true"
+                                     data-ng-init="ngInit"
+                                     data-ng-class="slidesToShow === 1 ?
                        [{ 'active-slide' : $index == (slideNumber - 1)},
                        { 'active-sibling-before' : $index == (slideNumber - 2) || slideNumber == 1 && $index == (slideTotal - 1)},
                        { 'active-sibling-after' : $index == slideNumber || slideNumber == slideTotal && $index == 0},
@@ -155,46 +155,46 @@
 
                                     <!-- image start -->
                                     <div class="slide-content">
-                                        <div class="image-wrapper" ng-class="{'image-fit-contain' : model.version.carouselOptions.fit === 'contain'}">
+                                        <div class="image-wrapper" data-ng-class="{'image-fit-contain' : model.version.carouselOptions.fit === 'contain'}">
                                             <!-- If it's an image -->
-                                            <div ng-if="image.mime.includes('image')"
-                                                 stratus-src
+                                            <div data-ng-if="image.mime.includes('image')"
+                                                 data-stratus-src
                                                  class="projector-image position-all"
-                                                 ng-style="{'background-image':'url({{ image.src }})'}"
+                                                 data-ng-style="{'background-image':'url({{ image.src }})'}"
                                                  style="background-repeat: no-repeat; background-position: center center; background-size: cover;">
                                             </div>
 
                                             <!-- If it's an video -->
-                                            <div ng-if="image.mime.includes('video')" class="projector-video position-all">
-                                                <div ng-bind-html="getHTML(image.embed)"></div>
+                                            <div data-ng-if="image.mime.includes('video')" class="projector-video position-all">
+                                                <div data-ng-bind-html="getHTML(image.embed)"></div>
                                             </div>
 
-                                            <div class="projector-media-icon position-center" ng-if="image.mime=='application/pdf' || image.mime=='application/msword' || image.mime.includes('audio')">
+                                            <div class="projector-media-icon position-center" data-ng-if="image.mime=='application/pdf' || image.mime=='application/msword' || image.mime.includes('audio')">
 
                                                 <!-- If it's a pdf -->
-                                                <!--<img ng-if="image.mime=='application/pdf'" src="{{ asset('/bundles/sitetheorymedia/images//mediaTypeIcons/media-icon-pdf.png') }}">-->
+                                                <!--<img data-ng-if="image.mime=='application/pdf'" src="{{ asset('/bundles/sitetheorymedia/images//mediaTypeIcons/media-icon-pdf.png') }}">-->
                                                 <!-- If it's a word doc -->
-                                                <!--<img ng-if="image.mime=='application/msword'" src="{{ asset('/bundles/sitetheorymedia/images//mediaTypeIcons/media-icon-doc.png') }}">-->
+                                                <!--<img data-ng-if="image.mime=='application/msword'" src="{{ asset('/bundles/sitetheorymedia/images//mediaTypeIcons/media-icon-doc.png') }}">-->
 
                                                 <!-- If the item is audio -->
-                                                <!--div ng-if="image.mime.includes('audio')">
+                                                <!--div data-ng-if="image.mime.includes('audio')">
                                                     {% embed '@SitetheoryMediaBundle/Resources/public/images/mediaTypeIcons/media-icon-audio.svg' %}{% block id %}stream-article-icon{% endblock %}{% endembed %}
                                                 </div-->
                                             </div>
 
-                                            <div class="media-icon-gradient" ng-if="image.mime=='application/pdf' || image.mime=='application/msword' || image.mime.includes('audio')"></div>
-                                            <div class="color-cover position-all" ng-class="[{ 'background-dark' : image.mime.includes('video')}, {'audio-color-cover' : image.mime.includes('audio')}, {'document-color-cover' : image.mime.includes('application')}]"></div>
+                                            <div class="media-icon-gradient" data-ng-if="image.mime=='application/pdf' || image.mime=='application/msword' || image.mime.includes('audio')"></div>
+                                            <div class="color-cover position-all" data-ng-class="[{ 'background-dark' : image.mime.includes('video')}, {'audio-color-cover' : image.mime.includes('audio')}, {'document-color-cover' : image.mime.includes('application')}]"></div>
 
                                             <!-- Shape holder if module has a set image ratio (takes priority) -->
-                                            <img ng-if="model.data.version.imageRatio" class="shapeholder image-shapeholder user-shape" ng-src="{% verbatim %}{{ {% endverbatim %} 'sitetheorycore/images/shapeholder-' + model.version.imageRatio + '.png' | assetPath {% verbatim %} }}{% endverbatim %}">
+                                            <img data-ng-if="model.data.version.imageRatio" class="shapeholder image-shapeholder user-shape" data-ng-src="{% verbatim %}{{ {% endverbatim %} 'sitetheorycore/images/shapeholder-' + model.version.imageRatio + '.png' | assetPath {% verbatim %} }}{% endverbatim %}">
 
                                             <!-- Shape holder if stream has a set image ratio or no ratio is set -->
-                                            <img ng-if="!model.data.version.imageRatio" class="shapeholder image-shapeholder stream-shape" src="{{ asset('/bundles/sitetheorycore/images/shapeholder-' ~ ratio ~ '.png') }}">
+                                            <img data-ng-if="!model.data.version.imageRatio" class="shapeholder image-shapeholder stream-shape" src="{{ asset('/bundles/sitetheorycore/images/shapeholder-' ~ ratio ~ '.png') }}">
 
                                         </div>
                                         <!-- Captions -->
                                         <div class="projector-caption">
-                                            <p ng-bind="image.description | truncate:{limit: 120}"></p>
+                                            <p data-ng-bind="image.description | truncate:{limit: 120}"></p>
                                         </div>
                                     </div>
                                     <!-- image end -->
@@ -203,13 +203,13 @@
                             </div>
 
                             <!-- Shapeholder if module has a set image ratio (takes priority) -->
-                            <img ng-if="model.data.version.imageRatio" class="shapeholder row-shapeholder user-shape" ng-src="{% verbatim %}{{ {% endverbatim %} 'sitetheorycore/images/shapeholder-' + model.version.imageRatio + '.png' | assetPath {% verbatim %} }}{% endverbatim %}">
+                            <img data-ng-if="model.data.version.imageRatio" class="shapeholder row-shapeholder user-shape" data-ng-src="{% verbatim %}{{ {% endverbatim %} 'sitetheorycore/images/shapeholder-' + model.version.imageRatio + '.png' | assetPath {% verbatim %} }}{% endverbatim %}">
 
                             <!-- Shapeholder if stream has a set image ratio or no ratio is set -->
-                            <img ng-if="!model.data.version.imageRatio" class="shapeholder row-shapeholder default-stream-shape" src="{{ asset('/bundles/sitetheorycore/images/shapeholder-' ~ ratio ~ '.png') }}">
+                            <img data-ng-if="!model.data.version.imageRatio" class="shapeholder row-shapeholder default-stream-shape" src="{{ asset('/bundles/sitetheorycore/images/shapeholder-' ~ ratio ~ '.png') }}">
 
                             <!-- Dark background for single item image carousel -->
-                            <div ng-if="'{{ carouselType }}' === 'images' && slidesToShow === 1" class="image-carousel-background background-dark"></div>
+                            <div data-ng-if="'{{ carouselType }}' === 'images' && slidesToShow === 1" class="image-carousel-background background-dark"></div>
 
 
                         </div>

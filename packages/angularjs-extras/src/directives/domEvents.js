@@ -2,9 +2,9 @@
 // -----------------
 // Intended to add the DOM events that https://github.com/angular/angular.js/blob/master/src/ng/directive/ngEventDirs.js has missed
 // Such as:
-// focusin: stratus-focusin (different than ng-focus) You can focus any element directly so long as you add tabindex="-1"
+// focusin: stratus-focusin (different than data-ng-focus) You can focus any element directly so long as you add tabindex="-1"
 //          Otherwise, this will always detect inner children being focused or directly on just input fields
-// focusout: stratus-focusout (different than ng-blur)
+// focusout: stratus-focusout (different than data-ng-blur)
 
 /* global define */
 

@@ -3,7 +3,7 @@
 
 /* global define */
 
-// Usage: The Validate directive enhances Angular's validation and ng-messages
+// Usage: The Validate directive enhances Angular's validation and data-ng-messages
 // system to allow custom validation in addition to the defaults like
 // `required`, `min`, `max`, `email`, etc. This validate adds several new
 // validations that can be triggered for inputs by including the requirements
@@ -19,7 +19,7 @@
 // model.data.nomineeName this is evaluates after the viewValue is updated but
 // BEFORE the model is updated, so it won't work with the timing.
 
-// The ng-message validate key will be set if a specific validation fails. If
+// The data-ng-message validate key will be set if a specific validation fails. If
 // more than one validation scheme is set, we will also show if any of them
 // fail: - `validateComparison`: if the comparison was false. -
 // `validateInvalid`: if an invalid value was provided. - `validateValid`: if a
@@ -27,14 +27,14 @@
 // fail.
 
 // Example:
-// <input name="nomineeName" ng-model="model.data.fooName" placeholder=""
+// <input name="nomineeName" data-ng-model="model.data.fooName" placeholder=""
 // required stratus-validate validate-comparison="model.data.fooName !=
 // model.data.barName" validate-invalid="['baz', 'rab']"> <div
-// ng-messages="Nominate.nomineeName.$error" ng-messages-multiple role="alert">
-// <div ng-message="required">Please enter a name.</div> <div
-// ng-message="validateComparison">Please do not nominate yourself.</div> <div
-// ng-message="validateInvalid">Baz and Rab are not valid values.</div> <div
-// ng-message="validateAny">Ya you really messed up.</div> </div>
+// data-ng-messages="Nominate.nomineeName.$error" data-ng-messages-multiple role="alert">
+// <div data-ng-message="required">Please enter a name.</div> <div
+// data-ng-message="validateComparison">Please do not nominate yourself.</div> <div
+// data-ng-message="validateInvalid">Baz and Rab are not valid values.</div> <div
+// data-ng-message="validateAny">Ya you really messed up.</div> </div>
 
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {

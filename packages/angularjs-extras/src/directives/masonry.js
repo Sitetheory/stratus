@@ -61,7 +61,7 @@
         }
 
         // Initialization by Event
-        // TODO: initialize it only AFTER a conditional value is true (e.g. when the content from the collection is ng-repeated and added to the DOM, so that this can find all elements on the page). That would require us to pass in a selector (e.g. `#my-id .grid-item` and the total number of elements to search for, and then watch and only initialize AFTER all the elements are added to the page. Without that, this loads masonry too soon.
+        // TODO: initialize it only AFTER a conditional value is true (e.g. when the content from the collection is data-ng-repeated and added to the DOM, so that this can find all elements on the page). That would require us to pass in a selector (e.g. `#my-id .grid-item` and the total number of elements to search for, and then watch and only initialize AFTER all the elements are added to the page. Without that, this loads masonry too soon.
         // NOTE: Temporary solution to timing issue is to set timeout of 1 milisecond which seems to force it to load AFTER everything else (put it at the end of the queue)
         setTimeout(function () {
           $ctrl.init()

@@ -91,7 +91,7 @@
                                         <span class="file-type uppercase"
                                               [innerText]="_.get(selectedModel, 'extension') || _.get(selectedModel, 'service') || (_.get(selectedModel, '_embedCode') ? 'Embedded Video' : '')">
                                         </span>
-                                        <!-- TODO: evaluate the possibility of an ng-container here instead -->
+                                        <!-- TODO: evaluate the possibility of an data-ng-container here instead -->
                                         <span class="delimiter"
                                               *ngIf="_.get(selectedModel, 'bytesHuman') && _.get(selectedModel, 'bytesHuman') !== 'Empty'"></span>
                                         <span class="file-size"
@@ -103,50 +103,37 @@
                                 </p>
                                 <div class="position-action-area">
                                     <div class="action-btns">
-                                        <!--md-grid-list md-cols="2" md-row-height="1:1" md-gutter-gt-md="8px" md-gutter="6px"-->
-                                        <div>
-                                            <div (click)="showDetails(selectedModel)">
-                                                <a class="border-radius-default"
-                                                   href="#"
-                                                   matTooltip="Show details">
-                                                    <!--<md-tooltip>Show details</md-tooltip>-->
-                                                    <mat-icon class="info-icon"
-                                                              svgIcon="media_selector_info"
-                                                              aria-hidden="true"
-                                                              aria-label="Info">
-                                                        Info
-                                                    </mat-icon>
-                                                </a>
-                                            </div>
-                                            <!--md-grid-tile-->
-                                            <!--<div (click)="!isSelector ? deleteMedia(selectedModel) : removeFromSelected(_.get(selectedModel, 'id'))">-->
-                                            <div (click)="remove(selectedModel)">
-                                                <a class="border-radius-default"
-                                                   href="#"
-                                                   matTooltip="Permanently delete from libary"
-                                                   *ngIf="!isSelector">
-                                                    <!--<md-tooltip>Permanently delete from libary</md-tooltip>-->
-                                                    <mat-icon class="delete-icon"
-                                                              svgIcon="media_selector_delete"
-                                                              aria-hidden="true"
-                                                              aria-label="Delete">
-                                                        Delete
-                                                    </mat-icon>
-                                                </a>
-                                                <a class="border-radius-default"
-                                                   href="#"
-                                                   matTooltip="Remove selection"
-                                                   *ngIf="isSelector">
-                                                    <!--<md-tooltip>Remove selection</md-tooltip>-->
-                                                    <mat-icon class="clear-icon"
-                                                              svgIcon="media_selector_clear"
-                                                              aria-hidden="true"
-                                                              aria-label="Clear">
-                                                        Clear
-                                                    </mat-icon>
-                                                </a>
-                                            </div>
-                                        </div>
+                                        <span (click)="showDetails(selectedModel)">
+                                            <a class="border-radius-default"
+                                               href="#"
+                                               [matTooltip]="'Show Details - ' + _.get(selectedModel, 'name')">
+                                                <!--<md-tooltip>Show details</md-tooltip>-->
+                                                <mat-icon class="info-icon"
+                                                          svgIcon="media_selector_info"
+                                                          aria-hidden="true"
+                                                          aria-label="Info"></mat-icon>
+                                            </a>
+                                        </span>
+                                        <span (click)="remove(selectedModel)">
+                                            <a class="border-radius-default"
+                                               href="#"
+                                               matTooltip="Permanently Delete from Libary"
+                                               *ngIf="!isSelector">
+                                                <mat-icon class="delete-icon"
+                                                          svgIcon="media_selector_delete"
+                                                          aria-hidden="true"
+                                                          aria-label="Delete"></mat-icon>
+                                            </a>
+                                            <a class="border-radius-default"
+                                               href="#"
+                                               matTooltip="Remove Selection"
+                                               *ngIf="isSelector">
+                                                <mat-icon class="clear-icon"
+                                                          svgIcon="media_selector_clear"
+                                                          aria-hidden="true"
+                                                          aria-label="Clear"></mat-icon>
+                                            </a>
+                                        </span>
                                     </div>
                                 </div>
                             </div>

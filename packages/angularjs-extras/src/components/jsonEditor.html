@@ -1,13 +1,13 @@
 <div class="stratus-json-editor">
-    <md-progress-linear md-mode="indeterminate" ng-if="!initialized"></md-progress-linear>
-    <div class="error" ng-show="$ctrl.formFieldCtrl.$error.validJson">
+    <md-progress-linear md-mode="indeterminate" data-ng-if="!initialized"></md-progress-linear>
+    <div class="error" data-ng-show="$ctrl.formFieldCtrl.$error.validJson">
         <b>WARNING:</b> This field has not been saved because there is a formatting problem with the JSON.
     </div>
     <textarea name="{{ $ctrl.name }}"
-              ng-model="jsonString"
+              data-ng-model="jsonString"
               rows="{{ $ctrl.rows}}"
               aria-label="{{ $ctrl.ariaLabel}}"
               class="code-editor"
-              ng-class='{"invalid-jsonEncode": $ctrl.formFieldCtrl.$error.validJson}'
+              data-ng-class='{"invalid-jsonEncode": $ctrl.formFieldCtrl.$error.validJson}'
     ></textarea>
 </div>

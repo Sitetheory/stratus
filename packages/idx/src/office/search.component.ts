@@ -307,7 +307,7 @@ Stratus.Components.IdxOfficeSearch = {
 
             let template =
                 '<md-dialog aria-label="Property Office Selector" class="transparent">' +
-                '<md-button style="text-align: center" ng-click="ctrl.close()">Close and Accept</md-button>' +
+                '<md-button style="text-align: center" data-ng-click="ctrl.close()">Close and Accept</md-button>' +
                 '<stratus-idx-office-list '
             // Object.keys(templateOptions).forEach(function (optionKey) {
             //    if (Object.prototype.hasOwnProperty.call(templateOptions, optionKey)) {

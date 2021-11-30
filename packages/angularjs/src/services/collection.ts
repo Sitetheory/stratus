@@ -115,7 +115,7 @@ export class Collection<T = LooseObject> extends EventManager {
     urlRoot = '/Api'
 
     // Unsure usage
-    qualifier = '' // ng-if
+    qualifier = '' // data-ng-if
     serviceId?: number = null
 
     // Infinite Scrolling
