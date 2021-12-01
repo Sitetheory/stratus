@@ -6,7 +6,10 @@
                     <img class="swiper-image" data-ng-class="{'stretch-image': stretchWidth}"
                          data-ng-click="imageClick(image, $event)"
                          draggable="false"
-                         data-ng-src="{{::(image.src||image.url)}}"/>
+                         data-ng-src="{{::(image.src||image.url)}}"
+                         title="{{::(image.title||image.description||'Carousel Photo')}}"
+                         alt="{{::(image.description||image.title||'Carousel Photo')}}"
+                    />
                 </div>
             </div>
         </div>
@@ -17,7 +20,10 @@
                     <img class="swiper-image swiper-lazy" data-ng-class="{'stretch-image': stretchWidth}"
                          data-ng-click="imageClick(image, $event)"
                          draggable="false"
-                         data-ng-src="{{::(image.src||image.url)}}"/>
+                         data-ng-src="{{::(image.src||image.url)}}"
+                         title="{{::(image.title||image.description||'Carousel Photo')}}"
+                         alt="{{::(image.description||image.title||'Carousel Photo')}}"
+                    />
                     <div class="swiper-lazy-preloader"></div>
                 </div>
             </div>

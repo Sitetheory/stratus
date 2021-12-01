@@ -268,6 +268,9 @@ Stratus.Components.SwiperCarousel = {
                                     image.src = replaceImageSizeSrc(image.src, sizeName)
                                     // console.log('image upgraded to ', image.src)
                                 }
+                                image.title = _.get(image, 'title')
+                                image.description = _.get(image, 'ShortDescription') ||
+                                    _.get(image, 'description') || _.get(image, 'LongDescription') || image.title
                                 preppedImage = image
                             }
                         }
