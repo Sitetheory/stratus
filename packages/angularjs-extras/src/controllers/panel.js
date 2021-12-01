@@ -34,22 +34,33 @@
 
       // Digest Model Bindings
       $scope.model = null
-      if ($element.attr('data-ng-model')) {
-        $scope.$parent.$watch($element.attr('data-ng-model'), function (model) {
-          if (model && typeof model === 'object') {
-            $scope.model = model
+      // compatibility with both valid and invalid html
+      if ($element.attr('data-ng-model') || $element.attr('ng-model')) {
+        $scope.$parent.$watch($element.attr('data-ng-model') || $element.attr('ng-model'),
+          function (model) {
+          if (!model) {
+            return
           }
+          if (typeof model !== 'object') {
+            return
+          }
+          $scope.model = model
         })
       }
 
       // Digest Collection Bindings
       $scope.collection = null
-      if ($element.attr('data-ng-collection')) {
-        $scope.$parent.$watch($element.attr('data-ng-collection'),
+      // compatibility with both valid and invalid html
+      if ($element.attr('data-ng-collection') || $element.attr('ng-collection')) {
+        $scope.$parent.$watch($element.attr('data-ng-collection') || $element.attr('ng-collection'),
           function (collection) {
-            if (collection && typeof collection === 'object') {
-              $scope.collection = collection
+            if (!collection) {
+              return
             }
+            if (typeof collection !== 'object') {
+              return
+            }
+            $scope.collection = collection
           })
       }
 

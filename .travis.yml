@@ -7,22 +7,22 @@ services:
   - redis
 jobs:
   include:
-    - language: node_js
-      # EOL: 2021-04-30
-      name: "NodeJS 10 LTS: Dubnium"
-      node_js:
-        - "10"
-      cache:
-        directories:
-          - node_modules
-    - language: node_js
-      # EOL: 2022-04-30
-      name: "NodeJS 12 LTS: Erbium"
-      node_js:
-        - "12"
-      cache:
-        directories:
-          - node_modules
+#    - language: node_js
+#      # EOL: 2021-04-30
+#      name: "NodeJS 10 LTS: Dubnium"
+#      node_js:
+#        - "10"
+#      cache:
+#        directories:
+#          - node_modules
+#    - language: node_js
+#      # EOL: 2022-04-30
+#      name: "NodeJS 12 LTS: Erbium"
+#      node_js:
+#        - "12"
+#      cache:
+#        directories:
+#          - node_modules
 
 #    - language: node_js
 #      # EOL: 2020-06-01
