@@ -1,26 +1,30 @@
-<div id="{{ elementId }}" class="swiper-flex" data-injection="swiper" data-ng-class="{'swiper-main': !gallery, 'swiper-gallery': gallery}">
-    <div class="swiper-container" data-ng-class="{'gallery-top': gallery}" data-ng-init="initSwiper()">
-        <div class="swiper-wrapper">
+<div id="{{ ::elementId }}" class="swiper-flex" data-injection="swiper" data-ng-class="{'swiper-main': !gallery, 'swiper-gallery': gallery}">
+    <div class="swiper" data-ng-class="{'gallery-top': gallery}" data-ng-init="initSwiper()">
+        <div class="swiper-wrapper" data-ng-if="!lazyLoad">
             <div class="swiper-slide" data-ng-repeat="image in images track by $index" data-ng-transclude="slide">
                 <div data-ng-class="{'swiper-zoom-container': scaleHeight}">
-                    <!--<div data-ng-if="::lazyLoad" class="swiper-lazy-preloader"></div>-->
                     <img class="swiper-image" data-ng-class="{'stretch-image': stretchWidth}"
-                         data-ng-if="!lazyLoad"
                          data-ng-click="imageClick(image, $event)"
                          draggable="false"
-                         data-ng-src="{{::(image.src||image.url)}}"/>
+                         data-ng-src="{{::(image.src||image.url)}}"
+                         title="{{::(image.title||image.description||'Carousel Photo')}}"
+                         alt="{{::(image.description||image.title||'Carousel Photo')}}"
+                    />
+                </div>
+            </div>
+        </div>
+        <div class="swiper-wrapper" data-ng-if="lazyLoad">
+            <div class="swiper-slide" data-ng-repeat="image in images track by $index" data-ng-transclude="slide">
+                <div data-ng-class="{'swiper-zoom-container': scaleHeight}">
                     <!-- swiper-lazy -->
                     <img class="swiper-image swiper-lazy" data-ng-class="{'stretch-image': stretchWidth}"
-                         data-ng-if="lazyLoad"
                          data-ng-click="imageClick(image, $event)"
                          draggable="false"
-                         data-ng-src="{{::(image.src||image.url)}}"/>
-                    <div data-ng-if="lazyLoad" class="swiper-lazy-preloader"></div>
-                    <!--
-                    <div class="small-label font-primary bold"
-                         data-ng-if="image.name" data-ng-bind="image.name">
-                    </div>
-                    -->
+                         data-ng-src="{{::(image.src||image.url)}}"
+                         title="{{::(image.title||image.description||'Carousel Photo')}}"
+                         alt="{{::(image.description||image.title||'Carousel Photo')}}"
+                    />
+                    <div class="swiper-lazy-preloader"></div>
                 </div>
             </div>
         </div>
