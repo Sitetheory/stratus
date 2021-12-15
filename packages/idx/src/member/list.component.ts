@@ -193,7 +193,7 @@ Stratus.Components.IdxMemberList = {
                     $scope.options.page = 1
                 }
                 // If search options sent, update the Widget. Otherwise use the widgets current where settings
-                if (Object.keys(options.where).length > 0) {
+                if (options.where && Object.keys(options.where).length > 0) {
                     delete ($scope.options.where)
                     $scope.options.where = options.where
                     if ($scope.options.where.Page) {
