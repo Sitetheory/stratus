@@ -102,7 +102,7 @@
                         <!-- Title & Route Display -->
                         <!--<span [class.selected-item]="isSelected(model)">-->
                         {{(model && model.version) ? model.version.title : 'Untitled'}}
-                        <small *ngIf="model.routing.length">
+                        <small *ngIf="model.routing && model.routing.length">
                             {{'/' + model.routing[0].url}}
                         </small>
                     </mat-option>
