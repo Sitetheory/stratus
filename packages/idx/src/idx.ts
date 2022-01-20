@@ -3120,13 +3120,11 @@ const angularJsService = (
      */
     function getStreetAddress(property: Property): string {
         if (
-            Object.prototype.hasOwnProperty.call(property, 'UnparsedAddress') &&
-            property.UnparsedAddress !== ''
+            // If a StreetName exists... let's build the Street Address!
+            (Object.prototype.hasOwnProperty.call(property, 'StreetName') && property.StreetName !== '') ||
+            // Or if we can't use the UnparsedAddress to begin with... e.g. we have no choice
+            !Object.prototype.hasOwnProperty.call(property, 'UnparsedAddress') || property.UnparsedAddress === ''
         ) {
-            return property.UnparsedAddress
-            // address = property.UnparsedAddress
-            // console.log('using unparsed ')
-        } else {
             const addressParts: string[] = []
             if (
                 Object.prototype.hasOwnProperty.call(property, 'StreetNumberNumeric') &&
@@ -3157,6 +3155,8 @@ const angularJsService = (
                     }
                 })
             return addressParts.join(' ')
+        } else {
+            return property.UnparsedAddress || ''
         }
     }
 
