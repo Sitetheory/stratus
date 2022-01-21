@@ -410,10 +410,16 @@ export class Model<T = LooseObject> extends ModelBase<T> {
         // XHR Flags
         this.pending = true
 
+        // Dispatch Model Change Event
+        this.trigger('change', this)
+
         // XHR Flags for Collection
         if (this.collection) {
             // TODO: Change to a Model ID Register
             this.collection.pending = true
+
+            // Dispatch Collection Change Event
+            this.collection.throttleTrigger('change')
         }
 
         // Diff Information
@@ -526,7 +532,7 @@ export class Model<T = LooseObject> extends ModelBase<T> {
                 this.meta.set(response.meta || {})
                 this.route.set(response.route || {})
                 const payload = response.payload || response
-                const status: { code: string }[] = this.meta.get('status')
+                const status: { code: string }[] = this.meta.get('status') || []
 
                 // Evaluate Payload
                 if (this.meta.has('status') && _.first(status).code !== 'SUCCESS') {
