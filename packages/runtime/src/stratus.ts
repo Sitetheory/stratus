@@ -2351,25 +2351,41 @@ Stratus.PostMessage.Convoy = (fn: (e: object) => void) => {
 // When a message arrives from another source, handle the Convoy
 // appropriately.
 Stratus.PostMessage.Convoy((convoy: any) => {
-    // Single Sign On
+    // Single Sign On Toggle
     let ssoEnabled: any = cookie('sso')
     ssoEnabled = ssoEnabled === null ? true : (isJSON(ssoEnabled) ? JSON.parse(ssoEnabled) : false)
-    if (ssoEnabled && convoy && convoy.meta && convoy.meta.session && convoy.meta.session !== cookie('SITETHEORY')) {
-        cookie({
-            name: 'SITETHEORY',
-            value: convoy.meta.session,
-            expires: '1w'
-        })
-        if (Stratus.Client.safari) {
-            return
-        }
-        // Force HTTPS
-        if (window.location.protocol === 'http:') {
-            window.location.href = window.location.href.replace('http:', 'https:')
-            return
-        }
-        window.location.reload()
+    if (!ssoEnabled) {
+        return
     }
+    // Ensure Convoy and Session are available
+    if (!convoy) {
+        return
+    }
+    const session = _.get(convoy, 'meta.session')
+    if (!session) {
+        return
+    }
+    // Ensure Cookie is different
+    if (session === cookie('SITETHEORY')) {
+        return
+    }
+    console.log('Session:', session)
+    // Set Cookie
+    cookie({
+        name: 'SITETHEORY',
+        value: session,
+        expires: '1w'
+    })
+    // Halt at Safari
+    if (Stratus.Client.safari) {
+        return
+    }
+    // Force HTTPS
+    if (window.location.protocol === 'http:') {
+        window.location.href = window.location.href.replace('http:', 'https:')
+        return
+    }
+    window.location.reload()
 })
 
 // Local Storage Handling
