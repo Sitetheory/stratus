@@ -198,6 +198,8 @@ export interface Options {
     signup: string
 }
 export interface RowAttributes {
+    // compatibility with both valid and invalid html
+    'ng-if': string
     'data-ng-if': string
 }
 export interface Attributes {
