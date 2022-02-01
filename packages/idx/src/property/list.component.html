@@ -94,24 +94,23 @@
                         <!--<span data-ng-bind="(query.page-1)*query.perPage+1"></span>-<span data-ng-bind="(query.page*query.perPage)|min:collection.meta.data.totalRecords"></span> of --><span data-ng-bind="collection.meta.data.totalRecords"></span> properties )
                     </span>
                 </div>
-                <a class="pager-button {{query.page > 1 && collection.completed ? '' : 'disabled'}}"
+                <md-button class="pager-button {{query.page > 1 && collection.completed ? '' : 'disabled'}}"
                    data-ng-disabled="!(query.page > 1 && collection.completed)"
                    data-ng-click="pagePrevious($event)" aria-label="Previous Page"
                 >
                     <i class="arrow small left"></i>
-                </a>
+                </md-button>
                 <md-button class="pager-button {{query.page < collection.meta.data.totalPages && collection.completed ? '' : 'disabled'}}"
                    data-ng-disabled="!(query.page < collection.meta.data.totalPages && collection.completed)"
                    data-ng-click="pageNext($event)" aria-label="Next Page"
                 >
                     <i class="arrow small right"></i>
                 </md-button>
-                <md-button class="search-more-filters advanced-search-link" data-ng-if="advancedSearchUrl">
-                    <a class="open-filters-link"
-                       data-ng-href="{{ advancedSearchUrl }}">
-                        <md-icon md-svg-src="{{ localDir + 'images/icons/actionButtons/filters.svg' }}"></md-icon>
-                        <span class="btn-text"><span data-ng-bind="advancedSearchLinkName"></span></span>
-                    </a>
+                <md-button class="pager-button search-more-filters advanced-search-link" data-ng-if="::!advancedSearchUrl"
+                           data-ng-href="{{ ::advancedSearchUrl }}"
+                >
+                    <md-icon md-svg-src="{{ localDir + 'images/icons/actionButtons/filters.svg' }}"></md-icon>
+                    <span class="btn-text"><span data-ng-bind="advancedSearchLinkName"></span></span>
                 </md-button>
             </nav>
 
