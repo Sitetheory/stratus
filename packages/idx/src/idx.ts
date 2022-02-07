@@ -1197,6 +1197,17 @@ const angularJsService = (
             }
         })
 
+        // FIXME prevent more than a single service from populating. prefer the service other than 0
+        if (session.services.length > 1) {
+            let singleService = session.services.pop()
+            if (singleService.id === 0) {
+                // If this is the exclusive... try once again
+                singleService = session.services.pop()
+            }
+            session.services = []
+            session.services[singleService.id] = singleService
+        }
+
         // Compile a contact from the response if it exists
         if (
             Object.prototype.hasOwnProperty.call(response.data, 'contactUrl')
