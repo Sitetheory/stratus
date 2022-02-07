@@ -60,8 +60,8 @@ export type IdxMapScope = IdxComponentScope & {
     markerIconLabelOriginY?: number
 
     getGoogleMapsKey(): string | null
-    mapInitialize(map: MapComponent): void
-    mapUpdate(): void
+    mapInitialize(map: MapComponent): Promise<void>
+    mapUpdate(): Promise<void>
 }
 
 Stratus.Components.IdxMap = {
@@ -336,24 +336,27 @@ Stratus.Components.IdxMap = {
             }
         })*/
 
-        $scope.mapInitialize = (map: MapComponent) => {
+        $scope.mapInitialize = async (map: MapComponent) => {
             // console.log('idx map is running the map!!!!', map)
             $scope.map = map
             $scope.$applyAsync(() => {
                 $scope.mapInitialized = true
             })
-            $scope.mapUpdate()
+            await $scope.mapUpdate()
         }
 
         /**
          * Refresh the Map with the latest markers
          */
-        $scope.mapUpdate = () => {
+        $scope.mapUpdate = async () => {
             if ($scope.map) {
                 $scope.map.removeMarkers()
-                $scope.mapMarkers.forEach((marker) => {
+                await $scope.mapMarkers.reduce((_unused: any, marker) => {
                     $scope.map.addMarker(marker)
-                })
+                }, undefined)
+                // Also sleep for 0.5 seconds just to ensure everything is loaded in
+                await new Promise(r => setTimeout(r, 500))
+
                 $scope.map.fitMarkerBounds()
             }
         }
