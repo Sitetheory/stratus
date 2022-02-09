@@ -11,6 +11,9 @@ import {Stratus} from '@stratusjs/runtime/stratus'
 
 // Stratus Core
 import {
+    ErrorBase
+} from '@stratusjs/core/errors/errorBase'
+import {
     getAnchorParams,
     getUrlParams,
     LooseObject,
@@ -19,8 +22,17 @@ import {
     strcmp,
     ucfirst
 } from '@stratusjs/core/misc'
-import {ModelBase, ModelBaseOptions} from '@stratusjs/core/datastore/modelBase'
-import {cookie} from '@stratusjs/core/environment'
+import {
+    ModelBase,
+    ModelBaseOptions
+} from '@stratusjs/core/datastore/modelBase'
+import {
+    cookie
+} from '@stratusjs/core/environment'
+import {
+    XHR,
+    XHRRequest
+} from '@stratusjs/core/datastore/xhr'
 
 // Modules
 import 'angular-material' // Reliant for $mdToast
@@ -30,7 +42,6 @@ import {getInjector} from '@stratusjs/angularjs/injector'
 
 // AngularJS Services
 import {Collection} from '@stratusjs/angularjs/services/collection'
-import {XHR, XHRRequest} from '@stratusjs/core/datastore/xhr'
 
 // Instantiate Injector
 let injector = getInjector()
@@ -173,9 +184,9 @@ export class Model<T = LooseObject> extends ModelBase<T> {
         // this.initData = {}
 
         // Handle Collections & Meta
-        this.header = new Stratus.Prototypes.Model()
-        this.meta = new Stratus.Prototypes.Model()
-        this.route = new Stratus.Prototypes.Model()
+        this.header = new ModelBase()
+        this.meta = new ModelBase()
+        this.route = new ModelBase()
         if (!_.isEmpty(this.collection)) {
             if (this.collection.target) {
                 this.target = this.collection.target
@@ -314,6 +325,7 @@ export class Model<T = LooseObject> extends ModelBase<T> {
         this.saveIdle()
 
         // Sync URL with Data Changes
+        // TODO: Check the Payload as well, as everything may not generate a changeSet upon return (i.e. Content Duplication)
         if (this.urlSync) {
             // TODO: Allow an option for using PushState here instead of hitting a page reload
             // Handle ID Changes
@@ -512,7 +524,7 @@ export class Model<T = LooseObject> extends ModelBase<T> {
                 // Evaluate Response
                 if (!_.isObject(response) && !_.isArray(response)) {
                     // Build Report
-                    const error = new Stratus.Prototypes.Error({
+                    const error = new ErrorBase({
                         payload: response,
                         message: `Invalid Payload: ${request.method} ${request.url}`
                     }, {})
@@ -550,7 +562,7 @@ export class Model<T = LooseObject> extends ModelBase<T> {
                 // Report Invalid Payloads
                 if (this.error) {
                     // Build Report
-                    const error = new Stratus.Prototypes.Error({
+                    const error = new ErrorBase({
                         payload,
                         message: `Invalid Payload: ${request.method} ${request.url}`
                     }, {})
@@ -837,6 +849,7 @@ export class Model<T = LooseObject> extends ModelBase<T> {
      * Use to get an attributes in the model.
      */
     get(attr: string) {
+        // TODO: Split these out as small errors
         if (typeof attr !== 'string' || !this.data || typeof this.data !== 'object') {
             return undefined
         }
