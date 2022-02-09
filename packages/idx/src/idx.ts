@@ -120,6 +120,8 @@ export interface IdxService {
     setUrlOptions(listingOrSearch: 'Search' | 'Listing', options: any): void
 
     // Reusable Methods
+    clearFieldInput(env: any): void
+
     devLog(...items: any): void
 
     emit(
@@ -3320,11 +3322,23 @@ const angularJsService = (
         }
     }
 
+    function clearFieldInput(ev?: any): void {
+        if (
+            ev &&
+            ev.hasOwnProperty('target') &&
+            ev.target &&
+            ev.target.hasOwnProperty('value')
+        ) {
+            ev.target.value = null
+        }
+    }
+
     return {
         fetchMembers,
         fetchOffices,
         fetchProperties,
         fetchProperty,
+        clearFieldInput,
         devLog,
         emit,
         emitManual,

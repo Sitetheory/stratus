@@ -112,6 +112,20 @@
                     <md-icon md-svg-src="{{ localDir + 'images/icons/actionButtons/filters.svg' }}"></md-icon>
                     <span class="btn-text"><span data-ng-bind="advancedSearchLinkName"></span></span>
                 </md-button>
+                <md-input-container
+                        class="page-input md-block minimal"
+                >
+                    <label>Go To</label>
+                    <input
+                            aria-label="Go To Page"
+                            data-ng-blur="$event.target.value > 0 && pageChange($event.target.value, $event) && Idx.clearFieldInput($event)"
+                            type="number"
+                            size="2"
+                            maxlength="3"
+                            data-ng-keyup="$event.keyCode == 13 && pageChange($event.target.value, $event) && Idx.clearFieldInput($event)"
+                            autocomplete="off"
+                    >
+                </md-input-container>
             </nav>
 
         </div>

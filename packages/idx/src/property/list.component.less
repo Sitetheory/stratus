@@ -443,6 +443,19 @@ stratus-idx-property-list {
           }
         }
       }
+      .page-input {
+        margin: 0;
+        float: left;
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button {
+          -webkit-appearance: none;
+          margin: 0;
+        }
+        input[type=number] {
+          -moz-appearance: textfield;
+          max-width: 40px;
+        }
+      }
       .search-more-filters {
         padding: 7px;
         font-size: 11px;
