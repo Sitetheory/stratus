@@ -120,6 +120,8 @@ export interface IdxService {
     setUrlOptions(listingOrSearch: 'Search' | 'Listing', options: any): void
 
     // Reusable Methods
+    clearFieldInput(env: any): void
+
     devLog(...items: any): void
 
     emit(
@@ -1196,6 +1198,17 @@ const angularJsService = (
                 session.expires = new Date(session.lastCreated.getTime() + (session.lastTtl - 15) * 1000)
             }
         })
+
+        // FIXME prevent more than a single service from populating. prefer the service other than 0
+        /*if (session.services.length > 1) {
+            let singleService = session.services.pop()
+            if (singleService.id === 0) {
+                // If this is the exclusive... try once again
+                singleService = session.services.pop()
+            }
+            session.services = []
+            session.services[singleService.id] = singleService
+        }*/
 
         // Compile a contact from the response if it exists
         if (
@@ -3309,11 +3322,23 @@ const angularJsService = (
         }
     }
 
+    function clearFieldInput(ev?: any): void {
+        if (
+            ev &&
+            ev.hasOwnProperty('target') &&
+            ev.target &&
+            ev.target.hasOwnProperty('value')
+        ) {
+            ev.target.value = null
+        }
+    }
+
     return {
         fetchMembers,
         fetchOffices,
         fetchProperties,
         fetchProperty,
+        clearFieldInput,
         devLog,
         emit,
         emitManual,
