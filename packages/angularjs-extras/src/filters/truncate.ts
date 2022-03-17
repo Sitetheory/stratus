@@ -1,48 +1,30 @@
-//     Stratus.Filters.Truncate.js 1.0
+// Truncate Filter
+// -----------------
 
-//     Copyright (c) 2017 by Sitetheory, All Rights Reserved
-//
-//     All information contained herein is, and remains the
-//     property of Sitetheory and its suppliers, if any.
-//     The intellectual and technical concepts contained herein
-//     are proprietary to Sitetheory and its suppliers and may be
-//     covered by U.S. and Foreign Patents, patents in process,
-//     and are protected by trade secret or copyright law.
-//     Dissemination of this information or reproduction of this
-//     material is strictly forbidden unless prior written
-//     permission is obtained from Sitetheory.
-//
-//     For full details and documentation:
-//     http://docs.sitetheory.io
+import {
+    Stratus
+} from '@stratusjs/runtime/stratus'
+import {
+    truncate,
+    LooseObject
+} from '@stratusjs/core/misc'
+import _ from 'lodash'
 
-// Function Factory
-// ----------------
-
-/* global define */
-
-// Define AMD, Require.js, or Contextual Scope
-(function (root, factory) {
-  if (typeof define === 'function' && define.amd) {
-    define(['stratus', 'lodash', 'angular'], factory)
-  } else {
-    factory(root.Stratus, root._, root.angular)
-  }
-}(this, function (Stratus, _, angular) {
-  // Angular Truncate Filter
-  // ---------------------
-
-  // This filter truncates a sentence
-  Stratus.Filters.Truncate = function () {
-    return function (input, options) {
-      if (!angular.isString(input)) {
-        return input
-      }
-      this.limit = null
-      this.suffix = null
-      if (angular.isObject(options)) {
-        angular.extend(this, options)
-      }
-      return _.truncate(input, this.limit, this.suffix)
+// This filter truncates a string
+Stratus.Filters.Truncate = () =>
+    (input: number, options?: LooseObject) => {
+        if (!_.isString(input)) {
+            return input
+        }
+        const tempScope: {
+            limit?: number,
+            suffix?: string
+        }  = {
+            limit: null,
+            suffix: null
+        }
+        if (_.isObject(options)) {
+            _.extend(tempScope, options)
+        }
+        return truncate(input, tempScope.limit, tempScope.suffix)
     }
-  }
-}))
