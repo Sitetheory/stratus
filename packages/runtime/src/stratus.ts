@@ -279,6 +279,9 @@ export const Stratus: StratusRuntime = {
         XHR: (request?: XHRRequest) => (new XHR(request)).send()
     },
     Loaders: {},
+    /**
+     * @deprecated use the class references instead
+     */
     Prototypes: {
         Event: EventBase,
         EventManager,
@@ -994,7 +997,7 @@ Stratus.Internals.Compatibility = () => {
 // very specific, decoupled, data sets.
 Stratus.Internals.Convoy = (convoy: any, query: any) => new Promise((resolve: any, reject: any) => {
     if (convoy === undefined) {
-        reject(new Stratus.Prototypes.Error({
+        reject(new ErrorBase({
             code: 'Convoy',
             message: 'No Convoy defined for dispatch.'
         }, this))
@@ -1022,7 +1025,7 @@ Stratus.Internals.Convoy = (convoy: any, query: any) => new Promise((resolve: an
             },
             error(response: any) {
                 reject(
-                    new Stratus.Prototypes.Error({code: 'Convoy', message: response},
+                    new ErrorBase({code: 'Convoy', message: response},
                         this))
                 return response
             }
@@ -1043,7 +1046,7 @@ Stratus.Internals.Convoy = (convoy: any, query: any) => new Promise((resolve: an
                 return response
             },
             error(response: any) {
-                reject(new Stratus.Prototypes.Error({
+                reject(new ErrorBase({
                     code: 'Convoy',
                     message: response
                 }, this))
@@ -1255,7 +1258,7 @@ Stratus.Internals.IsOnScreen = (el: any, offset: any, partial: any) => {
 Stratus.Internals.LoadCss = (urls?: string|string[]|LooseObject) => {
     return new Promise((resolve: any, reject: any) => {
         if (typeof urls === 'undefined' || typeof urls === 'function') {
-            reject(new Stratus.Prototypes.Error({
+            reject(new ErrorBase({
                 code: 'LoadCSS',
                 message: 'CSS Resource URLs must be defined as a String, Array, or Object.'
             }, this))
@@ -1269,7 +1272,7 @@ Stratus.Internals.LoadCss = (urls?: string|string[]|LooseObject) => {
             iteration: 0
         }
         if (cssEntries.total < 1) {
-            reject(new Stratus.Prototypes.Error({code: 'LoadCSS', message: 'No CSS Resource URLs found!'}, this))
+            reject(new ErrorBase({code: 'LoadCSS', message: 'No CSS Resource URLs found!'}, this))
             return
         }
         _.forEach(urls.reverse(), (url: string) => {
@@ -1708,7 +1711,7 @@ Stratus.Internals.LoadImage = (obj: any) => {
 Stratus.Internals.Location = (options: any) => {
     return new Promise((resolve: any, reject: any) => {
         if (!('geolocation' in navigator)) {
-            reject(new Stratus.Prototypes.Error({
+            reject(new ErrorBase({
                 code: 'Location',
                 message: 'HTML5 Geo-Location isn\'t supported on this browser.'
             }, this))
@@ -1826,7 +1829,7 @@ Stratus.Internals.OnScroll = _.once((elements: any) => {
 Stratus.Internals.Resource = (path: any, elementId: any) => {
     return new Promise((resolve: any, reject: any) => {
         if (typeof path === 'undefined') {
-            reject(new Stratus.Prototypes.Error({
+            reject(new ErrorBase({
                 code: 'Resource',
                 message: 'Resource path is not defined.'
             }, this))
