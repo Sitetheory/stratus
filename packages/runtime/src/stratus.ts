@@ -393,7 +393,6 @@ _.mixin({
     indexBy: _.keyBy,
     mapObject: _.mapValues,
     object: _.zipObject,
-    omit: _.omitBy,
     pairs: _.toPairs,
     pluck: _.map,
     where: _.filter,
