@@ -760,7 +760,7 @@ export class Model<T = LooseObject> extends ModelBase<T> {
      * @deprecated This is specific to the Sitetheory 1.0 API and will be removed entirely
      */
     specialAction(action: any) {
-
+        console.warn('model.specialAction() is deprecated!')
         this.meta.temp('api.options.apiSpecialAction', action)
         this.save()
         if (this.meta.get('api') &&
