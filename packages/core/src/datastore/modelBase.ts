@@ -145,9 +145,10 @@ export class ModelBase<T = LooseObject> extends EventManager {
             _.forEach(attr, (valueDeep, attrDeep) => {
                 this.setAttribute(attrDeep, valueDeep)
             })
-        } else {
-            this.setAttribute(attr, value)
+            return this
         }
+        this.setAttribute(attr, value)
+        return this
     }
 
     // TODO: Change this into the _.set function...
@@ -212,25 +213,23 @@ export class ModelBase<T = LooseObject> extends EventManager {
         }
     }
 
-    remove(attr: any, value: any) {
-        // Note:
-        // This needs to tree build into dot notation strings
-        // then delete the keys for the values or remove an
-        // element from an array.
-
-        // console.log('remove:', attr, value === undefined ? 'straight' : 'element')
-        if (value === undefined) {
-            // FIXME: This needs to remove the dot notation references
-            // delete this.data[attr];
-        } else {
-            // TODO: use dot notation for nested removal or _.without for array
-            // values (these should be separate functions)
-            (this.data as LooseObject)[attr] = _.without((this.data as LooseObject)[attr], value)
+    remove(attr: string, value?: any) {
+        // Ensure we have data
+        if (!_.isObject(this.data)) {
+            return null
         }
-        // if (!cookie('env')) {
-        //     console.log('removed:', this.data[attr])
-        // }
-        return (this.data as LooseObject)[attr]
+        // Handle removal of item from array
+        if (!_.isUndefined(value)) {
+            const data = this.get(attr)
+            if (_.isArray(data)) {
+                this.set(attr, _.without(data, value))
+                return this
+            }
+        }
+        // Handle removal of attribute completely
+        // @ts-ignore
+        this.data = _.omit(this.data, attr)
+        return this
     }
 
     iterate(attr: any) {
@@ -255,12 +254,10 @@ export class ModelBase<T = LooseObject> extends EventManager {
      * Clear all temporary data
      */
     clearTemp() {
-        for (const attribute in this.temps) {
-            if (Object.prototype.hasOwnProperty.call(this.temps, attribute)) {
-                // delete this.data[attribute];
-                // this.remove(attribute);
-                delete this.temps[attribute]
-            }
-        }
+        _.forEach(
+            this.temps,
+            (value: any, key: string) =>
+                this.remove(key, value) && delete this.temps[key]
+        )
     }
 }
