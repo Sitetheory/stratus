@@ -27,7 +27,6 @@ import {
     repeat,
     setUrlParams,
     strcmp,
-    truncate,
     ucfirst
 } from '@stratusjs/core/misc'
 import {
@@ -469,9 +468,6 @@ _.mixin({
     patch,
     poll,
     strcmp,
-
-    // FIXME: This overwrites the core one
-    truncate
 })
 
 // Client Information
