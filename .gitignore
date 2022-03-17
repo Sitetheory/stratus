@@ -99,7 +99,7 @@ packages/angularjs-extras/src/directives/trigger.js
 packages/angularjs-extras/src/directives/trigger.js.map
 packages/angularjs-extras/src/filter/numeral.js
 packages/angularjs-extras/src/filter/numeral.js.map
-packages/angularjs-extras/src/filters/truncate.js
+#packages/angularjs-extras/src/filters/truncate.js
 packages/angularjs-extras/src/filters/truncate.js.map
 packages/angularjs-extras/src/filters/numeral.js
 packages/angularjs-extras/src/filters/numeral.js.map
