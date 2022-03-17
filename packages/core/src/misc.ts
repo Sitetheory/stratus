@@ -414,8 +414,9 @@ export function truncate(target: string, limit?: number, suffix?: string) {
     return arr.join('\n').replace(/\n/g, '')
 }
 
-// Interfaces
-export interface LooseObject<T=any> {
+// Generic Types & Interfaces
+type ObjectType = object
+export interface LooseObject<T=any> extends ObjectType {
     [key: string]: T
 }
 export type LooseFunction<T=any> = (...args: any) => T
