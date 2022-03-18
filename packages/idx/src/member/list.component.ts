@@ -75,9 +75,10 @@ Stratus.Components.IdxMemberList = {
         $attrs: angular.IAttributes,
         $q: angular.IQService,
         $mdDialog: angular.material.IDialogService,
-        $timeout: angular.ITimeoutService,
+        $rootScope: angular.IRootScopeService,
         $sce: angular.ISCEService,
         $scope: IdxMemberListScope,
+        $timeout: angular.ITimeoutService,
         $window: angular.IWindowService,
         Idx: IdxService,
     ) {
@@ -406,7 +407,9 @@ Stratus.Components.IdxMemberList = {
 
         $scope.injectMemberDetails = async (member: any): Promise<void> => {
             // console.log('will add these details to a form', model)
-            await $scope.variableInject(member)
+            $rootScope.$applyAsync(async () => {
+                await $scope.variableInject(member)
+            })
         }
 
         /**
@@ -456,6 +459,7 @@ Stratus.Components.IdxMemberList = {
                                 varElement.val(member.OfficeKey)
                             }
                         }
+                        varElement.triggerHandler('input')
 
                         // varElement.val(member.MemberFullName)
 

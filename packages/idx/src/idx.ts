@@ -2942,6 +2942,7 @@ const angularJsService = (
             'MemberStatus',
             'MemberMlsAccessYN',
             'MemberType',
+            'MemberAOR',
             'OfficeKey',
             'OfficeMlsId',
             'OfficeName',
