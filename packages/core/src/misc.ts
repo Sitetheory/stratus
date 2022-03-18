@@ -310,7 +310,15 @@ export function strcmp(a: string, b: string) {
     return a.charAt(i) > b.charAt(i) ? -1 : 1
 }
 
-export function truncate(target: any, limit?: any, suffix?: any) {
+/**
+ * @deprecated use _.truncate() instead
+ * https://lodash.com/docs/4.17.15#truncate
+ *
+ * @param target string to truncate
+ * @param limit characters allowed in string
+ * @param suffix string to append after truncation
+ */
+export function truncate(target: string, limit?: number, suffix?: string) {
     limit = limit || 100
     suffix = suffix || '...'
 
@@ -406,8 +414,9 @@ export function truncate(target: any, limit?: any, suffix?: any) {
     return arr.join('\n').replace(/\n/g, '')
 }
 
-// Interfaces
-export interface LooseObject<T=any> {
+// Generic Types & Interfaces
+type ObjectType = object
+export interface LooseObject<T=any> extends ObjectType {
     [key: string]: T
 }
 export type LooseFunction<T=any> = (...args: any) => T

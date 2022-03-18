@@ -10,6 +10,7 @@ import angular from 'angular'
 import {Stratus} from '@stratusjs/runtime/stratus'
 
 // Stratus Core
+import {ErrorBase} from '@stratusjs/core/errors/errorBase'
 import {ModelBase} from '@stratusjs/core/datastore/modelBase'
 import {EventManager} from '@stratusjs/core/events/eventManager'
 import {cookie} from '@stratusjs/core/environment'
@@ -316,7 +317,7 @@ export class Collection<T = LooseObject> extends EventManager {
             const handler = (response: LooseObject | Array<LooseObject> | string) => {
                 if (!_.isObject(response) && !_.isArray(response)) {
                     // Build Report
-                    const error = new Stratus.Prototypes.Error({
+                    const error = new ErrorBase({
                         payload: response,
                         message: `Invalid Payload: ${request.method} ${request.url}`
                     }, {})

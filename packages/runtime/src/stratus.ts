@@ -27,7 +27,6 @@ import {
     repeat,
     setUrlParams,
     strcmp,
-    truncate,
     ucfirst
 } from '@stratusjs/core/misc'
 import {
@@ -280,6 +279,9 @@ export const Stratus: StratusRuntime = {
         XHR: (request?: XHRRequest) => (new XHR(request)).send()
     },
     Loaders: {},
+    /**
+     * @deprecated use the class references instead
+     */
     Prototypes: {
         Event: EventBase,
         EventManager,
@@ -394,7 +396,6 @@ _.mixin({
     indexBy: _.keyBy,
     mapObject: _.mapValues,
     object: _.zipObject,
-    omit: _.omitBy,
     pairs: _.toPairs,
     pluck: _.map,
     where: _.filter,
@@ -469,9 +470,6 @@ _.mixin({
     patch,
     poll,
     strcmp,
-
-    // FIXME: This overwrites the core one
-    truncate
 })
 
 // Client Information
@@ -999,7 +997,7 @@ Stratus.Internals.Compatibility = () => {
 // very specific, decoupled, data sets.
 Stratus.Internals.Convoy = (convoy: any, query: any) => new Promise((resolve: any, reject: any) => {
     if (convoy === undefined) {
-        reject(new Stratus.Prototypes.Error({
+        reject(new ErrorBase({
             code: 'Convoy',
             message: 'No Convoy defined for dispatch.'
         }, this))
@@ -1027,7 +1025,7 @@ Stratus.Internals.Convoy = (convoy: any, query: any) => new Promise((resolve: an
             },
             error(response: any) {
                 reject(
-                    new Stratus.Prototypes.Error({code: 'Convoy', message: response},
+                    new ErrorBase({code: 'Convoy', message: response},
                         this))
                 return response
             }
@@ -1048,7 +1046,7 @@ Stratus.Internals.Convoy = (convoy: any, query: any) => new Promise((resolve: an
                 return response
             },
             error(response: any) {
-                reject(new Stratus.Prototypes.Error({
+                reject(new ErrorBase({
                     code: 'Convoy',
                     message: response
                 }, this))
@@ -1260,7 +1258,7 @@ Stratus.Internals.IsOnScreen = (el: any, offset: any, partial: any) => {
 Stratus.Internals.LoadCss = (urls?: string|string[]|LooseObject) => {
     return new Promise((resolve: any, reject: any) => {
         if (typeof urls === 'undefined' || typeof urls === 'function') {
-            reject(new Stratus.Prototypes.Error({
+            reject(new ErrorBase({
                 code: 'LoadCSS',
                 message: 'CSS Resource URLs must be defined as a String, Array, or Object.'
             }, this))
@@ -1274,7 +1272,7 @@ Stratus.Internals.LoadCss = (urls?: string|string[]|LooseObject) => {
             iteration: 0
         }
         if (cssEntries.total < 1) {
-            reject(new Stratus.Prototypes.Error({code: 'LoadCSS', message: 'No CSS Resource URLs found!'}, this))
+            reject(new ErrorBase({code: 'LoadCSS', message: 'No CSS Resource URLs found!'}, this))
             return
         }
         _.forEach(urls.reverse(), (url: string) => {
@@ -1713,7 +1711,7 @@ Stratus.Internals.LoadImage = (obj: any) => {
 Stratus.Internals.Location = (options: any) => {
     return new Promise((resolve: any, reject: any) => {
         if (!('geolocation' in navigator)) {
-            reject(new Stratus.Prototypes.Error({
+            reject(new ErrorBase({
                 code: 'Location',
                 message: 'HTML5 Geo-Location isn\'t supported on this browser.'
             }, this))
@@ -1831,7 +1829,7 @@ Stratus.Internals.OnScroll = _.once((elements: any) => {
 Stratus.Internals.Resource = (path: any, elementId: any) => {
     return new Promise((resolve: any, reject: any) => {
         if (typeof path === 'undefined') {
-            reject(new Stratus.Prototypes.Error({
+            reject(new ErrorBase({
                 code: 'Resource',
                 message: 'Resource path is not defined.'
             }, this))
@@ -2351,25 +2349,41 @@ Stratus.PostMessage.Convoy = (fn: (e: object) => void) => {
 // When a message arrives from another source, handle the Convoy
 // appropriately.
 Stratus.PostMessage.Convoy((convoy: any) => {
-    // Single Sign On
+    // Single Sign On Toggle
     let ssoEnabled: any = cookie('sso')
     ssoEnabled = ssoEnabled === null ? true : (isJSON(ssoEnabled) ? JSON.parse(ssoEnabled) : false)
-    if (ssoEnabled && convoy && convoy.meta && convoy.meta.session && convoy.meta.session !== cookie('SITETHEORY')) {
-        cookie({
-            name: 'SITETHEORY',
-            value: convoy.meta.session,
-            expires: '1w'
-        })
-        if (Stratus.Client.safari) {
-            return
-        }
-        // Force HTTPS
-        if (window.location.protocol === 'http:') {
-            window.location.href = window.location.href.replace('http:', 'https:')
-            return
-        }
-        window.location.reload()
+    if (!ssoEnabled) {
+        return
     }
+    // Ensure Convoy and Session are available
+    if (!convoy) {
+        return
+    }
+    const session = _.get(convoy, 'meta.session')
+    if (!session) {
+        return
+    }
+    // Ensure Cookie is different
+    if (session === cookie('SITETHEORY')) {
+        return
+    }
+    console.log('Session:', session)
+    // Set Cookie
+    cookie({
+        name: 'SITETHEORY',
+        value: session,
+        expires: '1w'
+    })
+    // Halt at Safari
+    if (Stratus.Client.safari) {
+        return
+    }
+    // Force HTTPS
+    if (window.location.protocol === 'http:') {
+        window.location.href = window.location.href.replace('http:', 'https:')
+        return
+    }
+    window.location.reload()
 })
 
 // Local Storage Handling
