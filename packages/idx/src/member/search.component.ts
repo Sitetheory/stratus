@@ -15,10 +15,10 @@ import * as angular from 'angular'
 // Services
 import '@stratusjs/idx/idx'
 // tslint:disable-next-line:no-duplicate-imports
-import {IdxEmitter, IdxSearchScope, IdxService} from '@stratusjs/idx/idx'
+import {CompileFilterOptions, IdxEmitter, IdxSearchScope, IdxService} from '@stratusjs/idx/idx'
 
 // Stratus Dependencies
-import {isJSON, LooseObject} from '@stratusjs/core/misc'
+import {hydrate, isJSON, LooseObject} from '@stratusjs/core/misc'
 import {cookie} from '@stratusjs/core/environment'
 import {IdxMemberListScope} from '@stratusjs/idx/member/list.component'
 
@@ -50,7 +50,7 @@ Stratus.Components.IdxMemberSearch = {
         listId: '@',
         listLinkUrl: '@',
         listLinkTarget: '@',
-        options: '@',
+        options: '<',
         template: '@',
         variableSync: '@'
     },
@@ -88,7 +88,8 @@ Stratus.Components.IdxMemberSearch = {
               }
             }, 2000) */
 
-            $scope.options = $attrs.options && isJSON($attrs.options) ? JSON.parse($attrs.options) : {}
+            // $scope.options = $attrs.options && isJSON($attrs.options) ? JSON.parse($attrs.options) : {}
+            $scope.options = $ctrl.options || hydrate($attrs.options) || {}
 
             // Set default queries
             $scope.options.query = $scope.options.query || {}
@@ -171,6 +172,15 @@ Stratus.Components.IdxMemberSearch = {
          * Either popup or load a new page with the
          */
         $scope.displayMemberSelector = (): void => {
+            $scope.variableSyncing = $attrs.variableSync && isJSON($attrs.variableSync) ? JSON.parse($attrs.variableSync) : {
+                agent_fname: 'MemberFirstName',
+                agent_lname: 'MemberLastName',
+                agent_license: 'MemberStateLicense',
+                office_name: 'OfficeName',
+                // office_id: 'OfficeKey'
+                office_id: 'OfficeNumber'
+            }
+
             // Opening a popup will load the propertyDetails and adjust the hashbang URL
             const templateOptions: {
                 options: string,
@@ -180,21 +190,34 @@ Stratus.Components.IdxMemberSearch = {
                 // 'element_id': 'property_member_detail_popup',
                 options: '', // JSON.stringify($scope.options),
                 template: 'mothership/list.selector', // TODO attributes need to be able to select a template
-                'variable-sync': JSON.stringify({
-                    agent_fname: 'MemberFirstName',
-                    agent_lname: 'MemberLastName',
-                    agent_license: 'MemberStateLicense',
-                    office_name: 'OfficeName',
-                    // office_id: 'OfficeKey'
-                    office_id: 'OfficeNumber'
-                })
+                'variable-sync': JSON.stringify($scope.variableSyncing)
                 // 'page-title': true,//update the page title
             }
             if ($scope.options.query) {
-                const options = {
+                const options: CompileFilterOptions = {
                     service: [$scope.options.service || 0], // TODO update service
                     where: $scope.options.query
                 }
+                options.fields = [
+                    '_id',
+                    'MemberKey',
+                    'MemberStateLicense',
+                    'MemberNationalAssociationId',
+                    'MemberFirstName',
+                    'MemberLastName',
+                    'MemberFullName',
+                    'MemberEmail',
+                    'MemberOfficePhone',
+                    'MemberStatus',
+                    'MemberMlsAccessYN',
+                    'MemberType',
+                    'MemberAOR',
+                    'OfficeKey',
+                    'OfficeMlsId',
+                    'OfficeName',
+                    'OriginatingSystemName',
+                    'SourceSystemName'
+                ]
                 templateOptions.options = JSON.stringify(options)
             }
 
