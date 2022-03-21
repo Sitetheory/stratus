@@ -20,8 +20,8 @@ Stratus.Directives.JsonToObject = () => ({
     restrict: 'A',
     require: 'ngModel',
     link: (
-        $attrs: angular.IAttributes,
-        $element: angular.IAugmentedJQuery,
+        $attrs: angular.IAttributes, // Required for ngModel.$formatters and ngModel.$parsers
+        $element: angular.IAugmentedJQuery, // Required for ngModel.$formatters and ngModel.$parsers
         $scope: IScope & any,
         ngModel: INgModelController
     ) => {
