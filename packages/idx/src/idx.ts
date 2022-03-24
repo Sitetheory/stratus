@@ -3162,10 +3162,18 @@ const angularJsService = (
             ]
                 .forEach((addressPart) => {
                     if (Object.prototype.hasOwnProperty.call(property, addressPart)) {
+                        if (
+                            addressPart === 'StreetSuffix' &&
+                            property[addressPart] === 'None'
+                        ) {
+                            property[addressPart] = ''
+                        }
                         if (addressPart === 'UnitNumber') {
                             addressParts.push('Unit')
                         }
-                        addressParts.push(property[addressPart] as string)
+                        if (!_.isEmpty(property[addressPart])) {
+                            addressParts.push(property[addressPart] as string)
+                        }
                     }
                 })
             return addressParts.join(' ')
