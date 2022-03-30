@@ -87,10 +87,14 @@ packages/angularjs-extras/src/components/image-carousel.js
 packages/angularjs-extras/src/components/image-carousel.js.map
 packages/angularjs-extras/src/components/twitterFeed.js
 packages/angularjs-extras/src/components/twitterFeed.js.map
+packages/angularjs-extras/src/directives/bindHtml.js
+packages/angularjs-extras/src/directives/bindHtml.js.map
 packages/angularjs-extras/src/directives/froala.js
 packages/angularjs-extras/src/directives/froala.js.map
 packages/angularjs-extras/src/directives/fullHeight.js
 packages/angularjs-extras/src/directives/fullHeight.js.map
+packages/angularjs-extras/src/directives/jsonToObject.js
+packages/angularjs-extras/src/directives/jsonToObject.js.map
 packages/angularjs-extras/src/directives/maxLength.js
 packages/angularjs-extras/src/directives/maxLength.js.map
 packages/angularjs-extras/src/directives/parentClass.js

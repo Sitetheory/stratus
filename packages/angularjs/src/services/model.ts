@@ -306,8 +306,12 @@ export class Model<T = LooseObject> extends ModelBase<T> {
     // }
 
     // TODO: A simpler version should exist on the ModelBase
-    handleChanges(): LooseObject {
-        const changeSet = super.handleChanges()
+    handleChanges(changeSet?: LooseObject): LooseObject {
+        // Generate ChangeSet for normal triggers
+        const isUserChangeSet = _.isUndefined(changeSet)
+        if (isUserChangeSet) {
+            changeSet = super.handleChanges()
+        }
 
         // Ensure ChangeSet is valid
         if (!changeSet || _.isEmpty(changeSet)) {
@@ -317,12 +321,17 @@ export class Model<T = LooseObject> extends ModelBase<T> {
 
         // This ensures that we only save
         if (this.error && !this.completed && this.getIdentifier()) {
-            console.warn('Blocked attempt to save a persisted model that has not been fetched successfully.')
+            const action = isUserChangeSet ? 'save' : 'sync url for'
+            console.warn(`Blocked attempt to ${action} a persisted model that has not been fetched successfully.`)
             return
         }
 
-        // Trigger Queue for Auto-Save
-        this.saveIdle()
+        // Debug info
+        if (!isUserChangeSet) {
+            if (cookie('env')) {
+                console.info('Attempting URL Sync for non-User ChangeSet:', changeSet)
+            }
+        }
 
         // Sync URL with Data Changes
         // TODO: Check the Payload as well, as everything may not generate a changeSet upon return (i.e. Content Duplication)
@@ -334,7 +343,7 @@ export class Model<T = LooseObject> extends ModelBase<T> {
                 //     console.info('replace id:', this.getIdentifier())
                 // }
                 const newUrl = setUrlParams({
-                    id: this.getIdentifier()
+                    id: _.get(changeSet, 'id') || this.getIdentifier()
                 })
                 if (newUrl !== document.location.href) {
                     window.location.replace(newUrl)
@@ -350,6 +359,14 @@ export class Model<T = LooseObject> extends ModelBase<T> {
                 }
             }
         }
+
+        // Stop Handling Data if not triggered by a User Change
+        if (!isUserChangeSet) {
+            return
+        }
+
+        // Trigger Queue for Auto-Save
+        this.saveIdle()
 
         // Dispatch Model Events
         // This hasn't been test, but is probably a better idea than what we're getting from the setAttribute
@@ -577,9 +594,22 @@ export class Model<T = LooseObject> extends ModelBase<T> {
                 }
 
                 // Diff Settings
+
                 // This is the ChangeSet coming from alterations between what is sent and received (i.e. new version)
-                // const recvChangeSet = _.cloneDeep(patch(this.recv, this.sent))
-                // console.log('recvChangeSet:', recvChangeSet)
+                const incomingChangeSet = this.completed ? _.cloneDeep(
+                    patch(this.recv, this.sent)
+                ) : {}
+                if (!_.isEmpty(incomingChangeSet)) {
+                    if (cookie('env')) {
+                        console.log('Incoming ChangeSet detected:',
+                            cookie('debug_change_set')
+                            ? JSON.stringify(incomingChangeSet)
+                            : incomingChangeSet
+                        )
+                    }
+                    // Handle Incoming ChangeSet separately from User-defined data
+                    this.handleChanges(incomingChangeSet)
+                }
 
                 // This is the ChangeSet generated from what has changed during the save
                 const intermediateData = _.cloneDeep(
@@ -753,21 +783,6 @@ export class Model<T = LooseObject> extends ModelBase<T> {
             }
             this.save()
         }, this.autoSaveInterval)
-    }
-
-    /**
-     * TODO: Ensure the meta temp locations get cleared appropriately before removing function
-     * @deprecated This is specific to the Sitetheory 1.0 API and will be removed entirely
-     */
-    specialAction(action: any) {
-        console.warn('model.specialAction() is deprecated!')
-        this.meta.temp('api.options.apiSpecialAction', action)
-        this.save()
-        if (this.meta.get('api') &&
-            Object.prototype.hasOwnProperty.call(this.meta.get('api'), 'options') &&
-            Object.prototype.hasOwnProperty.call(this.meta.get('api').options, 'apiSpecialAction')) {
-            delete this.meta.get('api').options.apiSpecialAction
-        }
     }
 
     throttleSave() {
