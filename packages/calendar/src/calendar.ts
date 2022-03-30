@@ -292,6 +292,13 @@ Stratus.Components.Calendar = {
             /*if (fullUrl.startsWith('http')) {
                 fullUrl = `https://cors-anywhere.herokuapp.com/${url}`
             }*/
+            if (
+                url.startsWith('http') &&
+                !url.startsWith('/') &&
+                !url.startsWith('https://app004.sitetheory.io/')
+            ) {
+                url = `https://app004.sitetheory.io/${url}`
+            }
 
             const response: any = await $http.get(url)
             if (cookie('env')) {
