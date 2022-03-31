@@ -92,23 +92,34 @@ export class StripeSetupIntentComponent extends RootComponent implements OnInit 
             console.log('running addPaymentMethod')
             let clientSecret = ''
             let publishKey = ''
+            let formMessage = ''
             this.newPaymentMethodPending = true
 
             const model = new Model({
                 target: this.paymentMethodApiPath
             })
+            model.data.setupIntent = true
             await model.save()
             console.log('model', model)
             if (
                 Object.prototype.hasOwnProperty.call(model, 'meta') &&
-                Object.prototype.hasOwnProperty.call(model.meta, 'data') &&
-                Object.prototype.hasOwnProperty.call(model.meta.data, 'clientSecret') &&
-                Object.prototype.hasOwnProperty.call(model.meta.data, 'publishKey') &&
-                !_.isEmpty(model.meta.data.clientSecret) &&
-                !_.isEmpty(model.meta.data.publishKey)
+                Object.prototype.hasOwnProperty.call(model.meta, 'data')
             ) {
-                clientSecret = model.meta.data.clientSecret
-                publishKey = model.meta.data.publishKey
+                if (
+                    Object.prototype.hasOwnProperty.call(model.meta.data, 'clientSecret') &&
+                    Object.prototype.hasOwnProperty.call(model.meta.data, 'publishKey') &&
+                    !_.isEmpty(model.meta.data.clientSecret) &&
+                    !_.isEmpty(model.meta.data.publishKey)
+                ) {
+                    clientSecret = model.meta.data.clientSecret
+                    publishKey = model.meta.data.publishKey
+                }
+                if (
+                    Object.prototype.hasOwnProperty.call(model.meta.data, 'formMessage') &&
+                    !_.isEmpty(model.meta.data.formMessage)
+                ) {
+                    formMessage = model.meta.data.formMessage
+                }
             }
             // TODO check status
 
@@ -118,18 +129,19 @@ export class StripeSetupIntentComponent extends RootComponent implements OnInit 
             ) {
                 console.log('got client and publish, will make an input')
                 this.newPaymentMethodPrompt = true
-                this.inputPaymentMethod(clientSecret, publishKey, ev)
+                this.inputPaymentMethod(clientSecret, publishKey, formMessage, ev)
             }
 
             this.newPaymentMethodPending = false
         }
     }
 
-    inputPaymentMethod(clientSecret: string, publishKey: string, ev?: any) {
+    inputPaymentMethod(clientSecret: string, publishKey: string, formMessage?: string, ev?: any) {
         if (ev) {
             ev.preventDefault()
             // ev.stopPropagation()
         }
+        formMessage = formMessage || ''
 
         this.newPaymentMethodPrompt = true
         // testing opening a dialog
@@ -138,6 +150,7 @@ export class StripeSetupIntentComponent extends RootComponent implements OnInit 
             data: {
                 clientSecret,
                 publishKey,
+                formMessage,
                 detailedBillingInfo: this.detailedBillingInfo
             } as StripePaymentMethodDialogData
         })
