@@ -69,6 +69,7 @@ export class StripePaymentMethodComponent extends RootComponent implements OnDes
     // The SetupIntent Secret. This allows altering the SetupIntent that was created such as changing card details
     @Input() clientSecret: string
     @Input() publishKey = ''
+    @Input() formMessage = ''
     @Input() detailedBillingInfo?: boolean
     paymentMethodApiPath = 'PaymentMethod'
     billingInfo: stripe.BillingDetails = { // fixme should copy stripe.BillingDetails // PaymentBillingInfo
@@ -279,5 +280,6 @@ export class StripePaymentMethodComponent extends RootComponent implements OnDes
 export interface StripePaymentMethodDialogData {
     clientSecret: string
     publishKey: string
+    formMessage: string
     detailedBillingInfo?: boolean
 }
