@@ -202,7 +202,7 @@ export class StripePaymentMethodSelectorComponent extends RootComponent implemen
             // (value?: number) => {
             (value?: Model) => {
                 // Avoid saving until the Model is truly available
-                if (!value.completed) {
+                if (!value || !value.completed) {
                 // if (!this.model.completed) {
                     return
                 }
