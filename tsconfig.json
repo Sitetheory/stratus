@@ -74,5 +74,8 @@
   },
   "exclude": [
     "node_modules"
+  ],
+  "include": [
+    "./packages/*/src/**/*.ts"
   ]
 }
