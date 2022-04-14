@@ -74,10 +74,39 @@ Stratus.Directives.BindHtml = (
         $scope.elementId = $element.elementId || $ctrl.uid
         $scope.initialized = false
 
+        // Run Compilation, Deep...
+        $scope.compile = (el?: any) => {
+            // evaluate element
+            el = el || $element.contents()
+            if (!el) {
+                return
+            }
+            // compile node
+            $compile(el)($scope)
+            // attempt to compile child
+            const contents = el.contents()
+            if (!contents) {
+                return
+            }
+            if (!contents.length) {
+                return
+            }
+            $scope.compile(contents)
+        }
+
+        // Add Change Listener
+        // When changes are detected, compile child nodes (build directives and components for child elements)
+        $element.on('DOMSubtreeModified', () => $scope.compile())
+
+        // Attempt compile once
+        $scope.compile()
+
         // Attempt to Compile Data
-        $scope.bindHtml = $attrs.stratusBindHtml
-        if (!$scope.bindHtml) {
-            console.warn(`unable to set html on instance ${$ctrl.uid} via stratus-bind-html attributes.`)
+        if (!$attrs.stratusBindHtml) {
+            // Mark as initialized since the watcher isn't critical
+            $scope.initialized = true
+            // this isn't critical anymore, since we added a DOMSubtreeModified hook
+            // console.warn(`unable to set html on instance ${$ctrl.uid} via stratus-bind-html attributes.`)
             return
         }
 
@@ -109,8 +138,6 @@ Stratus.Directives.BindHtml = (
                 // set html to scope and element
                 $scope.html = newHtml
                 $element.html($scope.html)
-                // compile html (builds directives and components for child elements)
-                $compile($element.contents())($scope)
                 // mark as initialized
                 $scope.initialized = true
                 // handle single read binds
