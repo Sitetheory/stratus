@@ -57,23 +57,23 @@ jobs:
 #        directories:
 #          - node_modules
 
-#    - language: node_js
-#      # EOL: 2024-04-30
-#      name: "NodeJS 16: Gallium"
-#      node_js:
-#        - "16"
-#      cache:
-#        directories:
-#          - node_modules
+    - language: node_js
+      # EOL: 2024-04-30
+      name: "NodeJS 16: Gallium"
+      node_js:
+        - "16"
+      cache:
+        directories:
+          - node_modules
 
-#    - language: node_js
-#      # EOL: 2022-06-01
-#      name: "NodeJS 17"
-#      node_js:
-#        - "17"
-#      cache:
-#        directories:
-#          - node_modules
+    - language: node_js
+      # EOL: 2022-06-01
+      name: "NodeJS 17"
+      node_js:
+        - "17"
+      cache:
+        directories:
+          - node_modules
 
 #    - language: node_js
 #      # EOL: 2025-04-30
