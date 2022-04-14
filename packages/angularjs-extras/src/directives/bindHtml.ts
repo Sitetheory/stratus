@@ -74,32 +74,62 @@ Stratus.Directives.BindHtml = (
         $scope.elementId = $element.elementId || $ctrl.uid
         $scope.initialized = false
 
+        // Hoist Element for Debug Purposes
+        $scope.element = $element
+
+        // Safe Execution Flags
+        $scope.compiling = false
+        $scope.compiled = false
+
+        // Safe Execution Controls
+        // $scope.compileOnce = false
+
+        // Check if we can compile
+        $scope.canCompile = () => {
+            if ($scope.compiling) {
+                return false
+            }
+            // return !($scope.compileOnce && $scope.compiled);
+            return true
+
+        }
+
         // Run Compilation, Deep...
         $scope.compile = (el?: any) => {
             // evaluate element
             el = el || $element.contents()
-            if (!el) {
+            if (!el || !el.length) {
                 return
             }
+            // lock compilation
+            $scope.compiling = true
             // compile node
             $compile(el)($scope)
             // attempt to compile child
             const contents = el.contents()
-            if (!contents) {
-                return
-            }
-            if (!contents.length) {
+            if (!contents || !contents.length) {
+                // unlock compilation
+                $scope.compiling = false
+                // $scope.compiled = true
                 return
             }
             $scope.compile(contents)
         }
 
+        $scope.safeCompile = () => {
+            if (!$scope.canCompile()) {
+                return
+            }
+            $scope.compile()
+        }
+        $scope.safeCompile = _.throttle($scope.safeCompile, 100)
+
         // Add Change Listener
         // When changes are detected, compile child nodes (build directives and components for child elements)
-        $element.on('DOMSubtreeModified', () => $scope.compile())
+        $element.on('DOMSubtreeModified', $scope.safeCompile)
 
         // Attempt compile once
-        $scope.compile()
+        $scope.safeCompile()
 
         // Attempt to Compile Data
         if (!$attrs.stratusBindHtml) {
