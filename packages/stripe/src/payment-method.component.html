@@ -1,5 +1,6 @@
 <mat-card [attr.id]="elementId">
     <mat-card-content data-layout-padding [hidden]="cardSaved">
+        <div *ngIf="formMessage" class="billing-message" [innerHTML]="formMessage"></div>
         <!-- TODO add a form to collect Billing info for the card as an option -->
         <div *ngIf="detailedBillingInfo" class="billing-info">
             <mat-form-field class="md-block">
