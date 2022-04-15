@@ -12,6 +12,7 @@
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "esModuleInterop": true,
+    "skipLibCheck": true,
     "baseUrl": "",
     "typeRoots": [
       "node_modules/@types"
@@ -74,5 +75,8 @@
   },
   "exclude": [
     "node_modules"
+  ],
+  "include": [
+    "./packages/*/src/**/*.ts"
   ]
 }
