@@ -29,7 +29,7 @@
     "yarn": ">= 1.21.1"
   },
   "dependencies": {
-    "@angular/google-maps": "^11.0.3",
-    "@stratusjs/angular": "^0.2.89"
+    "@angular/google-maps": "^11.2.13",
+    "@stratusjs/angular": "^0.2.93"
   }
 }
