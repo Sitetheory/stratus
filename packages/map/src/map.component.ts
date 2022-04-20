@@ -323,15 +323,28 @@ export class MapComponent extends RootComponent implements OnInit, AfterViewInit
             this.info = new google.maps.InfoWindow({
                 maxWidth: 250
             })
-            this.processProvidedMarkersPath()
-            this.processProvidedCallback()
 
-            this.initialized = true
+            const stopListeningForIdle = this.map.addListener('idle', () => {
+                // do something only the first time the map is loaded
+                // console.info('Map is now idle (almost inited)')
+                stopListeningForIdle.remove()
+
+                this.updateWidgetSize()
+                this.processProvidedMarkersPath()
+                this.processProvidedCallback()
+
+                this.initialized = true
+                this.initializing = false
+            })
+
+            // this.initialized = true
+            // console.info('Map was thought to be inited')
             // console.info(this.uid, 'Inited')
         } catch (e) {
             console.error(this.uid, 'could not Init', e)
+            this.initializing = false
         }
-        this.initializing = false
+        // this.initializing = false
         // console.log('ngAfterViewInit done')
     }
 
@@ -412,17 +425,26 @@ export class MapComponent extends RootComponent implements OnInit, AfterViewInit
      * Center and possibly zoom map on current Markers
      */
     public fitMarkerBounds() {
+        // console.info('fitMarkerBounds start', _.clone(this.storedMarkers.length))
         if (this.storedMarkers.length === 1) {
             // If this is the only marker, center it
             // TODO Zoom....?
             this.centerAtPosition(this.storedMarkers[0].getPosition())
         } else if (this.storedMarkers.length > 1) {
             // This has multiple markers. Find the balance between all of them
-            const bounds = this.getMarkerBounds()
+            let bounds = this.getMarkerBounds()
+            // console.info('got map bounds', _.clone(bounds))
             // this.centerAtPosition(bounds.getCenter())
             this.panToPosition(bounds.getCenter())
             this.fitBounds(bounds)
+            setTimeout(() => {
+                // console.info('fitting once again')
+                bounds = this.getMarkerBounds()
+                // console.info('got map bounds again', _.clone(bounds))
+                this.fitBounds(bounds)
+            }, 1000) // fit bounds once more a second later
         }
+        // console.info('fitMarkerBounds end')
     }
 
     public decodeHTML (html: string) {
@@ -494,6 +516,7 @@ export class MapComponent extends RootComponent implements OnInit, AfterViewInit
     private processProvidedMarkersPath() {
         if (_.isString(this.markers)) {
             // console.info('the test var markers is string', this.markers)
+            // Watch for any changes to this.markers as we treat it as a variable reference
             this.watcher.watch(this.window, this.markers, (newValue) => {
                 // console.info(this.markers, 'variable changed', _.clone(newValue))
                 if (_.isArray(newValue)) {
@@ -506,6 +529,7 @@ export class MapComponent extends RootComponent implements OnInit, AfterViewInit
                 }
             })
         } else if (_.isArray(this.markers)) {
+            // console.info('the test var markers is a already prepared array', this.markers)
             // TODO need to verify its MarkSettings and not LatLng
             this.markers.forEach((mark: MarkerSettings) => {
                 this.addMarker(mark)
@@ -542,7 +566,7 @@ export class MapComponent extends RootComponent implements OnInit, AfterViewInit
 
     private fitBounds(latLngBounds: google.maps.LatLngBounds) {
         // TODO padding?
-        // console.info('setting bounds to', latLngBounds)
+        // console.info('setting bounds to', _.clone(latLngBounds))
         this.map.fitBounds(latLngBounds)
     }
 

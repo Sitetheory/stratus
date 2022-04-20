@@ -31,7 +31,7 @@
                 <mat-form-field class="md-block" flex-gt-sm>
                     <mat-label>Zip</mat-label>
                     <input matInput name="postalCode" [(ngModel)]="billingInfo.address.postal_code"
-                           pattern="/^[0-9]{5}$/" maxlength="5" [disabled]="!isEditable()">
+                           pattern="[0-9]{5}" maxlength="5" [disabled]="!isEditable()">
                 </mat-form-field>
             </div>
         </div>
