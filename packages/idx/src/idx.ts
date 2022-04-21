@@ -136,7 +136,8 @@ export interface IdxService {
         callback: IdxEmitter
     ): () => void
 
-    getFriendlyStatus(property: Property): string // TODO replace with property object
+    getFriendlyStatus(property: Property, preferredStatus?: 'Closed' | 'Leased' | 'Rented'): string
+    getFriendlyPriceLabel(property: Property): 'List Price' | 'Sale Price' | 'Lease Price' | 'Rent Price' | string
     getFullAddress(property: Property, encode?: boolean): string
 
     getGoogleMapsKey(): string | null
@@ -494,6 +495,8 @@ export interface Property extends LooseObject {
     StandardStatus: string
     PropertyType: string
     PropertySubType: string
+    ListPrice: number
+    ClosePrice: number
 
     // Time
     ModificationTimestamp: Date
@@ -3054,6 +3057,38 @@ const angularJsService = (
     }
 
     /**
+     * Grabs a more human label to append in front the the prices
+     * Depends on the ClosePrice and Status of a Proeprty
+     */
+    function getFriendlyPriceLabel(
+        property: Property
+    ): 'List Price' | 'Sale Price' | 'Lease Price' | 'Rent Price' | string {
+        let priceLabel = 'List'
+        if (property.hasOwnProperty('ClosePrice')) {
+            const statusName = getFriendlyStatus(property)
+            switch (statusName) {
+                case 'Closed': {
+                    priceLabel = 'Sale'
+                    break
+                }
+                case 'Leased': {
+                    priceLabel = 'Lease'
+                    break
+                }
+                case 'Rented': {
+                    priceLabel = 'Rent'
+                    break
+                }
+                default:
+                    priceLabel = 'Sale'
+            }
+        }
+        priceLabel += ' Price'
+
+        return priceLabel
+    }
+
+    /**
      * Grabs a full/longer name of the property's status. Mostly intended to properly show the normal/rent status
      * When selecting a preferredStatus, 'Closed' wil always show a Closed listing as such.
      * preferredStatus = 'Leased', a Closed listing will either be 'Sold' or 'Leased'
@@ -3354,6 +3389,7 @@ const angularJsService = (
         getContactVariables,
         getDefaultWhereOptions,
         getDisclaimerInstance,
+        getFriendlyPriceLabel,
         getFriendlyStatus,
         getFullAddress,
         getFullStatus,
