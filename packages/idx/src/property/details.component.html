@@ -9,9 +9,12 @@
         This listing is no longer available
     </div>
     <!-- parallax-wrapper disabled, cannot use height altering on the entire popup widget -->
-    <div data-ng-if="model.completed && (model.data.ListingId || model.data.ListingKey)">
+    <div
+            data-ng-if="model.completed && (model.data.ListingId || model.data.ListingKey)"
+            vocab="https://schema.org/" typeof="RealEstateListing Offer Accommodation"
+    >
 
-        <div class="details-header static-element">
+        <div class="details-header static-element" property="address">
             <h1 class="address">
                 <span data-ng-bind="::model.data.InternetAddressDisplayYN === false ? 'Address Not Disclosed' : getStreetAddress()" aria-label="Street Address"></span>
             </h1>
@@ -45,13 +48,13 @@
                             <span data-ng-bind="::Idx.getFullStatus(model.data, preferredStatus)" role="text"></span>
                         </li>
                         <li data-ng-if="::model.data.BedroomsTotal && model.data.BedroomsTotal > 0" role="text">
-                            <span data-ng-bind="::model.data.BedroomsTotal"></span> Beds
+                            <span data-ng-bind="::model.data.BedroomsTotal" property="numberOfBedrooms"></span> Beds
                         </li>
                         <li
                                 data-ng-if="::(model.data.BathroomsFull && model.data.BathroomsFull > 0) || (model.data.BathroomsTotalInteger && model.data.BathroomsTotalInteger > 0)"
                                 role="text"
                         >
-                            <span data-ng-bind="::model.data.BathroomsFull || model.data.BathroomsTotalInteger"></span>
+                            <span data-ng-bind="::model.data.BathroomsFull || model.data.BathroomsTotalInteger" property="numberOfFullBathrooms"></span>
                             Baths
                         </li>
                         <li data-ng-if="::model.data.BathroomsHalf && model.data.BathroomsHalf > 0" role="text">
@@ -61,7 +64,7 @@
                             <span data-ng-bind="::model.data.BathroomsOneQuarter"></span> Quarter Baths
                         </li>
                         <li data-ng-if="::model.data.BathroomsPartial && model.data.BathroomsPartial > 0" role="text">
-                            <span data-ng-bind="::model.data.BathroomsPartial"></span> Partial Baths
+                            <span data-ng-bind="::model.data.BathroomsPartial" property="numberOfPartialBathrooms"></span> Partial Baths
                         </li>
                         <li data-ng-if="::model.data.CloseDate && Idx.getFriendlyStatus(model.data) == 'Closed'" role="text">
                             <span data-ng-bind="::Idx.getFriendlyStatus(model.data, preferredStatus)"></span> on
@@ -69,7 +72,7 @@
                         </li>
                         <li data-ng-if="::model.data.OnMarketDate" role="text">
                             Listed on
-                            <time data-ng-bind="::model.data.OnMarketDate | moment:{unix:false,format:'MMM Do YYYY'}" datetime="{{::model.data.OnMarketDate}}"></time>
+                            <time data-ng-bind="::model.data.OnMarketDate | moment:{unix:false,format:'MMM Do YYYY'}" datetime="{{::model.data.OnMarketDate}}" property="datePosted"></time>
                         </li>
                         <li data-ng-if="::model.data.CloseDate && model.data.ClosePrice && model.data.ListPrice" role="text">
                             Listed at <span data-ng-bind="'$' + (model.data.ListPrice | number)"></span>
@@ -92,7 +95,7 @@
                             Style: <span data-ng-repeat="item in ::model.data.ArchitecturalStyle" class="repeatedArray"><span data-ng-bind="::item"></span><span class="hideLastChild">,&nbsp;</span></span>
                         </li>
                         <li data-ng-if="::model.data.YearBuilt" aria-label="Year Built" role="text">
-                            Built in <span data-ng-bind="::model.data.YearBuilt"></span>
+                            Built in <span data-ng-bind="::model.data.YearBuilt"  property="yearBuilt"></span>
                         </li>
                         <li data-ng-if="::model.data.LivingArea && model.data.LivingArea > 0" role="text">
                             Living Area:
@@ -146,7 +149,7 @@
                             Stories: <span data-ng-bind="::model.data.Stories"></span>
                         </li>
                         <li data-ng-if="::model.data.PropertyType">
-                            <span data-ng-bind="::model.data.PropertyType"></span>
+                            <span data-ng-bind="::model.data.PropertyType" property="accommodationCategory"></span>
                         </li>
                         <li data-ng-if="::model.data.PropertySubType && model.data.PropertySubType != model.data.PropertyType" role="text">
                             <span data-ng-bind="::model.data.PropertySubType"></span>
@@ -155,8 +158,8 @@
                             <span data-ng-bind="::model.data._Class"></span>
                         </li>
                         <li class="mls-service" data-ng-if="::model.data.ListingId || model.data.ListingKey" role="text">
-                            <span data-ng-bind="getMLSName()"></span>#
-                            <span data-ng-bind="::model.data.ListingId || model.data.ListingKey"></span>
+                            <span data-ng-bind="getMLSName()" property="maintainer"></span>#
+                            <span data-ng-bind="::model.data.ListingId || model.data.ListingKey" property="identifier"></span>
                         </li>
                     </ul>
 
@@ -177,28 +180,31 @@
                             </p>
                         </div>
                         <div class="listing-credit-divider" data-ng-if="getListAgentName() && Idx.sharedValues.contact.name" data-flex="10" data-hide-xs></div>
-                        <div class="listing-agent-container" data-ng-if="getListAgentName()" data-flex data-layout="column" aria-label="Listing Broker">
+                        <div class="listing-agent-container" data-ng-if="getListAgentName()" data-flex data-layout="column" aria-label="Listing Broker" property="seller" typeof="Person">
                             <h4 class="listing-credit-title">Listing Agent</h4>
                             <p class="listing-credit-contact">
-                                <span data-ng-bind="::getListAgentName()"></span> | <span data-ng-bind="::model.data.ListOfficeName"></span>
+                                <span data-ng-bind="::getListAgentName()" property="name"></span> | <span data-ng-bind="::model.data.ListOfficeName" property="affiliation"></span>
                             </p>
                             <p class="listing-credit-contact" data-ng-if="model.data.ListAgentEmail" aria-label="Listing Broker Contact">
                                 <!--a href="mailto:email@address.com">email@address.com</a-->
+                                <meta property="email" content="{{::model.data.ListAgentEmail}}" />
                                 <a data-ng-href="mailto:{{::model.data.ListAgentEmail}}" target="_blank" data-ng-bind="::model.data.ListAgentEmail"></a>
                             </p>
                             <p class="listing-credit-contact" data-ng-if="getListAgentPhone() && !model.data.ListAgentEmail" aria-label="Listing Broker Contact">
+                                <meta property="telephone" content="{{::getListAgentPhone()}}" />
                                 <a data-ng-href="tel:{{::getListAgentPhone()}}" data-ng-bind="::getListAgentPhone()"></a>
                             </p>
+                            <meta data-ng-if="::model.data.ListAgentStateLicense" property="identifier" content="{{::model.data.ListAgentStateLicense}}" />
                         </div>
                     </section>
 
                     <div class="list-price font-secondary" data-ng-if="::model.data.ClosePrice || model.data.ListPrice" role="text">
-                        <span class="list-price-label" data-ng-bind="model.data.ClosePrice ? Idx.getFriendlyStatus(model.data, preferredStatus) + ' for' : 'Listed at'"></span>
+                        <span class="list-price-label" data-ng-bind="Idx.getFriendlyPriceLabel(model.data)"></span>
                         <span class="list-price" data-ng-bind="'$' + (model.data.ClosePrice || model.data.ListPrice | number)" aria-label="Property Price"></span>
                     </div>
                     <!-- TODO need a decent way to make a title for Property listings -->
                     <!--h3 class="property-title">An exclusive haven destined for modern, indoor-outdoor entertaining</h3-->
-                    <div class="font-body description" data-ng-if="::model.data.PublicRemarks && !hideVariables.includes('PublicRemarks')" data-ng-bind-html="::getPublicRemarksHTML()" aria-label="Description"></div>
+                    <div class="font-body description" data-ng-if="::model.data.PublicRemarks && !hideVariables.includes('PublicRemarks')" data-ng-bind-html="::getPublicRemarksHTML()" aria-label="Description" property="description"></div>
                     <div class="response-container">
                         <a data-ng-if="::model.data.VirtualTourURLUnbranded && !hideVariables.includes('VirtualTourURLUnbranded')"
                            data-ng-href="{{::model.data.VirtualTourURLUnbranded}}"

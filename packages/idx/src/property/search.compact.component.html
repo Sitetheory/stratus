@@ -219,13 +219,18 @@
                         <h3 data-layout-align="space-around center">Preset Filters</h3>
                         <div class="specific-filters" data-layout="row" data-layout-align="space-around center" aria-label="Specific Areas">
                             <div class="search-input" data-ng-if="options.query.where.City.length">
-                                <md-input-container class="md-block minimal">
-                                    <label>City</label>
-                                    <input data-ng-model="options.query.where.City"
-                                           type="text"
-                                           maxlength="250"
-                                           autocomplete="off">
-                                </md-input-container>
+                                <md-chips
+                                        class="city-id font-secondary"
+                                        aria-label="Cities to Limit"
+                                        data-ng-model="options.query.where.City"
+                                        data-md-enable-chip-edit="true"
+                                        data-md-add-on-blur="true"
+                                        data-md-separator-keys="[$mdConstant.KEY_CODE.ENTER, $mdConstant.KEY_CODE.COMMA]"
+                                        data-placeholder="City"
+                                        data-secondary-placeholder="+City"
+                                        data-delete-button-label="Remove City"
+                                        data-delete-hint="Press delete to remove City"
+                                ></md-chips>
                             </div>
                             <div class="search-input" data-ng-if="options.query.where.CountyOrParish.length">
                                 <md-chips

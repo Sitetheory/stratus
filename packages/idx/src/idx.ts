@@ -136,7 +136,8 @@ export interface IdxService {
         callback: IdxEmitter
     ): () => void
 
-    getFriendlyStatus(property: Property): string // TODO replace with property object
+    getFriendlyStatus(property: Property, preferredStatus?: 'Closed' | 'Leased' | 'Rented'): string
+    getFriendlyPriceLabel(property: Property): 'List Price' | 'Sale Price' | 'Lease Price' | 'Rent Price' | string
     getFullAddress(property: Property, encode?: boolean): string
 
     getGoogleMapsKey(): string | null
@@ -246,7 +247,7 @@ export interface WhereOptions extends LooseObject {
     ListingType?: string[] | string,
     Status?: string[] | string,
     UnparsedAddress?: string,
-    City?: string,
+    City?: string[] | string,
     PostalCode?: string[] | string,
     CityRegion?: string[] | string,
     CountyOrParish?: string[] | string,
@@ -494,6 +495,8 @@ export interface Property extends LooseObject {
     StandardStatus: string
     PropertyType: string
     PropertySubType: string
+    ListPrice: number
+    ClosePrice: number
 
     // Time
     ModificationTimestamp: Date
@@ -630,7 +633,7 @@ const angularJsService = (
     }
     // Blank options to initialize arrays
     const defaultWhereOptions: WhereOptions = {
-        City: '', // Added as default so search and manipulate
+        City: [], // Added as default so search and manipulate
         UnparsedAddress: '', // Added as default so search and manipulate
         Location: '', // Added as default so search and manipulate
         Status: [],
@@ -1879,7 +1882,7 @@ const angularJsService = (
                     type: 'stringLike'
                 },
                 City: {
-                    type: 'stringLike'
+                    type: 'stringIncludesArray'
                 },
                 PostalCode: {
                     type: 'stringIncludesArray'
@@ -3054,6 +3057,38 @@ const angularJsService = (
     }
 
     /**
+     * Grabs a more human label to append in front the the prices
+     * Depends on the ClosePrice and Status of a Proeprty
+     */
+    function getFriendlyPriceLabel(
+        property: Property
+    ): 'List Price' | 'Sale Price' | 'Lease Price' | 'Rent Price' | string {
+        let priceLabel = 'List'
+        if (property.hasOwnProperty('ClosePrice')) {
+            const statusName = getFriendlyStatus(property)
+            switch (statusName) {
+                case 'Closed': {
+                    priceLabel = 'Sale'
+                    break
+                }
+                case 'Leased': {
+                    priceLabel = 'Lease'
+                    break
+                }
+                case 'Rented': {
+                    priceLabel = 'Rent'
+                    break
+                }
+                default:
+                    priceLabel = 'Sale'
+            }
+        }
+        priceLabel += ' Price'
+
+        return priceLabel
+    }
+
+    /**
      * Grabs a full/longer name of the property's status. Mostly intended to properly show the normal/rent status
      * When selecting a preferredStatus, 'Closed' wil always show a Closed listing as such.
      * preferredStatus = 'Leased', a Closed listing will either be 'Sold' or 'Leased'
@@ -3354,6 +3389,7 @@ const angularJsService = (
         getContactVariables,
         getDefaultWhereOptions,
         getDisclaimerInstance,
+        getFriendlyPriceLabel,
         getFriendlyStatus,
         getFullAddress,
         getFullStatus,
