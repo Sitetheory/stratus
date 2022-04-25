@@ -24,7 +24,7 @@
                     </div>
                 </div>
                 <div data-layout="row">
-                    <div class="search-input" data-flex="50">
+                    <!-- div class="search-input" data-flex="50">
                         <md-input-container class="md-block minimal">
                             <label>City</label>
                             <input data-ng-model="options.query.where.City"
@@ -32,6 +32,20 @@
                                    maxlength="250"
                                    autocomplete="off">
                         </md-input-container>
+                    </div -->
+                    <div class="search-input" data-flex="50">
+                        <md-chips
+                                class="city font-secondary"
+                                aria-label="City to Limit"
+                                data-ng-model="options.query.where.City"
+                                data-md-enable-chip-edit="true"
+                                data-md-add-on-blur="true"
+                                data-md-separator-keys="[$mdConstant.KEY_CODE.ENTER, $mdConstant.KEY_CODE.COMMA]"
+                                data-placeholder="City"
+                                data-secondary-placeholder="+City"
+                                data-delete-button-label="Remove City"
+                                data-delete-hint="Press delete to remove City"
+                        ></md-chips>
                     </div>
                     <div class="search-input" data-flex="50">
                         <md-chips

@@ -247,7 +247,7 @@ export interface WhereOptions extends LooseObject {
     ListingType?: string[] | string,
     Status?: string[] | string,
     UnparsedAddress?: string,
-    City?: string,
+    City?: string[] | string,
     PostalCode?: string[] | string,
     CityRegion?: string[] | string,
     CountyOrParish?: string[] | string,
@@ -633,7 +633,7 @@ const angularJsService = (
     }
     // Blank options to initialize arrays
     const defaultWhereOptions: WhereOptions = {
-        City: '', // Added as default so search and manipulate
+        City: [], // Added as default so search and manipulate
         UnparsedAddress: '', // Added as default so search and manipulate
         Location: '', // Added as default so search and manipulate
         Status: [],
@@ -1882,7 +1882,7 @@ const angularJsService = (
                     type: 'stringLike'
                 },
                 City: {
-                    type: 'stringLike'
+                    type: 'stringIncludesArray'
                 },
                 PostalCode: {
                     type: 'stringIncludesArray'
