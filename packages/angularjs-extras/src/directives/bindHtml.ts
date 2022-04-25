@@ -97,23 +97,23 @@ Stratus.Directives.BindHtml = (
         // Run Compilation, Deep...
         $scope.compile = (el?: any) => {
             // evaluate element
-            el = el || $element.contents()
-            if (!el || !el.length) {
+            el = el || _.first($element)
+            if (!el || !el.nodeType) {
+                return
+            }
+            if (el.nodeType !== Node.ELEMENT_NODE) {
+                return
+            }
+            const children: NodeList = el.querySelectorAll(':not(.ng-scope)')
+            if (!children || !children.length) {
                 return
             }
             // lock compilation
             $scope.compiling = true
             // compile node
-            $compile(el)($scope)
-            // attempt to compile child
-            const contents = el.contents()
-            if (!contents || !contents.length) {
-                // unlock compilation
-                $scope.compiling = false
-                // $scope.compiled = true
-                return
-            }
-            $scope.compile(contents)
+            $compile(children)($scope)
+            // unlock compilation
+            $scope.compiling = false
         }
 
         $scope.safeCompile = () => {
@@ -122,7 +122,7 @@ Stratus.Directives.BindHtml = (
             }
             $scope.compile()
         }
-        $scope.safeCompile = _.throttle($scope.safeCompile, 100)
+        $scope.safeCompile = _.throttle($scope.safeCompile, 250)
 
         // Add Change Listener
         // When changes are detected, compile child nodes (build directives and components for child elements)
