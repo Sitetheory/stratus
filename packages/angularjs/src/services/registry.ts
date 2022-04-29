@@ -243,6 +243,10 @@ export class Registry {
                             // console.log('changed:', $scope)
                             $scope.$applyAsync()
                         })
+                        $scope.model.on('error', () => {
+                            // console.log('errored:', $scope)
+                            $scope.$applyAsync()
+                        })
                     }
                 } else if (data instanceof Collection) {
                     $scope.collection = data
