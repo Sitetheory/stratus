@@ -38,15 +38,15 @@ jobs:
 #        directories:
 #          - node_modules
 
-    - language: node_js
-      # EOL: 2023-04-30
-      name: "NodeJS 14: Fermium"
-      node_js:
-        - "14"
-      cache:
-        #yarn: true
-        directories:
-          - node_modules
+#    - language: node_js
+#      # EOL: 2023-04-30
+#      name: "NodeJS 14: Fermium"
+#      node_js:
+#        - "14"
+#      cache:
+#        #yarn: true
+#        directories:
+#          - node_modules
 
 #    - language: node_js
 #      # EOL: 2021-06-01
