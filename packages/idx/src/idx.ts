@@ -1882,7 +1882,7 @@ const angularJsService = (
                     type: 'stringLike'
                 },
                 City: {
-                    type: 'stringIncludesArray'
+                    type: 'stringLikeArray'
                 },
                 PostalCode: {
                     type: 'stringIncludesArray'
@@ -1897,7 +1897,7 @@ const angularJsService = (
                 },
                 CityRegion: {
                     // Note: only 'in' seems to work as a replacement for inq when nested in another object
-                    type: 'stringIncludesArray'
+                    type: 'stringLikeArray'
                 },
                 Location: {
                     type: 'andOr',
@@ -3218,7 +3218,6 @@ const angularJsService = (
     }
 
     function getFullAddress(property: Property, encode?: boolean): string {
-        // const address = property.UnparsedAddress + ', ' + property.City + ' ' + property.StateOrProvince
         const address = getStreetAddress(property) + ', ' + property.City + ' ' + property.StateOrProvince
         return encode ? encodeURIComponent(address) : address
     }
