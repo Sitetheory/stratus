@@ -983,6 +983,7 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
         this.hydrate(elementRef, sanitizer, keys<EditorComponent>())
 
         // Data Connections
+        // TODO: Spelunk through this code to determine why I keep getting an empty component...
         this.fetchData()
             .then(data => {
                 if (!data || !(data instanceof EventManager)) {
@@ -1015,12 +1016,19 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             })
 
         // Declare Observable with Subscriber (Only Happens Once)
-        this.dataSub = new Observable(subscriber => this.dataDefer(subscriber))
+        // TODO: Test if the observable is necessary in any way...
+        this.dataSub = new Observable(subscriber => {
+            if (this.dev) {
+                console.warn(`[observable] creating subscriber on ${this.uid}`, subscriber)
+            }
+            return this.dataDefer(subscriber)
+        })
         this.dataSub.pipe(
-            debounce(() => timer(500)),
+            // debounceTime(250),
+            debounce(() => timer(250)),
             catchError(this.handleError)
         ).subscribe(evt => {
-            // While the editor is focused, we skip the debounce updates to avoid cursor glitches
+            // While the editor is focused, we skip debounce updates to avoid cursor glitches
             if (this.focused) {
                 if (this.dev) {
                     console.warn(`[subscriber] waiting on updates due to focus on ${this.uid}`)
@@ -1032,10 +1040,9 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             if (dataControl.value === evt) {
                 // In the case of data being edited by the code view or something else,
                 // we need to refresh the UI, as long as it has been initialized.
-                // FIXME: This doesn't work
-                // if (this.initialized) {
-                //     this.refresh()
-                // }
+                if (this.initialized) {
+                    this.refresh()
+                }
                 return
             }
             dataControl.patchValue(evt)
@@ -1246,23 +1253,42 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
     dataDefer(subscriber: Subscriber<any>) {
         this.subscriber = this.subscriber || subscriber
         if (!this.subscriber) {
+            if (this.dev) {
+                console.warn(`[defer] debouncing due to empty subscriber on ${this.uid}`)
+            }
+            setTimeout(() => {
+                if (this.dev) {
+                    console.warn(`[defer] debounced subscriber returned on ${this.uid}`)
+                }
+                this.dataDefer(subscriber)
+            }, 250)
             return
         }
-        const prevString = this.dataString
+        const prevString = _.clone(this.dataString)
         const dataString = this.dataRef()
-        if (!dataString) {
+        // ensure changes have occurred
+        if (prevString === dataString) {
+            return
+        }
+        if (!dataString && (!this.data || !this.data.completed)) {
+            if (this.dev) {
+                console.warn(`[defer] debouncing subscriber due to unavailable data on ${this.uid}`, this.data)
+            }
             setTimeout(() => {
+                if (this.dev) {
+                    console.warn(`[defer] debounced subscriber returned on ${this.uid}`)
+                }
                 this.dataDefer(subscriber)
-            }, 500)
+            }, 250)
             return
         }
         if (!this.froalaConfig.useClasses) {
-            if (prevString === this.dataString) {
+            if (prevString === dataString) {
                 return
             }
-            if (this.dev) {
-                console.log('changed value pushed to subscriber:', prevString, this.dataString)
-            }
+        }
+        if (this.dev) {
+            console.warn(`[subscriber] new value submitted on ${this.uid}:`, dataString)
         }
         this.subscriber.next(dataString)
         // TODO: Add a returned Promise to ensure async/await can use this defer directly.

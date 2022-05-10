@@ -29,7 +29,8 @@ export class ResponsiveComponent implements OnDestroy, ResponsiveInterface, Base
 
     // protected variables
     protected ref: ChangeDetectorRef
-    // protected disableRefresh = false
+    protected disableRefresh = false
+    protected stagger = true
 
     // local flags
     reloading = false
@@ -39,29 +40,27 @@ export class ResponsiveComponent implements OnDestroy, ResponsiveInterface, Base
      */
     public refresh() {
         return new Promise((resolve, reject) => {
-            // if (this.disableRefresh) {
-            //     resolve()
-            //     return
-            // }
+            if (this.disableRefresh) {
+                resolve()
+                return
+            }
             if (!this.ref) {
                 console.error('ChangeDetectorRef not set:', this.uid)
                 reject()
                 return
             }
-            if (this.reloading) {
+            if (this.reloading && this.stagger) {
                 if (cookie('env')) {
-                    console.warn('[control flow] waiting to refresh component:', this.uid)
+                    console.warn('[flow control] waiting to refresh component:', this.uid)
                 }
                 setTimeout(() => {
                     this.refresh()
                         .then(() => resolve())
-                }, 50)
+                }, 100)
                 return
             }
             this.reloading = true
-            // this.ref.detach()
             this.ref.detectChanges()
-            // this.ref.reattach()
             this.reloading = false
             resolve()
         })
