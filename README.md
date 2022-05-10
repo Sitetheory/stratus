@@ -1,8 +1,7 @@
 # Stratus - Web Design Platform
 
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/30b4795862414ba4b3337ddafb3fc6f6)](https://app.codacy.com/app/Sitetheory/stratus?utm_source=github.com&utm_medium=referral&utm_content=Sitetheory/stratus&utm_campaign=Badge_Grade_Dashboard)
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/2f4610bc1be141759b51b62c624282ff)](https://www.codacy.com/gh/Sitetheory/stratus/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Sitetheory/stratus&amp;utm_campaign=Badge_Grade)
 [![codecov](https://codecov.io/gh/Sitetheory/stratus/branch/master/graph/badge.svg)](https://codecov.io/gh/Sitetheory/stratus)
-[![Coverage Status](https://coveralls.io/repos/github/Sitetheory/stratus/badge.svg?branch=master)](https://coveralls.io/github/Sitetheory/stratus?branch=master)
 [![Build Status](https://travis-ci.com/Sitetheory/stratus.svg?branch=master)](https://travis-ci.com/Sitetheory/stratus)
 [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
 [![Join the chat at https://gitter.im/Sitetheory/stratus](https://badges.gitter.im/Sitetheory/stratus.svg)](https://gitter.im/Sitetheory/stratus?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge) 
