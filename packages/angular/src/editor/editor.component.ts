@@ -513,7 +513,7 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             'stratus-.+',
             'sa-.+',
             // Common Attributes
-            'accept', 'accept-charset', 'accesskey', 'action', 'align', 'allowfullscreen',
+            'accept', 'accept-charset', 'accesskey', 'action', 'align', 'allow', 'allowfullscreen',
             'allowtransparency', 'alt', 'async', 'autocomplete', 'autofocus',
             'autoplay', 'autosave',
             'background', 'bgcolor', 'border',
