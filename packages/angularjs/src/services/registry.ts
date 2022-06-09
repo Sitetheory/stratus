@@ -8,7 +8,7 @@ import {Stratus} from '@stratusjs/runtime/stratus'
 
 // Stratus Core
 import {sanitize} from '@stratusjs/core/conversion'
-import {isJSON, poll, ucfirst} from '@stratusjs/core/misc'
+import {flatten, isJSON, poll, ucfirst} from '@stratusjs/core/misc'
 import {cookie} from '@stratusjs/core/environment'
 
 // AngularJS Dependency Injector
@@ -29,6 +29,7 @@ let $interpolate: angular.IInterpolateService
 export interface RegistryOptions extends CollectionOptions, ModelOptions {
     id?: number
     api?: string
+    temp?: string
     decouple?: boolean
     fetch?: boolean
 }
@@ -84,6 +85,7 @@ export class Registry {
             const baseInputs = [
                 'id',
                 'api',
+                'temp',
                 'decouple',
                 'fetch'
             ]
@@ -100,6 +102,7 @@ export class Registry {
                 list[key] = JSON.parse(list[key])
             })
             options.api = sanitize(options.api)
+            options.temp = sanitize(options.temp)
             // TODO: handle these sorts of shortcuts to the API that components are providing
             // $scope.api = isJSON(options.api) ? JSON.parse(options.api) : false
             // const request = {
@@ -166,7 +169,7 @@ export class Registry {
         options: RegistryOptions,
         $scope: object|IScope|any
     ): Collection | Model {
-        let data
+        let data: Collection | Model
         // TODO: Code golf this function to be only 1 level
         if (options.target) {
             options.target = ucfirst(options.target)
@@ -226,8 +229,17 @@ export class Registry {
                 data.meta.set('api', isJSON(options.api) ? JSON.parse(options.api) : options.api)
             }
 
+            // Add Temp Values
+            if (options.temp && _.isObject(options.temp)) {
+                _.forEach(
+                    flatten(options.temp),
+                    (v: any, k: string) =>
+                        data.meta.temp(`api.${k}`, v)
+                )
+            }
+
             // Handle Staggered
-            if (data.stagger && typeof data.initialize === 'function') {
+            if (data instanceof Model && data.stagger && typeof data.initialize === 'function') {
                 data.initialize()
             }
         }
