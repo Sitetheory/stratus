@@ -230,11 +230,13 @@ export class Registry {
             }
 
             // Add Temp Values
-            if (options.temp && _.isObject(options.temp)) {
+            if (options.temp && _.isObject(options.temp) && !data.completed) {
                 _.forEach(
                     flatten(options.temp),
-                    (v: any, k: string) =>
+                    (v: any, k: string) => {
+                        console.log('setting temp:', `api.${k}`, v)
                         data.meta.temp(`api.${k}`, v)
+                    }
                 )
             }
 

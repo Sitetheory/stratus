@@ -151,7 +151,7 @@ export class Model<T = LooseObject> extends ModelBase<T> {
 
     // Auto-Save Logic
     autoSave = false
-    autoSaveInterval = 2500
+    autoSaveInterval = 4000
     autoSaveHalt = true
     autoSaveTimeout: any = null
 
@@ -650,6 +650,9 @@ export class Model<T = LooseObject> extends ModelBase<T> {
                     this.collection.pending = false
                 }
 
+                // Clear Meta Temps
+                this.meta.clearTemp()
+
                 // Events
                 this.trigger('success', this)
                 this.trigger('change', this)
@@ -814,9 +817,6 @@ export class Model<T = LooseObject> extends ModelBase<T> {
                 payload: data
             }
         }
-        if (this.meta.size() > 0) {
-            this.meta.clearTemp()
-        }
         return data
     }
 
@@ -868,9 +868,13 @@ export class Model<T = LooseObject> extends ModelBase<T> {
         if (typeof attr !== 'string' || !this.data || typeof this.data !== 'object') {
             return undefined
         }
+        return _.get(this.data, attr)
+        // Note: This get function below has been replaced by the _.get() above
+        /* *
         return this.buildPath(attr).reduce(
             (attrs: any, link: any) => attrs && attrs[link], this.data
         )
+        /* */
     }
 
     /**
@@ -901,6 +905,12 @@ export class Model<T = LooseObject> extends ModelBase<T> {
             console.warn('Malformed attr for model.setAttribute()!')
             return false
         }
+
+        // @ts-ignore
+        _.set(this.data, attr, value)
+
+        // Note: This entire set has been replaced with the  _.set() above
+        /* *
         if (_.includes(attr, '.') || _.includes(attr, '[')) {
             let future
             this.buildPath(attr)
@@ -918,6 +928,7 @@ export class Model<T = LooseObject> extends ModelBase<T> {
         } else {
             (this.data as LooseObject)[attr] = value
         }
+        /* */
         // The issue with these triggers is they only fire if using the set() method,
         // while some values will be changed via the data object directly.
         this.throttleTrigger('change', this)
