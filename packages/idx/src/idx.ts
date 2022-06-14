@@ -1681,24 +1681,31 @@ const angularJsService = (
             [key: string]: (searchObject: SearchObject, value: any) => void
         } = {
             valueEquals: (searchObject, value) => {
+                // Allow empty equal requests, as this can bring intentional results
                 whereQuery[searchObject.apiField] = value
             },
             stringLike: (searchObject, value) => {
-                whereQuery[searchObject.apiField] = {
-                    like: value,
-                    options: 'i'
+                // Don't perform empty like searches
+                if (!_.isEmpty(value)) {
+                    whereQuery[searchObject.apiField] = {
+                        like: value,
+                        options: 'i'
+                    }
                 }
             },
             stringLikeArray: (searchObject, value) => {
                 value = typeof value === 'string' ? [value] : value
                 const stringLikeArrayOrStatement: MongoWhereQuery[] = []
                 value.forEach((requestedValue: string) => {
-                    stringLikeArrayOrStatement.push({
-                        [searchObject.apiField]: {
-                            like: requestedValue,
-                            options: 'i'
-                        }
-                    })
+                    // Don't perform empty like searches
+                    if (!_.isEmpty(requestedValue)) {
+                        stringLikeArrayOrStatement.push({
+                            [searchObject.apiField]: {
+                                like: requestedValue,
+                                options: 'i'
+                            }
+                        })
+                    }
                 })
                 if (!_.isEmpty(stringLikeArrayOrStatement)) {
                     andStatement.push({or: stringLikeArrayOrStatement})
@@ -1769,22 +1776,28 @@ const angularJsService = (
                                 [orObject.apiField]: value
                             })
                         } else if (orObject.type === 'stringLike') {
-                            andOrOrStatement.push({
-                                [orObject.apiField]: {
-                                    like: value,
-                                    options: 'i'
-                                }
-                            })
+                            // Don't perform empty like searches
+                            if (!_.isEmpty(value)) {
+                                andOrOrStatement.push({
+                                    [orObject.apiField]: {
+                                        like: value,
+                                        options: 'i'
+                                    }
+                                })
+                            }
                         } else if (orObject.type === 'stringLikeArray') {
                             value = typeof value === 'string' ? [value] : value
                             if (value.length > 0) {
                                 value.forEach((requestedValue: string) => {
-                                    andOrOrStatement.push({
-                                        [orObject.apiField]: {
-                                            like: requestedValue,
-                                            options: 'i'
-                                        }
-                                    })
+                                    // Don't perform empty like searches
+                                    if (!_.isEmpty(requestedValue)) {
+                                        andOrOrStatement.push({
+                                            [orObject.apiField]: {
+                                                like: requestedValue,
+                                                options: 'i'
+                                            }
+                                        })
+                                    }
                                 })
                             }
                         } else if (orObject.type === 'stringIncludesArray') {
