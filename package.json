@@ -93,7 +93,7 @@
     "angular-froala-wysiwyg": "^3.2.7",
     "babel-core": "^6.26.3",
     "babel-preset-env": "^1.7.0",
-    "codelyzer": "^5.2.1",
+    "codelyzer": "^6.0.2",
     "codemirror": "^5.61.0",
     "core-js": "^3.19.0",
     "del": "^5.0.0",
