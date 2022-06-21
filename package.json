@@ -125,7 +125,6 @@
     "moment": "^2.24.0",
     "moment-range": "^4.0.2",
     "moment-timezone": "^0.5.27",
-    "ngx-quill": "^11.1.0",
     "numeral": "^2.0.6",
     "protractor": "^5.4.2",
     "quill": "^1.3.7",
