@@ -23,7 +23,23 @@
                 <div cdkDrag class="media-selected-list-row media-selected-box media-selected-box-grid"
                     (cdkDragMoved)="move($event)">
                     <!--<div class="custom-ghost-placeholder" *cdkDragPlaceholder></div>-->
-                    <div class="media-item selected-media-item" [id]="'libb_' + _.get(selectedModel, 'id') || id || uid">
+                    <div class="media-item selected-media-item"
+                         [id]="'libb_' + _.get(selectedModel, 'id') || id || uid"
+                         [ngClass]="{
+                                'image-thumb': _.get(selectedModel, 'mime') && _.get(selectedModel, 'mime').includes('image'),
+                                'video-thumb' : _.get(selectedModel, 'mime') && _.get(selectedModel, 'mime').includes('video'),
+                                'audio-thumb' : _.get(selectedModel, 'mime') && _.get(selectedModel, 'mime').includes('audio'),
+                                'document-thumb' : _.get(selectedModel, 'mime') && _.get(selectedModel, 'mime').includes('application'),
+                                'word' : _.get(selectedModel, 'extension') && _.get(selectedModel, 'extension').includes('doc'),
+                                'pdf' :  _.get(selectedModel, 'extension') && _.get(selectedModel, 'extension').includes('pdf'),
+                                'generic-thumb' : !_.get(selectedModel, 'mime') || (
+                                    !_.get(selectedModel, 'mime').includes('image')
+                                    && !_.get(selectedModel, 'mime').includes('video')
+                                    && !_.get(selectedModel, 'mime').includes('audio')
+                                    && !_.get(selectedModel, 'mime').includes('application')
+                                )
+                             }"
+                    >
                         <div class="image-draggable"
                              [ngClass]="{
                                 'image-thumb': _.get(selectedModel, 'mime') && _.get(selectedModel, 'mime').includes('image'),
@@ -39,8 +55,8 @@
                                     && !_.get(selectedModel, 'mime').includes('application')
                                 )
                              }"
-                             [ngStyle]="{'background': 'url(' + (_.get(selectedModel, '_thumbnailUrl') || _.get(selectedModel, 'bestImage.thumb') || _.get(selectedModel, 'meta.thumbnail_small')) + ') no-repeat center center', 'background-size': 'cover'}">
-
+                             [ngStyle]="{'background': 'url(' + (_.get(selectedModel, '_thumbnailUrl') || _.get(selectedModel, 'bestImage.thumb') || _.get(selectedModel, 'meta.thumbnail_small') || (Stratus.BaseUrl + 'sitetheorycore/images/shapeholder-square.png') || '') + ') no-repeat center center', 'background-size': 'cover'}">
+                            <!-- TODO: Possibly avoid the _.get(selectedModel, '_fileTypeIcon') evaluation in the data above and just have the right class styles appear.  It depends how it looks when the classes are properly set. -->
                             <img class="shapeholder" [src]="Stratus.BaseUrl + 'sitetheorycore/images/shapeholder-square.png'">
 
                             <div class="thumb-gradient">&nbsp;</div>
@@ -69,7 +85,7 @@
                                           aria-label="Audio">
                                     Audio
                                 </mat-icon>
-                                <mat-icon *ngIf="_.get(selectedModel, 'mime') && _.get(selectedModel, 'mime').includes('document')"
+                                <mat-icon *ngIf="_.get(selectedModel, 'mime') && _.get(selectedModel, 'mime').includes('application')"
                                           svgIcon="media_selector_document"
                                           aria-hidden="true"
                                           aria-label="Document">
@@ -107,7 +123,6 @@
                                             <a class="border-radius-default"
                                                href="#"
                                                [matTooltip]="'Show Details - ' + _.get(selectedModel, 'name')">
-                                                <!--<md-tooltip>Show details</md-tooltip>-->
                                                 <mat-icon class="info-icon"
                                                           svgIcon="media_selector_info"
                                                           aria-hidden="true"
