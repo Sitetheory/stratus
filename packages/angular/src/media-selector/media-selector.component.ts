@@ -520,18 +520,16 @@ export class MediaSelectorComponent extends RootComponent { // implements OnInit
         const dropIndex = __indexOf(dropElement.parentElement.children, dropElement)
 
         if (!this.sourceList) {
-            this.sourceIndex = dragIndex - 1
-            this.targetIndex = dropIndex - 1
+            this.sourceIndex = dragIndex
             this.sourceList = drag.dropContainer
 
             placeholderElement.style.width = `${sourceElement.clientWidth}px`
             placeholderElement.style.height = `${sourceElement.clientHeight}px`
 
             sourceElement.parentElement.removeChild(sourceElement)
-        } else {
-            this.targetIndex = dropIndex
         }
 
+        this.targetIndex = dropIndex
         this.targetList = drop
 
         placeholderElement.style.display = ''
