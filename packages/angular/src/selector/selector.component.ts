@@ -25,8 +25,7 @@ import {
 
 // SVG Icons
 import {DomSanitizer} from '@angular/platform-browser'
-import {MatIconRegistry} from '@angular/material/icon'
-import {IconOptions} from '@angular/material/icon/icon-registry'
+import {IconOptions, MatIconRegistry} from '@angular/material/icon'
 
 // RXJS
 
@@ -349,7 +348,7 @@ export class SelectorComponent extends RootComponent { // implements OnInit, OnC
 
     // async selectedModelFetch(observer: any): Promise<[]> {
     //     const that = this;
-    //     return new Promise(function (resolve, reject) {
+    //     return new Promise<any>(function (resolve, reject) {
     //         if (that.model) {
     //             resolve(that.dataRef());
     //             return;

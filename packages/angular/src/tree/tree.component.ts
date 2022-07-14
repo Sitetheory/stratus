@@ -25,7 +25,7 @@ import {
 
 // SVG Icons
 import {DomSanitizer} from '@angular/platform-browser'
-import {MatIconRegistry} from '@angular/material/icon'
+import {IconOptions, MatIconRegistry} from '@angular/material/icon'
 
 // RXJS
 import {
@@ -72,7 +72,6 @@ import '@stratusjs/angularjs/services/collection'
 import '@stratusjs/angularjs/services/model'
 
 import { DOCUMENT } from '@angular/common'
-import {IconOptions} from '@angular/material/icon/icon-registry'
 import {TreeNodeComponent} from '@stratusjs/angular/tree/tree-node.component'
 
 // Data Types
@@ -344,7 +343,7 @@ export class TreeComponent extends RootComponent implements OnInit, OnDestroy {
 
     public refresh() {
         if (this.isDestroyed) {
-            return new Promise(resolve => resolve())
+            return new Promise<void>(resolve => resolve())
         }
         // TODO: Refresh treeNodeComponents through a map
         _.forEach(this.metaMap, (meta: NodeMeta) => {

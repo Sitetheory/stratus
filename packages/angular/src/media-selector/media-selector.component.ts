@@ -28,8 +28,7 @@ import {
 
 // SVG Icons
 import {DomSanitizer} from '@angular/platform-browser'
-import {MatIconRegistry} from '@angular/material/icon'
-import {IconOptions} from '@angular/material/icon/icon-registry'
+import {IconOptions, MatIconRegistry} from '@angular/material/icon'
 
 // External Dependencies
 import {Stratus} from '@stratusjs/runtime/stratus'
