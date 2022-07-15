@@ -19,11 +19,22 @@
     if (typeof paths !== 'object' || !paths) {
       return paths
     }
+    const extensions = [
+      '.cjs',
+      '.mjs',
+    ]
     for (const path in paths) {
       if (!Object.prototype.hasOwnProperty.call(paths, path)) {
         continue
       }
-      paths[path] = paths[path] + '.js'
+      const module = paths[path]
+      if (typeof module !== 'string') {
+        continue
+      }
+      if (extensions.some(ext => module.endsWith(ext))) {
+        continue
+      }
+      paths[path] = module + '.js'
     }
     return paths
   }
