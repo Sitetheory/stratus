@@ -15,7 +15,8 @@ import {
     CdkDropListGroup,
     CdkDrag,
     CdkDragDrop,
-    CdkDragMove
+    CdkDragMove,
+    CdkDragEnter
 } from '@angular/cdk/drag-drop'
 
 // RXJS
@@ -67,6 +68,7 @@ const has = (object: object, path: string) => _.has(object, path) && !_.isEmpty(
  */
 @Component({
     selector: `sa-${moduleName}`,
+    // TODO: Add the ability to change the templateUrl to others, based on a cookie.
     templateUrl: `${localDir}/${moduleName}/${moduleName}.component${min}.html`,
     // FIXME: This doesn't work, as it seems Angular attempts to use a System.js import instead of their own, so it will
     // require the steal-css module
@@ -108,7 +110,7 @@ export class MediaSelectorComponent extends RootComponent { // implements OnInit
     fetched: Promise<boolean|Collection|Model>
     data: any
     collection?: EventBase
-    // @Output() model: any;
+    // @Output() model: any
     model?: Model
 
     // Observable Connection
@@ -121,8 +123,8 @@ export class MediaSelectorComponent extends RootComponent { // implements OnInit
     eventID: string
 
     // API Connectivity for Media Selector
-    // filteredModels: Observable<[]>;
-    // filteredModels: any;
+    // filteredModels: Observable<[]>
+    // filteredModels: any
 
     // Icon Localization
     svgIcons: {
@@ -142,11 +144,25 @@ export class MediaSelectorComponent extends RootComponent { // implements OnInit
     @ViewChild(CdkDropList) placeholder: CdkDropList
 
     // Grid Workaround
+    /**
+     * @deprecated This workaround only works from Angular 7 to 10.  Everything changed in 11+.
+     */
     public targetList: CdkDropList
+    /**
+     * @deprecated This workaround only works from Angular 7 to 10.  Everything changed in 11+.
+     */
     public targetIndex: number
+    /**
+     * @deprecated This workaround only works from Angular 7 to 10.  Everything changed in 11+.
+     */
     public sourceList: CdkDropList
+    /**
+     * @deprecated This workaround only works from Angular 7 to 10.  Everything changed in 11+.
+     */
     public sourceIndex: number
-    public dragIndex: number
+    /**
+     * @deprecated This workaround only works from Angular 7 to 10.  Everything changed in 11+.
+     */
     public activeContainer: any
 
     // Construct
@@ -225,14 +241,14 @@ export class MediaSelectorComponent extends RootComponent { // implements OnInit
                     return
                 }
                 // Manually render upon model change
-                // this.ref.detach();
+                // this.ref.detach()
                 // TODO: We need to check if the data actually changed before causing a whole render and pipe change
                 // TODO: Look into the Model, as it fires a lot of change events...
                 const onDataChange = () => {
                     if (!data.completed) {
                         return
                     }
-                    // this.onDataChange();
+                    // this.onDataChange()
                     this.dataDefer(this.subscriber)
                     this.prioritize()
                     this.refresh()
@@ -246,6 +262,9 @@ export class MediaSelectorComponent extends RootComponent { // implements OnInit
         const models = this.dataRef()
         if (!models || !models.length) {
             return
+        }
+        if (cookie('env')) {
+            console.log('drop:', event.previousContainer.id, event.container.id)
         }
         // This injects the Grid Movement Workaround, if enabled, otherwise it
         // uses `moveItemInArray` for basic movements or as a fallback.
@@ -308,7 +327,7 @@ export class MediaSelectorComponent extends RootComponent { // implements OnInit
             return
         }
         models.splice(index, 1)
-        // this.prioritize();
+        // this.prioritize()
         this.model.trigger('change')
         // trigger event emission
         this.removeFromSelected(model.id)
@@ -445,8 +464,47 @@ export class MediaSelectorComponent extends RootComponent { // implements OnInit
     }
 
     /**
+     * This uses a drag method compatible with Angular 11+
+     */
+    dragEntered(event: CdkDragEnter<number>) {
+        // Ensure Collection is Accessible
+        const models = this.dataRef()
+        if (!models || !models.length) {
+            return
+        }
+
+        // Store Drag & Drop Data
+        const drag = event.item
+        const dropList = event.container
+        const dragIndex = drag.data
+        const dropIndex = dropList.data
+
+        // Store Placeholders
+        const placeholderContainer = dropList.element.nativeElement
+        const placeholderElement = placeholderContainer.querySelector('.cdk-drag-placeholder')
+
+        // Twiddle Placeholders
+        placeholderContainer.removeChild(placeholderElement)
+        placeholderContainer.parentElement.insertBefore(placeholderElement, placeholderContainer)
+
+        // Display Debug Data
+        if (cookie('env')) {
+            console.log('media move:', dragIndex, '->', dropIndex)
+        }
+
+        // Move Element Accordingly
+        moveItemInArray(models, dragIndex, dropIndex)
+
+        let priority = 0
+        _.forEach(models, (model: any) => model.priority = priority++)
+        this.model.trigger('change')
+    }
+
+    /**
      * This functionality is based on the workaround present below:
      * https://stackoverflow.com/questions/53675661/angular-material-7-use-grid-with-drag-and-drop
+     *
+     * @deprecated This workaround only works from Angular 7 to 10.  Everything changed in 11+.
      */
     move(event: CdkDragMove) {
         const point = this.getPointerPositionOnPage(event.event)
@@ -470,8 +528,13 @@ export class MediaSelectorComponent extends RootComponent { // implements OnInit
     /**
      * This functionality is based on the workaround present below:
      * https://stackoverflow.com/questions/53675661/angular-material-7-use-grid-with-drag-and-drop
+     *
+     * @deprecated This workaround only works from Angular 7 to 10.  Everything changed in 11+.
      */
     moveItemInGrid(collection: Array<any>): boolean {
+        if (cookie('env')) {
+            console.log('moveItemInGrid:', collection)
+        }
         if (!this.targetList) {
             return false
         }
@@ -501,10 +564,16 @@ export class MediaSelectorComponent extends RootComponent { // implements OnInit
     /**
      * This functionality is based on the workaround present below:
      * https://stackoverflow.com/questions/53675661/angular-material-7-use-grid-with-drag-and-drop
+     *
+     * @deprecated This workaround only works from Angular 7 to 10.  Everything changed in 11+.
      */
     enterPredicate = (drag: CdkDrag, drop: CdkDropList) => {
         if (drop === this.placeholder) {
             return true
+        }
+
+        if (cookie('env')) {
+            console.log('entering predicate...')
         }
 
         if (drop !== this.activeContainer) {
@@ -531,6 +600,10 @@ export class MediaSelectorComponent extends RootComponent { // implements OnInit
         this.targetIndex = dropIndex
         this.targetList = drop
 
+        if (cookie('env')) {
+            console.log('predicate:', this.sourceIndex, '->', this.targetIndex)
+        }
+
         placeholderElement.style.display = ''
         dropElement.parentElement.insertBefore(
             placeholderElement,
@@ -548,6 +621,8 @@ export class MediaSelectorComponent extends RootComponent { // implements OnInit
     /**
      * This functionality is based on the workaround present below:
      * https://stackoverflow.com/questions/53675661/angular-material-7-use-grid-with-drag-and-drop
+     *
+     * @deprecated This workaround only works from Angular 7 to 10.  Everything changed in 11+.
      */
     getPointerPositionOnPage(event: MouseEvent | TouchEvent) {
         // start/end events will have empty `touches`, but `changedTouches` will be filled
