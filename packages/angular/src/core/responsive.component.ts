@@ -39,7 +39,7 @@ export class ResponsiveComponent implements OnDestroy, ResponsiveInterface, Base
      * force a redraw
      */
     public refresh() {
-        return new Promise((resolve, reject) => {
+        return new Promise<void>((resolve, reject) => {
             if (this.disableRefresh) {
                 resolve()
                 return

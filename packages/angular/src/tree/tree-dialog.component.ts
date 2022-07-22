@@ -20,11 +20,9 @@ import {
     MatDialogRef
 } from '@angular/material/dialog'
 import {
+    IconOptions,
     MatIconRegistry
 } from '@angular/material/icon'
-import {
-    IconOptions
-} from '@angular/material/icon/icon-registry'
 
 // RXJS
 import {
@@ -289,7 +287,7 @@ export class TreeDialogComponent extends ResponsiveComponent implements OnInit, 
 
     public refresh() {
         if (this.isDestroyed) {
-            return new Promise(resolve => resolve())
+            return new Promise<void>(resolve => resolve())
         }
         return super.refresh()
     }

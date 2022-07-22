@@ -10,11 +10,9 @@ import {
 
 // Material
 import {
-    MatDialog
-} from '@angular/material/dialog'
-import {
+    MatDialog,
     MatDialogRef
-} from '@angular/material/dialog/dialog-ref'
+} from '@angular/material/dialog'
 
 // Components
 import {
@@ -38,7 +36,7 @@ import {
 import _ from 'lodash'
 import {Stratus} from '@stratusjs/runtime/stratus'
 import {cookie} from '@stratusjs/core/environment'
-import {IconOptions} from '@angular/material/icon/icon-registry'
+import {IconOptions} from '@angular/material/icon'
 import {Observable} from 'rxjs'
 
 // Extends
@@ -143,7 +141,7 @@ export class TreeNodeComponent extends ResponsiveComponent implements OnInit, On
 
     public refresh() {
         if (this.isDestroyed) {
-            return new Promise(resolve => resolve())
+            return new Promise<void>(resolve => resolve())
         }
         return super.refresh()
     }
