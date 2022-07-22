@@ -7,7 +7,7 @@
     "test": "test"
   },
   "scripts": {
-    "test": "gulp dist && gulp compile && gulp compress && gulp lint",
+    "test": "gulp dist && gulp compile && gulp compress && gulp lint && ng lint",
     "karma": "node_modules/karma/bin/karma start karma.conf.js --single-run",
     "mocha": "mocha --recursive --reporter mochawesome --reporter-options reportDir=reports",
     "lint": "ng lint"
