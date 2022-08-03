@@ -20,8 +20,14 @@
       return paths
     }
     const extensions = [
+      '.js',
+      '.ts',
       '.cjs',
       '.mjs',
+      '.css',
+      '.scss',
+      '.sass',
+      '.less',
     ]
     for (const path in paths) {
       if (!Object.prototype.hasOwnProperty.call(paths, path)) {
