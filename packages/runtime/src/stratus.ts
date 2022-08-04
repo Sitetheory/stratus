@@ -1430,8 +1430,12 @@ Stratus.Internals.LoadImage = (obj: any) => {
             let unit: any = null
             let percentage: any = null
 
+            // Allow specifying an alternative element to reference the best size. Useful in cases like before/after images
+            const spyReference: any = hydrate(el.attr('data-stratus-src-spy')) || null
+            const $referenceElement = spyReference ? (jQuery(_.first(el.parents(spyReference))) || nativeEl) : nativeEl
+
             // if (el.width()) {
-            const nativeWidth = nativeEl.offsetWidth || nativeEl.clientWidth
+            const nativeWidth = $referenceElement.offsetWidth || $referenceElement.clientWidth
             if (nativeWidth) {
                 // Check if there is CSS width hard coded on the element
                 // width = el.width()
@@ -1465,7 +1469,9 @@ Stratus.Internals.LoadImage = (obj: any) => {
                 // so in some cases we need to flag to find the parent regardless of invisibility.
                 const visibilitySelector: any = hydrate(el.attr('data-ignore-visibility')) ? null : ':visible'
                 // TODO need a replacement for jQuery().parents() and jQuery().find() with class
-                const $visibleParent = jQuery(_.first(jQuery(obj.el).parents(visibilitySelector)))
+                // NOTE: this was previously finding parents of el but we changed to be $referenceElement
+                // in case they want to reference something else
+                const $visibleParent = jQuery(_.first(jQuery($referenceElement).parents(visibilitySelector)))
                 // let $visibleParent = obj.spy || el.parent()
                 width = $visibleParent ? $visibleParent.width() : 0
 
