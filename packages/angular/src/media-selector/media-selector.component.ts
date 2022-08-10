@@ -137,7 +137,7 @@ export class MediaSelectorComponent extends RootComponent { // implements OnInit
     libraryDisplay = false
     isSelector = true
     isGrid = true
-    disableRefresh = true
+    // disableRefresh = true
 
     // Drop List
     @ViewChild(CdkDropListGroup) listGroup: CdkDropListGroup<CdkDropList>
