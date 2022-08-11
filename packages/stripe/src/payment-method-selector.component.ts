@@ -69,11 +69,13 @@ export class StripePaymentMethodSelectorComponent extends RootComponent implemen
     @Input() direct: boolean
     @Input() api: object
     @Input() urlRoot: string
+    @Input() registryModel: boolean | string // inputs are strings.. // false will disable Registry
 
     // Component Attributes
     @Input() property: string
     @Input() detailedBillingInfo?: boolean
     fieldName = 'paymentSelection'
+    fieldNameId = 'paymentSelectionId'
 
     // Stratus Data Connectivity
     registry = new Registry()
@@ -85,9 +87,9 @@ export class StripePaymentMethodSelectorComponent extends RootComponent implemen
     subscriber: Subscriber<any>
     // Note: It may be better to LifeCycle::tick(), but this works for now
     form: FormGroup = this.fb.group({
-        [this.fieldName]: new FormControl()
+        [this.fieldName]: new FormControl(),
+        [this.fieldNameId]: new FormControl({disabled: true})
     })
-    // dataChangeLog: string[] = []
 
     // Component data
     paymentCollection: Collection
@@ -134,60 +136,62 @@ export class StripePaymentMethodSelectorComponent extends RootComponent implemen
         // Hydrate Root App Inputs
         this.hydrate(this.elementRef, this.sanitizer, keys<StripePaymentMethodSelectorComponent>())
 
-        // FIXME the current saved payment doesn't get reselected. may need to use 'Responsive' functions (dettach)
-        // Data Connections
-        this.fetchData()
-            .then(data => {
-                if (!data || !(data instanceof EventManager)) {
-                    console.warn('Unable to bind data from Registry!')
-                    return
-                }
-                // console.log('fetchData ran', data)
-                // Manually render upon model change
-                // this.ref.detach();
-                const onDataChange = () => {
-                    if (!data.completed) {
+        if (this.registryModel !== false && this.registryModel !== 'false') {
+            // FIXME the current saved payment doesn't get reselected. may need to use 'Responsive' functions (dettach)
+            // Data Connections
+            this.fetchData()
+                .then(data => {
+                    if (!data || !(data instanceof EventManager)) {
+                        console.warn('Unable to bind data from Registry!')
                         return
                     }
-                    // console.log('onDataChange changing', data)
-                    // this.onDataChange();
-                    this.dataDefer(this.subscriber)
-                    // Halt UI Logic when payment input is Open
-                    // if (this.codeViewIsOpen) {return}
-                    // TODO: Add a debounce so we don't attempt to update multiple times while the model is changing.
-                    // this.refresh()
-                    // FIXME: Somehow this doesn't completely work...  It gets data from the model
-                    // when it is changed, but won't propagate it when the form event changes the data.
+                    // console.log('fetchData ran', data)
+                    // Manually render upon model change
+                    // this.ref.detach();
+                    const onDataChange = () => {
+                        if (!data.completed) {
+                            return
+                        }
+                        // console.log('onDataChange changing', data)
+                        // this.onDataChange();
+                        this.dataDefer(this.subscriber)
+                        // Halt UI Logic when payment input is Open
+                        // if (this.codeViewIsOpen) {return}
+                        // TODO: Add a debounce so we don't attempt to update multiple times while the model is changing.
+                        // this.refresh()
+                        // FIXME: Somehow this doesn't completely work...  It gets data from the model
+                        // when it is changed, but won't propagate it when the form event changes the data.
+                    }
+                    data.on('change', onDataChange)
+                    onDataChange()
+                })
+
+            // Declare Observable with Subscriber (Only Happens Once)
+            // this doesnt seem to do anything
+            this.dataSub = new Observable(subscriber => this.dataDefer(subscriber))
+            this.dataSub.pipe(
+                debounce(() => timer(500)),
+                catchError(this.handleObservableError)
+            ).subscribe(evt => {
+
+                // dataControl.patchValue(evt)
+                // this.selectedId = evt
+                // const dataControl = this.form.get('dataNumber')
+                const dataControl = this.form.get(this.fieldName)
+                if (dataControl.value === evt) {
+                    // In the case of data being edited by the code view or something else,
+                    // we need to refresh the UI, as long as it has been initialized.
+                    // FIXME: This doesn't work
+                    if (this.initialized) {
+                        this.refresh()
+                    }
+                    return
                 }
-                data.on('change', onDataChange)
-                onDataChange()
+                dataControl.patchValue(evt)
+                // console.log('dataSub env', evt)
+                this.refresh()
             })
-
-        // Declare Observable with Subscriber (Only Happens Once)
-        // this doesnt seem to do anything
-        this.dataSub = new Observable(subscriber => this.dataDefer(subscriber))
-        this.dataSub.pipe(
-            debounce(() => timer(500)),
-            catchError(this.handleObservableError)
-        ).subscribe(evt => {
-
-            // dataControl.patchValue(evt)
-            // this.selectedId = evt
-            // const dataControl = this.form.get('dataNumber')
-            const dataControl = this.form.get(this.fieldName)
-            if (dataControl.value === evt) {
-                // In the case of data being edited by the code view or something else,
-                // we need to refresh the UI, as long as it has been initialized.
-                // FIXME: This doesn't work
-                if (this.initialized) {
-                    this.refresh()
-                }
-                return
-            }
-            dataControl.patchValue(evt)
-            // console.log('dataSub env', evt)
-            this.refresh()
-        })
+        }
     }
 
     /**
@@ -229,8 +233,11 @@ export class StripePaymentMethodSelectorComponent extends RootComponent implemen
         this.refresh()
     }
 
-    // valueChanged(value: number) {
     valueChanged(value: Model) {
+        if (value) {
+            // Update the field to allow external apps to read
+            this.form.get(this.fieldNameId).setValue(value.get('id'))
+        }
         if (
             !this.model ||
             !this.model.completed
@@ -260,8 +267,6 @@ export class StripePaymentMethodSelectorComponent extends RootComponent implemen
             return null
         }*/
         return model.data
-        // return data
-        // return model.get('id')
     }
 
     // normalizeIn(data?: number): number|null {
@@ -345,14 +350,9 @@ export class StripePaymentMethodSelectorComponent extends RootComponent implemen
             // console.log('dataRef cant read model')
             return null
         }
-        // return this.dataString = this.normalizeIn(
-        // const blah =  this.dataNumber = this.normalizeIn(
         return this.normalizeIn(
-        // return this.dataNumber = this.normalizeIn(
             this.model.get(this.property)
         )
-        // console.log('dataRef = ', blah, 'raw = ', this.model.get(this.property))
-        // return blah
     }
 
     handleObservableError(err: ObservableInput<any>): ObservableInput<any> {
