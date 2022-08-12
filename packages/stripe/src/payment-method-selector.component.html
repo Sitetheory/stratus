@@ -37,5 +37,6 @@
                 <sa-stripe-setup-intent data-detailed-billing-info="true"></sa-stripe-setup-intent>
             </mat-option>
         </mat-select>
+        <input formControlName="{{fieldNameId}}" [attr.id]="elementId+'_'+fieldNameId" type="text" style="display: none;">
     </mat-form-field>
 </div>
