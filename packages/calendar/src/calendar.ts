@@ -265,7 +265,14 @@ Stratus.Components.Calendar = {
                         console.log('loading external urls:', $scope.options.eventSources)
                     }
                     // Render happens once prior to any url fetching
-                    await $ctrl.render()
+                    $scope.$applyAsync(async () => {
+                        await $ctrl.render()
+                    })
+                    setTimeout(async () => {
+                        // render a second time for safety... as it doesn't seem to always grab the window size (fullcalendar issue)
+                        $scope.calendar.render()
+                    }, 200)
+
                     // process a list of URLS, just using single example below
                     // Process each feed before continuing noting that Calendar is done loading
                     await Promise.all(
@@ -411,8 +418,8 @@ Stratus.Components.Calendar = {
          * @TODO Methods to look into:
          * 'viewRender' for callbacks on new date range (pagination maybe)  - http:// fullcalendar.io/docs/display/viewRender/
          * 'dayRender' for modifying day cells - http://fullcalendar.io/docs/display/dayRender/
-         * 'windowResize' for callbacks on window resizing - http://fullcalendar.io/docs/display/windowResize/
-         * 'render' force calendar to redraw - http://fullcalendar.io/docs/display/render/
+         * 'windowResize' for callbacks on window resizing - https://fullcalendar.io/docs/handleWindowResize
+         * 'render' force calendar to redraw - https://fullcalendar.io/docs/render
          */
         $ctrl.render = () => {
             // return new Promise((resolve: any) => {
