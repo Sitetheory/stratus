@@ -269,9 +269,12 @@ Stratus.Components.Calendar = {
                         await $ctrl.render()
                     })
                     setTimeout(async () => {
-                        // render a second time for safety... as it doesn't seem to always grab the window size (fullcalendar issue)
+                        // render a second and third time for safety... as it doesn't seem to always grab the window size
                         $scope.calendar.render()
-                    }, 200)
+                        setTimeout(async () => {
+                            $scope.calendar.render()
+                        }, 300)
+                    }, 300)
 
                     // process a list of URLS, just using single example below
                     // Process each feed before continuing noting that Calendar is done loading
