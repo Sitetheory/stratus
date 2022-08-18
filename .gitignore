@@ -101,6 +101,8 @@ packages/angularjs-extras/src/directives/parentClass.js
 packages/angularjs-extras/src/directives/parentClass.js.map
 packages/angularjs-extras/src/directives/trigger.js
 packages/angularjs-extras/src/directives/trigger.js.map
+packages/angularjs-extras/src/filter/avatar.js
+packages/angularjs-extras/src/filter/avatar.js.map
 packages/angularjs-extras/src/filter/numeral.js
 packages/angularjs-extras/src/filter/numeral.js.map
 packages/angularjs-extras/src/filters/truncate.js
