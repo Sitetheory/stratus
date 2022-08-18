@@ -213,7 +213,7 @@ export class TreeDialogComponent extends ResponsiveComponent implements OnInit, 
                             this.data.content = value
                             this.data.url = null
                         }
-                        return this.backend.get(this.lastContentSelectorQuery)
+                        return this.backend.get(this.lastContentSelectorQuery || this.basicContentSelectorQuery)
                             .pipe(
                                 finalize(() => {
                                     this.isContentLoading = false
