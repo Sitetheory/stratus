@@ -23,7 +23,7 @@ export interface QueryMap {
 export class BackendService {
 
     // Basic Component Settings
-    title = 'tree-dnd'
+    title = 'backend'
     uid: string
 
     // HTTP Logic
@@ -40,6 +40,10 @@ export class BackendService {
 
     // Create an Observable that returns XHR data
     get(url: string): Observable<HttpResponse<any>> {
+        if (!_.isString(url)) {
+            console.error('url is not a string:', url)
+            return // new Observable()
+        }
         if (url in this.cache) {
             return this.cache[url].observable
         }
@@ -53,6 +57,10 @@ export class BackendService {
 
     // This ensures the XHR only runs once per query by caching the data
     private getData(url: string, subscriber: Subscriber<any>) {
+        if (!_.isString(url)) {
+            console.error('url is not a string:', url)
+            return
+        }
         // The observable cache reference should always be available
         if (!(url in this.cache)) {
             return
