@@ -42,7 +42,7 @@ export class BackendService {
     get(url: string): Observable<HttpResponse<any>> {
         if (!_.isString(url)) {
             console.error('url is not a string:', url)
-            return //new Observable()
+            return // new Observable()
         }
         if (url in this.cache) {
             return this.cache[url].observable
