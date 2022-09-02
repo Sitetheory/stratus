@@ -1901,7 +1901,7 @@ Stratus.Internals.TrackLocation = () => {
             })
         } else {
             Stratus.Internals.XHR({
-                url: 'https://ipapi.co/' + Stratus.Environment.get('ip') + '/json/',
+                url: 'https://ipapi.co/json/',
                 success(data: any) {
                     if (!data) {
                         data = {}
