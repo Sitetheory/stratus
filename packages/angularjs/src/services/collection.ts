@@ -361,9 +361,9 @@ export class Collection<T = LooseObject> extends EventManager {
 
                 // Data
                 this.header.set(responseHeaders || this.xhr.getAllResponseHeaders())
-                this.meta.set(response.meta || {})
+                this.meta.set((response as LooseObject).meta || {})
                 this.models = []
-                const payload = response.payload || response
+                const payload = (response as LooseObject).payload || response
 
                 // XHR Flags
                 this.error = false

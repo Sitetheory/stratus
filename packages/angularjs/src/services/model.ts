@@ -558,9 +558,9 @@ export class Model<T = LooseObject> extends ModelBase<T> {
                 // TODO: Make this into an over-writable function
                 // Gather Data
                 this.header.set(this.xhr.getAllResponseHeaders() || {})
-                this.meta.set(response.meta || {})
-                this.route.set(response.route || {})
-                const payload = response.payload || response
+                this.meta.set((response as LooseObject).meta || {})
+                this.route.set((response as LooseObject).route || {})
+                const payload = (response as LooseObject).payload || response
                 const status: { code: string }[] = this.meta.get('status') || []
 
                 // Evaluate Payload
@@ -635,6 +635,8 @@ export class Model<T = LooseObject> extends ModelBase<T> {
                 this.data = _.cloneDeep(intermediateData) as T
                 this.changed = false
                 this.saving = false
+
+                // FIXME: This should be finding the changed identifier...
                 this.handleChanges()
                 this.patch = {}
 
