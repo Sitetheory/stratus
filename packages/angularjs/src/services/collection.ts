@@ -387,8 +387,8 @@ export class Collection<T = LooseObject> extends EventManager {
                 this.completed = true
 
                 // Action Flags
-                this.filtering = false
-                this.paginate = false
+                this.filtering = !_.isEmpty(this.meta.get('api.q'))
+                this.paginate = !_.isEmpty(this.meta.get('api.p'))
 
                 // Trigger Change Event
                 this.throttleTrigger('change')
@@ -436,7 +436,7 @@ export class Collection<T = LooseObject> extends EventManager {
     }
 
     filter(query: string) {
-        this.filtering = true
+        this.filtering = !_.isEmpty(query)
         this.meta.set('api.q', !_.isUndefined(query) ? query : '')
         this.meta.set('api.p', 1)
         return this.fetch()
@@ -464,7 +464,7 @@ export class Collection<T = LooseObject> extends EventManager {
     }
 
     page(page: any) {
-        this.paginate = true
+        this.paginate = !_.isEmpty(page)
         this.meta.set('api.p', page)
         this.fetch()
         delete this.meta.get('api').p
