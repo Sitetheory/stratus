@@ -1432,10 +1432,10 @@ Stratus.Internals.LoadImage = (obj: any) => {
 
             // Allow specifying an alternative element to reference the best size. Useful in cases like before/after images
             const spyReference: any = hydrate(el.attr('data-stratus-src-spy')) || null
-            const $referenceElement = spyReference ? (jQuery(_.first(el.parents(spyReference))) || nativeEl) : nativeEl
+            const $referenceElement = spyReference ? (_.first(el.parents(spyReference)) || nativeEl) : nativeEl
 
             // if (el.width()) {
-            const nativeWidth = $referenceElement.offsetWidth || $referenceElement.clientWidth
+            const nativeWidth = $referenceElement.offsetWidth || $referenceElement.clientWidth || null
             if (nativeWidth) {
                 // Check if there is CSS width hard coded on the element
                 // width = el.width()
@@ -1445,7 +1445,6 @@ Stratus.Internals.LoadImage = (obj: any) => {
             }
 
             // TODO: If width comes out to xs, we want to still allow checks!
-
             // Digest Width Attribute
             if (width) {
                 const digest = /([\d]+)(.*)/
@@ -1454,7 +1453,6 @@ Stratus.Internals.LoadImage = (obj: any) => {
                 width = parseInt(width[1], 10)
                 percentage = unit === '%' ? (width / 100) : null
             }
-
             // FIXME: This should only happen if the CSS has completely loaded.
             // Gather Container (Calculated) Width
             // TODO: This may be able to be removed as it doesn't appear to be
@@ -1468,13 +1466,13 @@ Stratus.Internals.LoadImage = (obj: any) => {
                 // NOTE: when lazy-loading in a slideshow, the containers that determine the size, might be invisible
                 // so in some cases we need to flag to find the parent regardless of invisibility.
                 const visibilitySelector: any = hydrate(el.attr('data-ignore-visibility')) ? null : ':visible'
-                // TODO need a replacement for jQuery().parents() and jQuery().find() with class
+                // TODO need a replacement for jQuery().parent() and jQuery().find() with class
                 // NOTE: this was previously finding parents of el but we changed to be $referenceElement
                 // in case they want to reference something else
-                const $visibleParent = jQuery(_.first(jQuery($referenceElement).parents(visibilitySelector)))
+                // TODO: jQuery() turns this into an array so we have to get first
+                const $visibleParent = _.first(jQuery($referenceElement).parents(visibilitySelector))
                 // let $visibleParent = obj.spy || el.parent()
-                width = $visibleParent ? $visibleParent.width() : 0
-
+                width = $visibleParent ? ($visibleParent.offsetWidth || $visibleParent.clientWidth || 0) : 0
                 // if (cookie('env')) {
                 //     console.log(
                 //         'visibilitySelector:', visibilitySelector,
@@ -1530,10 +1528,8 @@ Stratus.Internals.LoadImage = (obj: any) => {
             if (_.isString(greatestWidth)) {
                 greatestWidth = hydrate(greatestWidth)
             }
-
             // Find greatest width
             width = _.max([width, greatestWidth])
-
             // Set greatest width for future reference
             el.attr('data-greatest-width', width)
             el.attr('data-current-width', width)
@@ -1542,7 +1538,6 @@ Stratus.Internals.LoadImage = (obj: any) => {
             if (hd) {
                 width = width * Stratus.Environment.get('devicePixelRatio')
             }
-
             // Return the first size that is bigger than container width
             size = _.findKey(Stratus.Settings.image.size, (s: any) => {
                 // The old logic doubled the width and used this hardcoded ratio
@@ -1552,7 +1547,6 @@ Stratus.Internals.LoadImage = (obj: any) => {
                 // return ratio > 0.85 && ratio < 1.15
                 return s > width
             })
-
             // default to largest size if the container is larger and it didn't
             // find a size
             size = size || 'hq'
