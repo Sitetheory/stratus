@@ -1424,13 +1424,13 @@ Stratus.Internals.LoadImage = (obj: any) => {
         const resizeOptimisticLock = hydrate(el.attr('data-resize-optimistic-lock')) || 0
 
         // if a specific valid size is requested, use that
-        // FIXME: size.indexOf should never return anything useful
         if (!size || resizeOptimisticLock !== Stratus.Environment.get('resizeOptimisticLock')) {
             let width: any = null
             let unit: any = null
             let percentage: any = null
 
             // Allow specifying an alternative element to reference the best size. Useful in cases like before/after images
+            // or carousels where the element is going to be in a collapsed diplay non container
             const spyReference: any = hydrate(el.attr('data-stratus-src-spy')) || null
             const $referenceElement = spyReference ? (_.first(el.parents(spyReference)) || nativeEl) : nativeEl
 
@@ -1450,57 +1450,66 @@ Stratus.Internals.LoadImage = (obj: any) => {
                 const digest = /([\d]+)(.*)/
                 width = digest.exec(width)
                 unit = width[2]
+                // make sure width only refers to the number (not 'px' or '%')
                 width = parseInt(width[1], 10)
+                // TODO: getting percentage is useless  unless we know the parent
                 percentage = unit === '%' ? (width / 100) : null
             }
             // FIXME: This should only happen if the CSS has completely loaded.
-            // Gather Container (Calculated) Width
-            // TODO: This may be able to be removed as it doesn't appear to be
-            // used for anything other than old Bootstrap Carousels.
-            const visibleParentCheck = true
-            if (visibleParentCheck && (!width || unit === '%')) {
-                console.warn('visibleParentTriggered:', el)
-                // If there is no CSS width, calculate the parent container's width
-                // The image may be inside an element that is invisible (e.g. Carousel has items display:none)
-                // So we need to find the first parent that is visible and use that width
-                // NOTE: when lazy-loading in a slideshow, the containers that determine the size, might be invisible
-                // so in some cases we need to flag to find the parent regardless of invisibility.
-                const visibilitySelector: any = hydrate(el.attr('data-ignore-visibility')) ? null : ':visible'
-                // TODO need a replacement for jQuery().parent() and jQuery().find() with class
-                // NOTE: this was previously finding parents of el but we changed to be $referenceElement
-                // in case they want to reference something else
-                // TODO: jQuery() turns this into an array so we have to get first
-                const $visibleParent = _.first(jQuery($referenceElement).parents(visibilitySelector))
-                // let $visibleParent = obj.spy || el.parent()
-                width = $visibleParent ? ($visibleParent.offsetWidth || $visibleParent.clientWidth || 0) : 0
-                // if (cookie('env')) {
-                //     console.log(
-                //         'visibilitySelector:', visibilitySelector,
-                //         '$visibleParent:', $visibleParent,
-                //         'offsetWidth:', el.offsetWidth,
-                //         'clientWidth:', el.clientWidth,
-                //         'width:', width,
-                //         'el:', el
-                //     )
-                // }
-
-                // If one of parents of the image (and child of the found parent) has
-                // a bootstrap col-*-* set divide width by that in anticipation (e.g.
-                // Carousel that has items grouped)
-                const $col = $visibleParent.find('[class*="col-"]')
-
-                if ($col.length > 0) {
-                    const colWidth: any = Stratus.Internals.GetColWidth($col)
-                    if (colWidth) {
-                        width = Math.round(width / colWidth)
-                    }
-                }
-
-                // Calculate Percentage
-                if (percentage) {
-                    width = Math.round(width * percentage)
-                }
-            }
+            // TODO: This may be able to be removed as it doesn't appear to be used (no reference to
+            //  `data-ignore-visibility` and also the logic is all wrong. But the idea is that if there is an image
+            //  in a collapsed container (e.g. a carousel) we would lookup the first visible parent. That's not reliable
+            //  and it should actually make the image use the data-stratus-src-spy logic above in the HTML because we
+            //  know it's going to be invisible, that we we specify the parent we want to determine the size.
+            // const visibleParentCheck = true
+            // if (visibleParentCheck && !width) {
+            //     console.warn('visibleParentTriggered:', el)
+            //     // If there is no CSS width, calculate the parent container's width
+            //     // The image may be inside an element that is invisible (e.g. Carousel has items display:none)
+            //     // So we need to find the first parent that is visible and use that width
+            //     // NOTE: when lazy-loading in a slideshow, the containers that determine the size, might be invisible
+            //     // so in some cases we need to flag to find the parent regardless of invisibility.
+            //     const visibilitySelector: any = hydrate(el.attr('data-ignore-visibility')) ? null : ':visible'
+            //     // TODO need a replacement for jQuery().parent() and jQuery().find() with class
+            //     // NOTE: this was previously finding parents of el but we changed to be $referenceElement
+            //     // in case they want to reference something else
+            //     // TODO: jQuery() turns this into an array so we have to get first
+            //     // TODO: why do we search for parents with the CSS selector from 'data-ignore-visibility', that's a stupid
+            //     // name when we are in fact NOT ignoring them, we are using the first that matches
+            //     const $visibleParent = _.first(jQuery($referenceElement).parents(visibilitySelector))
+            //     // let $visibleParent = obj.spy || el.parent()
+            //     width = $visibleParent ? ($visibleParent.offsetWidth || $visibleParent.clientWidth || 0) : 0
+            //     // if (cookie('env')) {
+            //     //     console.log(
+            //     //         'visibilitySelector:', visibilitySelector,
+            //     //         '$visibleParent:', $visibleParent,
+            //     //         'offsetWidth:', el.offsetWidth,
+            //     //         'clientWidth:', el.clientWidth,
+            //     //         'width:', width,
+            //     //         'el:', el
+            //     //     )
+            //     // }
+            //
+            //     // TODO: @deprecated - this is far too specific for a certain type of carousel that we don't use anymore
+            //     // If one of parents of the image (and child of the found parent) has
+            //     // a bootstrap col-*-* set divide width by that in anticipation (e.g.
+            //     // Carousel that has items grouped)
+            //     // const $col = $visibleParent.find('[class*="col-"]')
+            //     // if ($col.length > 0) {
+            //     //     const colWidth: any = Stratus.Internals.GetColWidth($col)
+            //     //     if (colWidth) {
+            //     //         width = Math.round(width / colWidth)
+            //     //     }
+            //     // }
+            //
+            // }
+            // TODO: what needs to happen if the width is percentage? how would we calculate a percent, of what...?
+            //  for exmple, if itthe original width on the element was set as "50%" the width=50 and the percentage will
+            //  be "0.5" but getting .5*50=25 which is a useless number. The percent would need the PARENT. At the moment
+            //  this old code could NOT have worked, so it's not implemented...
+            // if (width > 0 && percentage) {
+            //     width = Math.round(width * percentage)
+            // }
 
             // If no appropriate width was found, abort
             if (width <= 0) {
@@ -1535,7 +1544,7 @@ Stratus.Internals.LoadImage = (obj: any) => {
             el.attr('data-current-width', width)
 
             // Use devicePixelRatio for HD
-            if (hd) {
+            if (hd && Stratus.Environment.get('devicePixelRatio')) {
                 width = width * Stratus.Environment.get('devicePixelRatio')
             }
             // Return the first size that is bigger than container width
@@ -1561,14 +1570,14 @@ Stratus.Internals.LoadImage = (obj: any) => {
             //         'el:', el
             //     )
             // }
+        }
 
-            // Fail-safe for images that are sized too early
-            if (size === 'xs') {
-                setTimeout(() => {
-                    el.attr('data-loading', dehydrate(false))
-                    Stratus.Internals.LoadImage(obj)
-                }, 500)
-            }
+        // Fail-safe for images that are sized too early
+        if (size === 'xs') {
+            setTimeout(() => {
+                el.attr('data-loading', dehydrate(false))
+                Stratus.Internals.LoadImage(obj)
+            }, 500)
         }
 
         // Change Source to right size (get the base and extension and ignore
