@@ -335,6 +335,7 @@ export class Collection<T = LooseObject> extends EventManager {
 
                     // Trigger Change Event
                     this.throttleTrigger('change')
+                    this.trigger('error', error)
 
                     // Promise
                     reject(error)
@@ -392,6 +393,7 @@ export class Collection<T = LooseObject> extends EventManager {
 
                 // Trigger Change Event
                 this.throttleTrigger('change')
+                this.trigger('complete')
 
                 // Promise
                 resolve(this.models)
@@ -408,6 +410,7 @@ export class Collection<T = LooseObject> extends EventManager {
                     // (/(.*)\sReceived/i).exec(error.message)[1]
                     console.error(`XHR: ${request.method} ${request.url}`)
                     this.throttleTrigger('change')
+                    this.trigger('error', error)
                     reject(error)
                     throw error
                 })
