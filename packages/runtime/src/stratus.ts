@@ -1172,7 +1172,9 @@ Stratus.Internals.LoadImage = (obj: any) => {
         return
     }
     el.attr('data-loading', dehydrate(true))
+    // TODO: Access `complete()` from `DOM` instead of the deprecated `Stratus.DOM.complete()` reference
     Stratus.DOM.complete(() => {
+        // TODO: Move this sizing functionality out of `runtime.ts`
         // By default we'll load larger versions of an image to look good on HD
         // displays, but if you don't want that, you can bypass it with
         // data-hd="false"
@@ -1587,6 +1589,7 @@ Stratus.Internals.OnScroll = _.once((elements: any) => {
     window.addEventListener('resize', resizeChangeHandler, Stratus.Environment.get('passiveEventOptions'))
 
     // Run Once initially
+    // TODO: Access `complete()` from `DOM` instead of the deprecated `Stratus.DOM.complete()` reference
     Stratus.DOM.complete(() => {
         Stratus.Environment.set('viewPortChange', true)
     })
@@ -2372,6 +2375,7 @@ Stratus.Events.on('toast', (event: any, message: any, title: any, priority: any,
 // ------------------
 // On DOM Ready, add browser compatible CSS classes and digest DOM data-entity
 // attributes.
+// TODO: Access `ready()` from `DOM` instead of the deprecated `Stratus.DOM.ready()` reference
 Stratus.DOM.ready(() => {
     Stratus.Select('body').removeClass('loaded unloaded').addClass('loading')
     Stratus.Events.trigger('initialize')
@@ -2382,6 +2386,7 @@ Stratus.DOM.ready(() => {
 
 // Stratus Events are more accurate than the DOM, so nothing is added to this
 // stub.
+// TODO: Access `complete()` from `DOM` instead of the deprecated `Stratus.DOM.complete()` reference
 Stratus.DOM.complete(() => {
     // Renderer Detection
     const renderer: any = Stratus.Internals.Renderer()
@@ -2435,6 +2440,7 @@ Stratus.DOM.complete(() => {
 // break any open connections or currently operating routines,
 // while providing the user with a confirmation box, if necessary,
 // before close routines are triggered.
+// TODO: Access `unload()` from `DOM` instead of the deprecated `Stratus.DOM.unload()` reference
 Stratus.DOM.unload((event: BeforeUnloadEvent) => {
     Stratus.Select('body').removeClass('loading loaded').addClass('unloaded')
     Stratus.Events.trigger('terminate', event)
