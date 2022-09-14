@@ -21,7 +21,8 @@ import {
     isAngular,
     isjQuery,
     isJSON,
-    lcfirst, LooseObject,
+    lcfirst,
+    LooseObject,
     patch,
     poll,
     repeat,
@@ -33,6 +34,10 @@ import {
     seconds,
     titleCase,
 } from '@stratusjs/core/conversion'
+import {
+    DOM,
+    DOMType
+} from '@stratusjs/core/dom'
 
 // Specific Types
 import {ModelBase} from '@stratusjs/core/datastore/modelBase'
@@ -153,11 +158,11 @@ interface StratusRuntime {
         }
     }
     PostMessage: {} | any
-    Selector: {} | any
+    Selector: DOMType['Selector']
     Compendium: {} | any
     CSS: {} | any
     JS: {} | any
-    DOM: {} | any
+    DOM: DOMType
     Aether: Aether
     Chronos: Chronos
     Collections: ModelBase
@@ -168,9 +173,7 @@ interface StratusRuntime {
     Catalog: {} | any
     Instances: {} | any
     Services: {} | any
-    Select?: (selector: (string | any), context?: (Document | any)) => (
-        ({} & { selection: any; context: any; length: number; selector: any }) | any
-        )
+    Select: DOMType['Select']
     Environment: ModelBase
     Resources: {} | any
     Api: {
@@ -202,16 +205,16 @@ export const Stratus: StratusRuntime = {
     },
 
     /* Native */
-    DOM: {},
+    DOM,
     Key: {},
     PostMessage: {},
     LocalStorage: {},
 
     /* Selector Logic */
-    Selector: {},
+    Selector: DOM.Selector,
 
     // NOTE: This is a replacement for basic jQuery selectors. This function intends to allow native jQuery-Type chaining and plugins.
-    Select: null,
+    Select: DOM.Select,
 
     /* Boot */
     BaseUrl: (boot && _.has(boot, 'configuration') ? boot.configuration.baseUrl : null) || '/',
@@ -478,40 +481,6 @@ _.mixin({
 //     console.log('Browser Information:', browser)
 // }
 
-// Native Selector
-// ---------------
-
-Stratus.Select = (selector: string | Element | JQuery, context?: Document) => {
-    if (!context) {
-        context = document
-    }
-    let selection: any = selector
-    if (typeof selector === 'string') {
-        // let target
-        // if (_.startsWith(selector, '.') || _.includes(selector, '[')) {
-        //     target = 'querySelectorAll'
-        // } else if (_.includes(['html', 'head', 'body'], selector) || _.startsWith(selector, '#')) {
-        //     target = 'querySelector'
-        // } else {
-        //     target = 'querySelectorAll'
-        // }
-        // selection = context[target](selector)
-        selection = (_.includes(['html', 'head', 'body'], selector) || _.startsWith(selector, '#'))
-                    ? context.querySelector(selector) : context.querySelectorAll(selector)
-    }
-    if (!selection || typeof selection !== 'object') {
-        return selection
-    }
-    if (isAngular(selection) || isjQuery(selection)) {
-        selection = selection.length ? _.first(selection) : {}
-    }
-    return _.extend({}, Stratus.Selector, {
-        context: this,
-        length: _.size(selection),
-        selection,
-        selector
-    })
-}
 
 // TODO: Remove the following hack
 /* eslint no-global-assign: "off" */
@@ -520,195 +489,6 @@ Stratus.Select = (selector: string | Element | JQuery, context?: Document) => {
 //     // function for native jQuery-like chaining and plugins.
 //     return Stratus.Select(selector, context)
 // }, Stratus)
-
-// Selector Plugins
-// ----------------
-
-Stratus.Selector.attr = function attr(attribute: any, value: any) {
-    const that: any = this
-    if (that.selection instanceof NodeList) {
-        console.warn('Unable to find "' + attribute + '" for list:', that.selection)
-        return null
-    }
-    if (!attribute) {
-        return this
-    }
-    if (typeof value === 'undefined') {
-        value = that.selection.getAttribute(attribute)
-        return hydrate(value)
-    } else {
-        that.selection.setAttribute(attribute, dehydrate(value))
-    }
-    return that
-}
-
-Stratus.Selector.addEventListener = function addEventListener(type: any, listener: any, options?: any) {
-    const that: any = this
-    if (!that.selection) {
-        console.warn('Unable to add EventListener on empty selection.')
-        return that
-    }
-    const listen: any = (node: Element) => node.addEventListener(type, listener, options)
-    if (that.selection instanceof NodeList) {
-        _.forEach(that.selection, listen)
-        return that
-    }
-    if (that.selection instanceof EventTarget) {
-        listen(that.selection)
-        return that
-    }
-    console.warn('Unable to add EventListener on:', that.selection)
-    return that
-}
-
-Stratus.Selector.each = function each(callable: any) {
-    const that: any = this
-    if (typeof callable !== 'function') {
-        callable = (element: any) => {
-            console.warn('each running on element:', element)
-        }
-    }
-    if (that.selection instanceof NodeList) {
-        _.forEach(that.selection, callable)
-    }
-    return that
-}
-
-Stratus.Selector.find = function find(selector: any) {
-    const that: any = this
-    if (that.selection instanceof NodeList) {
-        console.warn('Unable to find "' + selector + '" for list:', that.selection)
-    } else if (selector) {
-        return Stratus.Select(selector, that.selection)
-    }
-    return null
-}
-
-Stratus.Selector.map = function map(callable: any) {
-    const that: any = this
-    if (typeof callable !== 'function') {
-        callable = (element: any) => {
-            console.warn('map running on element:', element)
-        }
-    }
-    if (that.selection instanceof NodeList) {
-        return _.map(that.selection, callable)
-    }
-    return that
-}
-
-// TODO: Merge with prepend
-Stratus.Selector.append = function append(child: any) {
-    const that: any = this
-    if (that.selection instanceof NodeList) {
-        console.warn('Unable to append child:', child, 'to list:', that.selection)
-    } else if (child) {
-        that.selection.insertBefore(child, that.selection.lastChild)
-    }
-    return that
-}
-
-// TODO: Merge with append
-Stratus.Selector.prepend = function(child: any) {
-    const that: any = this
-    if (that.selection instanceof NodeList) {
-        console.warn('Unable to prepend child:', child, 'to list:', that.selection)
-    } else if (child) {
-        that.selection.insertBefore(child, that.selection.firstChild)
-    }
-    return that
-}
-
-// Design Plugins
-Stratus.Selector.addClass = function addClass(className: any) {
-    const that: any = this
-    if (that.selection instanceof NodeList) {
-        console.warn('Unable to add class "' + className + '" to list:', that.selection)
-    } else {
-        _.forEach(className.split(' '), (name: any) => {
-            if (that.selection.classList) {
-                that.selection.classList.add(name)
-            } else {
-                that.selection.className += ' ' + name
-            }
-        })
-    }
-    return that
-}
-
-Stratus.Selector.removeClass = function removeClass(className: string) {
-    const that: any = this
-    if (that.selection instanceof NodeList) {
-        console.warn('Unable to remove class "' + className + '" from list:', that.selection)
-    } else if (that.selection.classList) {
-        _.forEach(className.split(' '), name => {
-            that.selection.classList.remove(name)
-        })
-    } else {
-        that.selection.className = that.selection.className.replace(
-            new RegExp('(^|\\b)' + className.split(' ').join('|') + '(\\b|$)',
-                'gi'), ' ')
-    }
-    return that
-}
-
-Stratus.Selector.style = function style() {
-    const that: any = this
-    if (that.selection instanceof NodeList) {
-        console.warn('Unable to find style for list:', that.selection)
-    } else if (that.selection instanceof Node) {
-        return window.getComputedStyle(that.selection)
-    }
-    return null
-}
-
-// Positioning Plugins
-Stratus.Selector.height = function height() {
-    const that: any = this
-    if (that.selection instanceof NodeList) {
-        console.warn('Unable to find height for list:', that.selection)
-        return null
-    }
-    return that.selection.offsetHeight || 0
-}
-
-Stratus.Selector.width = function width() {
-    const that: any = this
-    if (that.selection instanceof NodeList) {
-        console.warn('Unable to find width for list:', that.selection)
-        return null
-    }
-    // if (cookie('env')) {
-    //     console.log('width:', that.selection.scrollWidth, that.selection.clientWidth, that.selection.offsetWidth)
-    // }
-    return that.selection.offsetWidth || 0
-}
-
-Stratus.Selector.offset = function offset() {
-    const that: any = this
-    if (that.selection instanceof NodeList) {
-        console.warn('Unable to find offset for list:', that.selection)
-    } else if (that.selection.getBoundingClientRect) {
-        const rect: any = that.selection.getBoundingClientRect()
-        return {
-            top: rect.top + document.body.scrollTop,
-            left: rect.left + document.body.scrollLeft
-        }
-    }
-    return {
-        top: null,
-        left: null
-    }
-}
-
-Stratus.Selector.parent = function parent() {
-    const that: any = this
-    if (that.selection instanceof NodeList) {
-        console.warn('Unable to find offset for list:', that.selection)
-        return null
-    }
-    return Stratus.Select(that.selection.parentNode)
-}
 
 // Sentinel Prototype
 // ------------------
@@ -2419,29 +2199,6 @@ Stratus.LocalStorage.Listen('stratus-core', (data: any) => {
     // }
 })
 // localStorage.setItem('stratus-core', 'foo')
-
-// DOM Listeners
-// -------------
-
-// This function executes when the DOM is Ready, which means
-// the DOM is fully parsed, but still loading sub-resources
-// (CSS, Images, Frames, etc).
-Stratus.DOM.ready = (fn: any) => {
-    (document.readyState !== 'loading') ? fn() : document.addEventListener('DOMContentLoaded', fn)
-}
-
-// This function executes when the DOM is Complete, which means
-// the DOM is fully parsed and all resources are rendered.
-Stratus.DOM.complete = (fn: any) => {
-    (document.readyState === 'complete') ? fn() : window.addEventListener('load', fn)
-}
-
-// This function executes before the DOM has completely Unloaded,
-// which means the window/tab has been closed or the user has
-// navigated from the current page.
-Stratus.DOM.unload = (fn: (e: BeforeUnloadEvent) => void) => {
-    window.addEventListener('beforeunload', fn)
-}
 
 // Key Maps
 // --------
