@@ -1,0 +1,110 @@
+// Universal Button
+import {
+    InputButtonPlugin
+} from '@stratusjs/angular/froala/plugins/inputButton'
+
+// @ts-ignore
+import FroalaEditor from 'froala-editor'
+
+// Plugin Options
+FroalaEditor.DEFAULTS = Object.assign(FroalaEditor.DEFAULTS, {
+    endpoint: '/Api/Content'
+})
+
+/**
+ * @param editor The Froala instance
+ */
+FroalaEditor.PLUGINS.linkManager = function linkManager (editor: any) {
+    let inputButton: InputButtonPlugin
+
+    const debug = false
+
+    // When the plugin is initialized,this will be called.
+    function _init() {
+        inputButton = new InputButtonPlugin({
+            name: 'Link Manager',
+            eventName: 'link-library',
+            editor,
+            debug
+        })
+
+        if (debug) {
+            console.log('initialized:', {
+                options: editor.opts.endpoint,
+                instance: this
+            })
+        }
+
+        // Editor methods
+        // editor.methodName(params);
+
+        // Event listeners
+        // editor.events.add('contentChanged', function (params) {});
+    }
+
+    function onClick() {
+        if (!editor.el) {
+            console.warn('linkManager.onClick(): unable to find element')
+            return
+        }
+        inputButton.onClick(editor.el)
+    }
+
+    // Expose public methods.
+    // Public methods can be accessed through the editor API:
+    // editor.myPlugin.publicMethod();
+    return {
+        // If _init is not public then the plugin won't be initialized.
+        _init,
+        onClick
+    }
+}
+
+// Insert Plugin to Image Insert
+FroalaEditor.DEFAULTS.imageInsertButtons.push('linkManager'),
+    FroalaEditor.RegisterCommand('linkManager', {
+        title: 'Insert from Link Library',
+        undo: false,
+        focus: false,
+        modal: true,
+        callback() {
+            const debug = false
+            if (debug) {
+                console.log('clicked:', this.linkManager)
+            }
+            this.linkManager.onClick()
+        },
+        plugin: 'linkManager',
+    }),
+    FroalaEditor.DefineIcon('linkManager', {NAME: 'folder', SVG_KEY: 'insertLink'}),
+    FroalaEditor.DefineIcon('linkManagerInsert', {NAME: 'plus', SVG_KEY: 'add'}),
+    FroalaEditor.DefineIcon('linkManagerDelete', {NAME: 'trash', SVG_KEY: 'remove'})
+
+// Define a quick insert button
+FroalaEditor.RegisterQuickInsertButton('link', {
+    // Icon name.
+    icon: 'linkManager',
+
+    // Tooltip.
+    title: 'Insert from Link Library',
+
+    // Callback for the button.
+    callback: function linkManagerCallback () {
+        const debug = false
+        const inputButton = new InputButtonPlugin({
+            name: 'Link Manager',
+            eventName: 'link-library',
+            // Contextual `this` is equivalent to the editor instance
+            editor: this,
+            debug
+        })
+        if (!this.el) {
+            console.warn('linkManager.onClick(): unable to find element')
+            return
+        }
+        inputButton.onClick(this.el)
+    },
+
+    // Save changes to undo stack.
+    undo: true
+})

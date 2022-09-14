@@ -79,8 +79,7 @@ export class InputButtonPlugin implements TriggerInterface {
             console.warn(`${this.name}.trigger(): unable to inject html without a set editor.`)
             return
         }
-        // FIXME: This is specific to the media-insert plugin
-        if (name !== 'media-insert') {
+        if (name !== 'insert') {
             console.warn(`${this.name}.trigger():`, name, 'event is not supported.')
             return
         }
