@@ -33,39 +33,6 @@ export function unload(fn: (e: BeforeUnloadEvent) => void){
     window.addEventListener('beforeunload', fn)
 }
 
-export function Select(selector: string | Element | JQuery, context?: Document | Element): Selector {
-    if (!context) {
-        context = document
-    }
-    let selection: any = selector
-    if (typeof selector === 'string') {
-        // let target
-        // if (startsWith(selector, '.') || includes(selector, '[')) {
-        //     target = 'querySelectorAll'
-        // } else if (includes(['html', 'head', 'body'], selector) || startsWith(selector, '#')) {
-        //     target = 'querySelector'
-        // } else {
-        //     target = 'querySelectorAll'
-        // }
-        // selection = context[target](selector)
-        selection = (includes(['html', 'head', 'body'], selector) || startsWith(selector, '#'))
-            ? context.querySelector(selector) : context.querySelectorAll(selector)
-    }
-    if (!selection || typeof selection !== 'object') {
-        return selection
-    }
-    if (isAngular(selection) || isjQuery(selection)) {
-        selection = selection.length ? first(selection) : {}
-    }
-    return new Selector(context, size(selection), selection, selector)
-    /*return extend({}, Selector, {
-        context: this,
-        length: size(selection),
-        selection,
-        selector
-    })*/
-}
-
 export class Selector {
     context: Document | Element
     length: number
@@ -253,6 +220,39 @@ export class Selector {
         }
         return Select(that.selection.parentNode)
     }
+}
+
+export function Select(selector: string | Element | JQuery, context?: Document | Element): Selector {
+    if (!context) {
+        context = document
+    }
+    let selection: any = selector
+    if (typeof selector === 'string') {
+        // let target
+        // if (startsWith(selector, '.') || includes(selector, '[')) {
+        //     target = 'querySelectorAll'
+        // } else if (includes(['html', 'head', 'body'], selector) || startsWith(selector, '#')) {
+        //     target = 'querySelector'
+        // } else {
+        //     target = 'querySelectorAll'
+        // }
+        // selection = context[target](selector)
+        selection = (includes(['html', 'head', 'body'], selector) || startsWith(selector, '#'))
+            ? context.querySelector(selector) : context.querySelectorAll(selector)
+    }
+    if (!selection || typeof selection !== 'object') {
+        return selection
+    }
+    if (isAngular(selection) || isjQuery(selection)) {
+        selection = selection.length ? first(selection) : {}
+    }
+    return new Selector(context, size(selection), selection, selector)
+    /*return extend({}, Selector, {
+        context: this,
+        length: size(selection),
+        selection,
+        selector
+    })*/
 }
 
 export interface DOMType {
