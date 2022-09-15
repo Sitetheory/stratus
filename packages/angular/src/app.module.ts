@@ -127,6 +127,9 @@ import {
     MediaDialogComponent
 } from '@stratusjs/angular/editor/media-dialog.component'
 import {
+    LinkDialogComponent
+} from '@stratusjs/angular/editor/link-dialog.component'
+import {
     FroalaEditorModule,
     FroalaViewModule
 } from 'angular-froala-wysiwyg'
@@ -294,7 +297,7 @@ if (cookie('env')) {
     /* *
     quillConfig.modules.imageUploader = {
         upload: (file: any) => {
-            return new Promise((resolve, reject) => {
+            return new Promise<string>((resolve, reject) => {
                 setTimeout(() => {
                     resolve(
                         'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6a/JavaScript-logo.png/480px-JavaScript-logo.png'
@@ -387,6 +390,7 @@ const monacoConfig: NgxMonacoEditorConfig = {
         CodeViewDialogComponent,
         ConfirmDialogComponent,
         EditorComponent,
+        LinkDialogComponent,
         MapComponent,
         MediaDialogComponent,
         MediaSelectorComponent,
@@ -406,6 +410,7 @@ const monacoConfig: NgxMonacoEditorConfig = {
         CodeViewDialogComponent,
         ConfirmDialogComponent,
         EditorComponent,
+        LinkDialogComponent,
         MapComponent,
         MediaDialogComponent,
         MediaSelectorComponent,

@@ -64,6 +64,10 @@ import {
     RootComponent
 } from '@stratusjs/angular/core/root.component'
 import {
+    LinkDialogComponent,
+    LinkDialogData
+} from '@stratusjs/angular/editor/link-dialog.component'
+import {
     MediaDialogComponent,
     MediaDialogData
 } from '@stratusjs/angular/editor/media-dialog.component'
@@ -157,6 +161,7 @@ import 'froala-image-tui'
 // import 'froala-word-paste'
 
 // Froala Custom Plugins
+import '@stratusjs/angular/froala/plugins/linkManager'
 import '@stratusjs/angular/froala/plugins/mediaManager'
 import {FroalaEditorDirective} from 'angular-froala-wysiwyg'
 // import '@stratusjs/angular/froala/plugins/menuButton'
@@ -762,6 +767,20 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
         // Note: The request will contain the image source as src parameter.
         // imageManagerDeleteURL: '/Api/MediaSrc',
         // imageManagerPreloader: '/images/loader.gif',
+        linkInsertButtons: [
+            'linkBack',
+            '|',
+            'linkList',
+            'linkManager'
+        ],
+        // linkList: [
+        //     {
+        //         text: 'Meow',
+        //         href: 'https://meow.com/',
+        //         target: '_blank',
+        //         rel: 'nofollow'
+        //     }
+        // ],
         multiLine: true,
         paragraphStyles: {
             // 'fr-text-gray': 'Gray',
@@ -819,6 +838,7 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             'lineBreaker',
             // 'lineHeight',
             'link',
+            'linkManager',
             'lists',
             'mediaManager',
             // 'menuButton',
@@ -840,6 +860,7 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             'image',
             'video',
             'media',
+            'link',
             'embedly',
             'table',
             'ul',
@@ -1364,10 +1385,40 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
         }
         if (name === 'media-library') {
             this.openMediaDialog(callee)
+        } else if (name === 'link-library') {
+            this.openLinkDialog(callee)
         } else if (name === 'code-view') {
             this.openCodeViewDialog()
         }
         // callee.trigger('editor', null, this)
+    }
+
+    public openLinkDialog(callee: TriggerInterface): void {
+        const dialogRef = this.dialog.open(LinkDialogComponent, {
+            width: '1000px',
+            data: {
+                editor: this,
+                eventManager: callee,
+                // eventInsert: false,
+                form: this.form,
+                model: this.model,
+                property: this.property
+            }
+        })
+        this.refresh()
+
+        const that = this
+        dialogRef.afterClosed().subscribe((result: LinkDialogData) => {
+            if (!result || _.isEmpty(result)) {
+                return
+            }
+            // Refresh Component
+            that.refresh()
+            // Display output if one exists
+            if (this.dev && result) {
+                console.log('link dialog result:', result)
+            }
+        })
     }
 
     public openMediaDialog(callee: TriggerInterface): void {

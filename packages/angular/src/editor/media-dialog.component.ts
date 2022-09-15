@@ -266,7 +266,7 @@ export class MediaDialogComponent extends ResponsiveComponent implements OnInit 
             console.warn('media-dialog: event manager is not set.')
             return
         }
-        this.eventManager.trigger('media-insert', mediaElement, this.editor)
+        this.eventManager.trigger('insert', mediaElement, this.editor)
     }
 
     isSelected(media: Media) : boolean {

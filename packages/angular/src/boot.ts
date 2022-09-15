@@ -17,6 +17,7 @@ function exponentialTimeout() {
     return currentTimeout
 }
 
+// TODO: Make this importable, so we can bootstrap other components dynamically in packages outside this one.
 // Attempt to boot Angular
 let boot = false
 function angularBoot() {

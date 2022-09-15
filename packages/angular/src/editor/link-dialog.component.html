@@ -1,0 +1,208 @@
+<h1 mat-dialog-title>Link Selector</h1>
+
+<!-- Note: This spawns from the Media Dialog Component, so the UI here will need a revamp after it becomes functional. -->
+<div mat-dialog-content class="link-dialog-content">
+    <!-- Target Editor -->
+    <form class="dialog-form" [formGroup]='dialogLinkForm'>
+        <mat-form-field class="form-field">
+            <input matInput placeholder="Search Content" aria-label="Search Content" formControlName='linkQueryInput'>
+        </mat-form-field>
+    </form>
+    <mat-progress-bar mode="indeterminate" *ngIf="isContentLoading"></mat-progress-bar>
+    <!-- TODO: Add more information for the Content items -->
+    <div class="content" fxLayout="row wrap" fxLayoutGap="16px grid">
+        <div fxFlex="25%" fxFlex.xs="100%" fxFlex.sm="33%" *ngFor="let contentEntity of contentEntities">
+            <mat-card class="content-card">
+                <mat-card-header>
+                    <!--<div mat-card-avatar class="content-header-image"></div>-->
+                    <!--<mat-card-title [innerText]="contentEntity.version.title || 'Untitled'"></mat-card-title>-->
+                    <mat-card-title>
+                        <ng-container *ngIf="contentEntity.version.title && contentEntity.version.title.length > 16; else defaultTitle">
+                            <span [matTooltip]="contentEntity.version.title"
+                                  [innerText]="(contentEntity.version.title | slice:0:13) + '...'"
+                                  [style.cursor]="'help'">
+                            </span>
+                        </ng-container>
+                        <ng-template #defaultTitle>
+                            <span [innerText]="contentEntity.version.title || 'Untitled'"
+                                  [style.cursor]="'default'">
+                            </span>
+                        </ng-template>
+                    </mat-card-title>
+                    <mat-card-subtitle>
+                        <ng-container *ngIf="contentEntity.contentType.name && contentEntity.contentType.name.length > 24; else defaultSubtitle">
+                            <span [matTooltip]="contentEntity.contentType.name"
+                                  [innerText]="(contentEntity.contentType.name | slice:0:21) + '...'"
+                                  [style.cursor]="'help'">
+                            </span>
+                        </ng-container>
+                        <ng-template #defaultSubtitle>
+                            <span [innerText]="contentEntity.contentType.name"
+                                  [style.cursor]="'default'">
+                            </span>
+                        </ng-template>
+                    </mat-card-subtitle>
+                </mat-card-header>
+                <ng-template #defaultBody>
+                    <mat-icon aria-hidden="true"
+                              [svgIcon]="getSvg(Stratus.BaseUrl + contentEntity.contentType.iconResourcePath) | async">
+                        ContentType Icon
+                    </mat-icon>
+                </ng-template>
+                <ng-container *ngIf="contentEntity.version && contentEntity.version.bestImage; else defaultBody">
+                    <ng-container *ngIf="contentEntity.version.bestImage._thumbnailUrl">
+                        <img mat-card-image
+                             class="generic-thumb basic-image"
+                             [src]="contentEntity.version.bestImage.mime !== 'image/gif' ? contentEntity.version.bestImage._thumbnailUrl : contentEntity.version.bestImage._directUrl"
+                             [alt]="contentEntity.version.title"
+                             [ngClass]="{'selected' : isSelected(contentEntity)}">
+                    </ng-container>
+                    <ng-container *ngIf="!contentEntity.version.bestImage._thumbnailUrl
+                                          && contentEntity.version.bestImage.mime === 'video'">
+                        <ng-container *ngIf="contentEntity.version.bestImage.service === 'vimeo'">
+                            <ng-container *ngIf="contentEntity.version.bestImage.meta && contentEntity.version.bestImage.meta.thumbnail_large; else basicVimeoButton">
+                                <!-- [src]="contentEntity.version.bestImage.meta.thumbnail_large || Stratus.BaseUrl + 'sitetheorymedia/images/mediaTypeIcons/media-icon-video.png'" -->
+                                <img mat-card-image
+                                     class="vimeo"
+                                     [src]="contentEntity.version.bestImage.meta.thumbnail_large"
+                                     [alt]="contentEntity.version.title"
+                                     [ngClass]="{'selected' : isSelected(contentEntity)}">
+                            </ng-container>
+                            <ng-template #basicVimeoButton>
+                                <!-- TODO: Change Generic Video Image to Generic Vimeo Image -->
+                                <!-- Generic Video Image -->
+                                <!-- TODO: make this a local file -->
+                                <img mat-card-image
+                                     class="vimeo basic-image"
+                                     [src]="Stratus.BaseUrl + 'sitetheorymedia/images/mediaTypeIcons/media-icon-video.png'"
+                                     style="background: #4e4e4e;"
+                                     [alt]="contentEntity.version.title"
+                                     [ngClass]="{'selected' : isSelected(contentEntity)}">
+                            </ng-template>
+                        </ng-container>
+                        <ng-container *ngIf="contentEntity.version.bestImage.service === 'youtube'">
+                            <ng-container *ngIf="contentEntity.version.bestImage.serviceMediaId; else basicYoutubeButton">
+                                <img mat-card-image
+                                     class="youtube"
+                                     [src]="'https://img.youtube.com/vi/' + contentEntity.version.bestImage.serviceMediaId + '/hqdefault.jpg'"
+                                     [alt]="contentEntity.version.title"
+                                     [ngClass]="{'selected' : isSelected(contentEntity)}">
+                            </ng-container>
+                            <ng-template #basicYoutubeButton>
+                                <!-- TODO: Change Generic Video Image to Generic Youtube Image -->
+                                <!-- Generic Video Image -->
+                                <!-- TODO: make this a local file -->
+                                <img mat-card-image
+                                     class="youtube basic-image"
+                                     [src]="Stratus.BaseUrl + 'sitetheorymedia/images/mediaTypeIcons/media-icon-video.png'"
+                                     style="background: #4e4e4e;"
+                                     [alt]="contentEntity.version.title"
+                                     [ngClass]="{'selected' : isSelected(contentEntity)}">
+                            </ng-template>
+                        </ng-container>
+                        <ng-container *ngIf="contentEntity.version.bestImage.service === 'facebook'">
+                            <!-- TODO: Change Generic Video Image until we have dynamic thumbnails fetched -->
+                            <!-- Generic Video Image -->
+                            <!-- TODO: make this a local file -->
+                            <img mat-card-image
+                                 class="facebook-video basic-image"
+                                 [src]="Stratus.BaseUrl + 'sitetheorymedia/images/mediaTypeIcons/media-icon-video.png'"
+                                 style="background: #4e4e4e;"
+                                 [alt]="contentEntity.version.title"
+                                 [ngClass]="{'selected' : isSelected(contentEntity)}">
+                        </ng-container>
+                        <ng-container *ngIf="!['vimeo', 'youtube', 'facebook'].includes(contentEntity.version.bestImage.service)">
+                            <!-- Generic Video Image -->
+                            <!-- TODO: make this a local file -->
+                            <img mat-card-image
+                                 class="generic-video basic-image"
+                                 [src]="Stratus.BaseUrl + 'sitetheorymedia/images/mediaTypeIcons/media-icon-video.png'"
+                                 style="background: #4e4e4e;"
+                                 [alt]="contentEntity.version.title"
+                                 [ngClass]="{'selected' : isSelected(contentEntity)}">
+                        </ng-container>
+                    </ng-container>
+                    <ng-container *ngIf="!contentEntity.version.bestImage._thumbnailUrl
+                                          && _.startsWith(contentEntity.version.bestImage.mime, 'audio')">
+                        <!-- TODO: make this a local file -->
+                        <img mat-card-image
+                             class="generic-audio"
+                             [src]="Stratus.BaseUrl + 'sitetheorymedia/images/mediaTypeGraphics/media-graphic-audio.png'"
+                             style="background: #4e4e4e;"
+                             [alt]="contentEntity.version.title"
+                             [ngClass]="{'selected' : isSelected(contentEntity)}">
+                    </ng-container>
+                    <ng-container *ngIf="!contentEntity.version.bestImage._thumbnailUrl
+                                          && contentEntity.version.bestImage.mime === 'application/pdf'">
+                        <!-- TODO: make this a local file -->
+                        <img mat-card-image
+                             class="generic-pdf basic-image"
+                             [src]="Stratus.BaseUrl + 'sitetheorymedia/images/mediaTypeGraphics/media-graphic-pdf.png'"
+                             [alt]="contentEntity.version.title"
+                             [ngClass]="{'selected' : isSelected(contentEntity)}">
+                    </ng-container>
+                    <ng-container *ngIf="!contentEntity.version.bestImage._thumbnailUrl
+                                          && contentEntity.version.bestImage.mime === 'application/msword'">
+                        <!-- TODO: make this a local file -->
+                        <img mat-card-image
+                             class="generic-word basic-image"
+                             [src]="Stratus.BaseUrl + 'sitetheorymedia/images/mediaTypeGraphics/media-graphic-doc.png'"
+                             [alt]="contentEntity.version.title"
+                             [ngClass]="{'selected' : isSelected(contentEntity)}">
+                    </ng-container>
+                    <ng-container *ngIf="!contentEntity.version.bestImage._thumbnailUrl
+                                          && contentEntity.version.bestImage.service === 'directLink'
+                                          && contentEntity.version.bestImage.file">
+                        <!-- In some cases, there are external images with a service of 'directLink' -->
+                        <img mat-card-image
+                             class="direct-link"
+                             [src]="contentEntity.version.bestImage.file"
+                             [alt]="contentEntity.version.title"
+                             [ngClass]="{'selected' : isSelected(contentEntity)}">
+                    </ng-container>
+
+                    <!-- Note: This shows info for entities that don't have a proper display -->
+                    <!--
+                    <ng-container *ngIf="!contentEntity.version.bestImage._thumbnailUrl
+                                          && !_.startsWith(contentEntity.version.bestImage.mime, 'audio')
+                                          && !['application/pdf', 'application/msword', 'video'].includes(contentEntity.version.bestImage.mime)
+                                          && !(contentEntity.version.bestImage.service === 'directLink' && contentEntity.version.bestImage.file)">
+                        <mat-card-content>
+                            <p>
+                                ID: <span [innerText]="contentEntity.version.bestImage.id"></span>
+                            </p>
+                            <p>
+                                Service: <span [innerText]="contentEntity.version.bestImage.service|json"></span>
+                            </p>
+                        </mat-card-content>
+                    </ng-container>
+                    -->
+
+                </ng-container>
+
+                <!--
+                <mat-card-content>
+                    <p>
+                        This can have a description, maybe.
+                    </p>
+                </mat-card-content>
+                -->
+                <mat-card-actions>
+                    <!-- This action button is for selecting the Media, instead of clicking directly on the image -->
+                    <button mat-button
+                            [disabled]="isSelected(contentEntity)"
+                            (click)="select(contentEntity)">
+                        <span [innerText]="isSelected(contentEntity) ? 'Selected' : 'Insert'"></span>
+                    </button>
+                    <!-- TODO: Add action buttons for deleting media with confirm dialog (i.e. trash can) -->
+                </mat-card-actions>
+            </mat-card>
+        </div>
+    </div>
+    <!-- Pagination is based on the latest Convoy Meta -->
+    <mat-paginator [length]="(!meta || !meta.pagination) ? contentEntities.length : (meta.pagination.countTotal || contentEntities.length)"
+                   [pageSize]="(!meta || !meta.pagination) ? limit : (meta.pagination.limit || limit)"
+                   [pageSizeOptions]="[5, 10, 25, 50, 100]"
+                   (page)="onPage($event)">
+    </mat-paginator>
+</div>
