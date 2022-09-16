@@ -1,0 +1,6 @@
+<span data-ng-cloak class="citation-popup" data-ng-class="{'opened': citationOpened}">
+    <span class="citation-title" data-ng-bind="title + '.'"></span>
+    <span class="citation-popup-close" data-ng-click="toggleCitation()"><span class="citation-popup-close-btn"></span></span>
+    <span class="citation-text" data-ng-transclude></span>
+</span>
+<sup class="citation-title-sup" data-ng-click="toggleCitation()" data-ng-bind="title"></sup>

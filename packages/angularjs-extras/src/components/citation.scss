@@ -1,0 +1,51 @@
+stratus-citation {
+  position: relative;
+  display: inline;
+  .citation-title-sup {
+    color: #F85B3B; /* handle generic color better */
+    cursor: pointer;
+  }
+  .citation-popup {
+    opacity: 0;
+    z-index: -1;
+    position: absolute;
+    width: 300px;
+    background-color: #E2E7ED;
+    padding: 1.5em;
+    line-height: 1.5;
+    bottom: 30px;
+    right: 0;
+    box-shadow: 0 0 10px #ccc;
+
+    .citation-popup-close {
+      position: absolute;
+      top: 0;
+      right: 0;
+      padding: 10px;
+
+      .citation-popup-close-btn {
+        display: block;
+        height: 20px;
+        width: 15px;
+        max-width: 100%;
+        cursor: pointer;
+        opacity: .75;
+
+        &:before {
+          content: 'x';
+          padding-left: 3px;
+        }
+      }
+    }
+
+    .citation-title {
+      display: block;
+      margin-bottom: 7px;
+    }
+
+    &.opened {
+      opacity: 1;
+      z-index: 9;
+    }
+  }
+}
