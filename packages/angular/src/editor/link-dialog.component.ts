@@ -119,6 +119,9 @@ export class LinkDialogComponent extends ResponsiveComponent implements OnInit {
         [key: string]: string
     } = {}
 
+    // UI Flags
+    styled = false
+
     constructor(
         public dialogRef: MatDialogRef<LinkDialogComponent>,
         @Inject(MAT_DIALOG_DATA) public data: LinkDialogData,
@@ -144,6 +147,22 @@ export class LinkDialogComponent extends ResponsiveComponent implements OnInit {
         // TODO: Assess & Possibly Remove when the System.js ecosystem is complete
         // Load Component CSS until System.js can import CSS properly.
         Stratus.Internals.CssLoader(`${localDir}${parentModuleName}/${moduleName}.component${min}.css`)
+            .then(() => {
+                this.styled = true
+                this.refresh()
+            })
+            .catch((err: any) => {
+                console.warn('Issue detected in CSS Loader for Component:', this)
+                console.error(err)
+                this.styled = true
+                this.refresh()
+            })
+
+        // SVG Icons
+        _.forEach({
+            selector_delete: `${Stratus.BaseUrl}sitetheorycore/images/icons/actionButtons/delete.svg`,
+            selector_edit: `${Stratus.BaseUrl}sitetheorycore/images/icons/actionButtons/edit.svg`
+        }, (value, key) => this.iconRegistry.addSvgIcon(key, this.sanitizer.bypassSecurityTrustResourceUrl(value)).getNamedSvgIcon(key))
 
         // Hoist Data
         this.model = this.data.model
@@ -274,6 +293,8 @@ export class LinkDialogComponent extends ResponsiveComponent implements OnInit {
             return
         }
         this.eventManager.trigger('insert', linkElement, this.editor)
+        // close dialog after inserting link
+        this.onCancelClick()
     }
 
     isSelected(content: ContentEntity) : boolean {
@@ -349,6 +370,14 @@ export class LinkDialogComponent extends ResponsiveComponent implements OnInit {
         const uid = this.svgIcons[url] = _.uniqueId('selector_svg')
         this.iconRegistry.addSvgIcon(uid, this.sanitizer.bypassSecurityTrustResourceUrl(url), options)
         return uid
+    }
+
+    goToUrl(content: ContentEntity) {
+        if (!content || !content.contentType) {
+            console.error('unable to execute goToUrl() because a valid model content was not provided.')
+            return
+        }
+        window.open(content.contentType.editUrl + '?id=' + content.id, '_blank')
     }
 }
 
