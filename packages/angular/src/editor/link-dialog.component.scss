@@ -21,6 +21,259 @@
         //background-image: url('');
         background-size: cover;
       }
+
+      /* Styles for Both Selector and Content Areas */
+      .autocomplete-option {
+        .content-type {
+          margin-bottom: 2px;
+          md-icon,
+          mat-icon {
+            margin-right: 4px;
+            height: 14px;
+            width: 14px;
+            min-height: 14px;
+            min-width: 14px;
+          }
+          .content-type-name {
+            font-weight: bold;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+          }
+        }
+        .no-image-icon {
+          md-icon,
+          mat-icon {
+            height: 28px;
+            width: 28px;
+            min-height: 28px;
+            min-width: 28px;
+            svg g {
+              fill: #FFF;
+            }
+          }
+        }
+        .shapeholder {
+          width: 100%;
+          display: block;
+        }
+      }
+
+      .content-selector-autocomplete {
+        .column-title h3 {
+          margin: 0 0 5px;
+          font-size: 16px;
+        }
+      }
+
+
+
+      /* Selector Autocomplete Options */
+      md-autocomplete,
+      .content-selector {
+        margin-top: 12px;
+      }
+      .selector-filter md-checkbox {
+        padding-right: 10px;
+      }
+      .md-autocomplete-suggestions li {
+        height: 80px;
+      }
+      .content-selector-autocomplete {
+        .autocomplete-row {
+          padding: 4px 0;
+          border-bottom: 1px solid rgba(0,0,0,.1);
+          * {
+            line-height: 1.4;
+          }
+          .column-image {
+            .image-container {
+              margin-right: 18px;
+            }
+          }
+          h3 {
+            font-size: 14px;
+          }
+          .routing {
+            font-size: 13px;
+          }
+        }
+        .content {
+          .image,
+          .column-title {
+            opacity: .3;
+          }
+          md-icon.content-icon,
+          mat-icon.content-icon {
+            z-index: 5;
+            height: 40px;
+            width: 40px;
+            min-height: 40px;
+            min-width: 40px;
+            svg {
+              filter: drop-shadow(0 0 1px rgba(0, 0, 0, 0.5));
+              -webkit-filter: drop-shadow(0 0 1px rgba(0, 0, 0, 0.5));
+              g {
+                fill: #FFF;
+              }
+            }
+          }
+        }
+      }
+
+      /* Draggable Content List */
+
+      .selector-wrapper {
+        background: rgba(255,255,255,.4);
+        margin-top: 20px;
+        padding: 40px;
+      }
+
+      /* Based on Angular Material 8+ */
+
+      .content-list {
+        margin: 0 auto;
+        max-width: 600px;
+        min-height: 60px;
+        display: block;
+        border-radius: 4px;
+        overflow: hidden;
+      }
+      .content-box {
+        padding: 12px 16px;
+        color: rgba(0, 0, 0, 0.87);
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        box-sizing: border-box;
+        background: white;
+        font-size: 14px;
+      }
+      .content-box:last-child {
+        border: none;
+      }
+      .custom-ghost-placeholder {
+        background: rgba(0,0,0,.4);
+        min-height: 60px;
+        transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+      }
+
+      /* Content List Custom */
+      .column-image,
+      .column-title,
+      .column-action {
+        float: left;
+      }
+
+      .column-image {
+        width: 15%;
+        padding-right: 10px;
+        .image,
+        .no-image-icon {
+          margin-right: 10px;
+        }
+      }
+      .column-title {
+        width: 70%;
+      }
+      .column-action {
+        width: 15%;
+        > * {
+          display: inline-block;
+          vertical-align: middle;
+          margin-bottom: 2px;
+          &:last-child {
+            margin-bottom: 0;
+          }
+        }
+      }
+      .content-box.cdk-drag-preview {
+        .column-image {
+          width: 15%;
+        }
+        .column-title {
+          width: 85%;
+        }
+      }
+
+      margin: 0 auto;
+      .routing {
+        color: #333;
+        font-size: 13px;
+      }
+      .content-list {
+        .content-list-header {
+          margin-bottom: 20px;
+          padding-bottom: 20px;
+          h3,
+          .note {
+            margin: 0;
+            display: inline-block;
+            vertical-align: text-bottom;
+            line-height: 1.2;
+          }
+          .note {
+            padding-left: 10px;
+          }
+        }
+        .content-message-box {
+          // extra information for the list messages (currently only used for an empty list)
+        }
+        .content-list-container {
+          width: 100%;
+        }
+        .content-list-row {
+          margin-bottom: 10px;
+          padding: 12px 16px;
+          background: rgba(0, 0, 0, 0.04);
+          border-radius: 2px;
+          cursor: pointer;
+          &.active {
+            // extra options for status >= 1
+          }
+          &.inactive {
+            // extra options for status < 1
+            background: #DDD;
+          }
+          &.published {
+            // extra options for status == 1
+          }
+          &.unpublished {
+            // extra options for published != 1
+            background: #DDD;
+          }
+        }
+        .btn.btn-delete, .btn.btn-edit {
+          float: right;
+          width: 35px;
+          min-width: unset;
+          height: 35px;
+          font-size: 10px;
+          margin-left: 12px;
+          padding: 0;
+          background: #fff;
+          box-shadow: 0 0 2px rgba(0, 0, 0, 0.3);
+          &:hover {
+            background: #fff;
+            box-shadow: 0 0 2px rgba(0, 0, 0, 0.8);
+          }
+          svg {
+            margin: 0 auto;
+            width: 60%;
+            g {
+              fill: #222;
+            }
+          }
+        }
+      }
+      .firefox .btn.btn-delete svg, .firefox .btn.btn-edit svg {
+        &,
+        g {
+          max-width: 28px;
+          max-height: 28px;
+        }
+      }
     }
   }
 }

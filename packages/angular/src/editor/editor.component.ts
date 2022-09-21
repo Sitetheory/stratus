@@ -420,11 +420,12 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             // 'lineHeight'
         ],
         moreRich: [
-            'insertLink',
+            'linkManager',
             'insertImage',
             'insertVideo',
             'insertFile',
             'insertTable',
+            'insertLink',
             'insertHR',
             'specialCharacters',
             // FIXME: The free version is lacking and will require custom `fontAwesomeSets` to remove PRO icons
