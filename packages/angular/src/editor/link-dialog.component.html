@@ -1,34 +1,78 @@
 <h1 mat-dialog-title>Link Selector</h1>
 
 <div mat-dialog-content class="link-dialog-content">
-    <form class="dialog-form" [formGroup]='dialogLinkForm'>
+    <form class="dialog-form"
+          *ngIf="isStyled"
+          [formGroup]='dialogContentForm'>
         <mat-form-field class="form-field">
-            <input matInput placeholder="Search Content" aria-label="Search Content" formControlName='linkQueryInput'>
+            <input matInput
+                   placeholder="Search Content"
+                   aria-label="Search Content"
+                   [matAutocomplete]="auto"
+                   formControlName='contentSelectorInput'>
         </mat-form-field>
+        <mat-autocomplete autoActiveFirstOption
+                          #auto="matAutocomplete"
+                          [displayWith]="displayContentText">
+            <mat-option *ngIf="isContentLoading" class="is-loading">
+                <mat-spinner diameter="50"></mat-spinner>
+            </mat-option>
+            <ng-container *ngIf="!isContentLoading">
+                <!-- TODO: Modify to filteredContentModels|async which should improve responsiveness -->
+                <mat-option *ngFor="let model of contentEntities"
+                            [value]="model">
+                    <!-- Display Best Image -->
+                    <!--
+                    <span class="image position-all"
+                         style="background-size: cover"
+                         *ngIf="_.has(model, 'version.bestImage._thumbnailUrl')"
+                         [style.background]="'url(' + _.get(model, 'version.bestImage._thumbnailUrl') + ') no-repeat center center'">
+                    </span>
+                    -->
+
+                    <!-- Content Type Icon -->
+                    <mat-icon aria-hidden="true"
+                              *ngIf="_.get(model, 'contentType.iconResourcePath')"
+                              [svgIcon]="getSvg(Stratus.BaseUrl + _.get(model, 'contentType.iconResourcePath')) | async">
+                        Icon
+                    </mat-icon>
+
+                    <!-- Title & Route Display -->
+                    <!--<span [class.selected-item]="isSelected(model)">-->
+                    {{(model && model.version) ? model.version.title : 'Untitled'}}
+                    <small *ngIf="model.routing && model.routing.length">
+                        {{'/' + model.routing[0].url}}
+                    </small>
+                </mat-option>
+            </ng-container>
+        </mat-autocomplete>
     </form>
-    <mat-progress-bar mode="indeterminate" *ngIf="isContentLoading || !styled"></mat-progress-bar>
-    <div class="content-list" *ngIf="styled">
-        <!--[matTooltip]="isSelected(contentEntity) ? 'Selected' : 'Not Selected'"-->
+    <!-- List View and AutoComplete View Progress Bars -->
+    <mat-progress-bar mode="indeterminate" *ngIf="!isListView && !isStyled"></mat-progress-bar>
+    <mat-progress-bar mode="indeterminate" *ngIf="isListView && (isContentLoading || !isStyled)"></mat-progress-bar>
+    <!-- TODO: Remove the following list as everything is being phased into the AutoComplete -->
+    <div class="content-list" *ngIf="isListView && isStyled">
+        <!--[matTooltip]="isSelected(model) ? 'Selected' : 'Not Selected'"-->
         <div class="content-list-row content-box"
-             [ngClass]="{'active': _.get(contentEntity, 'status') === 1, 'inactive' : _.get(contentEntity, 'status') !== 1, 'published': _.get(contentEntity, 'version.published') === 1, 'unpublished': _.get(contentEntity, 'version.published') !== 1, 'selected': isSelected(contentEntity)}"
-             (click)="select(contentEntity)"
-             *ngFor="let contentEntity of contentEntities">
+             [ngClass]="{'active': _.get(model, 'status') === 1, 'inactive' : _.get(model, 'status') !== 1, 'published': _.get(model, 'version.published') === 1, 'unpublished': _.get(model, 'version.published') !== 1, 'selected': isSelected(model)}"
+             (click)="select(model)"
+             *ngFor="let model of contentEntities">
             <div class="content-list-container">
                 <div class="column-image position-anchor">
                     <!-- This adds stratus-src lazy loading if bestImage isn't a third party service without image sizes, e.g. Video -->
                     <div class="image position-all"
-                         *ngIf="_.has(contentEntity, 'version.bestImage._thumbnailUrl')"
-                         [attr.data-stratus-src]="!_.get(contentEntity, 'version.bestImage.service') ? true : false"
-                         [ngStyle]="{'background': 'url(' + _.get(contentEntity, 'version.bestImage._thumbnailUrl') + ') no-repeat center center', 'background-size': 'cover'}">
+                         *ngIf="_.has(model, 'version.bestImage._thumbnailUrl')"
+                         [attr.data-stratus-src]="!_.get(model, 'version.bestImage.service') ? true : false"
+                         [ngStyle]="{'background': 'url(' + _.get(model, 'version.bestImage._thumbnailUrl') + ') no-repeat center center', 'background-size': 'cover'}">
                     </div>
 
                     <!-- Icon for items with no image -->
                     <div class="no-image-icon position-all"
-                         *ngIf="!_.has(contentEntity, 'version.bestImage._thumbnailUrl')"
-                         [ngClass]="_.get(contentEntity, 'contentType.class') + '-background-color'">
+                         *ngIf="!_.has(model, 'version.bestImage._thumbnailUrl')"
+                         [ngClass]="_.get(model, 'contentType.class') + '-background-color'">
 
                         <mat-icon class="content-type-icon position-center"
-                                  [svgIcon]="getSvg(Stratus.BaseUrl + (_.get(contentEntity, 'contentType.iconResourcePath') || _.get(contentEntity, 'iconResourcePath'))) | async">
+                                  [svgIcon]="getSvg(Stratus.BaseUrl + (_.get(model, 'contentType.iconResourcePath') || _.get(model, 'iconResourcePath'))) | async">
                             Icon
                         </mat-icon>
                     </div>
@@ -38,36 +82,36 @@
 
                 </div>
                 <div class="column-title">
-                    <!-- _.has(contentEntity, 'iconResourcePath') || _.has(contentEntity, 'contentType.iconResourcePath') -->
-                    <div class="content-type" *ngIf="_.has(contentEntity, 'contentType.iconResourcePath')">
+                    <!-- _.has(model, 'iconResourcePath') || _.has(model, 'contentType.iconResourcePath') -->
+                    <div class="content-type" *ngIf="_.has(model, 'contentType.iconResourcePath')">
                         <!--
                         I disabled the position-center class on this one as it causes the icon
                         to break away from the div and float to the top of the selector container
                         -->
                         <mat-icon class="content-type-icon"
-                                  [svgIcon]="getSvg(Stratus.BaseUrl + _.get(contentEntity, 'contentType.iconResourcePath')) | async">
+                                  [svgIcon]="getSvg(Stratus.BaseUrl + _.get(model, 'contentType.iconResourcePath')) | async">
                             ContentType Icon
                         </mat-icon>
                         <span class="comment content-type-name font-body"
-                              [ngClass]="((_.get(contentEntity, 'contentType.name') || _.get(contentEntity, 'name')) | lowercase) + '-color'"
-                              [textContent]="(_.get(contentEntity, 'contentType.name') || _.get(contentEntity, 'name')) + ((_.get(contentEntity, 'status') !== 1) ? ' (hidden)' : '') + ((_.get(contentEntity, 'version.published') !== 1) ? ' (unpublished)' : '')">
+                              [ngClass]="((_.get(model, 'contentType.name') || _.get(model, 'name')) | lowercase) + '-color'"
+                              [textContent]="(_.get(model, 'contentType.name') || _.get(model, 'name')) + ((_.get(model, 'status') !== 1) ? ' (hidden)' : '') + ((_.get(model, 'version.published') !== 1) ? ' (unpublished)' : '')">
                         </span>
                     </div>
 
                     <!-- This include fallbacks in case a version is not present -->
-                    <h3 [innerHTML]="_.get(contentEntity, 'version.bestIdentifier') || _.get(contentEntity, 'name') || (_.get(contentEntity, 'contentType.controller') === 'Content\\Module' ? _.get(contentEntity, 'version.internalIdentifier') : 'Untitled ' + _.get(contentEntity, 'contentType.name') + ' (' + _.get(contentEntity, 'id') + ')')"></h3>
+                    <h3 [innerHTML]="_.get(model, 'version.bestIdentifier') || _.get(model, 'name') || (_.get(model, 'contentType.controller') === 'Content\\Module' ? _.get(model, 'version.internalIdentifier') : 'Untitled ' + _.get(model, 'contentType.name') + ' (' + _.get(model, 'id') + ')')"></h3>
                     <!-- TODO: make this clickable in new window -->
                     <span class="routing"
-                          [textContent]="(_.has(contentEntity, 'routing') ? '/' + _.get(contentEntity, 'routing[0].url') : null) || _.get(contentEntity, 'description') || ''">
+                          [textContent]="(_.has(model, 'routing') ? '/' + _.get(model, 'routing[0].url') : null) || _.get(model, 'description') || ''">
                     </span>
                 </div>
                 <div class="column-action">
                     <a mat-button
-                       *ngIf="_.has(contentEntity, 'contentType.editUrl')"
-                       [matTooltip]="'Edit ' + (_.get(contentEntity, 'contentType.name') || _.get(contentEntity, 'name'))"
+                       *ngIf="_.has(model, 'contentType.editUrl')"
+                       [matTooltip]="'Edit ' + (_.get(model, 'contentType.name') || _.get(model, 'name'))"
                        aria-label="Edit Item in New Window"
                        class="btn btn-edit"
-                       (click)="goToUrl(contentEntity, '_blank');">
+                       (click)="goToUrl(model, '_blank');">
                         <mat-icon svgIcon="selector_edit" aria-hidden="false" aria-label="Edit Item">Edit</mat-icon>
                     </a>
                 </div>
