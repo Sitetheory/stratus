@@ -1396,7 +1396,7 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
 
     public openLinkDialog(callee: TriggerInterface): void {
         const dialogRef = this.dialog.open(LinkDialogComponent, {
-            width: '1000px',
+            width: '450px',
             data: {
                 editor: this,
                 eventManager: callee,

@@ -3,7 +3,7 @@ import {
     // ChangeDetectionStrategy,
     ChangeDetectorRef,
     Component,
-    Inject,
+    Inject, OnDestroy,
     OnInit
 } from '@angular/core'
 import {
@@ -61,6 +61,7 @@ import {
 import {ContentEntity} from '@stratusjs/angular/data/content.interface'
 import {IconOptions, MatIconRegistry} from '@angular/material/icon'
 import {DomSanitizer} from '@angular/platform-browser'
+import {Convoy} from '@stratusjs/angular/data/convoy.interface'
 
 // Local Setup
 const systemDir = '@stratusjs/angular'
@@ -79,7 +80,7 @@ const localDir = `${Stratus.BaseUrl}${boot.configuration.paths[`${systemDir}/*`]
     templateUrl: `${localDir}/${parentModuleName}/${moduleName}.component${min}.html`,
     // changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class LinkDialogComponent extends ResponsiveComponent implements OnInit {
+export class LinkDialogComponent extends ResponsiveComponent implements OnInit, OnDestroy {
 
     // Basic Component Settings
     title = moduleName + '_component'
@@ -93,7 +94,7 @@ export class LinkDialogComponent extends ResponsiveComponent implements OnInit {
     // AutoComplete Data
     apiBase = '/Api/Content'
     contentEntities: any[] = []
-    dialogLinkForm: FormGroup
+    dialogContentForm: FormGroup
     isContentLoading = true
     lastContentQuery: string
 
@@ -112,6 +113,7 @@ export class LinkDialogComponent extends ResponsiveComponent implements OnInit {
     eventInsert = true
 
     // UI Settings
+    isListView = false
     selected: Array<number> = []
 
     // Icon Localization
@@ -119,8 +121,10 @@ export class LinkDialogComponent extends ResponsiveComponent implements OnInit {
         [key: string]: string
     } = {}
 
-    // UI Flags
-    styled = false
+    // Timing Flags
+    isInitialized = false
+    isDestroyed = false
+    isStyled = false
 
     constructor(
         public dialogRef: MatDialogRef<LinkDialogComponent>,
@@ -148,13 +152,13 @@ export class LinkDialogComponent extends ResponsiveComponent implements OnInit {
         // Load Component CSS until System.js can import CSS properly.
         Stratus.Internals.CssLoader(`${localDir}${parentModuleName}/${moduleName}.component${min}.css`)
             .then(() => {
-                this.styled = true
+                this.isStyled = true
                 this.refresh()
             })
             .catch((err: any) => {
                 console.warn('Issue detected in CSS Loader for Component:', this)
                 console.error(err)
-                this.styled = true
+                this.isStyled = true
                 this.refresh()
             })
 
@@ -175,32 +179,51 @@ export class LinkDialogComponent extends ResponsiveComponent implements OnInit {
 
         // TODO: Move this to its own AutoComplete Component
         // AutoComplete Logic
-        this.dialogLinkForm = this.fb.group({
-            linkQueryInput: ''
+        this.dialogContentForm = this.fb.group({
+            contentSelectorInput: ''
         })
-        this.dialogLinkForm
-            .get('linkQueryInput')
+        this.dialogContentForm
+            .get('contentSelectorInput')
             .valueChanges
             .pipe(
                 debounceTime(300),
-                tap(() => {
-                    // this.isContentLoading = true
-                }),
-                switchMap((value: any) => {
+                tap(() => this.isContentLoading = true),
+                switchMap((value: string|ContentEntity) => {
+                        if (!_.isString(value)) {
+                            this.select(value)
+                            return this.getQuery()
+                        }
                         return this.getQuery(value)
                     }
                 )
             )
             .subscribe((response: HttpResponse<any>) => this.processContent(response))
 
-        // Initialize Link Query with starter data
-        this.getQuery().subscribe(
-            (response: HttpResponse<any>) => this.processContent(response)
-        )
+        // Initial Call for Content
+        this.backend
+            .get(this.getQueryUrl())
+            .pipe(
+                finalize(() => this.isContentLoading = false),
+            )
+            .subscribe((response: HttpResponse<Convoy<ContentEntity>>) => this.processContent(response))
+
+        // Mark as complete
+        this.isInitialized = true
 
         // FIXME: We have to go in this roundabout way to force changes to be detected since the
         // Dialog Sub-Components don't seem to have the right timing for ngOnInit
-        this.refresh()
+        // this.refresh()
+    }
+
+    ngOnDestroy() {
+        this.isDestroyed = true
+    }
+
+    public refresh() {
+        if (this.isDestroyed) {
+            return new Promise<void>(resolve => resolve())
+        }
+        return super.refresh()
     }
 
     onCancelClick(): void {
@@ -216,14 +239,8 @@ export class LinkDialogComponent extends ResponsiveComponent implements OnInit {
     }
 
     getQueryUrl(query?: string): string {
-        let limit = this.limit
-        let paging = 1
-        if (this.pageEvent) {
-            limit = this.pageEvent.pageSize
-            paging = this.pageEvent.pageIndex + 1
-        }
-        query = (_.isString(query) && !_.isEmpty(query)) ? `"${query}"` : ''
-        return `${this.apiBase}?limit=${limit}&p=${paging}&q=${query}`
+        query = (!_.isString(query) || _.isEmpty(query)) ? '' : `"${query}"`
+        return `${this.apiBase}?limit=${this.limit}&options[isContent]=null&options[isCollection]=null&options[showRoutable]=true&options[showRouting]=true&q=${query}`
     }
 
     getQuery(query?: string): Observable<HttpResponse<any>> {
@@ -370,6 +387,21 @@ export class LinkDialogComponent extends ResponsiveComponent implements OnInit {
         const uid = this.svgIcons[url] = _.uniqueId('selector_svg')
         this.iconRegistry.addSvgIcon(uid, this.sanitizer.bypassSecurityTrustResourceUrl(url), options)
         return uid
+    }
+
+    displayContentText(content: ContentEntity) {
+        // Ensure Content is Selected before Display Text
+        if (!content) {
+            return
+        }
+        // Routing Display
+        const routing = _.get(content, 'routing[0].url')
+        const routingText = !_.isUndefined(routing) ? ` (/${routing})` : ' (No route!)'
+        // ContentId Fallback
+        const contentId = _.get(content, 'id')
+        const contentIdText = !_.isUndefined(contentId) ? `Content: ${contentId}` : null
+        // Return Version Title or Fallback Text
+        return (_.get(content, 'version.title') || contentIdText) + routingText
     }
 
     goToUrl(content: ContentEntity) {
