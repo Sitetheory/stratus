@@ -80,6 +80,7 @@ Stratus.Controllers.Generic = [
                     substance = true
                 }
             })
+            // TODO: I do not think that this should automatically force the URL to update
             if (substance) {
                 window.location.replace(setUrlParams(options))
             }
