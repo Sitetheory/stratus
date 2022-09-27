@@ -262,6 +262,14 @@ export class Model<T = LooseObject> extends ModelBase<T> {
         }
     }
 
+    resetXHRFlags() {
+        this.pending = false
+        this.saving = false
+        // Note: we do not know status of this.completed because in some cases an error would cause retrieval of bad
+        // data and we do not want to overwrite data
+        // NOTE: when we reset XHR it could happen in success, error, etc, so we don't know status of this.changed
+    }
+
     sanitizeOptions(options: LooseObject): LooseObject {
         const sanitizedOptions = {}
         _.forEach(ModelOptionKeys, (key) => {
@@ -513,13 +521,11 @@ export class Model<T = LooseObject> extends ModelBase<T> {
                 const propagateError = () => {
                     // XHR Flags
                     this.error = true
-                    this.pending = false
+                    this.resetXHRFlags()
 
-                    // Note: I've disabled this because a model should not be marked
-                    // as completed if it hasn't received a proper entity or prototype
-                    // initially.  This is to ensure we don't save entities with the
-                    // possibility of nullified fields due to a broken retrieval,
-                    // resulting in the replacement of good data for bad.
+                    // Note: we do not mark a model as "complete" completed if it hasn't received a proper entity or
+                    // prototype initially.  This is to ensure we don't save entities with the possibility of nullified
+                    // fields due to a broken retrieval, resulting in the replacement of good data for bad.
                     // this.completed = true
 
                     // XHR Flags for Collection
@@ -633,8 +639,8 @@ export class Model<T = LooseObject> extends ModelBase<T> {
 
                 // Propagate Changes
                 this.data = _.cloneDeep(intermediateData) as T
+                // Before handling changes make sure we set to false
                 this.changed = false
-                this.saving = false
 
                 // FIXME: This should be finding the changed identifier...
                 this.handleChanges()
@@ -643,7 +649,7 @@ export class Model<T = LooseObject> extends ModelBase<T> {
                 // TODO: Handle the remainder here, which was encapsulated after the if (!this.error) {
 
                 // XHR Flags
-                this.pending = false
+                this.resetXHRFlags()
                 this.completed = true
 
                 // XHR Flags for Collection
@@ -676,6 +682,7 @@ export class Model<T = LooseObject> extends ModelBase<T> {
                 // Treat a fatal error like 500 (our UI code relies on this distinction)
                 this.status = 500
                 this.error = true
+                this.resetXHRFlags()
                 console.error(`XHR: ${request.method} ${request.url}`, error)
                 reject(error)
                 throw error
@@ -688,6 +695,7 @@ export class Model<T = LooseObject> extends ModelBase<T> {
             .catch(async (message: any) => {
                 this.status = 500
                 this.error = true
+                this.resetXHRFlags()
                 console.error('FETCH:', message)
                 // TODO: Move toast to something external (outside of Stratus scope)
                 if (!this.toast) {
@@ -751,6 +759,7 @@ export class Model<T = LooseObject> extends ModelBase<T> {
             }))
             .catch(async (message: any) => {
                 this.error = true
+                this.resetXHRFlags()
                 console.error('SAVE:', message)
                 // TODO: Move toast to something external (outside of Stratus scope)
                 if (!this.toast) {
@@ -1061,6 +1070,8 @@ export class Model<T = LooseObject> extends ModelBase<T> {
                 }
             })
             .catch(async (message: any) => {
+                this.error = true
+                this.resetXHRFlags()
                 console.error('DESTROY:', message)
                 // TODO: Move toast to something external (outside of Stratus scope)
                 if (!this.toast) {
