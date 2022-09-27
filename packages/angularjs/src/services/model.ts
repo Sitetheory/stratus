@@ -350,6 +350,7 @@ export class Model<T = LooseObject> extends ModelBase<T> {
                 // if (cookie('env')) {
                 //     console.info('replace id:', this.getIdentifier())
                 // }
+                // NOTE: setUrlParams will automatically update the window (and I think that is a mistake!)
                 const newUrl = setUrlParams({
                     id: _.get(changeSet, 'id') || this.getIdentifier()
                 })
@@ -641,7 +642,7 @@ export class Model<T = LooseObject> extends ModelBase<T> {
                 this.data = _.cloneDeep(intermediateData) as T
                 // Before handling changes make sure we set to false
                 this.changed = false
-
+                this.saving = false
                 // FIXME: This should be finding the changed identifier...
                 this.handleChanges()
                 this.patch = {}
@@ -708,7 +709,7 @@ export class Model<T = LooseObject> extends ModelBase<T> {
                 }
                 $mdToast.show(
                     $mdToast.simple()
-                        .textContent('Failure to Fetch!')
+                        .textContent('Failure to fetch data!')
                         .toastClass('errorMessage')
                         .position('top right')
                         .hideDelay(3000)
