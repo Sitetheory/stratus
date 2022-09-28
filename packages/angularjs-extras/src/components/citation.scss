@@ -1,9 +1,17 @@
+.content-container,
+.stream-item {
+  counter-reset: stratus-citation-counter;
+}
+
 stratus-citation {
   position: relative;
   display: inline;
   .citation-title-sup {
     color: #F85B3B; /* handle generic color better */
     cursor: pointer;
+    &.auto-counter::before {
+      content: counter(stratus-citation-counter);
+    }
   }
   .citation-popup {
     opacity: 0;
@@ -41,6 +49,11 @@ stratus-citation {
     .citation-title {
       display: block;
       margin-bottom: 7px;
+      &.auto-counter::before {
+        /* Counting -here- so it only counting when class set to auto. this loads before the other counter */
+        counter-increment: stratus-citation-counter;
+        content: counter(stratus-citation-counter);
+      }
     }
 
     &.opened {

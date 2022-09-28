@@ -13,6 +13,7 @@ import {cookie} from '@stratusjs/core/environment'
 export type CitationComponentScope = angular.IScope & LooseObject<LooseFunction> & {
     title: string
     citationOpened: boolean
+    auto: boolean
 
     toggleCitation(): void
 }
@@ -36,6 +37,7 @@ Stratus.Components.Citation = {
         const $ctrl = this
         $ctrl.uid = uniqueId(camelCase(packageName) + '_' + camelCase(moduleName) + '_' + camelCase(componentName) + '_')
         Stratus.Instances[$ctrl.uid] = $scope
+        $scope.auto = true
 
         Stratus.Internals.CssLoader(`${localDir}${componentName}${min}.css`)
 
@@ -44,8 +46,9 @@ Stratus.Components.Citation = {
             if (isEmpty($scope.title) && !isEmpty($ctrl.title)) {
                 $scope.title = $ctrl.title
             }
-            if (isEmpty($scope.title)) {
-                $scope.title = '..'
+            if (!isEmpty($scope.title)) {
+                // We need to use the custom title
+                $scope.auto = false
             }
         }
         $scope.toggleCitation = () => {
