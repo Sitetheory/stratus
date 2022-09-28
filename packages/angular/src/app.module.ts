@@ -120,6 +120,7 @@ import {
 // import {QuillConfig} from 'ngx-quill/lib/quill-editor.interfaces'
 
 // Editor Dialogs
+import {CitationDialogComponent} from '@stratusjs/angular/editor/citation-dialog.component'
 import {
     CodeViewDialogComponent
 } from '@stratusjs/angular/editor/code-view-dialog.component'
@@ -387,6 +388,7 @@ const monacoConfig: NgxMonacoEditorConfig = {
     // This determines what is accessible as a component. These must be listed in `declarations`.
     entryComponents: [
         BaseComponent,
+        CitationDialogComponent,
         CodeViewDialogComponent,
         ConfirmDialogComponent,
         EditorComponent,
@@ -407,6 +409,7 @@ const monacoConfig: NgxMonacoEditorConfig = {
     // These determine what exists as a component. These must be listed in `entryComponents`.
     declarations: [
         BaseComponent,
+        CitationDialogComponent,
         CodeViewDialogComponent,
         ConfirmDialogComponent,
         EditorComponent,

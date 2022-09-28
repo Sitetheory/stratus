@@ -64,6 +64,10 @@ import {
     RootComponent
 } from '@stratusjs/angular/core/root.component'
 import {
+    CitationDialogComponent,
+    CitationDialogData
+} from '@stratusjs/angular/editor/citation-dialog.component'
+import {
     LinkDialogComponent,
     LinkDialogData
 } from '@stratusjs/angular/editor/link-dialog.component'
@@ -161,6 +165,7 @@ import 'froala-image-tui'
 // import 'froala-word-paste'
 
 // Froala Custom Plugins
+import '@stratusjs/angular/froala/plugins/citationManager'
 import '@stratusjs/angular/froala/plugins/linkManager'
 import '@stratusjs/angular/froala/plugins/mediaManager'
 import {FroalaEditorDirective} from 'angular-froala-wysiwyg'
@@ -428,6 +433,7 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             'insertLink',
             'insertHR',
             'specialCharacters',
+            'citationManager',
             // FIXME: The free version is lacking and will require custom `fontAwesomeSets` to remove PRO icons
             // 'fontAwesome',
             // 'emoticons',
@@ -741,6 +747,8 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             'sa-stripe-payment-method-list',
             'sa-stripe-payment-method-selector',
             'sa-tree',
+            // StratusJS tags
+            'stratus-.+',
         ],
         // @ts-ignore
         htmlRemoveTags: [],
@@ -772,7 +780,7 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             'linkBack',
             '|',
             'linkList',
-            'linkManager'
+            'linkManager',
         ],
         // linkList: [
         //     {
@@ -840,6 +848,7 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             // 'lineHeight',
             'link',
             'linkManager',
+            'citationManager',
             'lists',
             'mediaManager',
             // 'menuButton',
@@ -1386,12 +1395,42 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
         }
         if (name === 'media-library') {
             this.openMediaDialog(callee)
+        } else if (name === 'citation-input') {
+            this.openCitationDialog(callee)
         } else if (name === 'link-library') {
             this.openLinkDialog(callee)
         } else if (name === 'code-view') {
             this.openCodeViewDialog()
         }
         // callee.trigger('editor', null, this)
+    }
+
+    public openCitationDialog(callee: TriggerInterface): void {
+        const dialogRef = this.dialog.open(CitationDialogComponent, {
+            width: '1000px',
+            data: {
+                editor: this,
+                eventManager: callee,
+                form: this.form,
+                model: this.model,
+                property: this.property,
+            }
+        })
+        // Dialog will refresh itself
+        // this.refresh()
+
+        const that = this
+        dialogRef.afterClosed().subscribe((result: CitationDialogData) => {
+            if (!result || _.isEmpty(result)) {
+                return
+            }
+            // Refresh Component
+            that.refresh()
+            // Display output if one exists
+            if (this.dev && result) {
+                console.log('citation dialog result:', result)
+            }
+        })
     }
 
     public openLinkDialog(callee: TriggerInterface): void {

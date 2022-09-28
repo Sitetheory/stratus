@@ -1,0 +1,27 @@
+.citation {
+  &-dialog {
+    &-content {
+      .radio {
+        &-group {
+          display: flex;
+          flex-direction: column;
+          margin: 15px 0;
+        }
+        &-button {
+          margin: 5px;
+        }
+      }
+      img.selected {
+        opacity: 0.5;
+      }
+      .link-card {
+        max-width: 400px;
+      }
+      .link-header-image {
+        //background-image: url('');
+        background-size: cover;
+      }
+    }
+  }
+}
+
