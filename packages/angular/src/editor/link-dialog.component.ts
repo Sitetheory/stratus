@@ -277,8 +277,8 @@ export class LinkDialogComponent extends ResponsiveComponent implements OnInit, 
         if (_.isUndefined(content)) {
             return
         }
-        const linkElement = this.createLink(content)
-        if (!linkElement) {
+        const link = this.createLink(content)
+        if (!link) {
             console.warn(`${moduleName}: unable to build link for Content ID: ${content.id}`)
             this.snackBar.open(`Unable to build link for Content ID: ${content.id}.`, 'dismiss', {
                 duration: 5000,
@@ -301,7 +301,7 @@ export class LinkDialogComponent extends ResponsiveComponent implements OnInit, 
             console.warn(`${moduleName}: disabling eventInsert is not recommended.`)
             this.model.set(
                 this.property,
-                this.model.get(this.property) + linkElement
+                this.model.get(this.property) + link
             )
             return
         }
@@ -309,7 +309,7 @@ export class LinkDialogComponent extends ResponsiveComponent implements OnInit, 
             console.warn(`${moduleName}: event manager is not set.`)
             return
         }
-        this.eventManager.trigger('insert', linkElement, this.editor)
+        this.eventManager.trigger('insert', link, this.editor)
         // close dialog after inserting link
         this.onCancelClick()
     }
@@ -321,7 +321,7 @@ export class LinkDialogComponent extends ResponsiveComponent implements OnInit, 
         return _.includes(this.selected, content.id)
     }
 
-    createLink (content: ContentEntity): string|null {
+    createLink (content: ContentEntity): Link|null {
         if (!content) {
             console.warn(`${moduleName}: unable to create link for empty content`)
             return null
@@ -348,7 +348,10 @@ export class LinkDialogComponent extends ResponsiveComponent implements OnInit, 
             return null
         }
 
-        return `<a href="/${content.routing[0].url}" aria-label="${content.version.title}">${content.version.title}</a>`
+        return {
+            url: `/${content.routing[0].url}`,
+            title: content.version.title
+        }
     }
 
     getSvg(url: string, options?: IconOptions): Observable<string> {
@@ -421,4 +424,8 @@ export interface LinkDialogData {
     form: FormGroup,
     model: Model,
     property: string
+}
+export interface Link {
+    url: string,
+    title: string
 }

@@ -5,13 +5,17 @@ import {
 import {
     TriggerInterface
 } from '@stratusjs/angular/core/trigger.interface'
+import {
+    LooseFunction,
+    LooseObject
+} from '@stratusjs/core/misc'
 
 // External Dependencies
 import _ from 'lodash'
 
 // Universal Button
 // TODO: Move this elsewhere, since it isn't specific to Froala
-export class InputButtonPlugin implements TriggerInterface {
+export class InputButtonPlugin<EventData = LooseObject> implements TriggerInterface {
     // Local
     uid: string
     snapshot: any
@@ -21,6 +25,11 @@ export class InputButtonPlugin implements TriggerInterface {
     name = 'inputButton'
     eventName = 'input-button'
     editor: any
+    insert: LooseFunction
+    autoRestoreSelection = false
+    autoSaveSelection = false
+    maintainSelection = false
+    maintainSnapshot = false
 
     // The quill parameter should be a type of Quill, but that doesn't appear to have the container attribute
     constructor(options: any) {
@@ -37,6 +46,11 @@ export class InputButtonPlugin implements TriggerInterface {
         this.name = options.name || this.name
         this.eventName = options.eventName || this.eventName
         this.editor = options.editor || null
+        this.insert = options.insert || null
+        this.autoRestoreSelection = options.autoRestoreSelection || null
+        this.autoSaveSelection = options.autoSaveSelection || null
+        this.maintainSelection = options.maintainSelection || null
+        this.maintainSnapshot = options.maintainSnapshot || null
     }
 
     findUID(el: HTMLElement): string {
@@ -59,20 +73,23 @@ export class InputButtonPlugin implements TriggerInterface {
         if (!instance) {
             return
         }
-        // FIXME: The snapshot is specific to Froala
+        // Save selection before passing off event
+        if (this.autoSaveSelection) {
+            this.saveSelection()
+        }
         // Get snapshot before passing off event
         this.updateSnapshot()
         instance.trigger(this.eventName, null, this)
     }
 
-    trigger(name: string, data: any, callee: TriggerInterface) {
-        // This allows  us to handle data on the return
+    trigger(name: string, data: EventData, callee: TriggerInterface) {
+        // This allows us to handle data on the return
         if (this.debug) {
             console.log(`${this.name}.trigger():`, name, data, callee)
         }
         // This checks the data and inserts it on the cursor
-        if (!_.isString(data)) {
-            console.warn(`${this.name}.trigger():`, data, 'is not a data string.')
+        if (_.isEmpty(data)) {
+            console.warn(`${this.name}.trigger():`, data, 'is not valid data.')
             return
         }
         if (!this.editor) {
@@ -83,17 +100,28 @@ export class InputButtonPlugin implements TriggerInterface {
             console.warn(`${this.name}.trigger():`, name, 'event is not supported.')
             return
         }
-        // FIXME: Everything below is specific to the Froala API
+        // Handle the Froala Editor Insertion
         if (!this.restoreSnapshot()) {
             return
         }
+        // Attempt to Restore Selection
+        if (this.autoRestoreSelection) {
+            this.restoreSelection()
+        }
         // Insert our data into Froala on the caret
-        this.editor.html.insert(data)
+        this.insert ? this.insert(data): this.editor.html.insert(data)
         // Update snapshot for next insert
         this.updateSnapshot()
+        // Save new selection
+        if (this.maintainSelection) {
+            this.saveSelection()
+        }
     }
 
     restoreSnapshot(): boolean {
+        if (!this.maintainSnapshot) {
+            return true
+        }
         if (!this.snapshot) {
             console.warn(`${this.name}.restoreSnapshot(): unable to restore editor session without a snapshot.`)
             return false
@@ -106,7 +134,40 @@ export class InputButtonPlugin implements TriggerInterface {
     }
 
     updateSnapshot() {
-        // FIXME: This is specific to the Froala API
+        if (!this.maintainSnapshot) {
+            return true
+        }
         this.snapshot = this.editor.snapshot.get()
+    }
+
+    restoreSelection(): boolean {
+        // Ensure selection exists
+        if (!this.editor.selection) {
+            console.warn(`${this.name}.restoreSelection(): unable to restore editor selection.`)
+            return false
+        }
+        // Get focus back to the editor
+        this.editor.events.focus()
+        // Restore last selection
+        this.editor.selection.restore()
+        return true
+    }
+
+    saveSelection(): boolean {
+        if (!this.editor.selection) {
+            console.warn(`${this.name}.saveSelection(): unable to save editor selection.`)
+            return false
+        }
+        this.editor.selection.save()
+        return true
+    }
+
+    clearSelection(): boolean {
+        if (!this.editor.selection) {
+            console.warn(`${this.name}.clearSelection(): unable to clear editor selection.`)
+            return false
+        }
+        this.editor.selection.clear()
+        return true
     }
 }
