@@ -113,7 +113,6 @@ export class CitationDialogComponent extends ResponsiveComponent implements OnIn
         public dialogRef: MatDialogRef<CitationDialogComponent>,
         @Inject(MAT_DIALOG_DATA) public data: CitationDialogData,
         private fb: FormBuilder,
-        private backend: BackendService,
         private snackBar: MatSnackBar,
         private iconRegistry: MatIconRegistry,
         private sanitizer: DomSanitizer,
