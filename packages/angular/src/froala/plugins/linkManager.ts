@@ -2,6 +2,9 @@
 import {
     InputButtonPlugin
 } from '@stratusjs/angular/froala/plugins/inputButton'
+import {
+    Link
+} from '@stratusjs/angular/editor/link-dialog.component'
 
 // @ts-ignore
 import FroalaEditor from 'froala-editor'
@@ -21,10 +24,15 @@ FroalaEditor.PLUGINS.linkManager = function linkManager (editor: any) {
 
     // When the plugin is initialized,this will be called.
     function _init() {
-        inputButton = new InputButtonPlugin({
+        inputButton = new InputButtonPlugin<Link>({
             name: 'Link Manager',
             eventName: 'link-library',
             editor,
+            insert: (link: Link) => {
+                FroalaEditor.PLUGINS.link(editor).insert(link.url, '', {'aria-label': link.title})
+            },
+            autoSaveSelection: true,
+            autoRestoreSelection: true,
             debug
         })
 
@@ -61,24 +69,28 @@ FroalaEditor.PLUGINS.linkManager = function linkManager (editor: any) {
 }
 
 // Insert Plugin to Image Insert
-FroalaEditor.DEFAULTS.imageInsertButtons.push('linkManager'),
-    FroalaEditor.RegisterCommand('linkManager', {
-        title: 'Insert from Link Library',
-        undo: false,
-        focus: false,
-        modal: true,
-        callback() {
-            const debug = false
-            if (debug) {
-                console.log('clicked:', this.linkManager)
-            }
-            this.linkManager.onClick()
-        },
-        plugin: 'linkManager',
-    }),
-    FroalaEditor.DefineIcon('linkManager', {NAME: 'folder', SVG_KEY: 'insertLink'}),
-    FroalaEditor.DefineIcon('linkManagerInsert', {NAME: 'plus', SVG_KEY: 'add'}),
-    FroalaEditor.DefineIcon('linkManagerDelete', {NAME: 'trash', SVG_KEY: 'remove'})
+// FroalaEditor.DEFAULTS.imageInsertButtons.push('linkManager')
+FroalaEditor.RegisterCommand('linkManager', {
+    title: 'Insert from Link Library',
+    undo: false,
+    focus: false,
+    modal: true,
+    callback() {
+        // debug info (move variable elsewhere)
+        const debug = false
+        if (debug) {
+            console.log('clicked:', this.linkManager)
+        }
+        // testing selection saving at earlier point to avoid loss of data
+        // this.selection.save()
+        // initiate click
+        this.linkManager.onClick()
+    },
+    plugin: 'linkManager',
+}),
+FroalaEditor.DefineIcon('linkManager', {NAME: 'folder', SVG_KEY: 'insertLink'}),
+FroalaEditor.DefineIcon('linkManagerInsert', {NAME: 'plus', SVG_KEY: 'add'}),
+FroalaEditor.DefineIcon('linkManagerDelete', {NAME: 'trash', SVG_KEY: 'remove'})
 
 // Define a quick insert button
 FroalaEditor.RegisterQuickInsertButton('link', {
@@ -91,11 +103,16 @@ FroalaEditor.RegisterQuickInsertButton('link', {
     // Callback for the button.
     callback: function linkManagerCallback () {
         const debug = false
-        const inputButton = new InputButtonPlugin({
+        const inputButton = new InputButtonPlugin<Link>({
             name: 'Link Manager',
             eventName: 'link-library',
             // Contextual `this` is equivalent to the editor instance
             editor: this,
+            insert: (link: Link) => {
+                FroalaEditor.PLUGINS.link(this).insert(link.url, '', {'aria-label': link.title})
+            },
+            autoSaveSelection: true,
+            autoRestoreSelection: true,
             debug
         })
         if (!this.el) {
