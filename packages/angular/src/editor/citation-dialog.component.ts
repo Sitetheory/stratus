@@ -91,7 +91,7 @@ export class CitationDialogComponent extends ResponsiveComponent implements OnIn
 
     // Event Settings
     editor: TriggerInterface
-    eventManager: InputButtonPlugin
+    eventManager: InputButtonPlugin<string>
     baseEditor: LooseObject & {
         citationManager: LooseObject<LooseFunction>
         selection: LooseObject<LooseFunction> & {
@@ -146,15 +146,11 @@ export class CitationDialogComponent extends ResponsiveComponent implements OnIn
             citationElementInput: new FormControl('', [Validators.required]),
             citationTitleInput: ''
         })
-        // console.log('baseEditor',this.baseEditor)
-        // console.log('our selected text:',this.baseEditor.selection.text())
 
         this.highlightedText = this.baseEditor.selection.text()
         // Let's figure out if this is going to make a new citation or update an existing
         const containedElement = this.baseEditor.selection.endElement()
         const containedElementName = containedElement.tagName
-        // console.log('containedElement', containedElement)
-       //  console.log('containedElementName', containedElementName)
         if (containedElementName === 'STRATUS-CITATION') {
             this.newCitation = false
             this.existingCitationElement = containedElement
@@ -168,9 +164,8 @@ export class CitationDialogComponent extends ResponsiveComponent implements OnIn
             this.dialogCitationForm.get('citationElementInput').setValue(copiedElement.innerHTML)
         }
         if (this.newCitation && !isEmpty(this.highlightedText)) {
-            this.formDisabled = true
-            this.warningMessage = 'Unable to handle highlighted text at this time creating new citations. Please choose another location and try again'
-            console.warn('at this time we cannot handle highlighted text on new citations.')
+            this.popupTitle = 'Convert Text into Citation'
+            this.dialogCitationForm.get('citationElementInput').setValue(this.highlightedText)
         }
 
         if (!this.newCitation) {
@@ -213,16 +208,14 @@ export class CitationDialogComponent extends ResponsiveComponent implements OnIn
             return
         }
 
-        this.baseEditor.selection.restore()
+        // this.baseEditor.selection.restore()
         // if this is a new element, we can insert... however if this is existing, we only want to update the existing element
         if (!this.newCitation && this.existingCitationElement) {
             // The selection tool is not working properly... so we are just going to directly alter the existing element
             this.existingCitationElement.outerHTML = citationElement
-            // console.log('Updated element', citationElement)
         } else {
             this.eventManager.trigger('insert', citationElement, this.editor)
             // this.baseEditor.html.insert(citationElement) // same effect as above trigger
-            // console.log('Adding element', citationElement, 'to editor!')
         }
         this.dialogRef.close()
     }
@@ -278,7 +271,7 @@ export class CitationDialogComponent extends ResponsiveComponent implements OnIn
 // Data Types
 export interface CitationDialogData {
     editor: TriggerInterface
-    eventManager: InputButtonPlugin
+    eventManager: InputButtonPlugin<string>
     form: FormGroup,
     model: Model,
     property: string

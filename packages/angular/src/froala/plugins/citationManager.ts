@@ -38,6 +38,8 @@ FroalaEditor.PLUGINS.citationManager = function citationManager (editor: any) {
             name: 'Citation Manager',
             eventName: 'citation-input',
             editor,
+            autoSaveSelection: true,
+            autoRestoreSelection: true,
             debug
         })
 
@@ -82,7 +84,7 @@ FroalaEditor.RegisterCommand('citationManager', {
     modal: true,
     callback(cmd: unknown, _val: unknown, _params: unknown) {
         // Store the selection/cursor location so that it can be used later when inserting by restoring it first
-        this.selection.save()
+        // this.selection.save()
 
         const debug = false
         if (debug) {
@@ -114,6 +116,8 @@ FroalaEditor.RegisterQuickInsertButton('citation', {
             eventName: 'citation-input',
             // Contextual `this` is equivalent to the editor instance
             editor: this,
+            autoSaveSelection: true,
+            autoRestoreSelection: true,
             debug
         })
         if (!this.el) {
