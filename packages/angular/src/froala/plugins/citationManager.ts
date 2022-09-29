@@ -75,8 +75,6 @@ FroalaEditor.PLUGINS.citationManager = function citationManager (editor: any) {
     }
 }
 
-// Insert Plugin to Image Insert TODO will not in the end
-FroalaEditor.DEFAULTS.imageInsertButtons.push('citationManager')
 FroalaEditor.RegisterCommand('citationManager', {
     title: 'Insert Citation',
     undo: false,
