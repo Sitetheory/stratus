@@ -15,7 +15,7 @@ import _ from 'lodash'
 
 // Universal Button
 // TODO: Move this elsewhere, since it isn't specific to Froala
-export class InputButtonPlugin<EventData = LooseObject> implements TriggerInterface {
+export class InputButtonPlugin<EventData = string|LooseObject> implements TriggerInterface {
     // Local
     uid: string
     snapshot: any
