@@ -131,11 +131,15 @@ Stratus.Components.IdxPropertySearch = {
          * normal link. Any usable HTML <b>'_target'</b> attribute such as '_self' or '_blank'.
          */
         listLinkTarget: '@',
-        // TODO
+        /**
+         * Type: string
+         * Default: 'advanced'
+         * Options: 'simple' (only a location field), 'basic' (location plus beds/baths/price), 'advanced' (everything)
+         */
         searchType: '@',
         /**
          * Type: string
-         * A link to another dedicated advanced search page (used when this is a module)
+         * A link to another dedicated advanced search page (used when this is a module). NOTE: this should generally be the same as linkListUrl and if not set it will set this to match.
          */
         advancedSearchUrl: '@',
         /**
@@ -214,9 +218,10 @@ Stratus.Components.IdxPropertySearch = {
             $scope.widgetName = $attrs.widgetName || ''
             $scope.listId = $attrs.listId || null
             $scope.listInitialized = false
-            $scope.listLinkUrl = $attrs.listLinkUrl || '/property/list'
+            $scope.listLinkUrl = $attrs.listLinkUrl || $attrs.advancedSearchUrl || '/property/list'
             $scope.listLinkTarget = $attrs.listLinkTarget || '_self'
             $scope.searchType = $attrs.searchType || 'advanced'
+            // NOTE: this does not default to listLinkUrl in case they don't want an advanced search button they leave blank
             $scope.advancedSearchUrl = $attrs.advancedSearchUrl ||  $scope.advancedSearchUrl
             $scope.advancedSearchLinkName = $attrs.advancedSearchLinkName || $scope.advancedSearchLinkName
             $scope.options = $attrs.options && isJSON($attrs.options) ? JSON.parse($attrs.options) : {}
@@ -381,6 +386,10 @@ Stratus.Components.IdxPropertySearch = {
         }
 
         $scope.$watch('options.query.where.ListingType', () => {
+            // on load this isn't defined yet
+            if (typeof $scope.options === 'undefined' || typeof $scope.options.query === 'undefined' ) {
+                return
+            }
             // TODO: Consider Better solution? I just added the check to see if $scope.options.query is set
             // because there are cases where $scope.options.query is not defined (null). This happens on admin
             // edit page load  for a new record where nothing has been set on a page yet.
