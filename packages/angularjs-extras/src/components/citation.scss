@@ -35,7 +35,7 @@ stratus-citation {
         max-width: 100%;
         cursor: pointer;
         opacity: 0.75;
-        &:before {
+        &::before {
           content: "x";
           padding-left: 3px;
         }
