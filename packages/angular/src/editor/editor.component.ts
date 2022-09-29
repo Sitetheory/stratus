@@ -410,41 +410,41 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             'clearFormatting'
         ],
         moreParagraph: [
+            'linkManager',
+            // 'formatOLSimple',
+            'formatOL',
+            'formatUL',
+            'indent',
+            'outdent',
+            'quote',
+            'paragraphFormat',
+            'paragraphStyle',
+            // 'lineHeight'
             'alignLeft',
             'alignCenter',
             'alignRight',
             'alignJustify',
-            'indent',
-            'outdent',
-            'paragraphFormat',
-            'paragraphStyle',
-            // 'formatOLSimple',
-            'formatOL',
-            'formatUL',
-            'quote',
-            // 'lineHeight'
         ],
         moreRich: [
-            'linkManager',
             'insertImage',
+            'insertTable',
             'insertVideo',
             'insertFile',
-            'insertTable',
-            'insertLink',
+            'citationManager',
             'insertHR',
             'specialCharacters',
-            'citationManager',
+            // 'insertLink',
             // FIXME: The free version is lacking and will require custom `fontAwesomeSets` to remove PRO icons
             // 'fontAwesome',
             // 'emoticons',
-            'embedly'
+            // 'embedly'
         ],
         moreMisc: [
             // 'menuButton',
+            'html',
             'undo',
             'redo',
             'fullscreen',
-            'html',
             'print',
             // FIXME: This plugin doesn't detect the window.html2pdf, likely due to timing issues
             // 'getPDF',
@@ -883,7 +883,7 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
         toolbarButtons: {
             moreText: {
                 buttons: this.froalaStandardButtons.moreText,
-                buttonsVisible: 0
+                buttonsVisible: 3
             },
             moreParagraph: {
                 buttons: this.froalaStandardButtons.moreParagraph,
@@ -891,12 +891,12 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             },
             moreRich: {
                 buttons: this.froalaStandardButtons.moreRich,
-                buttonsVisible: 5
+                buttonsVisible: 1
             },
             moreMisc: {
                 buttons: this.froalaStandardButtons.moreMisc,
                 align: 'right',
-                buttonsVisible: 4
+                buttonsVisible: 1
             }
         },
         // A MD sized screen will show the default toolbarButtons
@@ -917,7 +917,7 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             moreMisc: {
                 buttons: this.froalaStandardButtons.moreMisc,
                 align: 'right',
-                buttonsVisible: 4
+                buttonsVisible: 0
             }
         },
         toolbarButtonsXS: {
@@ -936,7 +936,7 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             moreMisc: {
                 buttons: this.froalaStandardButtons.moreMisc,
                 align: 'right',
-                buttonsVisible: 2
+                buttonsVisible: 0
             }
         },
         // This needs to remain false, or inline styles will be converted to froala classes.
