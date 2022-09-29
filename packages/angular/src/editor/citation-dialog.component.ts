@@ -33,10 +33,6 @@ import {
 } from '@stratusjs/runtime/stratus'
 import {cookie} from '@stratusjs/core/environment'
 
-// Services
-import {
-    BackendService
-} from '@stratusjs/angular/backend.service'
 import {
     LooseFunction,
     LooseObject
