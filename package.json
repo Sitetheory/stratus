@@ -144,6 +144,7 @@
     "quill-image-resize": "^3.0.9",
     "quill-image-resize-module": "^3.0.0",
     "quill-image-uploader": "^1.2.2",
+    "quill-mention": "^2.2.7",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-scripts": "^5.0.1",

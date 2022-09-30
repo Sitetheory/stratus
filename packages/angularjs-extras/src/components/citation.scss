@@ -1,0 +1,58 @@
+.content-container,
+.stream-item {
+  counter-reset: stratus-citation-counter;
+}
+stratus-citation {
+  position: relative;
+  display: inline;
+  .citation-title-sup {
+    color: #f85b3b; /* handle generic color better */
+    cursor: pointer;
+    &.auto-counter::before {
+      content: counter(stratus-citation-counter);
+    }
+  }
+  .citation-popup {
+    opacity: 0;
+    z-index: -1;
+    position: absolute;
+    width: 300px;
+    background-color: #e2e7ed;
+    padding: 1.5em;
+    line-height: 1.5;
+    bottom: 30px;
+    right: 0;
+    box-shadow: 0 0 10px #ccc;
+    .citation-popup-close {
+      position: absolute;
+      top: 0;
+      right: 0;
+      padding: 10px;
+      .citation-popup-close-btn {
+        display: block;
+        height: 20px;
+        width: 15px;
+        max-width: 100%;
+        cursor: pointer;
+        opacity: 0.75;
+        &::before {
+          content: "x";
+          padding-left: 3px;
+        }
+      }
+    }
+    .citation-title {
+      display: block;
+      margin-bottom: 7px;
+      &.auto-counter::before {
+        /* Counting -here- so it only counting when class set to auto. this loads before the other counter */
+        counter-increment: stratus-citation-counter;
+        content: counter(stratus-citation-counter);
+      }
+    }
+    &.opened {
+      opacity: 1;
+      z-index: 9;
+    }
+  }
+}

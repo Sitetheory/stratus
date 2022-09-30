@@ -1,0 +1,22 @@
+.editor-component {
+  counter-reset: stratus-citation-counter;
+  stratus-citation {
+    position: relative;
+    display: inline-block;
+    counter-increment: stratus-citation-counter;
+    color: transparent;
+    border-style: dotted;
+    border-color: cornflowerblue;
+    cursor: pointer;
+    height: 20px;
+    width: 20px;
+    overflow: hidden;
+    &::before {
+      content: counter(stratus-citation-counter);
+      position: absolute;
+      left: 2px;
+      font-size: 0.75em;
+      color: #f85b3b; /* handle generic color better */
+    }
+  }
+}
