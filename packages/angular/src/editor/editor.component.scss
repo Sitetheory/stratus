@@ -25,6 +25,12 @@
       // Nothing yet
     }
   }
+  /* Reduce the spacing of the toolbar button groups to fit more */
+  .fr-toolbar {
+    .fr-btn-grp {
+      margin: 0 0 0 5px;
+    }
+  }
 }
 
 // This fixes the sticky toolbar if nested in md-tabs
