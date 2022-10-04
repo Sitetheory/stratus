@@ -12,6 +12,7 @@ import {cookie} from '@stratusjs/core/environment'
 
 export type CitationComponentScope = angular.IScope & LooseObject<LooseFunction> & {
     title: string
+    content: string // HTML
     citationOpened: boolean
     auto: boolean
 
@@ -26,12 +27,13 @@ const componentName = 'citation'
 const localDir = `${Stratus.BaseUrl}${Stratus.DeploymentPath}@stratusjs/${packageName}/src/${moduleName}/`
 
 Stratus.Components.Citation = {
-    transclude: true,
-    bindings: {
-        title: '@',
+    transclude: {
+        content: 'stratusCitationContent',
+        title: '?stratusCitationTitle',
     },
     controller(
-        $scope: CitationComponentScope
+        $scope: CitationComponentScope,
+        $transclude: angular.ITranscludeFunction
     ) {
         // Initialize
         const $ctrl = this
@@ -43,10 +45,7 @@ Stratus.Components.Citation = {
 
         // Initialization
         $ctrl.$onInit = () => {
-            if (isEmpty($scope.title) && !isEmpty($ctrl.title)) {
-                $scope.title = $ctrl.title
-            }
-            if (!isEmpty($scope.title)) {
+            if ($transclude.isSlotFilled('title')) {
                 // We need to use the custom title
                 $scope.auto = false
             }
