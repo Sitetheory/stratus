@@ -48,6 +48,7 @@ import {
 import {IconOptions, MatIconRegistry} from '@angular/material/icon'
 import {DomSanitizer} from '@angular/platform-browser'
 import {InputButtonPlugin} from '@stratusjs/angular/froala/plugins/inputButton'
+import {CitationManager} from '@stratusjs/angular/froala/plugins/citationManager'
 
 // Local Setup
 const systemDir = '@stratusjs/angular'
@@ -89,7 +90,7 @@ export class CitationDialogComponent extends ResponsiveComponent implements OnIn
     editor: TriggerInterface
     eventManager: InputButtonPlugin<string>
     baseEditor: LooseObject & {
-        citationManager: LooseObject<LooseFunction>
+        citationManager: CitationManager // LooseObject<LooseFunction>
         selection: LooseObject<LooseFunction> & {
             element(): Element // entire element surrounding the highlighted text (maybe be inaccurate due to froala selection tags)
             endElement(): Element // entire element surrounding the highlighted text
@@ -144,9 +145,12 @@ export class CitationDialogComponent extends ResponsiveComponent implements OnIn
 
         this.highlightedText = this.baseEditor.selection.text()
         // Let's figure out if this is going to make a new citation or update an existing
-        const containedElement = this.baseEditor.selection.endElement()
-        const containedElementName = containedElement.tagName
-        if (containedElementName === 'STRATUS-CITATION') {
+        const containedElement = this.baseEditor.citationManager.getSelectedCitation() ||
+            this.baseEditor.citationManager.getLastKnownCitation() // Last known detect better and set from Toolbar
+        this.baseEditor.citationManager.hideToolbar() // Let's ensure this closes and all vars reset
+        // const containedElement = this.baseEditor.selection.endElement()
+        // const containedElementName = containedElement.tagName
+        if (containedElement) {
             this.newCitation = false
             this.existingCitationElement = containedElement
             // console.log('We selected an existing citation, so we\'ll be only updating it (ignore highlighted text)')

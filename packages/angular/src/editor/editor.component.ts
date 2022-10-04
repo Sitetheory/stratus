@@ -430,7 +430,7 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             'insertTable',
             'insertVideo',
             'insertFile',
-            'citationManager',
+            'citationInsert',
             'insertHR',
             'specialCharacters',
             // 'insertLink',
