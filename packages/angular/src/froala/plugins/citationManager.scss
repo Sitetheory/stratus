@@ -3,21 +3,31 @@
   stratus-citation {
     position: relative;
     display: inline-block;
-    counter-increment: stratus-citation-counter;
-    color: transparent;
     border-style: dotted;
     border-color: cornflowerblue;
     border-width: 2px;
+    color: #f85b3b; /* handle generic color better */
     cursor: pointer;
-    height: 20px;
-    width: 20px;
-    overflow: hidden;
-    &::before {
+    min-height: 17px;
+    min-width: 20px;
+    stratus-citation-content {
+      display: none;
+    }
+    stratus-citation-title {
+      display: block;
+      position: relative;
+      top: -4px;
+      margin-bottom: -6px;
+      padding-top: 4px;
+      padding-right: 1px;
+      font-size: 0.75em;
+    }
+    stratus-citation-notitle::before {
+      counter-increment: stratus-citation-counter;
       content: counter(stratus-citation-counter);
       position: absolute;
       left: 2px;
       font-size: 0.75em;
-      color: #f85b3b; /* handle generic color better */
     }
   }
 }

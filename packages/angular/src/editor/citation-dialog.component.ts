@@ -27,7 +27,7 @@ import {
 } from 'rxjs'
 
 // External
-import {snakeCase, isEmpty, isString, isUndefined, uniqueId} from 'lodash'
+import {head, isEmpty, isString, isUndefined, snakeCase, uniqueId} from 'lodash'
 import {
     Stratus
 } from '@stratusjs/runtime/stratus'
@@ -139,8 +139,8 @@ export class CitationDialogComponent extends ResponsiveComponent implements OnIn
 
         // Form Logic
         this.dialogCitationForm = this.fb.group({
-            citationElementInput: new FormControl('', [Validators.required]),
-            citationTitleInput: ''
+            citationContentInput: new FormControl('', [Validators.required]),
+            citationTitleInput: new FormControl(''),
         })
 
         this.highlightedText = this.baseEditor.selection.text()
@@ -153,18 +153,26 @@ export class CitationDialogComponent extends ResponsiveComponent implements OnIn
         if (containedElement) {
             this.newCitation = false
             this.existingCitationElement = containedElement
-            // console.log('We selected an existing citation, so we\'ll be only updating it (ignore highlighted text)')
             const copiedElement = containedElement.cloneNode(true) as Element
             // if text is highlighted, we need to manually remove all the styling froala injected
             Array.from(copiedElement.getElementsByClassName('fr-marker')).forEach((markerEl)=>{
                 markerEl.remove()
             })
-            // Set all the contents of this existing Citation as edittable
-            this.dialogCitationForm.get('citationElementInput').setValue(copiedElement.innerHTML)
+            // find <stratus-citation-content> and <stratus-citation-content>
+            const contentElement = head(copiedElement.getElementsByTagName('stratus-citation-content'))
+            if (contentElement) {
+                // Set all the contents of this existing Citation as edittable
+                this.dialogCitationForm.get('citationContentInput').setValue(contentElement.innerHTML)
+            }
+            const titleElement = head(copiedElement.getElementsByTagName('stratus-citation-title'))
+            if (titleElement) {
+                // Set all the title of this existing Citation as edittable
+                this.dialogCitationForm.get('citationTitleInput').setValue(titleElement.innerHTML)
+            }
         }
         if (this.newCitation && !isEmpty(this.highlightedText)) {
             this.popupTitle = 'Convert Text into Citation'
-            this.dialogCitationForm.get('citationElementInput').setValue(this.highlightedText)
+            this.dialogCitationForm.get('citationTitleInput').setValue(this.highlightedText)
         }
 
         if (!this.newCitation) {
@@ -183,15 +191,16 @@ export class CitationDialogComponent extends ResponsiveComponent implements OnIn
     }
 
     confirm() {
-        if (isUndefined(this.dialogCitationForm.get('citationElementInput'))) {
+        if (isUndefined(this.dialogCitationForm.get('citationContentInput'))) {
             return
         }
-        const content = this.dialogCitationForm.get('citationElementInput').value
+        const content = this.dialogCitationForm.get('citationContentInput').value
         if (isUndefined(content) || !isString(content)) {
             return
         }
+
         const title = this.dialogCitationForm.get('citationTitleInput').value
-        const citationElement = this.createCitation(content, title)
+        const citationElement = this.createCitationHTML(content, title)
         if (!citationElement) {
             console.warn(`${moduleName}: unable to build citation for: ${content}`)
             this.snackBar.open(`Unable to build citation for: ${content}.`, 'dismiss', {
@@ -219,13 +228,18 @@ export class CitationDialogComponent extends ResponsiveComponent implements OnIn
         this.dialogRef.close()
     }
 
-    createCitation (content: string, title?: string): string|null {
+    createCitationHTML (content: string, title?: string): string|null {
         if (!content) {
             console.warn(`${moduleName}: unable to create citation for empty content`)
             return null
         }
+        if (!isEmpty(title)) {
+            title = `<stratus-citation-title>${title}</stratus-citation-title>`
+        } else {
+            title = `<stratus-citation-notitle/>`
+        }
 
-        return isEmpty(title) ? `<stratus-citation>${content}</stratus-citation>` : `<stratus-citation data-title="${title}">${content}</stratus-citation>`
+        return `<stratus-citation><stratus-citation-content>${content}</stratus-citation-content>${title}</stratus-citation-content>`
     }
 
     getSvg(url: string, options?: IconOptions): Observable<string> {

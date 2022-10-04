@@ -63,7 +63,10 @@ FroalaEditor.PLUGINS.citationManager = function citationManager(editor: any) {
             if (
                 clickEvent.hasOwnProperty('target') &&
                 // clickEvent.target.hasOwnProperty('nodeName') &&
-                (clickEvent.target as Element).nodeName === 'STRATUS-CITATION'
+                (
+                    (clickEvent.target as Element).nodeName === 'STRATUS-CITATION' ||
+                    (clickEvent.target as Element).nodeName === 'STRATUS-CITATION-TITLE'
+                )
             ) {
                 const citation = getSelectedCitation() // If citation isn't fully grabbed, will not attempt
                 if (citation) {
@@ -157,6 +160,7 @@ FroalaEditor.PLUGINS.citationManager = function citationManager(editor: any) {
         // Show the custom toolbar.
         // The button's outerHeight is required in case the popup needs to be displayed above it.
         editor.popups.show('citationManager.toolbar', left, top, btn.outerHeight())
+        // Hold onto this lastKnown for the dialog to use -this- element
         editor.citationManager.setLastKnownCitation(citation)
     }
 
