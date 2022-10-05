@@ -44,6 +44,10 @@ stratus-citation {
     .citation-title {
       display: block;
       margin-bottom: 7px;
+      &::after {
+        /* Ensuring a ending marker is in the popup */
+        content: ".";
+      }
       &.auto-counter::before {
         /* Counting -here- so it only counting when class set to auto. this loads before the other counter */
         counter-increment: stratus-citation-counter;

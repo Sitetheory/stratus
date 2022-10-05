@@ -6,25 +6,22 @@
         <mat-card-content mat-dialog-content class="citation-dialog-content">
             <mat-progress-bar mode="indeterminate" *ngIf="isPopupLoading"></mat-progress-bar>
             <p *ngIf="!isPopupLoading && warningMessage" [innerHTML]='warningMessage'></p>
+            <mat-form-field class="form-field" style="width: 100%;">
+                <input matInput placeholder="Optional Citation Number/Title"
+                       aria-label="Optional Citation Number/Title"
+                       [readonly]="formDisabled || isPopupLoading"
+                       formControlName='citationTitleInput'
+                >
+            </mat-form-field>
             <!-- HTML Content -->
             <mat-form-field class="form-field" style="width: 100%;">
                 <textarea matInput placeholder="Add a Citation Content"
                           aria-label="Add a Citation Content"
-                          formControlName='citationElementInput'
+                          formControlName='citationContentInput'
                           [readonly]="formDisabled || isPopupLoading"
-                          [disabled]="formDisabled || isPopupLoading"
                           style="min-height: 100px;"
                 ></textarea>
             </mat-form-field>
-            <!-- citationTitleInput. Disabled as the editor cannot handle angular -->
-            <!--<mat-form-field class="form-field" style="width: 100%;">
-                <input matInput placeholder="Add a Optional Citation Number/Title"
-                       aria-label="Add a Optional Citation Number/Title"
-                       [readonly]="formDisabled || isPopupLoading"
-                       [disabled]="formDisabled || isPopupLoading"
-                       formControlName='citationTitleInput'
-                >
-            </mat-form-field>-->
         </mat-card-content>
         <mat-card-actions>
             <!-- [disabled]="isSelected(mediaEntity)" -->

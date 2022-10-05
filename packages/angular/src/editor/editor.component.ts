@@ -430,7 +430,7 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             'insertTable',
             'insertVideo',
             'insertFile',
-            'citationManager',
+            'citationInsert',
             'insertHR',
             'specialCharacters',
             // 'insertLink',
@@ -634,6 +634,8 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             'md-virtual-repeat', 'md-virtual-repeat-container', 'md-whiteframe',
             // AngularJS Material Secondary Tags
             'md-svg-src',
+            // Stratus AngularJS Tags
+            'stratus-citation-notitle',
             // Stratus Angular+ Tags
             'sa-boot',
             'sa-editor',
