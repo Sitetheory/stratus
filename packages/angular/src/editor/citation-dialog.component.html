@@ -5,18 +5,19 @@
         <!-- Note: This spawns from the Citation Dialog Component, so the UI here will need a revamp after it becomes functional. -->
         <mat-card-content mat-dialog-content class="citation-dialog-content">
             <mat-progress-bar mode="indeterminate" *ngIf="isPopupLoading"></mat-progress-bar>
-            <p *ngIf="!isPopupLoading && warningMessage" [innerHTML]='warningMessage'></p>
+            <p *ngIf="!isPopupLoading && warningMessage" [innerHTML]="warningMessage"></p>
             <mat-form-field class="form-field" style="width: 100%;">
-                <input matInput placeholder="Optional Citation Number/Title"
-                       aria-label="Optional Citation Number/Title"
+                <input matInput placeholder="Optional Citation Title"
+                       aria-label="Optional Citation Title"
                        [readonly]="formDisabled || isPopupLoading"
                        formControlName='citationTitleInput'
                 >
             </mat-form-field>
+            <p class="field-notes">If no title is provided an auto-incremented number will be displayed.</p>
             <!-- HTML Content -->
             <mat-form-field class="form-field" style="width: 100%;">
-                <textarea matInput placeholder="Add a Citation Content"
-                          aria-label="Add a Citation Content"
+                <textarea matInput placeholder="Citation Text or HTML"
+                          aria-label="Citation Text or HTML"
                           formControlName='citationContentInput'
                           [readonly]="formDisabled || isPopupLoading"
                           style="min-height: 100px;"

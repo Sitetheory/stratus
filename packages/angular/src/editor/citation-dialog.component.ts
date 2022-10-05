@@ -128,7 +128,7 @@ export class CitationDialogComponent extends ResponsiveComponent implements OnIn
         Stratus.Instances[this.uid] = this
 
         // Load Component CSS until System.js can import CSS properly.
-        // Stratus.Internals.CssLoader(`${localDir}${parentModuleName}/${moduleName}.component${min}.css`)
+        Stratus.Internals.CssLoader(`${localDir}${parentModuleName}/${moduleName}.component${min}.css`)
 
         // Hoist Data
         this.model = this.data.model
