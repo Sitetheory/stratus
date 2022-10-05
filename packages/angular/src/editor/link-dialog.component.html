@@ -4,7 +4,32 @@
     <form class="dialog-form"
           *ngIf="isStyled"
           [formGroup]='dialogContentForm'>
+
         <mat-form-field class="form-field">
+            <mat-label>Link Text</mat-label>
+            <input matInput
+                   aria-label="Link Text"
+                   formControlName='linkTextInput'>
+        </mat-form-field>
+
+        <!-- Target Selector -->
+        <h4>
+            <label id="link-type-label">Link Type:</label>
+        </h4>
+        <mat-radio-group class="radio-group"
+                         aria-labelledby="link-type-label"
+                         formControlName='linkTypeRadio'>
+            <mat-radio-button class="radio-button" value="content">
+                Website Page
+            </mat-radio-button>
+            <mat-radio-button class="radio-button" value="url">
+                Custom Link
+            </mat-radio-button>
+        </mat-radio-group>
+
+        <!-- Content Population -->
+        <mat-form-field class="form-field"
+                        *ngIf="linkType == 'content'">
             <input matInput
                    placeholder="Search Content"
                    aria-label="Search Content"
@@ -46,6 +71,21 @@
                 </mat-option>
             </ng-container>
         </mat-autocomplete>
+
+        <mat-form-field class="form-field"
+                        *ngIf="linkType == 'url'">
+            <input matInput
+                   placeholder="Edit URL"
+                   aria-label="Edit URL"
+                   formControlName='linkURLInput'>
+        </mat-form-field>
+
+        <br>
+
+        <mat-checkbox class=""
+                      formControlName='linkTargetCheckbox'>
+            Open in new tab
+        </mat-checkbox>
     </form>
     <!-- List View and AutoComplete View Progress Bars -->
     <mat-progress-bar mode="indeterminate" *ngIf="!isListView && !isStyled"></mat-progress-bar>
@@ -118,4 +158,16 @@
             </div>
         </div>
     </div>
+</div>
+
+<div mat-dialog-actions>
+    <button mat-button
+            mat-dialog-close
+            (click)="onCancelClick()">
+        Cancel
+    </button>
+    <button mat-button
+            (click)="onAcceptClick()">
+        Ok
+    </button>
 </div>

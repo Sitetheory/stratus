@@ -5,6 +5,9 @@ import {
 import {
     Link
 } from '@stratusjs/angular/editor/link-dialog.component'
+import {
+    LooseObject
+} from '@stratusjs/core/misc'
 
 // @ts-ignore
 import FroalaEditor from 'froala-editor'
@@ -20,6 +23,7 @@ FroalaEditor.DEFAULTS = Object.assign(FroalaEditor.DEFAULTS, {
 FroalaEditor.PLUGINS.linkManager = function linkManager (editor: any) {
     let inputButton: InputButtonPlugin
 
+    const linkPlugin = FroalaEditor.PLUGINS.link(editor)
     const debug = false
 
     // When the plugin is initialized,this will be called.
@@ -29,7 +33,14 @@ FroalaEditor.PLUGINS.linkManager = function linkManager (editor: any) {
             eventName: 'link-library',
             editor,
             insert: (link: Link) => {
-                FroalaEditor.PLUGINS.link(editor).insert(link.url, '', {'aria-label': link.title})
+                const attrs: LooseObject = {}
+                if (link.id) {
+                    attrs['data-content-id'] = link.id
+                }
+                if (link.target) {
+                    attrs.target = '_blank'
+                }
+                linkPlugin.insert(link.url, link.text, attrs)
             },
             autoSaveSelection: true,
             autoRestoreSelection: true,
@@ -55,7 +66,7 @@ FroalaEditor.PLUGINS.linkManager = function linkManager (editor: any) {
             console.warn('linkManager.onClick(): unable to find element')
             return
         }
-        inputButton.onClick(editor.el)
+        inputButton.onClick(editor.el, linkPlugin.get())
     }
 
     // Expose public methods.
@@ -69,7 +80,7 @@ FroalaEditor.PLUGINS.linkManager = function linkManager (editor: any) {
 }
 
 // Insert Plugin to Image Insert
-// FroalaEditor.DEFAULTS.imageInsertButtons.push('linkManager')
+// TODO: Register a linkManagerEdit button pointed to the edit svg
 FroalaEditor.RegisterCommand('linkManager', {
     title: 'Insert from Link Library',
     undo: false,
@@ -81,14 +92,13 @@ FroalaEditor.RegisterCommand('linkManager', {
         if (debug) {
             console.log('clicked:', this.linkManager)
         }
-        // testing selection saving at earlier point to avoid loss of data
-        // this.selection.save()
         // initiate click
-        this.linkManager.onClick()
+        this.linkManager.onClick(undefined, FroalaEditor.PLUGINS.link(this).get())
     },
     plugin: 'linkManager',
 }),
 FroalaEditor.DefineIcon('linkManager', {NAME: 'folder', SVG_KEY: 'insertLink'}),
+FroalaEditor.DefineIcon('linkManagerEdit', {NAME: 'edit', SVG_KEY: 'edit'}),
 FroalaEditor.DefineIcon('linkManagerInsert', {NAME: 'plus', SVG_KEY: 'add'}),
 FroalaEditor.DefineIcon('linkManagerDelete', {NAME: 'trash', SVG_KEY: 'remove'})
 

@@ -67,7 +67,7 @@ export class InputButtonPlugin<EventData = string|LooseObject> implements Trigge
         return Stratus.Instances[uid]
     }
 
-    onClick(el: HTMLElement) {
+    onClick(el: HTMLElement, data?: any) {
         const uid = this.findUID(el)
         const instance = this.getInstance(uid)
         if (!instance) {
@@ -79,7 +79,7 @@ export class InputButtonPlugin<EventData = string|LooseObject> implements Trigge
         }
         // Get snapshot before passing off event
         this.updateSnapshot()
-        instance.trigger(this.eventName, null, this)
+        instance.trigger(this.eventName, data, this)
     }
 
     trigger(name: string, data: EventData, callee: TriggerInterface) {
