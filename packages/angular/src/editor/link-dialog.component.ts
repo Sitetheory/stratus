@@ -119,10 +119,10 @@ export class LinkDialogComponent extends ResponsiveComponent implements OnInit, 
 
     // User Input
     content: ContentEntity
-    linkType: string = ''
-    linkText: string = ''
-    linkURL: string = ''
-    linkTarget: boolean = false
+    linkType = ''
+    linkText = ''
+    linkURL = ''
+    linkTarget = false
 
     // Icon Localization
     svgIcons: {
