@@ -139,7 +139,8 @@ Stratus.Components.IdxPropertySearch = {
         searchType: '@',
         /**
          * Type: string
-         * A link to another dedicated advanced search page (used when this is a module). NOTE: this should generally be the same as linkListUrl and if not set it will set this to match.
+         * A link to another dedicated advanced search page (used when this is a module). NOTE: this should generally be
+         * the same as linkListUrl and if not set it will set this to match.
          */
         advancedSearchUrl: '@',
         /**
@@ -158,7 +159,8 @@ Stratus.Components.IdxPropertySearch = {
         template: '@',
         /**
          * Type: json
-         * Additional advanced parameters that may control what the Search interface displays. Only parameter used at this time is selection
+         * Additional advanced parameters that may control what the Search interface displays. Only parameter used at
+         * this time is selection
          * @TODO
          */
         options: '@',
@@ -233,10 +235,12 @@ Stratus.Components.IdxPropertySearch = {
             // $scope.options.officeGroups = $scope.options.officeGroups || []
 
             $scope.options.officeGroups =
-                $scope.options.officeGroups && _.isString($scope.options.officeGroups) && isJSON($scope.options.officeGroups)
-                    ? JSON.parse($scope.options.officeGroups) :
-                    $attrs.optionsOfficeGroups && isJSON($attrs.optionsOfficeGroups) ?
-                        JSON.parse($attrs.optionsOfficeGroups) : $scope.options.officeGroups || []
+                ($scope.options.officeGroups && _.isString($scope.options.officeGroups) && isJSON($scope.options.officeGroups)
+                    ? JSON.parse($scope.options.officeGroups)
+                    : ($attrs.optionsOfficeGroups && isJSON($attrs.optionsOfficeGroups)
+                        ? JSON.parse($attrs.optionsOfficeGroups)
+                        : $scope.options.officeGroups)
+                    ) || []
 
             // Set default queries
             $scope.options.query = $scope.options.query || {}
