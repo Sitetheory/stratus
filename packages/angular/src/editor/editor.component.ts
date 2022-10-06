@@ -778,6 +778,13 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
         // Note: The request will contain the image source as src parameter.
         // imageManagerDeleteURL: '/Api/MediaSrc',
         // imageManagerPreloader: '/images/loader.gif',
+        linkEditButtons: [
+            'linkOpen',
+            'linkStyle',
+            'linkEdit',
+            // 'linkManager',
+            'linkRemove',
+        ],
         linkInsertButtons: [
             'linkBack',
             '|',
@@ -1400,7 +1407,7 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
         } else if (name === 'citation-input') {
             this.openCitationDialog(callee)
         } else if (name === 'link-library') {
-            this.openLinkDialog(callee)
+            this.openLinkDialog(callee, data)
         } else if (name === 'code-view') {
             this.openCodeViewDialog()
         }
@@ -1435,12 +1442,13 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
         })
     }
 
-    public openLinkDialog(callee: TriggerInterface): void {
+    public openLinkDialog(callee: TriggerInterface, data: any): void {
         const dialogRef = this.dialog.open(LinkDialogComponent, {
-            width: '450px',
+            width: '500px',
             data: {
                 editor: this,
                 eventManager: callee,
+                element: data,
                 // eventInsert: false,
                 form: this.form,
                 model: this.model,

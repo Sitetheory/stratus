@@ -110,11 +110,19 @@ export class LinkDialogComponent extends ResponsiveComponent implements OnInit, 
     // Event Settings
     editor: TriggerInterface
     eventManager: TriggerInterface
+    element: Element
     eventInsert = true
 
     // UI Settings
     isListView = false
     selected: Array<number> = []
+
+    // User Input
+    content: ContentEntity
+    linkType = ''
+    linkText = ''
+    linkURL = ''
+    linkTarget = false
 
     // Icon Localization
     svgIcons: {
@@ -173,6 +181,7 @@ export class LinkDialogComponent extends ResponsiveComponent implements OnInit, 
         this.property = this.data.property
         this.editor = this.data.editor
         this.eventManager = this.data.eventManager
+        this.element = this.data.element
         if (_.isBoolean(this.data.eventInsert)) {
             this.eventInsert = this.data.eventInsert
         }
@@ -180,7 +189,11 @@ export class LinkDialogComponent extends ResponsiveComponent implements OnInit, 
         // TODO: Move this to its own AutoComplete Component
         // AutoComplete Logic
         this.dialogContentForm = this.fb.group({
-            contentSelectorInput: ''
+            contentSelectorInput: '',
+            linkTypeRadio: '',
+            linkTextInput: '',
+            linkURLInput: '',
+            linkTargetCheckbox: ''
         })
         this.dialogContentForm
             .get('contentSelectorInput')
@@ -189,8 +202,11 @@ export class LinkDialogComponent extends ResponsiveComponent implements OnInit, 
                 debounceTime(300),
                 tap(() => this.isContentLoading = true),
                 switchMap((value: string|ContentEntity) => {
+                        if (_.isUndefined(value)) {
+                            return this.getQuery()
+                        }
                         if (!_.isString(value)) {
-                            this.select(value)
+                            this.content = value
                             return this.getQuery()
                         }
                         return this.getQuery(value)
@@ -206,6 +222,58 @@ export class LinkDialogComponent extends ResponsiveComponent implements OnInit, 
                 finalize(() => this.isContentLoading = false),
             )
             .subscribe((response: HttpResponse<Convoy<ContentEntity>>) => this.processContent(response))
+
+        // Subscribe to Link Text Input Field
+        this.dialogContentForm
+            .get('linkTypeRadio')
+            .valueChanges
+            .pipe(
+                debounceTime(300),
+            )
+            .subscribe((response: string) => this.linkType = response)
+
+        // Populate Data from Froala Element
+        this.linkType = this.element && this.element.hasAttribute('data-content-id') ? 'content' : 'url'
+        this.dialogContentForm.get('linkTypeRadio').patchValue(this.linkType)
+
+        // Subscribe to Link Text Input Field
+        this.dialogContentForm
+            .get('linkTextInput')
+            .valueChanges
+            .pipe(
+                debounceTime(300),
+            )
+            .subscribe((response: string) => this.linkText = response)
+
+        // Populate Data from Froala Element
+        this.linkText = this.element ? this.element.textContent : ''
+        this.dialogContentForm.get('linkTextInput').patchValue(this.linkText)
+
+        // Subscribe to Link Text Input Field
+        this.dialogContentForm
+            .get('linkURLInput')
+            .valueChanges
+            .pipe(
+                debounceTime(300),
+            )
+            .subscribe((response: string) => this.linkURL = response)
+
+        // Populate Data from Froala Element
+        this.linkURL = this.element && this.element.hasAttribute('href') ? this.element.getAttribute('href') : ''
+        this.dialogContentForm.get('linkURLInput').patchValue(this.linkURL)
+
+        // Subscribe to Link Target Checkbox Field
+        this.dialogContentForm
+            .get('linkTargetCheckbox')
+            .valueChanges
+            .pipe(
+                debounceTime(300),
+            )
+            .subscribe((response: boolean) => this.linkTarget = response)
+
+        // Populate Data from Froala Element
+        this.linkTarget = this.element ? this.element.hasAttribute('target') : false
+        this.dialogContentForm.get('linkTargetCheckbox').patchValue(this.linkTarget)
 
         // Mark as complete
         this.isInitialized = true
@@ -273,21 +341,25 @@ export class LinkDialogComponent extends ResponsiveComponent implements OnInit, 
         return this.contentEntities
     }
 
-    select(content: ContentEntity) {
-        if (_.isUndefined(content)) {
-            return
+    onAcceptClick(): void {
+        const link: Link|null = this.linkType === 'content' ? this.createLink(this.content) : {
+            url: this.linkURL,
+            text: this.linkText,
+            target: this.linkTarget,
         }
-        const link = this.createLink(content)
         if (!link) {
-            console.warn(`${moduleName}: unable to build link for Content ID: ${content.id}`)
-            this.snackBar.open(`Unable to build link for Content ID: ${content.id}.`, 'dismiss', {
+            const identifier = this.content && this.content.id ? `for Content ID: ${this.content.id}.` : 'without Content Selected or URL Input.'
+            console.warn(`${moduleName}: unable to build link ${identifier}`)
+            this.snackBar.open(`Unable to build link ${identifier}`, 'dismiss', {
                 duration: 5000,
                 horizontalPosition: 'right',
                 verticalPosition: 'bottom'
             })
             return
         }
-        this.selected.push(content.id)
+        if (this.content && this.content.id) {
+            this.selected.push(this.content.id)
+        }
         // Add element to the end of the model property
         if (!this.eventInsert) {
             if (!(this.model instanceof Model)) {
@@ -326,6 +398,10 @@ export class LinkDialogComponent extends ResponsiveComponent implements OnInit, 
             console.warn(`${moduleName}: unable to create link for empty content`)
             return null
         }
+        if (!content.id) {
+            console.warn(`${moduleName}: unable to find content id for content:`, content)
+            return null
+        }
         if (!content.contentType || !content.contentType.name) {
             console.warn(`${moduleName}: unable to find content type for content id: ${content.id}`)
             return null
@@ -350,7 +426,10 @@ export class LinkDialogComponent extends ResponsiveComponent implements OnInit, 
 
         return {
             url: `/${content.routing[0].url}`,
-            title: content.version.title
+            title: content.version.title,
+            text: this.linkText,
+            target: this.linkTarget,
+            id: content.id
         }
     }
 
@@ -420,12 +499,16 @@ export class LinkDialogComponent extends ResponsiveComponent implements OnInit, 
 export interface LinkDialogData {
     editor: TriggerInterface
     eventManager: TriggerInterface
+    element: Element
     eventInsert: boolean
-    form: FormGroup,
-    model: Model,
+    form: FormGroup
+    model: Model
     property: string
 }
 export interface Link {
-    url: string,
-    title: string
+    url: string
+    text: string
+    target: boolean
+    title?: string
+    id?: number
 }
