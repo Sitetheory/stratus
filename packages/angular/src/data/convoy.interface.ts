@@ -2,7 +2,7 @@ export interface Convoy<t> {
     success: boolean
     route: Route
     meta: Meta
-    payload?: Array<t> | null
+    payload?: Array<t> | t | null
 }
 export interface Route {
     controller: string

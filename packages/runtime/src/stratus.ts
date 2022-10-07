@@ -2141,6 +2141,8 @@ Stratus.PostMessage.Convoy = (fn: (e: object) => void) => {
 // When a message arrives from another source, handle the Convoy
 // appropriately.
 Stratus.PostMessage.Convoy((convoy: any) => {
+    // Control SSO Redirects
+    const ssoRedirect = false
     // Single Sign On Toggle
     let ssoEnabled: any = cookie('sso')
     ssoEnabled = ssoEnabled === null ? true : (isJSON(ssoEnabled) ? JSON.parse(ssoEnabled) : false)
@@ -2159,6 +2161,12 @@ Stratus.PostMessage.Convoy((convoy: any) => {
     if (session === cookie('SITETHEORY')) {
         return
     }
+    // Force HTTPS
+    if (window.location.protocol === 'http:') {
+        console.log('Session Detected on insecure protocol.  Upgrading to HTTPS.')
+        window.location.href = window.location.href.replace('http:', 'https:')
+        return
+    }
     console.log('Session:', session)
     // Set Cookie
     cookie({
@@ -2166,13 +2174,12 @@ Stratus.PostMessage.Convoy((convoy: any) => {
         value: session,
         expires: '1w'
     })
-    // Halt at Safari
-    if (Stratus.Client.safari) {
+    // Halt Redirect if Disabled
+    if (!ssoRedirect) {
         return
     }
-    // Force HTTPS
-    if (window.location.protocol === 'http:') {
-        window.location.href = window.location.href.replace('http:', 'https:')
+    // Halt at Safari
+    if (Stratus.Client.safari) {
         return
     }
     window.location.reload()

@@ -780,16 +780,16 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
         // imageManagerPreloader: '/images/loader.gif',
         linkEditButtons: [
             'linkOpen',
-            'linkStyle',
+            // 'linkStyle',
             'linkEdit',
             // 'linkManager',
             'linkRemove',
         ],
         linkInsertButtons: [
             'linkBack',
-            '|',
-            'linkList',
-            'linkManager',
+            // '|',
+            // 'linkList',
+            // 'linkManager',
         ],
         // linkList: [
         //     {

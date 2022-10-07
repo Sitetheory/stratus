@@ -93,9 +93,11 @@ export class LinkDialogComponent extends ResponsiveComponent implements OnInit, 
     // TODO: Move this to its own AutoComplete Component
     // AutoComplete Data
     apiBase = '/Api/Content'
-    contentEntities: any[] = []
+    contentEntities: ContentEntity[] = []
+    contentEntity: ContentEntity
     dialogContentForm: FormGroup
     isContentLoading = true
+    isSingleContentLoading = false
     lastContentQuery: string
 
     // Pagination Data
@@ -234,7 +236,9 @@ export class LinkDialogComponent extends ResponsiveComponent implements OnInit, 
 
         // Populate Data from Froala Element
         this.linkType = this.element && this.element.hasAttribute('data-content-id') ? 'content' : 'url'
-        this.dialogContentForm.get('linkTypeRadio').patchValue(this.linkType)
+        this.dialogContentForm
+            .get('linkTypeRadio')
+            .patchValue(this.linkType)
 
         // Subscribe to Link Text Input Field
         this.dialogContentForm
@@ -247,7 +251,9 @@ export class LinkDialogComponent extends ResponsiveComponent implements OnInit, 
 
         // Populate Data from Froala Element
         this.linkText = this.element ? this.element.textContent : ''
-        this.dialogContentForm.get('linkTextInput').patchValue(this.linkText)
+        this.dialogContentForm
+            .get('linkTextInput')
+            .patchValue(this.linkText)
 
         // Subscribe to Link Text Input Field
         this.dialogContentForm
@@ -260,7 +266,9 @@ export class LinkDialogComponent extends ResponsiveComponent implements OnInit, 
 
         // Populate Data from Froala Element
         this.linkURL = this.element && this.element.hasAttribute('href') ? this.element.getAttribute('href') : ''
-        this.dialogContentForm.get('linkURLInput').patchValue(this.linkURL)
+        this.dialogContentForm
+            .get('linkURLInput')
+            .patchValue(this.linkURL)
 
         // Subscribe to Link Target Checkbox Field
         this.dialogContentForm
@@ -273,7 +281,41 @@ export class LinkDialogComponent extends ResponsiveComponent implements OnInit, 
 
         // Populate Data from Froala Element
         this.linkTarget = this.element ? this.element.hasAttribute('target') : false
-        this.dialogContentForm.get('linkTargetCheckbox').patchValue(this.linkTarget)
+        this.dialogContentForm
+            .get('linkTargetCheckbox')
+            .patchValue(this.linkTarget)
+
+        // Hydrate Selected Content
+        if (this.element && this.element.hasAttribute('data-content-id')) {
+            this.isSingleContentLoading = true
+            this.backend
+                .get(
+                    this.getQueryUrl(
+                        null,
+                        this.element.getAttribute('data-content-id')
+                    )
+                )
+                .pipe(
+                    finalize(() => this.isSingleContentLoading = false),
+                )
+                .subscribe((response: HttpResponse<Convoy<ContentEntity>>) => {
+                    if (!response.ok || response.status !== 200 || _.isEmpty(response.body)) {
+                        return null
+                    }
+                    const payload = _.get(response.body, 'payload') || response.body
+                    if (_.isEmpty(payload) || Array.isArray(payload) || !_.isObject(payload)) {
+                        return null
+                    }
+                    // @ts-ignore
+                    this.contentEntity = payload
+                    this.isSingleContentLoading = false
+                    this.dialogContentForm
+                        .get('contentSelectorInput')
+                        .patchValue(this.contentEntity)
+                    this.refresh()
+                    return this.contentEntity
+                })
+        }
 
         // Mark as complete
         this.isInitialized = true
@@ -306,9 +348,10 @@ export class LinkDialogComponent extends ResponsiveComponent implements OnInit, 
         )
     }
 
-    getQueryUrl(query?: string): string {
+    getQueryUrl(query?: string, id?: string|number): string {
         query = (!_.isString(query) || _.isEmpty(query)) ? '' : `"${query}"`
-        return `${this.apiBase}?limit=${this.limit}&options[isContent]=null&options[isCollection]=null&options[showRoutable]=true&options[showRouting]=true&q=${query}`
+        id = _.isEmpty(id) ? '' : `/${id}`
+        return `${this.apiBase}${id}?limit=${this.limit}&options[isContent]=null&options[isCollection]=null&options[showRoutable]=true&options[showRouting]=true&q=${query}`
     }
 
     getQuery(query?: string): Observable<HttpResponse<any>> {
