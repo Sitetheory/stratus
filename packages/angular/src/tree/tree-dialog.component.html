@@ -56,7 +56,7 @@
                               #auto="matAutocomplete"
                               [displayWith]="displayContentText">
                 <mat-option *ngIf="isContentLoading" class="is-loading">
-                    <mat-spinner diameter="50"></mat-spinner>
+                    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
                 </mat-option>
                 <ng-container *ngIf="!isContentLoading">
                     <!-- TODO: Modify to filteredContentModels|async which should improve responsiveness -->

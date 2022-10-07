@@ -39,8 +39,8 @@
         <mat-autocomplete autoActiveFirstOption
                           #auto="matAutocomplete"
                           [displayWith]="displayContentText">
-            <mat-option *ngIf="isContentLoading" class="is-loading">
-                <mat-spinner diameter="50"></mat-spinner>
+            <mat-option *ngIf="isContentLoading || isSingleContentLoading" class="is-loading">
+                <mat-progress-bar mode="indeterminate"></mat-progress-bar>
             </mat-option>
             <ng-container *ngIf="!isContentLoading">
                 <!-- TODO: Modify to filteredContentModels|async which should improve responsiveness -->
@@ -161,6 +161,9 @@
 </div>
 
 <div mat-dialog-actions>
+    <mat-progress-bar mode="indeterminate"
+                      *ngIf="isSingleContentLoading">
+    </mat-progress-bar>
     <button mat-button
             mat-dialog-close
             (click)="onCancelClick()">
