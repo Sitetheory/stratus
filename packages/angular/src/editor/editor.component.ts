@@ -781,8 +781,8 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
         linkEditButtons: [
             'linkOpen',
             // 'linkStyle',
-            'linkEdit',
-            // 'linkManager',
+            // 'linkEdit',
+            'linkManagerEdit',
             'linkRemove',
         ],
         linkInsertButtons: [

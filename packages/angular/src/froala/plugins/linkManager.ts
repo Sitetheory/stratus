@@ -98,7 +98,22 @@ FroalaEditor.RegisterCommand('linkManager', {
     plugin: 'linkManager',
 }),
 FroalaEditor.DefineIcon('linkManager', {NAME: 'folder', SVG_KEY: 'insertLink'}),
+
+// Link Edit Icon
+FroalaEditor.RegisterCommand('linkManagerEdit', {
+    title: 'Edit Link',
+    undo: false,
+    focus: false,
+    modal: true,
+    callback() {
+        console.log('linkManagerEdit clicked:', this)
+        this.linkManager.onClick(undefined, FroalaEditor.PLUGINS.link(this).get())
+    },
+    plugin: 'linkManager',
+}),
 FroalaEditor.DefineIcon('linkManagerEdit', {NAME: 'edit', SVG_KEY: 'edit'}),
+
+// Other Icons
 FroalaEditor.DefineIcon('linkManagerInsert', {NAME: 'plus', SVG_KEY: 'add'}),
 FroalaEditor.DefineIcon('linkManagerDelete', {NAME: 'trash', SVG_KEY: 'remove'})
 
