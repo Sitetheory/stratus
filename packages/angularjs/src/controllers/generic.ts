@@ -67,24 +67,7 @@ Stratus.Controllers.Generic = [
         $scope.Stratus = Stratus
         $scope._ = _
         $scope.$window = $window
-        $scope.setUrlParams = (options: any) => {
-            if (!_.isObject(options)) {
-                return
-            }
-            let substance = false
-            _.forEach(options, (value: any) => {
-                if (_.isUndefined(value) || value === null) {
-                    return
-                }
-                if (!_.isString(value) || value.length > 0) {
-                    substance = true
-                }
-            })
-            // TODO: I do not think that this should automatically force the URL to update
-            if (substance) {
-                window.location.replace(setUrlParams(options))
-            }
-        }
+        $scope.setUrlParams = setUrlParams
         $scope.$log = $log
 
         // Inject Javascript Objects
