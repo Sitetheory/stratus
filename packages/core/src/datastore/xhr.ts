@@ -9,6 +9,7 @@ export interface XHRRequest {
     type?: string
     success?: (response: any) => any
     error?: (response: any) => any
+    withCredentials?: boolean
 }
 
 export class XHR {
@@ -19,6 +20,7 @@ export class XHR {
     public type: string
     public success: (response: any) => any
     public error: (response: any) => any
+    public withCredentials: boolean
     private xhr: XMLHttpRequest
 
     // XHR Properties
@@ -31,7 +33,6 @@ export class XHR {
     readonly statusText?: string
     readonly timeout?: number
     readonly upload?: XMLHttpRequestUpload
-    readonly withCredentials?: boolean
 
     // TODO: Make the constructor optional, and allow the send to provide options instead (for class reuse)
     constructor(request?: XHRRequest) {
@@ -41,6 +42,7 @@ export class XHR {
         this.data = null
         this.headers = {}
         this.type = ''
+        this.withCredentials = false
 
         this.success = (response: any) => {
             return response
@@ -75,8 +77,11 @@ export class XHR {
         // Make Request
         // TODO: Make this possibly store a const and store each reference in an array (simultaneous calls as an option)
         this.xhr = new XMLHttpRequest()
-        const promise = new Promise((resolve, reject) => {
+        const promise = new Promise<LooseObject|Array<LooseObject>|string>((resolve, reject) => {
             this.xhr.open(this.method, this.url, true)
+
+            // hoist settings
+            this.xhr.withCredentials = this.withCredentials
 
             if (typeof this.type === 'string' && this.type.length) {
                 this.xhr.setRequestHeader('Content-Type', this.type)
@@ -98,7 +103,6 @@ export class XHR {
                     'statusText',
                     'timeout',
                     'upload',
-                    'withCredentials'
                 ],(p) => _.set(this, p, _.get(this.xhr, p)))
                 if (this.xhr.status < 200 || this.xhr.status >= 400) {
                     reject(this.xhr)

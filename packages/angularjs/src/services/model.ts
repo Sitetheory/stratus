@@ -107,6 +107,7 @@ export interface ModelOptions extends ModelBaseOptions {
     urlRoot?: string,
     urlSync?: boolean,
     watch?: boolean,
+    withCredentials?: boolean,
 }
 
 export const ModelOptionKeys = keys<ModelOptions>()
@@ -129,6 +130,7 @@ export class Model<T = LooseObject> extends ModelBase<T> {
     urlRoot = '/Api'
     targetSuffix?: string = null
     serviceId?: number = null
+    withCredentials = false
 
     // Infrastructure
     header = new ModelBase()
@@ -471,7 +473,8 @@ export class Model<T = LooseObject> extends ModelBase<T> {
             const request: XHRRequest = {
                 method: action,
                 url: this.url(),
-                headers: {}
+                headers: {},
+                withCredentials: this.withCredentials,
             }
             if (!_.isUndefined(data)) {
                 if (action === 'GET') {
