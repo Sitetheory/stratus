@@ -87,12 +87,6 @@ FroalaEditor.RegisterCommand('linkManager', {
     focus: false,
     modal: true,
     callback() {
-        // debug info (move variable elsewhere)
-        const debug = false
-        if (debug) {
-            console.log('clicked:', this.linkManager)
-        }
-        // initiate click
         this.linkManager.onClick(undefined, FroalaEditor.PLUGINS.link(this).get())
     },
     plugin: 'linkManager',
@@ -106,7 +100,6 @@ FroalaEditor.RegisterCommand('linkManagerEdit', {
     focus: false,
     modal: true,
     callback() {
-        console.log('linkManagerEdit clicked:', this)
         this.linkManager.onClick(undefined, FroalaEditor.PLUGINS.link(this).get())
     },
     plugin: 'linkManager',

@@ -276,21 +276,36 @@ export class MediaDialogComponent extends ResponsiveComponent implements OnInit 
         return _.includes(this.selected, media.id)
     }
 
-    createEmbed (media: Media) {
+    createEmbed (media: Media): MediaEmbed {
         if (media._embedCode) {
-            return media._embedCode
+            return {
+                html: media._embedCode
+            }
         }
         if (_.startsWith(media.mime, 'image')) {
             if (!media._thumbnailUrl || (media.service === 'directLink' && !media.file)) {
                 console.warn(`media-dialog: unable to determine image source for media id: ${media.id}`)
                 return null
             }
-            return `<img src="${media._thumbnailUrl||media.file}" alt="${media.name || media.filename}" ${media.mime !== 'image/gif' ? 'data-stratus-src' : ''}">`
+            // const attrs: LooseObject = {
+            //     alt: media.name || media.filename
+            // }
+            // if (media.mime !== 'image/gif') {
+            //     attrs['data-stratus-src'] = ''
+            // }
+            return {
+                // type: 'image',
+                // url: media._thumbnailUrl || media.file,
+                // attrs,
+                html: `<img src="${media._thumbnailUrl || media.file}" alt="${media.name || media.filename}" ${media.mime !== 'image/gif' ? 'data-stratus-src' : ''}">`
+            }
         }
         if (media.mime === 'video') {
             // Use the embed code if we can't standardize.
             if (media.embed) {
-                return media.embed
+                return {
+                    html: media.embed
+                }
             }
             const iframeAttributes = 'width="100%" scrolling="no" frameborder="0" allowTransparency="true" allowFullScreen="true" webkitAllowFullScreen="" mozAllowFullScreen=""'
             // Handle Facebook videos first, since they're quite odd
@@ -301,13 +316,17 @@ export class MediaDialogComponent extends ResponsiveComponent implements OnInit 
                     return null
                 }
                 if (this.embedly) {
-                    return `<div class="fr-embedly"
+                    return {
+                        html: `<div class="fr-embedly"
                                  data-original-embed="<a href='${mediaUrl}' data-card-branding='0' class='embedly-card'></a>"
                                  style="height: 998px;">
                                  <a href="${mediaUrl}" data-card-branding="0" class="embedly-card"></a>
                              </div>`
+                    }
                 }
-                return `<iframe src="https://www.facebook.com/plugins/video.php?href=${mediaUrl}" ${iframeAttributes}></iframe>`
+                return {
+                    html: `<iframe src="https://www.facebook.com/plugins/video.php?href=${mediaUrl}" ${iframeAttributes}></iframe>`
+                }
             }
             if (!media.serviceMediaId) {
                 console.warn(`media-dialog: unable to find serviceMediaId for video with media id: ${media.id}`)
@@ -315,23 +334,31 @@ export class MediaDialogComponent extends ResponsiveComponent implements OnInit 
             }
             if (media.service === 'vimeo') {
                 if (this.embedly) {
-                    return `<div class="fr-embedly"
+                    return {
+                        html: `<div class="fr-embedly"
                                 data-original-embed="<a href='https://vimeo.com/${media.serviceMediaId}' data-card-branding='0' class='embedly-card'></a>"
                                 style="height: 370px;">
                                 <a href="https://vimeo.com/${media.serviceMediaId}" data-card-branding="0" class="embedly-card"></a>
                             </div>`
+                    }
                 }
-                return `<iframe src="https://player.vimeo.com/video/${media.serviceMediaId}" ${iframeAttributes}></iframe>`
+                return {
+                    html: `<iframe src="https://player.vimeo.com/video/${media.serviceMediaId}" ${iframeAttributes}></iframe>`
+                }
             }
             if (media.service === 'youtube') {
                 if (this.embedly) {
-                    return `<div class="fr-embedly"
+                    return {
+                        html: `<div class="fr-embedly"
                                  data-original-embed="<a href='https://www.youtube.com/watch?v=${media.serviceMediaId}' data-card-branding='0' class='embedly-card'></a>"
                                  style="height: 370px;">
                                 <a href="https://www.youtube.com/watch?v=${media.serviceMediaId}" data-card-branding="0" class="embedly-card"></a>
                             </div>`
+                    }
                 }
-                return `<iframe src="https://www.youtube.com/embed/${media.serviceMediaId}" ${iframeAttributes}></iframe>`
+                return {
+                    html: `<iframe src="https://www.youtube.com/embed/${media.serviceMediaId}" ${iframeAttributes}></iframe>`
+                }
             }
             console.warn(`media-dialog: unsupported service: ${media.service} for media id: ${media.id}`)
             return null
@@ -341,12 +368,14 @@ export class MediaDialogComponent extends ResponsiveComponent implements OnInit 
                 console.warn(`media-dialog: unable to determine audio source for media id: ${media.id}`)
                 return null
             }
-            return `<audio controls>
+            return {
+                html: `<audio controls>
                         <source src="https://${media.url}" type="${media.mime}">
                         <p>
                             Your browser doesn't support HTML5 audio, but you can <a href="https://${media.url}">download the audio here</a>.
                         </p>
                     </audio>`
+            }
         }
         if (media.mime === 'application/pdf') {
             if (!media.url) {
@@ -354,14 +383,18 @@ export class MediaDialogComponent extends ResponsiveComponent implements OnInit 
                 return null
             }
             if (this.embedly) {
-                return `<div class="fr-embedly"
+                return {
+                    html: `<div class="fr-embedly"
                              data-original-embed="<a href='https://${media.url}' data-card-branding='0' class='embedly-card'></a>"
                              style="height: 71px;">
                              <a href="https://${media.url}" data-card-branding="0" class="embedly-card"></a>
                          </div>`
+                }
             }
             // This works, but lags Froala...
-            return `<iframe src="https://docs.google.com/viewer?url=${media.url}&embedded=true" style="min-height: 500px;" width="100%"></iframe>`
+            return {
+                html: `<iframe src="https://docs.google.com/viewer?url=${media.url}&embedded=true" style="min-height: 500px;" width="100%"></iframe>`
+            }
         }
         if (media.mime === 'application/msword') {
             if (!media.url) {
@@ -369,14 +402,18 @@ export class MediaDialogComponent extends ResponsiveComponent implements OnInit 
                 return null
             }
             if (this.embedly) {
-                return `<div class="fr-embedly"
+                return {
+                    html: `<div class="fr-embedly"
                              data-original-embed="<a href='https://${media.url}' data-card-branding='0' class='embedly-card'></a>"
                              style="height: 71px;">
                              <a href="https://${media.url}" data-card-branding="0" class="embedly-card"></a>
                          </div>`
+                }
             }
             // This works, but lags Froala...
-            return `<iframe src="https://docs.google.com/viewer?url=${media.url}&embedded=true" style="min-height: 500px;" width="100%"></iframe>`
+            return {
+                html: `<iframe src="https://docs.google.com/viewer?url=${media.url}&embedded=true" style="min-height: 500px;" width="100%"></iframe>`
+            }
         }
         console.warn(`media-dialog: unsupported mime type: ${media.mime} for media id: ${media.id}`)
         return null
@@ -441,4 +478,10 @@ export interface Media extends LooseObject {
     vendor?: any
     syndicated: number
     isPseudoPriority: boolean
+}
+export interface MediaEmbed {
+    type?: string
+    url?: string
+    attrs?: LooseObject
+    html?: string
 }

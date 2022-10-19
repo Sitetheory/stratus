@@ -131,10 +131,16 @@ export class TreeDialogComponent extends ResponsiveComponent implements OnInit, 
     // AutoComplete Data
     filteredContent: Array<ContentEntity>
     dialogContentForm: FormGroup
+
+    // API Data
+    apiBase = '/Api/Content'
+    isSingleContentLoading = false
+    limit = 20
     isContentLoading = false
     isContentLoaded = false
     lastContentSelectorQuery: string
-    basicContentSelectorQuery = '/Api/Content?options[isContent]=null&options[isCollection]=null&options[showRoutable]=true&options[showRouting]=true&q='
+    basicContentQueryAttributes = 'options[isContent]=null&options[isCollection]=null&options[showRoutable]=true&options[showRouting]=true'
+    contentEntity: ContentEntity
 
     // Normalized Data
     browserTarget: boolean
@@ -208,12 +214,13 @@ export class TreeDialogComponent extends ResponsiveComponent implements OnInit, 
                 tap(() => this.isContentLoading = true),
                 switchMap((value: any) => {
                         if (_.isString(value)) {
-                            this.lastContentSelectorQuery = `${this.basicContentSelectorQuery}${value}`
+                            this.lastContentSelectorQuery = this.getQueryUrl(value)
                         } else {
+                            // console.log('switchMap value is not a string:', value)
                             this.data.content = value
                             this.data.url = null
                         }
-                        return this.backend.get(this.lastContentSelectorQuery || this.basicContentSelectorQuery)
+                        return this.backend.get(this.lastContentSelectorQuery || this.getQueryUrl())
                             .pipe(
                                 finalize(() => {
                                     this.isContentLoading = false
@@ -232,11 +239,43 @@ export class TreeDialogComponent extends ResponsiveComponent implements OnInit, 
 
         // Initial Call for Content
         this.backend
-            .get(this.basicContentSelectorQuery)
+            .get(this.getQueryUrl())
             .pipe(
                 finalize(() => this.isContentLoading = false),
             )
             .subscribe((response: HttpResponse<Convoy<ContentEntity>>) => this.handleContent(response))
+
+        // Hydrate Selected Content
+        if (this.data.content && this.data.content.id) {
+            this.isSingleContentLoading = true
+            this.backend
+                .get(
+                    this.getQueryUrl(
+                        null,
+                        this.data.content.id
+                    )
+                )
+                .pipe(
+                    finalize(() => this.isSingleContentLoading = false),
+                )
+                .subscribe((response: HttpResponse<Convoy<ContentEntity>>) => {
+                    if (!response.ok || response.status !== 200 || _.isEmpty(response.body)) {
+                        return null
+                    }
+                    const payload = _.get(response.body, 'payload') || response.body
+                    if (_.isEmpty(payload) || Array.isArray(payload) || !_.isObject(payload)) {
+                        return null
+                    }
+                    // @ts-ignore
+                    this.contentEntity = payload
+                    this.isSingleContentLoading = false
+                    this.dialogContentForm
+                        .get('contentSelectorInput')
+                        .patchValue(this.contentEntity)
+                    this.refresh()
+                    return this.contentEntity
+                })
+        }
 
         // Handle Parent Selector
         // this.dialogParentForm = this.fb.group({
@@ -340,7 +379,8 @@ export class TreeDialogComponent extends ResponsiveComponent implements OnInit, 
             // this.refresh()
             return this.filteredContent
         }
-        this.filteredContent = this.selectedOnTop(payload, this.data.content)
+        // this.filteredContent = this.selectedOnTop(payload, this.data.content)
+        this.filteredContent = payload
         // FIXME: We have to go in this roundabout way to force changes to be detected since the
         // Dialog Sub-Components don't seem to have the right timing for ngOnInit
         // this.refresh()
@@ -375,6 +415,12 @@ export class TreeDialogComponent extends ResponsiveComponent implements OnInit, 
 
     public getSvg(url: string, options?: IconOptions): Observable<string> {
         return this.tree.getSvg(url, options)
+    }
+
+    getQueryUrl(query?: string, id?: string|number): string {
+        query = (!_.isString(query) || _.isEmpty(query)) ? '' : `"${query}"`
+        id = !_.isString(id) && !_.isNumber(id) ? '' : `/${id}`
+        return `${this.apiBase}${id}?limit=${this.limit}&${this.basicContentQueryAttributes}&q=${query}`
     }
 
     selectedOnTop(list?: Array<ContentEntity>, selected?: ContentEntity): Array<ContentEntity> {

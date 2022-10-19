@@ -426,8 +426,9 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             'alignJustify',
         ],
         moreRich: [
-            'insertImage',
+            'mediaManager',
             'insertTable',
+            'insertImage',
             'insertVideo',
             'insertFile',
             'citationInsert',
@@ -500,8 +501,8 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
         },
         fileInsertButtons: [
             'fileBack',
-            '|',
-            'mediaManager'
+            // '|',
+            // 'mediaManager'
         ],
         fileUploadURL: 'https://app.sitetheory.io/?session=' + cookie('SITETHEORY'),
         fontFamily: {
@@ -760,11 +761,15 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
         imageInsertButtons: [
             'imageBack',
             '|',
-            'mediaManager',
+            // 'mediaManager',
             'imageUpload',
             'imageByURL',
             // 'imageManager'
         ],
+        // TODO: These options control the styles for images
+        // imageDefaultWidth: 'auto', // Default: 300
+        // imageDefaultAlign: false, // Default: 'center'
+        // imageDefaultDisplay: false, // Default: 'block'
         imageUpload: true,
         imageUploadRemoteUrls: true,
         imageUploadURL: 'https://app.sitetheory.io/?session=' + cookie('SITETHEORY'),
@@ -876,10 +881,10 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             'wordPaste',
         ],
         quickInsertButtons: [
-            'image',
-            'video',
+            // 'image',
             'media',
             'link',
+            'video',
             'embedly',
             'table',
             'ul',
@@ -954,7 +959,7 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
         videoInsertButtons: [
             'videoBack',
             '|',
-            'mediaManager',
+            // 'mediaManager',
             'videoByURL',
             'videoEmbed',
             'videoUpload',
