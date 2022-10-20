@@ -268,6 +268,13 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
     dataChangeLog: string[] = []
     dataString = ''
 
+    // Debounce Saving Controls
+    debounceSave = true
+    debounceTime = 5000
+
+    // Model Saving Controls
+    forceSave = true
+
     // Child Components
     froalaEditorDirective: FroalaEditorDirective
     // quill: Quill
@@ -426,8 +433,9 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             'alignJustify',
         ],
         moreRich: [
-            'insertImage',
+            'mediaManager',
             'insertTable',
+            'insertImage',
             'insertVideo',
             'insertFile',
             'citationInsert',
@@ -500,8 +508,8 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
         },
         fileInsertButtons: [
             'fileBack',
-            '|',
-            'mediaManager'
+            // '|',
+            // 'mediaManager'
         ],
         fileUploadURL: 'https://app.sitetheory.io/?session=' + cookie('SITETHEORY'),
         fontFamily: {
@@ -760,11 +768,15 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
         imageInsertButtons: [
             'imageBack',
             '|',
-            'mediaManager',
+            // 'mediaManager',
             'imageUpload',
             'imageByURL',
             // 'imageManager'
         ],
+        // TODO: These options control the styles for images
+        // imageDefaultWidth: 'auto', // Default: 300
+        // imageDefaultAlign: false, // Default: 'center'
+        // imageDefaultDisplay: false, // Default: 'block'
         imageUpload: true,
         imageUploadRemoteUrls: true,
         imageUploadURL: 'https://app.sitetheory.io/?session=' + cookie('SITETHEORY'),
@@ -876,10 +888,10 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             'wordPaste',
         ],
         quickInsertButtons: [
-            'image',
-            'video',
+            // 'image',
             'media',
             'link',
+            'video',
             'embedly',
             'table',
             'ul',
@@ -954,7 +966,7 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
         videoInsertButtons: [
             'videoBack',
             '|',
-            'mediaManager',
+            // 'mediaManager',
             'videoByURL',
             'videoEmbed',
             'videoUpload',
@@ -1098,47 +1110,59 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
         // console.info(`${moduleName}.ngOnInit`)
         const dataControl = this.form.get('dataString')
         // This valueChanges field is an Event Emitter
-        dataControl.valueChanges.forEach(
-            (value: string) => {
-                // Avoid saving until the Model is truly available
-                if (!this.model.completed) {
-                    return
-                }
-
-                // This avoids saving if it's the same
-                // if (value === this.model.get(this.property)) {
-                //     return
-                // }
-
-                // This keeps a change log of what's been typed.  I used this for testing purposes,
-                // but something this simple could be used for simple UX purposes down the road.
-                // this.dataChangeLog.push(value)
-
-                // If `useClasses: false`, this uses the innerHTML instead of the form output
-                // to avoid the fr-original-style attributes being persisted into the models.
-                let innerHTML = null
-                if (!this.froalaConfig.useClasses
-                    && this.froalaEditorDirective
-                    // @ts-ignore
-                    && this.froalaEditorDirective.getEditor()
-                    // @ts-ignore
-                    && this.froalaEditorDirective.getEditor().el
-                    // @ts-ignore
-                    && this.froalaEditorDirective.getEditor().el.innerHTML
-                ) {
-                    // @ts-ignore
-                    innerHTML = this.froalaEditorDirective.getEditor().el.innerHTML
-                }
-
-                // Save the qualified change!
-                this.model.set(
-                    this.property,
-                    this.normalizeOut(innerHTML || value)
-                )
-            }
-        )
+        if (this.debounceSave) {
+            dataControl.valueChanges.pipe(
+                debounce(() => timer(this.debounceTime)),
+                catchError(this.handleError)
+            ).subscribe((evt: string) => this.modelSave(evt))
+        } else {
+            dataControl.valueChanges.forEach(
+                (value: string) => this.modelSave(value)
+            )
+        }
         if (this.dev) {
             this.listDuplicates(this.froalaConfig)
+        }
+    }
+
+    modelSave(value: string) {
+        // Avoid saving until the Model is truly available
+        if (!this.model.completed) {
+            return
+        }
+
+        // This avoids saving if it's the same
+        // if (value === this.model.get(this.property)) {
+        //     return
+        // }
+
+        // This keeps a change log of what's been typed.  I used this for testing purposes,
+        // but something this simple could be used for simple UX purposes down the road.
+        // this.dataChangeLog.push(value)
+
+        // If `useClasses: false`, this uses the innerHTML instead of the form output
+        // to avoid the fr-original-style attributes being persisted into the models.
+        let innerHTML = null
+        if (!this.froalaConfig.useClasses
+            && this.froalaEditorDirective
+            // @ts-ignore
+            && this.froalaEditorDirective.getEditor()
+            // @ts-ignore
+            && this.froalaEditorDirective.getEditor().el
+            // @ts-ignore
+            && this.froalaEditorDirective.getEditor().el.innerHTML
+        ) {
+            // @ts-ignore
+            innerHTML = this.froalaEditorDirective.getEditor().el.innerHTML
+        }
+
+        // Save the qualified change!
+        this.model.set(
+            this.property,
+            this.normalizeOut(innerHTML || value)
+        )
+        if (this.forceSave) {
+            this.model.save()
         }
     }
 

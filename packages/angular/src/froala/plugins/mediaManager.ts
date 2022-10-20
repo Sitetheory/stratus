@@ -2,6 +2,9 @@
 import {
     InputButtonPlugin
 } from '@stratusjs/angular/froala/plugins/inputButton'
+import {
+    MediaEmbed
+} from '@stratusjs/angular/editor/media-dialog.component'
 
 // @ts-ignore
 import FroalaEditor from 'froala-editor'
@@ -17,14 +20,25 @@ FroalaEditor.DEFAULTS = Object.assign(FroalaEditor.DEFAULTS, {
 FroalaEditor.PLUGINS.mediaManager = function mediaManager (editor: any) {
     let inputButton: InputButtonPlugin
 
+    // const imagePlugin = FroalaEditor.PLUGINS.image(editor)
     const debug = false
 
     // When the plugin is initialized,this will be called.
     function _init() {
-        inputButton = new InputButtonPlugin({
+        inputButton = new InputButtonPlugin<MediaEmbed>({
             name: 'Media Manager',
             eventName: 'media-library',
             editor,
+            insert: (media: MediaEmbed) => {
+                // if (media.type === 'image') {
+                //     imagePlugin.insert(media.url, true, media.attrs)
+                // } else {
+                //     editor.html.insert(media.html)
+                // }
+                editor.html.insert(media.html)
+            },
+            autoSaveSelection: true,
+            autoRestoreSelection: true,
             debug
         })
 
@@ -68,10 +82,6 @@ FroalaEditor.DEFAULTS.imageInsertButtons.push('mediaManager'),
         focus: false,
         modal: true,
         callback() {
-            const debug = false
-            if (debug) {
-                console.log('clicked:', this.mediaManager)
-            }
             this.mediaManager.onClick()
         },
         plugin: 'mediaManager',
@@ -91,11 +101,17 @@ FroalaEditor.RegisterQuickInsertButton('media', {
     // Callback for the button.
     callback: function mediaManagerCallback () {
         const debug = false
-        const inputButton = new InputButtonPlugin({
+        const inputButton = new InputButtonPlugin<MediaEmbed>({
             name: 'Media Manager',
             eventName: 'media-library',
             // Contextual `this` is equivalent to the editor instance
             editor: this,
+            insert: (media: MediaEmbed) => {
+                // console.log('media to insert directly:', media)
+                this.html.insert(media.html)
+            },
+            autoSaveSelection: true,
+            autoRestoreSelection: true,
             debug
         })
         if (!this.el) {
