@@ -19,7 +19,7 @@ import {
 } from '@angular/forms'*/
 
 // Runtime
-import _ from 'lodash'
+import {clone, includes, isEmpty, isString, set, snakeCase, uniqueId} from 'lodash'
 import {keys} from 'ts-transformer-keys'
 
 // Stratus Dependencies
@@ -89,7 +89,7 @@ export class StripePaymentMethodComponent extends RootComponent implements OnDes
         super()
 
         // Initialization
-        this.uid = _.uniqueId(`sa_${_.snakeCase(this.title)}_`)
+        this.uid = uniqueId(`sa_${snakeCase(this.title)}_`)
         Stratus.Instances[this.uid] = this
         this.elementId = this.elementId || this.uid
 
@@ -108,11 +108,11 @@ export class StripePaymentMethodComponent extends RootComponent implements OnDes
         this.hydrate(this.elementRef, this.sanitizer, keys<StripePaymentMethodComponent>())
 
         // Hydrate Dialog Data
-        if (!_.isEmpty(this.dialogData)) {
+        if (!isEmpty(this.dialogData)) {
             const keysPossible = keys<StripePaymentMethodDialogData>()
             Object.keys(this.dialogData).forEach((attr) => {
-                if (!_.isEmpty(attr) && _.includes(keysPossible, attr)) {
-                    _.set(this, attr, this.dialogData[attr as keyof StripePaymentMethodDialogData])
+                if (!isEmpty(attr) && includes(keysPossible, attr)) {
+                    set(this, attr, this.dialogData[attr as keyof StripePaymentMethodDialogData])
                 }
             })
         }
@@ -131,7 +131,7 @@ export class StripePaymentMethodComponent extends RootComponent implements OnDes
             options,
             `#${this.elementId}-mount`
         )
-        console.log('loading', _.clone(options))
+        console.log('loading', clone(options))
         // Render the Card
         // this.card.mount(`#${this.elementId}-mount`)
         // Provide possible Stripe errors
@@ -172,12 +172,12 @@ export class StripePaymentMethodComponent extends RootComponent implements OnDes
      */
     isBillingDetailsFilled() {
         if (
-            !_.isEmpty(this.billingInfo.name) &&
-            !_.isEmpty(this.billingInfo.email) &&
-            !_.isEmpty(this.billingInfo.address.line1) &&
-            !_.isEmpty(this.billingInfo.address.city) &&
-            !_.isEmpty(this.billingInfo.address.state) &&
-            !_.isEmpty(this.billingInfo.address.postal_code)
+            !isEmpty(this.billingInfo.name) &&
+            !isEmpty(this.billingInfo.email) &&
+            !isEmpty(this.billingInfo.address.line1) &&
+            !isEmpty(this.billingInfo.address.city) &&
+            !isEmpty(this.billingInfo.address.state) &&
+            !isEmpty(this.billingInfo.address.postal_code)
         ) {
             // TODO not checking this yet
         }
@@ -230,7 +230,7 @@ export class StripePaymentMethodComponent extends RootComponent implements OnDes
 
         if (
             setupIntent.status === 'succeeded'
-            && _.isString(setupIntent.payment_method)
+            && isString(setupIntent.payment_method)
         ) {
             // The setup has succeeded.
             // Send setupIntent.payment_method to your server to save the card to a Customer as default
