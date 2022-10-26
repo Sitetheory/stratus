@@ -13,7 +13,7 @@ import {
 } from '@angular/material/dialog'
 
 // Runtime
-import {isEmpty, snakeCase, uniqueId} from 'lodash'
+import {isEmpty, clone, snakeCase, uniqueId} from 'lodash'
 import {keys} from 'ts-transformer-keys'
 
 // Stratus Dependencies
@@ -53,6 +53,7 @@ export class StripeSetupIntentComponent extends RootComponent implements OnInit 
     newPaymentMethodPending = false
 
     @Input() detailedBillingInfo?: boolean
+    @Input() defaultBillingInfo?: stripe.BillingDetails
     paymentMethodApiPath = 'PaymentMethod'
 
     constructor(
@@ -151,7 +152,8 @@ export class StripeSetupIntentComponent extends RootComponent implements OnInit 
                 clientSecret,
                 publishKey,
                 formMessage,
-                detailedBillingInfo: this.detailedBillingInfo
+                detailedBillingInfo: this.detailedBillingInfo,
+                defaultBillingInfo: this.defaultBillingInfo
             } as StripePaymentMethodDialogData
         })
 

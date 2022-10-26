@@ -19,7 +19,7 @@ import {
 } from '@angular/forms'*/
 
 // Runtime
-import {clone, includes, isEmpty, isString, set, snakeCase, uniqueId} from 'lodash'
+import {assignIn, includes, isEmpty, isObject, isString, set, snakeCase, uniqueId} from 'lodash'
 import {keys} from 'ts-transformer-keys'
 
 // Stratus Dependencies
@@ -71,6 +71,7 @@ export class StripePaymentMethodComponent extends RootComponent implements OnDes
     @Input() publishKey = ''
     @Input() formMessage = ''
     @Input() detailedBillingInfo?: boolean
+    @Input() defaultBillingInfo?: stripe.BillingDetails
     paymentMethodApiPath = 'PaymentMethod'
     billingInfo: stripe.BillingDetails = { // fixme should copy stripe.BillingDetails // PaymentBillingInfo
         address: {}
@@ -116,12 +117,17 @@ export class StripePaymentMethodComponent extends RootComponent implements OnDes
                 }
             })
         }
+
+        if (isObject(this.defaultBillingInfo)) {
+            // Adds any of this extra data to the payment model
+            assignIn(this.billingInfo, this.defaultBillingInfo)
+        }
     }
 
     async ngOnInit() {
+        // noinspection RedundantConditionalExpressionJS - dont simplify detailedBillingInfo. needs to be converted to boolean
         const options: stripe.elements.ElementsOptions = {
             // {} // style options
-            // FIXME dont simplify. detailedBillingInfo needs to be converted to boolean
             hidePostalCode: this.detailedBillingInfo ? true : false // option can remove postal
         }
         this.cardId = await this.Stripe.createElement(
@@ -131,14 +137,14 @@ export class StripePaymentMethodComponent extends RootComponent implements OnDes
             options,
             `#${this.elementId}-mount`
         )
-        console.log('loading', clone(options))
+        // console.log('loading', clone(options))
         // Render the Card
         // this.card.mount(`#${this.elementId}-mount`)
         // Provide possible Stripe errors
         // this.card.addEventListener('change', (event) => {
         this.Stripe.elementAddEventListener(this.cardId, 'change', (event: stripe.elements.ElementChangeResponse) => {
             const displayError = document.getElementById(`${this.elementId}-errors`)
-            console.log('event', event) // Can get postal code from here
+            // console.log('event', event) // Can get postal code from here
             // need to track if button is able to save
             if (
                 Object.prototype.hasOwnProperty.call(event, 'complete') &&
@@ -267,7 +273,7 @@ export class StripePaymentMethodComponent extends RootComponent implements OnDes
     }
 
     ngOnDestroy() {
-        console.warn('local destroying stratus', this.uid)
+        // console.warn('local destroying stratus', this.uid)
         if (this.cardId) {
             this.Stripe.destroyElement(this.cardId)
         }
@@ -282,4 +288,5 @@ export interface StripePaymentMethodDialogData {
     publishKey: string
     formMessage: string
     detailedBillingInfo?: boolean
+    defaultBillingInfo?: stripe.BillingDetails
 }

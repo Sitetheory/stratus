@@ -11,7 +11,7 @@ import {
 import {DomSanitizer} from '@angular/platform-browser'
 
 // Runtime
-import _ from 'lodash'
+import {clone, isEmpty, snakeCase, uniqueId} from 'lodash'
 import {keys} from 'ts-transformer-keys'
 
 // Stratus Dependencies
@@ -32,7 +32,7 @@ import {EventManager} from '@stratusjs/core/events/eventManager'
 import {Observable, ObservableInput, Subscriber, timer} from 'rxjs'
 import {catchError, debounce} from 'rxjs/operators'
 import {FormBuilder, FormControl, FormGroup} from '@angular/forms'
-import {LooseObject} from '@stratusjs/core/misc'
+import {isJSON, LooseObject} from '@stratusjs/core/misc'
 // import {EventBase} from '@stratusjs/core/events/eventBase'
 
 // Local Setup
@@ -74,6 +74,15 @@ export class StripePaymentMethodSelectorComponent extends RootComponent implemen
     // Component Attributes
     @Input() property: string
     @Input() detailedBillingInfo?: boolean
+    @Input() defaultBillingName?: string
+    @Input() defaultBillingEmail?: string
+    @Input() defaultBillingPhone?: string
+    @Input() defaultBillingZip?: string
+    @Input() defaultBillingState?: string
+    @Input() defaultBillingCity?: string
+    @Input() defaultBillingAddress1?: string
+    @Input() defaultBillingAddress2?: string
+    defaultBillingInfo: stripe.BillingDetails = {address: {}}
     fieldName = 'paymentSelection'
     fieldNameId = 'paymentSelectionId'
 
@@ -108,7 +117,7 @@ export class StripePaymentMethodSelectorComponent extends RootComponent implemen
         super()
 
         // Initialization
-        this.uid = _.uniqueId(`sa_${_.snakeCase(this.title)}_`)
+        this.uid = uniqueId(`sa_${snakeCase(this.title)}_`)
         Stratus.Instances[this.uid] = this
         this.elementId = this.elementId || this.uid
 
@@ -135,6 +144,31 @@ export class StripePaymentMethodSelectorComponent extends RootComponent implemen
 
         // Hydrate Root App Inputs
         this.hydrate(this.elementRef, this.sanitizer, keys<StripePaymentMethodSelectorComponent>())
+
+        if (this.defaultBillingName) {
+            this.defaultBillingInfo.name = this.defaultBillingName
+        }
+        if (this.defaultBillingEmail) {
+            this.defaultBillingInfo.email = this.defaultBillingEmail
+        }
+        if (this.defaultBillingPhone) {
+            this.defaultBillingInfo.phone = this.defaultBillingPhone
+        }
+        if (this.defaultBillingZip) {
+            this.defaultBillingInfo.address.postal_code = this.defaultBillingZip
+        }
+        if (this.defaultBillingState) {
+            this.defaultBillingInfo.address.state = this.defaultBillingState
+        }
+        if (this.defaultBillingCity) {
+            this.defaultBillingInfo.address.city = this.defaultBillingCity
+        }
+        if (this.defaultBillingAddress1) {
+            this.defaultBillingInfo.address.line1 = this.defaultBillingAddress1
+        }
+        if (this.defaultBillingAddress2) {
+            this.defaultBillingInfo.address.line2 = this.defaultBillingAddress2
+        }
 
         if (this.registryModel !== false && this.registryModel !== 'false') {
             // FIXME the current saved payment doesn't get reselected. may need to use 'Responsive' functions (dettach)
@@ -261,8 +295,8 @@ export class StripePaymentMethodSelectorComponent extends RootComponent implemen
         // console.log('normalizeOut on', model)
         /*if (
             !model || !model.hasOwnProperty('id') ||
-            // !_.isSafeInteger(model.data.id)
-            !_.isSafeInteger(model.id)
+            // !isSafeInteger(model.data.id)
+            !isSafeInteger(model.id)
         ) {
             return null
         }*/
@@ -278,7 +312,7 @@ export class StripePaymentMethodSelectorComponent extends RootComponent implemen
         return new Model({}, data)
         // return data
         // Normalize non-int values to strings.
-        /*if (!data || !_.isSafeInteger(data)) {
+        /*if (!data || !isSafeInteger(data)) {
             return null
         }
         return data*/

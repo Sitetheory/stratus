@@ -12,6 +12,10 @@
                 <input matInput [(ngModel)]="billingInfo.email" [disabled]="!isEditable()">
             </mat-form-field>
             <mat-form-field class="md-block">
+                <mat-label>Phone</mat-label>
+                <input matInput [(ngModel)]="billingInfo.phone" [disabled]="!isEditable()">
+            </mat-form-field>
+            <mat-form-field class="md-block">
                 <mat-label>Address</mat-label>
                 <input matInput [(ngModel)]="billingInfo.address.line1" [disabled]="!isEditable()">
             </mat-form-field>
