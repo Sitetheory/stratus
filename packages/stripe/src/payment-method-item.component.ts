@@ -97,6 +97,10 @@ export class StripePaymentMethodItemComponent extends RootComponent implements O
 
     }
 
+    getCardLogoUrl(brand: string) {
+        return `${localDir}/images/card/${brand}.png`
+    }
+
     /*ngAfterViewInit() {
         this.paymentItemComponentPortal = new ComponentPortal(StripePaymentMethodItem)
     }*/

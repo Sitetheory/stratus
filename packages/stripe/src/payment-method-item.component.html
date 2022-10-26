@@ -24,8 +24,11 @@
             <mat-grid-tile colspan="3">
                 <span [innerHTML]="model.data.name" class="aligned-tile name" [style.justifyContent]="'flex-start'"></span>
             </mat-grid-tile>
-            <mat-grid-tile colspan="1">
-                <span [innerHTML]="model.data.brand" class="aligned-tile brand" [style.justifyContent]="'flex-start'"></span>
+            <mat-grid-tile colspan="1" [style.justifyContent]="'flex-start'">
+                <!--span [innerHTML]="model.data.brand" class="aligned-tile brand" [style.justifyContent]="'flex-start'"></span-->
+                <div class="aligned-tile">
+                    <img [src]="getCardLogoUrl(model.data.brand)" [alt]="model.data.brand" class="brand"/>
+                </div>
             </mat-grid-tile>
             <mat-grid-tile colspan="2">
                 <span class="aligned-tile last-four" [style.justifyContent]="'flex-end'">...<span [innerHTML]="model.data.last4"></span></span>
