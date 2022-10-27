@@ -1,11 +1,15 @@
 @white-color: #fff;
 @light-blue-color: #f4faff;
 @light-grey-color: #f5f5f5;
+@medium-grey-color: #d3d3d3;
 sa-stripe-payment-method-item {
   mat-card.payment-method-container {
     position: relative;
     margin: 5px 1px;
     background-color: @light-blue-color;
+    &expired {
+      background-color: @medium-grey-color;
+    }
     mat-card-content {
       animation: background-color 2s ease-out both;
       -webkit-animation: background-color 2s ease-out both;
@@ -16,6 +20,12 @@ sa-stripe-payment-method-item {
     mat-grid-tile .aligned-tile {
       display: flex;
       width: 100%;
+    }
+    .expiration.expiring {
+      background-color: #ff000061;
+      border-radius: 25px;
+      padding: 0 3px;
+      line-height: 1.5;
     }
     .action-buttons {
       position: absolute;

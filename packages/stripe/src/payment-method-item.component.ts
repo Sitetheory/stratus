@@ -101,6 +101,28 @@ export class StripePaymentMethodItemComponent extends RootComponent implements O
         return `${localDir}/images/card/${brand}.png`
     }
 
+    isExpired() {
+        if (this.model.pending) {return false}
+        const d = new Date()
+        const month = d.getMonth()+1
+        const year = d.getFullYear()
+
+        if (this.model.data.exp_year < year) {return true}
+        if (this.model.data.exp_year > year) {return false}
+        return this.model.data.exp_month < month
+    }
+
+    isExpiring() {
+        if (this.model.pending) {return false}
+        const d = new Date()
+        const month = d.getMonth()+1
+        const year = d.getFullYear()
+
+        if (this.model.data.exp_year < year) {return true}
+        if (this.model.data.exp_year > year) {return false}
+        return this.model.data.exp_month <= month
+    }
+
     /*ngAfterViewInit() {
         this.paymentItemComponentPortal = new ComponentPortal(StripePaymentMethodItem)
     }*/

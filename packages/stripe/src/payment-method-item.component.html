@@ -3,6 +3,7 @@
         [attr.id]="elementId"
         [class.model-changed]="model.changed"
         [class.model-pending]="model.pending"
+        [class.expired]="isExpired()"
 >
     <button href="javascript:void(0)"
             tabindex="-1"
@@ -34,9 +35,11 @@
                 <span class="aligned-tile last-four" [style.justifyContent]="'flex-end'">...<span [innerHTML]="model.data.last4"></span></span>
             </mat-grid-tile>
             <mat-grid-tile colspan="3">
-                <span class="aligned-tile expiration" [style.justifyContent]="'flex-end'">
-                    Expires <span [innerHTML]="model.data.exp_month"></span>/<span [innerHTML]="model.data.exp_year"></span>
-                </span>
+                <div class="aligned-tile" [style.justifyContent]="'flex-end'">
+                    <span class="expiration" [class.expiring]="isExpiring()">
+                        Expires <span [innerHTML]="model.data.exp_month"></span>/<span [innerHTML]="model.data.exp_year"></span>
+                    </span>
+                </div>
             </mat-grid-tile>
         </mat-grid-list>
     </mat-card-content>
