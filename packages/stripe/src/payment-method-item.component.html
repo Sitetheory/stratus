@@ -5,10 +5,10 @@
         [class.model-pending]="model.pending"
         [class.expired]="isExpired()"
 >
-    <button href="javascript:void(0)"
+    <button
             tabindex="-1"
             [disabled]="!model.completed || model.pending"
-            (click)="show($event)"
+            (click)="deletePM($event)"
             class="action-buttons delete-button default-border-radius"
             matTooltip="Delete Payment Method"
             *ngIf="editable"

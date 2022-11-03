@@ -11,7 +11,7 @@ import {
 import {DomSanitizer} from '@angular/platform-browser'
 
 // Runtime
-import {clone, isEmpty, snakeCase, uniqueId} from 'lodash'
+import {snakeCase, uniqueId} from 'lodash'
 import {keys} from 'ts-transformer-keys'
 
 // Stratus Dependencies
@@ -32,7 +32,7 @@ import {EventManager} from '@stratusjs/core/events/eventManager'
 import {Observable, ObservableInput, Subscriber, timer} from 'rxjs'
 import {catchError, debounce} from 'rxjs/operators'
 import {FormBuilder, FormControl, FormGroup} from '@angular/forms'
-import {isJSON, LooseObject} from '@stratusjs/core/misc'
+import {LooseObject} from '@stratusjs/core/misc'
 // import {EventBase} from '@stratusjs/core/events/eventBase'
 
 // Local Setup
@@ -392,6 +392,17 @@ export class StripePaymentMethodSelectorComponent extends RootComponent implemen
     handleObservableError(err: ObservableInput<any>): ObservableInput<any> {
         console.error(err)
         return err
+    }
+
+    isPMExpired(paymentMethod: Model) {
+        if (paymentMethod.pending) {return false}
+        const d = new Date()
+        const month = d.getMonth()+1
+        const year = d.getFullYear()
+
+        if (paymentMethod.data.exp_year < year) {return true}
+        if (paymentMethod.data.exp_year > year) {return false}
+        return paymentMethod.data.exp_month < month
     }
 
 }

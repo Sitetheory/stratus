@@ -7,8 +7,22 @@ sa-stripe-payment-method-item {
     position: relative;
     margin: 5px 1px;
     background-color: @light-blue-color;
-    &expired {
+    &.expired {
       background-color: @medium-grey-color;
+      &:before {
+        overflow: hidden;
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        content: 'EXPIRED';
+        color: #eeeeee63;
+        font-size: 76px;
+        text-align: center;
+        line-height: 1.8;
+        transform: rotate(-13deg);
+      }
     }
     mat-card-content {
       animation: background-color 2s ease-out both;
@@ -33,6 +47,7 @@ sa-stripe-payment-method-item {
       -webkit-animation: opacity 0.3s ease-out both;
       opacity: 0;
       top: 4px;
+      z-index: 2;
       &.save-button {
         right: 28px;
       }

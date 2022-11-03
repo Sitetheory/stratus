@@ -27,6 +27,7 @@
             <mat-option
                     *ngFor="let paymentMethod of paymentCollection.models"
                     [value]="paymentMethod"
+                    [disabled]="isPMExpired(paymentMethod)"
             >
                 <sa-stripe-payment-method-item [(model)]="paymentMethod" [editable]="true"></sa-stripe-payment-method-item>
             </mat-option>

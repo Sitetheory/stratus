@@ -16,8 +16,15 @@ import {
     Stratus
 } from '@stratusjs/runtime/stratus'
 import {RootComponent} from '@stratusjs/angular/core/root.component'
+import {ConfirmDialogComponent} from '@stratusjs/angular/confirm-dialog/confirm-dialog.component'
 import {Model} from '@stratusjs/angularjs/services/model'
 import {cookie} from '@stratusjs/core/environment'
+
+// Material
+import {
+    MatDialog,
+    MatDialogRef
+} from '@angular/material/dialog'
 
 // Services
 // import {StripeService} from '@stratusjs/stripe/stripe.service'
@@ -49,9 +56,8 @@ export class StripePaymentMethodItemComponent extends RootComponent implements O
     styled = false
     initialized = false
 
-    paymentMethodApiPath = 'PaymentMethod'
-
     constructor(
+        private dialog: MatDialog,
         private elementRef: ElementRef,
         private sanitizer: DomSanitizer,
         // private Stripe: StripeService,
@@ -75,14 +81,6 @@ export class StripePaymentMethodItemComponent extends RootComponent implements O
                 this.styled = false
             })
 
-        // TODO needs to make use of Observables
-        /*this.collection = new Collection({
-            autoSave: false,
-            target: this.paymentMethodApiPath,
-            watch: true
-            // TODO remove pagination?
-        })*/
-
         // Hydrate Root App Inputs
         this.hydrate(this.elementRef, this.sanitizer, keys<StripePaymentMethodItemComponent>())
     }
@@ -91,8 +89,6 @@ export class StripePaymentMethodItemComponent extends RootComponent implements O
      * On load, attempt to prepare and render the Card element
      */
     async ngOnInit() {
-        /*await this.fetchPaymentMethods()
-        this.Stripe.registerCollection(this.collection)*/
         this.initialized = true
 
     }
@@ -127,8 +123,40 @@ export class StripePaymentMethodItemComponent extends RootComponent implements O
         this.paymentItemComponentPortal = new ComponentPortal(StripePaymentMethodItem)
     }*/
 
-    /*async fetchPaymentMethods() {
-        await this.collection.fetch()
-    }*/
+    deletePM(event?: Event) {
+        if(event) {
+            event.stopPropagation()
+        }
+        // Event will be empty
+        this.deletePMConfirmation()
+        return false
+    }
 
+    public deletePMConfirmation(): MatDialogRef<ConfirmDialogComponent, any> {
+        const dialog = this.dialog
+            .open(ConfirmDialogComponent, {
+                maxWidth: '400px',
+                data: {
+                    title: 'Delete Payment Method',
+                    message: 'Are you sure you wish to remove this payment method from your personal account?'
+                }
+            })
+        dialog
+            .afterClosed()
+            .subscribe(async (dialogResult: boolean) => {
+                if (!dialogResult) {
+                    return
+                }
+                let collection
+                if (this.model.collection) {
+                    collection = this.model.collection
+                }
+                await this.model.destroy()
+                if (collection) {
+                    // Refetch to get current PMs
+                    collection.fetch()
+                }
+            })
+        return dialog
+    }
 }
