@@ -15,6 +15,7 @@ import {ModelBase} from '@stratusjs/core/datastore/modelBase'
 import {EventManager} from '@stratusjs/core/events/eventManager'
 import {cookie} from '@stratusjs/core/environment'
 import {
+    isJSON,
     LooseFunction,
     LooseObject,
     ucfirst
@@ -85,6 +86,8 @@ export interface CollectionOptions {
     // threshold?: number,
     urlRoot?: string,
     watch?: boolean,
+    payload?: string,
+    convoy?: string,
 }
 
 export interface CollectionModelOptions extends ModelOptions {
@@ -164,6 +167,34 @@ export class Collection<T = LooseObject> extends EventManager {
         // Generate URL
         if (this.target) {
             this.urlRoot += '/' + ucfirst(this.target)
+        }
+
+        // Handle Convoy
+        if (options.convoy) {
+            const convoy = isJSON(options.convoy) ? JSON.parse(options.convoy) : options.convoy
+            if (_.isObject(convoy)) {
+                this.meta.set((convoy as LooseObject).meta || {})
+                const models = (convoy as LooseObject).payload
+                if (_.isArray(models)) {
+                    this.inject(models)
+                    this.completed = true
+                } else {
+                    console.error('malformed payload:', models)
+                }
+            } else {
+                console.error('malformed convoy:', convoy)
+            }
+        }
+
+        // Handle Payload
+        if (options.payload) {
+            const models = isJSON(options.payload) ? JSON.parse(options.payload) : options.payload
+            if (_.isArray(models)) {
+                this.inject(models)
+                this.completed = true
+            } else {
+                console.error('malformed payload:', models)
+            }
         }
 
         // Scope Binding

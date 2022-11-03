@@ -17,6 +17,7 @@ import {getInjector} from '@stratusjs/angularjs/injector'
 // AngularJS Services
 import {Model, ModelOptionKeys, ModelOptions} from '@stratusjs/angularjs/services/model'
 import {Collection, CollectionOptionKeys, CollectionOptions} from '@stratusjs/angularjs/services/collection'
+import {EventManager} from '@stratusjs/core/events/eventManager'
 
 // Instantiate Injector
 let injector = getInjector()
@@ -171,6 +172,11 @@ export class Registry {
     ): Collection | Model {
         let data: Collection | Model
         // TODO: Code golf this function to be only 1 level
+        // Ensure we don't fetch if the data is already available
+        if (options.payload || options.convoy) {
+            options.fetch = false
+        }
+        // Lookup Reference based on Target (and id if present)
         if (options.target) {
             options.target = ucfirst(options.target)
 
@@ -252,18 +258,22 @@ export class Registry {
                 $scope.data = data
                 if (data instanceof Model) {
                     $scope.model = data
-                    if (typeof $scope.$applyAsync === 'function') {
-                        $scope.model.on('change', () => {
-                            // console.log('changed:', $scope)
-                            $scope.$applyAsync()
-                        })
-                        $scope.model.on('error', () => {
-                            // console.log('errored:', $scope)
-                            $scope.$applyAsync()
-                        })
-                    }
                 } else if (data instanceof Collection) {
                     $scope.collection = data
+                }
+                // bind changes to redraw
+                if (data instanceof EventManager && typeof $scope.$applyAsync === 'function') {
+                    data.on('change', () => {
+                        // console.log('changed:', $scope)
+                        $scope.$applyAsync()
+                    })
+                    data.on('error', () => {
+                        // console.log('errored:', $scope)
+                        $scope.$applyAsync()
+                    })
+                    if (data.completed) {
+                        $scope.$applyAsync()
+                    }
                 }
             }
             if (!data.pending
