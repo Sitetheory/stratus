@@ -16,6 +16,7 @@ import {
 import {
     getAnchorParams,
     getUrlParams,
+    isJSON,
     LooseObject,
     patch,
     setUrlParams,
@@ -108,6 +109,8 @@ export interface ModelOptions extends ModelBaseOptions {
     urlSync?: boolean,
     watch?: boolean,
     withCredentials?: boolean,
+    payload?: string,
+    convoy?: string,
 }
 
 export const ModelOptionKeys = keys<ModelOptions>()
@@ -181,6 +184,36 @@ export class Model<T = LooseObject> extends ModelBase<T> {
 
         // Inject Options
         _.extend(this, this.sanitizeOptions(options))
+
+        // Handle Convoy
+        if (options.convoy) {
+            const convoy = isJSON(options.convoy) ? JSON.parse(options.convoy) : options.convoy
+            if (_.isObject(convoy)) {
+                this.meta.set((convoy as LooseObject).meta || {})
+                const payload = (convoy as LooseObject).payload
+                if (_.isObject(payload)) {
+                    _.extend(this.data, payload)
+                    this.completed = true
+                    options.received = true
+                } else {
+                    console.error('malformed payload:', payload)
+                }
+            } else {
+                console.error('malformed convoy:', convoy)
+            }
+        }
+
+        // Handle Payload
+        if (options.payload) {
+            const payload = isJSON(options.payload) ? JSON.parse(options.payload) : options.payload
+            if (_.isObject(payload)) {
+                _.extend(this.data, payload)
+                this.completed = true
+                options.received = true
+            } else {
+                console.error('malformed payload:', payload)
+            }
+        }
 
         // The data used to detect the data is changed.
         // this.initData = {}
