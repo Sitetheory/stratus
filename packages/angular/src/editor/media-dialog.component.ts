@@ -297,7 +297,7 @@ export class MediaDialogComponent extends ResponsiveComponent implements OnInit 
                 // type: 'image',
                 // url: media._thumbnailUrl || media.file,
                 // attrs,
-                html: `<img src="${media._thumbnailUrl || media.file}" alt="${media.name || media.filename}" ${media.mime !== 'image/gif' ? 'data-stratus-src' : ''}">`
+                html: `<img src="${media._thumbnailUrl || media.file}" alt="${media.name || media.filename}" ${media.mime !== 'image/gif' ? 'data-stratus-src' : ''}>`
             }
         }
         if (media.mime === 'video') {
