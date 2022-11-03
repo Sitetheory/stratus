@@ -13,7 +13,7 @@ import {
 } from '@angular/material/dialog'
 
 // Runtime
-import {isEmpty, clone, snakeCase, uniqueId} from 'lodash'
+import {isEmpty, snakeCase, uniqueId} from 'lodash'
 import {keys} from 'ts-transformer-keys'
 
 // Stratus Dependencies
