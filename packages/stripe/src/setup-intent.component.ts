@@ -13,7 +13,7 @@ import {
 } from '@angular/material/dialog'
 
 // Runtime
-import _ from 'lodash'
+import {isEmpty, snakeCase, uniqueId} from 'lodash'
 import {keys} from 'ts-transformer-keys'
 
 // Stratus Dependencies
@@ -53,6 +53,7 @@ export class StripeSetupIntentComponent extends RootComponent implements OnInit 
     newPaymentMethodPending = false
 
     @Input() detailedBillingInfo?: boolean
+    @Input() defaultBillingInfo?: stripe.BillingDetails
     paymentMethodApiPath = 'PaymentMethod'
 
     constructor(
@@ -64,7 +65,7 @@ export class StripeSetupIntentComponent extends RootComponent implements OnInit 
         super()
 
         // Initialization
-        this.uid = _.uniqueId(`sa_${_.snakeCase(this.title)}_`)
+        this.uid = uniqueId(`sa_${snakeCase(this.title)}_`)
         Stratus.Instances[this.uid] = this
         this.elementId = this.elementId || this.uid
 
@@ -89,7 +90,7 @@ export class StripeSetupIntentComponent extends RootComponent implements OnInit 
 
     async addPaymentMethod(ev?: any) {
         if (!this.newPaymentMethodPending && !this.newPaymentMethodPrompt) {
-            console.log('running addPaymentMethod')
+            // console.log('running addPaymentMethod')
             let clientSecret = ''
             let publishKey = ''
             let formMessage = ''
@@ -100,7 +101,7 @@ export class StripeSetupIntentComponent extends RootComponent implements OnInit 
             })
             model.data.setupIntent = true
             await model.save()
-            console.log('model', model)
+            // console.log('model', model)
             if (
                 Object.prototype.hasOwnProperty.call(model, 'meta') &&
                 Object.prototype.hasOwnProperty.call(model.meta, 'data')
@@ -108,15 +109,15 @@ export class StripeSetupIntentComponent extends RootComponent implements OnInit 
                 if (
                     Object.prototype.hasOwnProperty.call(model.meta.data, 'clientSecret') &&
                     Object.prototype.hasOwnProperty.call(model.meta.data, 'publishKey') &&
-                    !_.isEmpty(model.meta.data.clientSecret) &&
-                    !_.isEmpty(model.meta.data.publishKey)
+                    !isEmpty(model.meta.data.clientSecret) &&
+                    !isEmpty(model.meta.data.publishKey)
                 ) {
                     clientSecret = model.meta.data.clientSecret
                     publishKey = model.meta.data.publishKey
                 }
                 if (
                     Object.prototype.hasOwnProperty.call(model.meta.data, 'formMessage') &&
-                    !_.isEmpty(model.meta.data.formMessage)
+                    !isEmpty(model.meta.data.formMessage)
                 ) {
                     formMessage = model.meta.data.formMessage
                 }
@@ -124,10 +125,10 @@ export class StripeSetupIntentComponent extends RootComponent implements OnInit 
             // TODO check status
 
             if (
-                !_.isEmpty(clientSecret) &&
-                !_.isEmpty(publishKey)
+                !isEmpty(clientSecret) &&
+                !isEmpty(publishKey)
             ) {
-                console.log('got client and publish, will make an input')
+                // console.log('got client and publish, will make an input')
                 this.newPaymentMethodPrompt = true
                 this.inputPaymentMethod(clientSecret, publishKey, formMessage, ev)
             }
@@ -151,13 +152,14 @@ export class StripeSetupIntentComponent extends RootComponent implements OnInit 
                 clientSecret,
                 publishKey,
                 formMessage,
-                detailedBillingInfo: this.detailedBillingInfo
+                detailedBillingInfo: this.detailedBillingInfo,
+                defaultBillingInfo: this.defaultBillingInfo
             } as StripePaymentMethodDialogData
         })
 
         dialogRef.afterClosed().subscribe((result: StripePaymentMethodDialogData) => {
             this.newPaymentMethodPrompt = false
-            if (!result || _.isEmpty(result)) {
+            if (!result || isEmpty(result)) {
                 return
             }
 
@@ -166,7 +168,7 @@ export class StripeSetupIntentComponent extends RootComponent implements OnInit 
                 // this.dev &&
                 result
             ) {
-                console.log('payment dialog result:', result)
+                // console.log('payment dialog result:', result)
             }
         })
     }

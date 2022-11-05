@@ -27,6 +27,7 @@
             <mat-option
                     *ngFor="let paymentMethod of paymentCollection.models"
                     [value]="paymentMethod"
+                    [disabled]="isPMExpired(paymentMethod)"
             >
                 <sa-stripe-payment-method-item [(model)]="paymentMethod" [editable]="true"></sa-stripe-payment-method-item>
             </mat-option>
@@ -34,7 +35,7 @@
                     [hidden]="!paymentCollection.completed || paymentCollection.pending"
                     [disabled]="true"
             >
-                <sa-stripe-setup-intent data-detailed-billing-info="true"></sa-stripe-setup-intent>
+                <sa-stripe-setup-intent data-detailed-billing-info="true" [defaultBillingInfo]="defaultBillingInfo"></sa-stripe-setup-intent>
             </mat-option>
         </mat-select>
         <input formControlName="{{fieldNameId}}" [attr.id]="elementId+'_'+fieldNameId" type="text" style="display: none;">

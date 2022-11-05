@@ -10,7 +10,7 @@ import {
 import {DomSanitizer} from '@angular/platform-browser'
 
 // Runtime
-import _ from 'lodash'
+import {snakeCase, uniqueId} from 'lodash'
 import {keys} from 'ts-transformer-keys'
 
 // Stratus Dependencies
@@ -65,7 +65,7 @@ export class StripePaymentMethodListComponent extends RootComponent implements A
         super()
 
         // Initialization
-        this.uid = _.uniqueId(`sa_${_.snakeCase(this.title)}_`)
+        this.uid = uniqueId(`sa_${snakeCase(this.title)}_`)
         Stratus.Instances[this.uid] = this
         this.elementId = this.elementId || this.uid
 

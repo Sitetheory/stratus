@@ -1,7 +1,7 @@
 // Angular Core
 import { Injectable } from '@angular/core'
 // Runtime
-import _ from 'lodash'
+import {isEmpty, isNil, isString, uniqueId} from 'lodash'
 
 // Stratus Dependencies
 import {Stratus} from '@stratusjs/runtime/stratus'
@@ -96,7 +96,7 @@ export class StripeService {
         options?: stripe.ConfirmCardSetupOptions,
     ): Promise<stripe.SetupIntentResponse> {
         if (
-            _.isEmpty(this.currentElement) ||
+            isEmpty(this.currentElement) ||
             this.currentElement.id !== id
         ) {
             // TODO throw
@@ -114,10 +114,10 @@ export class StripeService {
         }
         if (
             data
-            && !_.isEmpty(data.payment_method)
-            && !_.isString(data.payment_method)
-            && !_.isEmpty(data.payment_method.billing_details)
-            && !_.isString(stripeData.payment_method)
+            && !isEmpty(data.payment_method)
+            && !isString(data.payment_method)
+            && !isEmpty(data.payment_method.billing_details)
+            && !isString(stripeData.payment_method)
         ) {
             stripeData.payment_method.billing_details = data.payment_method.billing_details
         }
@@ -131,7 +131,7 @@ export class StripeService {
     fetchCollections() {
         this.collections.forEach((collection) => {
             collection.fetch()
-            console.log('refetching this collection')
+            // console.log('refetching this collection')
         })
     }
 
@@ -143,13 +143,13 @@ export class StripeService {
         options: stripe.elements.ElementsOptions,
         mountElement?: any
     ) {
-        if (!_.isEmpty(this.currentElement)) {
+        if (!isEmpty(this.currentElement)) {
             console.warn('StripeElement for', this.currentElement.id, 'already exists. Destroying existing (consider cleaning up first)')
             this.destroyElement()
         }
         const element = (await this.elements(publishKey)).create(paymentMethodType, options)
         this.currentElement = {
-            id: _.uniqueId(id+'_'),
+            id: uniqueId(id+'_'),
             paymentMethodType,
             element
         }
@@ -165,7 +165,7 @@ export class StripeService {
 
     mountElement(id: string, mountElement: any) {
         if (
-            _.isEmpty(this.currentElement) ||
+            isEmpty(this.currentElement) ||
             this.currentElement.id !== id
         ) {
             return
@@ -175,7 +175,7 @@ export class StripeService {
 
     unmountElement(id: string) {
         if (
-            _.isEmpty(this.currentElement) ||
+            isEmpty(this.currentElement) ||
             this.currentElement.id !== id
         ) {
             return
@@ -189,7 +189,7 @@ export class StripeService {
         handler: stripe.elements.handler
     ) {
         if (
-            _.isEmpty(this.currentElement) ||
+            isEmpty(this.currentElement) ||
             this.currentElement.id !== id
         ) {
             console.error('The StripeElement for', id, 'no longer exists. Cannot attach listener')
@@ -200,10 +200,10 @@ export class StripeService {
 
     destroyElement(id?: string) {
         if (
-            !_.isEmpty(this.currentElement) &&
+            !isEmpty(this.currentElement) &&
             (
-                _.isNil(id) ||
-                (_.isString(id) && this.currentElement.id === id)
+                isNil(id) ||
+                (isString(id) && this.currentElement.id === id)
             )
         ) {
             if (this.currentElement.element) {

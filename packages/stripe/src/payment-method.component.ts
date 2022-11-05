@@ -19,7 +19,7 @@ import {
 } from '@angular/forms'*/
 
 // Runtime
-import _ from 'lodash'
+import {assignIn, includes, isEmpty, isObject, isString, set, snakeCase, uniqueId} from 'lodash'
 import {keys} from 'ts-transformer-keys'
 
 // Stratus Dependencies
@@ -71,6 +71,7 @@ export class StripePaymentMethodComponent extends RootComponent implements OnDes
     @Input() publishKey = ''
     @Input() formMessage = ''
     @Input() detailedBillingInfo?: boolean
+    @Input() defaultBillingInfo?: stripe.BillingDetails
     paymentMethodApiPath = 'PaymentMethod'
     billingInfo: stripe.BillingDetails = { // fixme should copy stripe.BillingDetails // PaymentBillingInfo
         address: {}
@@ -89,7 +90,7 @@ export class StripePaymentMethodComponent extends RootComponent implements OnDes
         super()
 
         // Initialization
-        this.uid = _.uniqueId(`sa_${_.snakeCase(this.title)}_`)
+        this.uid = uniqueId(`sa_${snakeCase(this.title)}_`)
         Stratus.Instances[this.uid] = this
         this.elementId = this.elementId || this.uid
 
@@ -108,20 +109,25 @@ export class StripePaymentMethodComponent extends RootComponent implements OnDes
         this.hydrate(this.elementRef, this.sanitizer, keys<StripePaymentMethodComponent>())
 
         // Hydrate Dialog Data
-        if (!_.isEmpty(this.dialogData)) {
+        if (!isEmpty(this.dialogData)) {
             const keysPossible = keys<StripePaymentMethodDialogData>()
             Object.keys(this.dialogData).forEach((attr) => {
-                if (!_.isEmpty(attr) && _.includes(keysPossible, attr)) {
-                    _.set(this, attr, this.dialogData[attr as keyof StripePaymentMethodDialogData])
+                if (!isEmpty(attr) && includes(keysPossible, attr)) {
+                    set(this, attr, this.dialogData[attr as keyof StripePaymentMethodDialogData])
                 }
             })
+        }
+
+        if (isObject(this.defaultBillingInfo)) {
+            // Adds any of this extra data to the payment model
+            assignIn(this.billingInfo, this.defaultBillingInfo)
         }
     }
 
     async ngOnInit() {
+        // noinspection RedundantConditionalExpressionJS - dont simplify detailedBillingInfo. needs to be converted to boolean
         const options: stripe.elements.ElementsOptions = {
             // {} // style options
-            // FIXME dont simplify. detailedBillingInfo needs to be converted to boolean
             hidePostalCode: this.detailedBillingInfo ? true : false // option can remove postal
         }
         this.cardId = await this.Stripe.createElement(
@@ -131,14 +137,14 @@ export class StripePaymentMethodComponent extends RootComponent implements OnDes
             options,
             `#${this.elementId}-mount`
         )
-        console.log('loading', _.clone(options))
+        // console.log('loading', clone(options))
         // Render the Card
         // this.card.mount(`#${this.elementId}-mount`)
         // Provide possible Stripe errors
         // this.card.addEventListener('change', (event) => {
         this.Stripe.elementAddEventListener(this.cardId, 'change', (event: stripe.elements.ElementChangeResponse) => {
             const displayError = document.getElementById(`${this.elementId}-errors`)
-            console.log('event', event) // Can get postal code from here
+            // console.log('event', event) // Can get postal code from here
             // need to track if button is able to save
             if (
                 Object.prototype.hasOwnProperty.call(event, 'complete') &&
@@ -172,12 +178,12 @@ export class StripePaymentMethodComponent extends RootComponent implements OnDes
      */
     isBillingDetailsFilled() {
         if (
-            !_.isEmpty(this.billingInfo.name) &&
-            !_.isEmpty(this.billingInfo.email) &&
-            !_.isEmpty(this.billingInfo.address.line1) &&
-            !_.isEmpty(this.billingInfo.address.city) &&
-            !_.isEmpty(this.billingInfo.address.state) &&
-            !_.isEmpty(this.billingInfo.address.postal_code)
+            !isEmpty(this.billingInfo.name) &&
+            !isEmpty(this.billingInfo.email) &&
+            !isEmpty(this.billingInfo.address.line1) &&
+            !isEmpty(this.billingInfo.address.city) &&
+            !isEmpty(this.billingInfo.address.state) &&
+            !isEmpty(this.billingInfo.address.postal_code)
         ) {
             // TODO not checking this yet
         }
@@ -230,7 +236,7 @@ export class StripePaymentMethodComponent extends RootComponent implements OnDes
 
         if (
             setupIntent.status === 'succeeded'
-            && _.isString(setupIntent.payment_method)
+            && isString(setupIntent.payment_method)
         ) {
             // The setup has succeeded.
             // Send setupIntent.payment_method to your server to save the card to a Customer as default
@@ -267,7 +273,7 @@ export class StripePaymentMethodComponent extends RootComponent implements OnDes
     }
 
     ngOnDestroy() {
-        console.warn('local destroying stratus', this.uid)
+        // console.warn('local destroying stratus', this.uid)
         if (this.cardId) {
             this.Stripe.destroyElement(this.cardId)
         }
@@ -282,4 +288,5 @@ export interface StripePaymentMethodDialogData {
     publishKey: string
     formMessage: string
     detailedBillingInfo?: boolean
+    defaultBillingInfo?: stripe.BillingDetails
 }

@@ -1384,18 +1384,22 @@ Stratus.Components.IdxPropertyDetails = {
         $scope.getFullAddress = (encode?: boolean): string => $scope.Idx.getFullAddress($scope.model.data, encode)
 
         $scope.getListAgentName = (): string => $scope.model.data.ListAgentFullName || ($scope.model.data.ListAgentFirstName ?
-            $scope.model.data.ListAgentFirstName + ' ' + $scope.model.data.ListAgentLastName : null)
+            $scope.model.data.ListAgentFirstName + ' ' + $scope.model.data.ListAgentLastName : null) ||
+            ($scope.model.data.ListAgentLastName ? $scope.model.data.ListAgentLastName : null)
 
         $scope.getListAgentPhone = (): string => $scope.model.data.ListAgentDirectPhone || $scope.model.data.ListAgentOfficePhone || null
 
         $scope.getCoListAgentName = (): string => $scope.model.data.CoListAgentFullName || ($scope.model.data.CoListAgentFirstName ?
-            $scope.model.data.CoListAgentFirstName + ' ' + $scope.model.data.CoListAgentLastName : null)
+            $scope.model.data.CoListAgentFirstName + ' ' + $scope.model.data.CoListAgentLastName : null) ||
+            ($scope.model.data.CoListAgentLastName ? $scope.model.data.CoListAgentLastName : null)
 
         $scope.getBuyerAgentName = (): string => $scope.model.data.BuyerAgentFullName || ($scope.model.data.BuyerAgentFirstName ?
-            $scope.model.data.BuyerAgentFirstName + ' ' + $scope.model.data.BuyerAgentLastName : null)
+            $scope.model.data.BuyerAgentFirstName + ' ' + $scope.model.data.BuyerAgentLastName : null) ||
+            ($scope.model.data.BuyerAgentLastName ? $scope.model.data.BuyerAgentLastName : null)
 
         $scope.getCoBuyerAgentName = (): string => $scope.model.data.CoBuyerAgentFullName || ($scope.model.data.CoBuyerAgentFirstName ?
-            $scope.model.data.CoBuyerAgentFirstName + ' ' + $scope.model.data.CoBuyerAgentLastName : null)
+            $scope.model.data.CoBuyerAgentFirstName + ' ' + $scope.model.data.CoBuyerAgentLastName : null) ||
+            ($scope.model.data.CoBuyerAgentLastName ? $scope.model.data.CoBuyerAgentLastName : null)
 
         $scope.getGoogleMapsKey = (): string | null => {
             let googleApiKey = null
