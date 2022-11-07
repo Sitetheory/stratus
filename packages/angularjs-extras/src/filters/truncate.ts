@@ -5,26 +5,25 @@ import {
     Stratus
 } from '@stratusjs/runtime/stratus'
 import {
-    truncate,
     LooseObject
 } from '@stratusjs/core/misc'
-import _ from 'lodash'
+import {extend, isObject, isString, truncate} from 'lodash'
 
 // This filter truncates a string
 Stratus.Filters.Truncate = () =>
     (input: number, options?: LooseObject) => {
-        if (!_.isString(input)) {
+        if (!isString(input)) {
             return input
         }
         const tempScope: {
             limit?: number,
             suffix?: string
         }  = {
-            limit: null,
-            suffix: null
+            limit: 100, // 100 is the default from original misc/truncate
+            suffix: '...' // '...' is the default from original misc/truncate
         }
-        if (_.isObject(options)) {
-            _.extend(tempScope, options)
+        if (isObject(options)) {
+            extend(tempScope, options)
         }
-        return truncate(input, tempScope.limit, tempScope.suffix)
+        return truncate(input, {length: tempScope.limit, omission: tempScope.suffix})
     }
