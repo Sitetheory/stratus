@@ -222,10 +222,13 @@ function lintJS() {
         // Pure JavaScript Files
         'packages/angularjs-extras/**/*.js',
         '!packages/angularjs-extras/**/*.min.js',
+        '!packages/angularjs-extras/node_modules/**/*.js',
         'packages/boot/**/*.js',
         '!packages/boot/**/*.min.js',
+        '!packages/boot/node_modules/**/*.js',
         'packages/runtime/**/*.js',
         '!packages/runtime/**/*.min.js',
+        '!packages/runtime/node_modules/**/*.js',
         // TypeScript Supersedes
         '!packages/angularjs-extras/src/directives/baseNew.js',
         '!packages/angularjs-extras/src/components/citation.js',
