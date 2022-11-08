@@ -6,7 +6,7 @@ import {
 } from '@stratusjs/runtime/stratus'
 import {isArray} from 'lodash'
 
-Stratus.Filters.Map = () => (
+Stratus.Filters.IsArray = () => (
     obj: any
 ) => {
     return isArray(obj)
