@@ -239,9 +239,7 @@ function lintJS() {
         '!packages/angularjs-extras/src/directives/maxLength.js',
         '!packages/angularjs-extras/src/directives/parentClass.js',
         '!packages/angularjs-extras/src/directives/trigger.js',
-        '!packages/angularjs-extras/src/filters/avatar.js',
-        '!packages/angularjs-extras/src/filters/numeral.js',
-        '!packages/angularjs-extras/src/filters/truncate.js',
+        '!packages/angularjs-extras/src/filters/*.js',
         '!packages/runtime/src/stratus.js',
     ])
         /* *
