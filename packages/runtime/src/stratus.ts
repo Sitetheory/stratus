@@ -1718,8 +1718,7 @@ Stratus.Internals.UpdateEnvironment = (request: any) => {
     if (!request) {
         request = {}
     }
-    if (typeof document.cookie !== 'string' ||
-        !cookie('SITETHEORY')) {
+    if (typeof document.cookie !== 'string' || !cookie('SITETHEORY')) {
         return false
     }
     if (typeof request === 'object' && Object.keys(request).length) {
@@ -2140,7 +2139,7 @@ Stratus.PostMessage.Convoy = (fn: (e: object) => void) => {
 
 // When a message arrives from another source, handle the Convoy
 // appropriately.
-Stratus.PostMessage.Convoy((convoy: any) => {
+Stratus.Internals.Auth = (convoy: any) => {
     // Control SSO Redirects
     const ssoRedirect = false
     // Single Sign On Toggle
@@ -2183,7 +2182,43 @@ Stratus.PostMessage.Convoy((convoy: any) => {
         return
     }
     window.location.reload()
-})
+}
+// Bind Auth to PostMessage
+Stratus.PostMessage.Convoy(Stratus.Internals.Auth)
+
+// Run XHR to Gather Session
+Stratus.Internals.SessionSync = () => {
+    // Ensure we only provide Sitetheory SSO to Sitetheory Sites
+    if (!cookie('SITETHEORY')) {
+        console.log('invalid[SessionSync]: This does not appear to be a Sitetheory site.')
+        return
+    }
+    // Create Request for Single Sign On
+    const xhr = new XHR({
+        method: 'PUT', // POST
+        url: 'https://auth.sitetheory.io/Api/Session',
+        withCredentials: true,
+        data: {
+            route: {},
+            meta: {
+                // We provide the Session if available and allow the SessionApiController to handle the proper dissemination
+                session: cookie('SITETHEORY') || null
+            },
+            payload: {
+                empty: true
+            }
+        },
+        type: 'application/json'
+    })
+    xhr.send()
+        .then((response: LooseObject | Array<LooseObject> | string) => {
+            Stratus.Internals.Auth(response)
+        })
+        .catch((error: any) => {
+            console.error('error[SessionSync]:', error)
+        })
+}
+Stratus.Internals.SessionSync()
 
 // Local Storage Handling
 // ----------------------
