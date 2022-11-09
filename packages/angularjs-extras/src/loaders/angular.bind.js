@@ -264,10 +264,12 @@ Stratus.Loaders.Angular = () => {
         )
       }
       if (Stratus.Directives.Froala || Stratus('[froala]').length) {
+        // eslint-disable-next-line dot-notation
         const froalaPath = boot.configuration.paths['froala'].replace(/\/[^/]+\/?[^/]+\/?$/, '')
         _.each([
         // FIXME this is sitetheory only
           Stratus.BaseUrl + 'sitetheorycore/css/sitetheory.codemirror.css',
+          // eslint-disable-next-line dot-notation
           Stratus.BaseUrl + boot.configuration.paths['codemirror'].replace(/\/([^/]+)\/?$/, '') + '/codemirror.css',
           Stratus.BaseUrl + froalaPath + '/css/froala_editor.min.css',
           Stratus.BaseUrl + froalaPath + '/css/froala_style.min.css',

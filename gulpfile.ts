@@ -219,14 +219,31 @@ const locations: Locations = {
 // Code Linters
 function lintJS() {
     return src([
-        '**/*.js',
-        '!**/*.min.js',
-        '!node_modules/**/*.js',
-        '!dist/**/*.js',
-        '!etc/**/*.js',
-        '!packages/**/*.js', // TypeScript supersedes Standard JS
-        '!reports/**/*.js',
-        '!umd/**/*.js'
+        // Pure JavaScript Files
+        'packages/angularjs-extras/**/*.js',
+        '!packages/angularjs-extras/**/*.min.js',
+        '!packages/angularjs-extras/node_modules/**/*.js',
+        'packages/boot/**/*.js',
+        '!packages/boot/**/*.min.js',
+        '!packages/boot/node_modules/**/*.js',
+        'packages/runtime/**/*.js',
+        '!packages/runtime/**/*.min.js',
+        '!packages/runtime/node_modules/**/*.js',
+        // TypeScript Supersedes
+        '!packages/angularjs-extras/src/directives/baseNew.js',
+        '!packages/angularjs-extras/src/components/citation.js',
+        '!packages/angularjs-extras/src/components/embed.js',
+        '!packages/angularjs-extras/src/components/image-carousel.js',
+        '!packages/angularjs-extras/src/components/twitterFeed.js',
+        '!packages/angularjs-extras/src/directives/bindHtml.js',
+        '!packages/angularjs-extras/src/directives/froala.js',
+        '!packages/angularjs-extras/src/directives/fullHeight.js',
+        '!packages/angularjs-extras/src/directives/jsonToObject.js',
+        '!packages/angularjs-extras/src/directives/maxLength.js',
+        '!packages/angularjs-extras/src/directives/parentClass.js',
+        '!packages/angularjs-extras/src/directives/trigger.js',
+        '!packages/angularjs-extras/src/filters/*.js',
+        '!packages/runtime/src/stratus.js',
     ])
         /* *
          .pipe(debug({

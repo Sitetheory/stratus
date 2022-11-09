@@ -53,7 +53,6 @@
       // 'stratus.components.*': boot.deployment + '@stratusjs/angularjs/src/components/*' + boot.suffix,
       'stratus.components.base': boot.deployment + '@stratusjs/angularjs/src/components/base' + boot.suffix,
 
-
       // DIRECTIVES:
       // -----------
       // 'stratus.directives.*': boot.deployment + '@stratusjs/angularjs/src/directives/*' + boot.suffix,

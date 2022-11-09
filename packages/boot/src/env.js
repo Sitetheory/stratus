@@ -130,11 +130,12 @@
             console.error(error)
           })
 
-        const debug = hamlet.isCookie('env')
+        // const debug = hamlet.isCookie('env')
 
         // start polling at an interval until the data is found at the global
         const poll = async function () {
-          const delay = await hamlet.delay(100)
+          await hamlet.delay(100)
+          // const delay = await hamlet.delay(100)
           // if (debug) {
           //   console.log(`${requirements} poll:`, delay)
           // }
