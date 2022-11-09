@@ -28,7 +28,6 @@
         Stratus.Instances[_.uniqueId(_.snakeCase(name) + '_')] = $scope
 
         function setDisplayNumber (val, formatter) {
-          let valStr
           let displayValue
 
           if (
@@ -38,7 +37,7 @@
             return null
           }
 
-          valStr = val.toString()
+          const valStr = val.toString()
           displayValue = valStr.replace(/,/g, '').replace(/[A-Za-z]/g, '')
           displayValue = parseFloat(displayValue)
           displayValue = (!isNaN(displayValue)) ? displayValue.toString() : ''
@@ -62,8 +61,8 @@
               } else if (valStr.slice(-3) === '.00') {
                 displayValue += '.00'
               }
-            } // handle last character 0 after decimal and another number
-            else {
+            } else {
+              // handle last character 0 after decimal and another number
               if (valStr.slice(-1) === '0') {
                 displayValue += '0'
               }
@@ -117,7 +116,6 @@
             return parseFloat(value)
           })
         }
-
       }
     }
   }

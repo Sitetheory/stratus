@@ -11,19 +11,19 @@
   if (typeof define === 'function' && define.amd) {
     define([
       'exports',
-      '@stratusjs/runtime/stratus',
-    ], function (exports, module_stratus) {
-      return (root.Stratus = factory(exports, module_stratus))
+      '@stratusjs/runtime/stratus'
+    ], function (exports, moduleStratus) {
+      return (root.Stratus = factory(exports, moduleStratus))
     })
   } else {
     root.Stratus = factory(root.exports)
   }
-}(this, function (exports, module_stratus) {
+}(this, function (exports, moduleStratus) {
   // Handle Module
   // ------------
 
   // This pulls the Stratus object from Stratus for Backwards Compatibility with AMD Define
-  const {Stratus} = module_stratus
+  const { Stratus } = moduleStratus
 
   // Handle Scope
   // ------------

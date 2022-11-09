@@ -63,7 +63,6 @@
 
       // This is a function bound to the same context
       $scope.initialize = () => {
-
         console.log('Stratus Json Editor was initialized.')
 
         if ($scope.initialized) {
@@ -83,11 +82,11 @@
           }
           // This will prettify the results
           const jsonString = angular.toJson(jsonObject, true)
-          if($scope.jsonString === jsonString) {
+          if ($scope.jsonString === jsonString) {
             return
           }
           $scope.jsonString = jsonString
-          $scope.$applyAsync();
+          $scope.$applyAsync()
         })
         // Saving Data if Valid This is expecting a string
         /**
@@ -98,8 +97,8 @@
           if (newString === oldString) {
             return
           }
-          const isValid = _.isJSON(newString);
-          $ctrl.formFieldCtrl.$setValidity('validJson', isValid);
+          const isValid = _.isJSON(newString)
+          $ctrl.formFieldCtrl.$setValidity('validJson', isValid)
           if (!isValid) {
             return
           }
@@ -119,7 +118,6 @@
         $scope.initialize()
         unwatch()
       })
-
     },
     templateUrl: Stratus.BaseUrl + Stratus.BundlePath + localPath + '/' + name + min + '.html'
   }

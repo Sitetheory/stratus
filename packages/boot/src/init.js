@@ -1,6 +1,8 @@
 // Initializer
 // -----------
 
+/* global location */
+
 (function (root) {
   // Ensure Boot is available
   if (typeof root.boot === 'undefined') {
@@ -27,7 +29,7 @@
       '.css',
       '.scss',
       '.sass',
-      '.less',
+      '.less'
     ]
     for (const path in paths) {
       if (!Object.prototype.hasOwnProperty.call(paths, path)) {
@@ -112,15 +114,16 @@
         if (!digest || !digest.length || digest.length < 2) {
           continue
         }
+        // console.log('digest:', digest)
         matches[path] = data.path.replace('*', digest[1])
       }
       const matchPaths = Object.keys(matches)
       if (!matchPaths.length) {
-        return false;
+        return false
       }
       const bestPath = matchPaths.reduce((memo, value) => memo.length >= value.length ? memo : value)
       if (!bestPath) {
-        return false;
+        return false
       }
       return matches[bestPath]
     }
@@ -151,10 +154,11 @@
         // const pathUrl = `${boot.cdn + boot.relative + config.paths[path]}.js${boot.cacheTime ? '?v=' + boot.cacheTime : ''}`
         const pathUrl = `${boot.cdn + boot.relative + config.paths[path]}.js`
         if (path.endsWith('*')) {
+          // console.log('wildcard!')
           const pathRe = path.replace('/', '\\/').replace('*', '(.*)')
           wildcards[path] = {
             path: pathUrl,
-            re: pathRe,
+            re: pathRe
           }
           continue
         }

@@ -38,14 +38,14 @@
       if ($element.attr('data-ng-model') || $element.attr('ng-model')) {
         $scope.$parent.$watch($element.attr('data-ng-model') || $element.attr('ng-model'),
           function (model) {
-          if (!model) {
-            return
-          }
-          if (typeof model !== 'object') {
-            return
-          }
-          $scope.model = model
-        })
+            if (!model) {
+              return
+            }
+            if (typeof model !== 'object') {
+              return
+            }
+            $scope.model = model
+          })
       }
 
       // Digest Collection Bindings

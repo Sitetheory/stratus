@@ -16,7 +16,6 @@
     factory(root.Stratus, root._, root.angular)
   }
 }(this, function (Stratus, _) {
-
   /**
    * List of DOM events that will be converted into Directives
    * @type {string[]}
@@ -31,18 +30,18 @@
    * so that they are not executed in an inconsistent state.
    */
   const forceAsyncEvents = {
-    'focusin': true,
-    'focusout': true
+    focusin: true,
+    focusout: true
   }
 
   directiveEvents.forEach(function (eventName) {
     const directiveName = _.capitalize(eventName)
     const attributeName = 'stratus' + directiveName
-    /*console.log({
+    /* console.log({
       'eventName': eventName,
       'directiveName': directiveName,
       'attributeName': attributeName
-    })*/
+    }) */
 
     Stratus.Directives[directiveName] = function ($parse, $rootScope, $exceptionHandler) {
       return {
@@ -70,7 +69,6 @@
               }
             })
           }
-
         }
 
       }
