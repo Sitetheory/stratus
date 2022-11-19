@@ -2,7 +2,7 @@
 // @stratusjs/idx/idx
 
 // Runtime
-import _ from 'lodash'
+import {clone, extend, get, isArray, isDate, isEmpty, isEqual, isNumber, isObject, isPlainObject, isString, uniqueId} from 'lodash'
 import {Stratus} from '@stratusjs/runtime/stratus'
 import * as angular from 'angular'
 import {IPromise, IScope} from 'angular'
@@ -868,7 +868,7 @@ const angularJsService = (
         if (!Object.prototype.hasOwnProperty.call(instanceOnEmitters[uid], emitterName)) {
             instanceOnEmitters[uid][emitterName] = {}
         }
-        const onId = _.uniqueId() // TODO make a named connection to the requesting scope??
+        const onId = uniqueId() // TODO make a named connection to the requesting scope??
         instanceOnEmitters[uid][emitterName][onId] = callback
         return (): void => {removeOnManual(uid, emitterName, onId)}
     }
@@ -984,7 +984,7 @@ const angularJsService = (
      * Return Blank options to initialize arrays
      */
     function getDefaultWhereOptions(): WhereOptions {
-        return _.clone(defaultWhereOptions)
+        return clone(defaultWhereOptions)
     }
 
     /**
@@ -1241,49 +1241,49 @@ const angularJsService = (
 
             if (
                 Object.prototype.hasOwnProperty.call(response.data, 'site')
-                && _.isString(response.data.site)
+                && isString(response.data.site)
                 && response.data.site !== ''
             ) {
                 sharedValues.contact.name = response.data.site
             }
             if (
                 Object.prototype.hasOwnProperty.call(response.data, 'contactName')
-                && _.isString(response.data.contactName)
+                && isString(response.data.contactName)
                 && response.data.site !== ''
             ) {
                 sharedValues.contact.name = response.data.contactName
             }
             if (
                 Object.prototype.hasOwnProperty.call(response.data, 'contact')
-                && _.isPlainObject(response.data.contact)
+                && isPlainObject(response.data.contact)
             ) {
                 if (
                     Object.prototype.hasOwnProperty.call(response.data.contact, 'emails')
-                    && _.isPlainObject(response.data.contact.emails)
+                    && isPlainObject(response.data.contact.emails)
                 ) {
                     sharedValues.contact.emails = response.data.contact.emails
                 }
                 if (
                     Object.prototype.hasOwnProperty.call(response.data.contact, 'locations')
-                    && _.isPlainObject(response.data.contact.locations)
+                    && isPlainObject(response.data.contact.locations)
                 ) {
                     sharedValues.contact.locations = response.data.contact.locations
                 }
                 if (
                     Object.prototype.hasOwnProperty.call(response.data.contact, 'phones')
-                    && _.isPlainObject(response.data.contact.phones)
+                    && isPlainObject(response.data.contact.phones)
                 ) {
                     sharedValues.contact.phones = response.data.contact.phones
                 }
                 if (
                     Object.prototype.hasOwnProperty.call(response.data.contact, 'socialUrls')
-                    && _.isPlainObject(response.data.contact.socialUrls)
+                    && isPlainObject(response.data.contact.socialUrls)
                 ) {
                     sharedValues.contact.socialUrls = response.data.contact.socialUrls
                 }
                 if (
                     Object.prototype.hasOwnProperty.call(response.data.contact, 'urls')
-                    && _.isPlainObject(response.data.contact.urls)
+                    && isPlainObject(response.data.contact.urls)
                 ) {
                     sharedValues.contact.urls = response.data.contact.urls
                 }
@@ -1296,7 +1296,7 @@ const angularJsService = (
                 if (Object.prototype.hasOwnProperty.call(response.data.integrations.analytics, 'googleAnalytics')) {
                     if (
                         Object.prototype.hasOwnProperty.call(response.data.integrations.analytics.googleAnalytics, 'accountId')
-                        && _.isString(response.data.integrations.analytics.googleAnalytics.accountId)
+                        && isString(response.data.integrations.analytics.googleAnalytics.accountId)
                         && response.data.integrations.analytics.googleAnalytics.accountId !== ''
                     ) {
                         sharedValues.integrations.analytics.googleAnalytics = {
@@ -1309,7 +1309,7 @@ const angularJsService = (
                         Object.prototype.hasOwnProperty.call(
                             response.data.integrations.analytics.listTrac, 'accountId'
                         )
-                        && _.isString(response.data.integrations.analytics.listTrac.accountId)
+                        && isString(response.data.integrations.analytics.listTrac.accountId)
                         && response.data.integrations.analytics.listTrac.accountId !== ''
                     ) {
                         sharedValues.integrations.analytics.listTrac = {
@@ -1324,7 +1324,7 @@ const angularJsService = (
                 if (Object.prototype.hasOwnProperty.call(response.data.integrations.maps, 'googleMaps')) {
                     if (
                         Object.prototype.hasOwnProperty.call(response.data.integrations.maps.googleMaps, 'publicKey')
-                        && _.isString(response.data.integrations.maps.googleMaps.publicKey)
+                        && isString(response.data.integrations.maps.googleMaps.publicKey)
                         && response.data.integrations.maps.googleMaps.publicKey !== ''
                     ) {
                         sharedValues.integrations.maps.googleMaps = {
@@ -1394,7 +1394,7 @@ const angularJsService = (
             // TODO check differences or old vs new and push emit
 
             if (
-                !(_.isDate(oldTime) && _.isDate(session.services[serviceId].fetchTime[modelName])) ||
+                !(isDate(oldTime) && isDate(session.services[serviceId].fetchTime[modelName])) ||
                 oldTime.getTime() !== session.services[serviceId].fetchTime[modelName].getTime()
             ) {
                 // Only emit if there is a new time set
@@ -1525,7 +1525,7 @@ const angularJsService = (
                 (fetchedData: any[]): any => {
                     // Once all the Results are returned, starting merging them into the original Collection
                     fetchedData.forEach(models => {
-                        if (_.isArray(models)) {
+                        if (isArray(models)) {
                             originalCollection.models.push(...models)
                         }
                     })
@@ -1624,7 +1624,7 @@ const angularJsService = (
      */
     function modelInjectProperty<T>(modelDatas: (Model<T>['data'])[], properties: { [key: string]: any }): void {
         modelDatas.forEach(modelData => {
-            _.extend(modelData, properties)
+            extend(modelData, properties)
         })
     }
 
@@ -1686,7 +1686,7 @@ const angularJsService = (
             },
             stringLike: (searchObject, value) => {
                 // Don't perform empty like searches
-                if (!_.isEmpty(value)) {
+                if (!isEmpty(value)) {
                     whereQuery[searchObject.apiField] = {
                         like: value,
                         options: 'i'
@@ -1698,7 +1698,7 @@ const angularJsService = (
                 const stringLikeArrayOrStatement: MongoWhereQuery[] = []
                 value.forEach((requestedValue: string) => {
                     // Don't perform empty like searches
-                    if (!_.isEmpty(requestedValue)) {
+                    if (!isEmpty(requestedValue)) {
                         stringLikeArrayOrStatement.push({
                             [searchObject.apiField]: {
                                 like: requestedValue,
@@ -1707,7 +1707,7 @@ const angularJsService = (
                         })
                     }
                 })
-                if (!_.isEmpty(stringLikeArrayOrStatement)) {
+                if (!isEmpty(stringLikeArrayOrStatement)) {
                     andStatement.push({or: stringLikeArrayOrStatement})
                 }
             },
@@ -1738,7 +1738,7 @@ const angularJsService = (
                         whereQuery[searchObject.apiField] = {
                             between: [
                                 parseInt(value, 10),
-                                parseInt(_.get(whereQuery[searchObject.apiField], 'lte'), 10)
+                                parseInt(get(whereQuery[searchObject.apiField], 'lte'), 10)
                             ]
                         }
                     } else {
@@ -1755,7 +1755,7 @@ const angularJsService = (
                         // If a Greater than already is being searched
                         whereQuery[searchObject.apiField] = {
                             between: [
-                                parseInt(_.get(whereQuery[searchObject.apiField], 'gte'), 10),
+                                parseInt(get(whereQuery[searchObject.apiField], 'gte'), 10),
                                 parseInt(value, 10)
                             ]
                         }
@@ -1777,7 +1777,7 @@ const angularJsService = (
                             })
                         } else if (orObject.type === 'stringLike') {
                             // Don't perform empty like searches
-                            if (!_.isEmpty(value)) {
+                            if (!isEmpty(value)) {
                                 andOrOrStatement.push({
                                     [orObject.apiField]: {
                                         like: value,
@@ -1790,7 +1790,7 @@ const angularJsService = (
                             if (value.length > 0) {
                                 value.forEach((requestedValue: string) => {
                                     // Don't perform empty like searches
-                                    if (!_.isEmpty(requestedValue)) {
+                                    if (!isEmpty(requestedValue)) {
                                         andOrOrStatement.push({
                                             [orObject.apiField]: {
                                                 like: requestedValue,
@@ -1812,7 +1812,7 @@ const angularJsService = (
                         }
                     })
 
-                    if (!_.isEmpty(andOrOrStatement)) {
+                    if (!isEmpty(andOrOrStatement)) {
                         andStatement.push({or: andOrOrStatement})
                     }
                 }
@@ -1835,7 +1835,7 @@ const angularJsService = (
             }
         }
 
-        if (!_.isEmpty(andStatement)) {
+        if (!isEmpty(andStatement)) {
             whereQuery.and = andStatement
         }
 
@@ -2123,7 +2123,7 @@ const angularJsService = (
                         }
                     } else if (
                         Object.prototype.hasOwnProperty.call(option, 'limit') &&
-                        _.isNumber(option.limit)
+                        isNumber(option.limit)
                     ) {
                         includeItem.scope.limit = option.limit
                     }
@@ -2210,7 +2210,7 @@ const angularJsService = (
      */
     function getMLSVariables(serviceIds?: number[]): MLSService[] {
         const serviceList: MLSService[] = []
-        if (serviceIds && _.isArray(serviceIds)) {
+        if (serviceIds && isArray(serviceIds)) {
             serviceIds.forEach(serviceId => {
                 if (Object.prototype.hasOwnProperty.call(session.services, serviceId)) {
                     serviceList.push({
@@ -2225,7 +2225,7 @@ const angularJsService = (
             })
         } else {
             session.services.forEach(service => {
-                if (!_.isEmpty(service)) {
+                if (!isEmpty(service)) {
                     serviceList.push({
                         id: service.id,
                         name: service.name,
@@ -2330,7 +2330,7 @@ const angularJsService = (
 
         // Math is performed in Page and needs to be converted
         if (Object.prototype.hasOwnProperty.call(urlOptions.Search, 'Page')) {
-            if (_.isString(urlOptions.Search.Page)) {
+            if (isString(urlOptions.Search.Page)) {
                 urlOptions.Search.Page = parseInt(urlOptions.Search.Page, 10)
             }
         }
@@ -2345,9 +2345,9 @@ const angularJsService = (
      * TODO define options
      */
     function setUrlOptions(listingOrSearch: 'Listing' | 'Search', options: object | any) {
-        // console.log('setUrlOptions ', listingOrSearch, _.clone(options))
+        // console.log('setUrlOptions ', listingOrSearch, clone(options))
         urlOptions[listingOrSearch] = options || {}
-        // console.log('set url options', _.clone(urlOptions[listingOrSearch]))
+        // console.log('set url options', clone(urlOptions[listingOrSearch]))
     }
 
     /**
@@ -2366,12 +2366,12 @@ const angularJsService = (
      */
     function getUrlOptionsPath(defaultOptions?: object | any) {
         defaultOptions = defaultOptions || {}
-        // console.log('getUrlOptionsPath defaultOptions', _.clone(defaultOptions))
+        // console.log('getUrlOptionsPath defaultOptions', clone(defaultOptions))
         let path = ''
 
         // Set the Search List url variables
         const searchOptionNames = Object.keys(urlOptions.Search)
-        // console.log('getUrlOptionsPath searchOptionNames', _.clone(searchOptionNames))
+        // console.log('getUrlOptionsPath searchOptionNames', clone(searchOptionNames))
         if (searchOptionNames.length > 0) {
             let searchPath = ''
             searchOptionNames.forEach(searchOptionName => {
@@ -2385,13 +2385,13 @@ const angularJsService = (
                     let defaultValue = defaultOptions[searchOptionName]
                     const compareValue = urlOptions.Search[searchOptionName]
                     if (
-                        !_.isArray(defaultValue) &&
-                        _.isArray(compareValue)
+                        !isArray(defaultValue) &&
+                        isArray(compareValue)
                     ) {
                         // If they both aren't arrays, make them so we can compare
                         defaultValue = [defaultValue]
                     }
-                    if (!_.isEqual(defaultValue, compareValue)) {
+                    if (!isEqual(defaultValue, compareValue)) {
                         // console.log(searchOptionName, defaultValue, compareValue)
                         searchPath += searchOptionName + '/' + compareValue + '/'
                     }
@@ -2450,8 +2450,8 @@ const angularJsService = (
      * TODO define defaultOptions
      */
     function refreshUrlOptions(defaultOptions: object | any): void {
-        // console.log('refreshUrlOptions', _.clone(defaultOptions))
-        // console.log('refreshUrlOptions getUrlOptionsPath', _.clone(getUrlOptionsPath(defaultOptions)))
+        // console.log('refreshUrlOptions', clone(defaultOptions))
+        // console.log('refreshUrlOptions getUrlOptionsPath', clone(getUrlOptionsPath(defaultOptions)))
         setLocationPath(getUrlOptionsPath(defaultOptions))
         // console.log('Refreshed url with', urlOptions, defaultOptions);
     }
@@ -2476,7 +2476,7 @@ const angularJsService = (
      * @param reverse - If it should reverse sort by the value. {Boolean=}
      */
     function orderBy(collection: Collection, propertyNames: string | string[], reverse = false): void {
-        const orderPropertyNames = _.clone(propertyNames)
+        const orderPropertyNames = clone(propertyNames)
         if (orderPropertyNames) {
             collection.models = orderByFilter(collection.models, orderPropertyNames, reverse)
         }
@@ -2563,7 +2563,7 @@ const angularJsService = (
         // check if this filterQuery is any different from the 'last one' used
         // if this is a new query rather than a page change
         if (
-            !_.isEqual(lastQueries.whereFilter, filterQuery.where) ||
+            !isEqual(lastQueries.whereFilter, filterQuery.where) ||
             lastQueries.order !== options.order ||
             lastQueries.perPage !== options.perPage ||
             refresh
@@ -2670,7 +2670,7 @@ const angularJsService = (
         }
 
         // then save this in the last queries
-        lastQueries.whereFilter = _.clone(filterQuery.where)
+        lastQueries.whereFilter = clone(filterQuery.where)
         lastQueries.order = options.order
         lastQueries.perPage = options.perPage
         lastQueries.pages.push(options.page)
@@ -2711,7 +2711,7 @@ const angularJsService = (
         options.fields = options.fields || []
         options.perPage = 1
 
-        if (_.isArray(options.service)) {
+        if (isArray(options.service)) {
             options.service = options.service[0]
         }
 
@@ -2801,7 +2801,7 @@ const angularJsService = (
         // options.where = options.where || urlOptions.Search || {} // TODO may want to sanitize the urlOptions
         if (
             !options.where &&
-            !_.isEmpty(urlOptions.Search)
+            !isEmpty(urlOptions.Search)
         ) {
             // Do fancy, since UrlWhereOptions isn't allowed
             const whereReAssign: WhereOptions = urlOptions.Search as WhereOptions
@@ -2848,7 +2848,7 @@ const angularJsService = (
         // Include openhouses is filtered
         if (
             Object.prototype.hasOwnProperty.call(options.where, 'OpenHouseOnly') &&
-            _.isString(options.where.OpenHouseOnly)
+            isString(options.where.OpenHouseOnly)
         ) {
             options.where.OpenHouseOnly = (options.where.OpenHouseOnly === 'true')
         }
@@ -2860,16 +2860,16 @@ const angularJsService = (
         }
         // OpenHousesOnly can work fast enough if there is more filters. Disable otherwise
         if (
-            _.isEmpty(options.where.Neighborhood) &&
-            _.isEmpty(options.where.Location) &&
-            _.isEmpty(options.where.AgentLicense) &&
-            _.isEmpty(options.where.OfficeNumber) &&
-            _.isEmpty(options.where.City) &&
-            _.isEmpty(options.where.CityRegion) &&
-            _.isEmpty(options.where.CountyOrParish) &&
-            _.isEmpty(options.where.MLSAreaMajor) &&
-            _.isEmpty(options.where.PostalCode) &&
-            _.isEmpty(options.where.UnparsedAddress)
+            isEmpty(options.where.Neighborhood) &&
+            isEmpty(options.where.Location) &&
+            isEmpty(options.where.AgentLicense) &&
+            isEmpty(options.where.OfficeNumber) &&
+            isEmpty(options.where.City) &&
+            isEmpty(options.where.CityRegion) &&
+            isEmpty(options.where.CountyOrParish) &&
+            isEmpty(options.where.MLSAreaMajor) &&
+            isEmpty(options.where.PostalCode) &&
+            isEmpty(options.where.UnparsedAddress)
         ) {
             options.openhouses = false
             delete options.where.OpenHouseOnly
@@ -3190,7 +3190,7 @@ const angularJsService = (
             const addressParts: string[] = []
             if (
                 Object.prototype.hasOwnProperty.call(property, 'StreetNumberNumeric') &&
-                _.isNumber(property.StreetNumberNumeric) &&
+                isNumber(property.StreetNumberNumeric) &&
                 property.StreetNumberNumeric > 0
             ) {
                 addressParts.push(property.StreetNumberNumeric.toString())
@@ -3219,7 +3219,7 @@ const angularJsService = (
                         if (addressPart === 'UnitNumber') {
                             addressParts.push('Unit')
                         }
-                        if (!_.isEmpty(property[addressPart])) {
+                        if (!isEmpty(property[addressPart])) {
                             addressParts.push(property[addressPart] as string)
                         }
                     }
@@ -3264,17 +3264,17 @@ const angularJsService = (
             phone: null,
         }
 
-        if (_.isPlainObject(sharedValues.contact)) {
-            contact.name = _.clone(sharedValues.contact.name)
+        if (isPlainObject(sharedValues.contact)) {
+            contact.name = clone(sharedValues.contact.name)
             if (sharedValues.contact.emails.hasOwnProperty('Main')) {
-                contact.email = _.clone(sharedValues.contact.emails.Main)
+                contact.email = clone(sharedValues.contact.emails.Main)
             }
             if (sharedValues.contact.phones.hasOwnProperty('Main')) {
-                contact.phone = _.clone(sharedValues.contact.phones.Main)
+                contact.phone = clone(sharedValues.contact.phones.Main)
             }
         }
 
-        if (!_.isString(contact.name) || contact.name === '') {
+        if (!isString(contact.name) || contact.name === '') {
             // Don't return an empty object. (or one withg a name, as a a basic item)
             return null
         }
@@ -3337,18 +3337,18 @@ const angularJsService = (
                 return updateNestedPathValue(currentNest[currentPiece], pathPieces, value)
             } else if (
                 Object.prototype.hasOwnProperty.call(currentNest, currentPiece) &&
-                (!_.isArray(currentNest[currentPiece]) && _.isArray(value))
+                (!isArray(currentNest[currentPiece]) && isArray(value))
             ) {
                 console.warn(
                     'updateNestedPathValue couldn\'t connect', currentPiece, ' as value given is array, but value stored is not: ',
-                    _.clone(currentNest), 'It may need to be initialized first (as an array)'
+                    clone(currentNest), 'It may need to be initialized first (as an array)'
                 )
             } else {
-                if (_.isArray(currentNest[currentPiece]) && !_.isArray(value) && !isJSON(value)) {
-                    // console.log('checking if this was an array', _.clone(value))
+                if (isArray(currentNest[currentPiece]) && !isArray(value) && !isJSON(value)) {
+                    // console.log('checking if this was an array', clone(value))
                     value = value === '' ? [] : value.split(',')
                 }/* else if (
-                        _.isString(value) &&
+                        isString(value) &&
                         (value[0] === '[' || value[0] === '{') &&
                         isJSON(value)
                     ) {
@@ -3359,21 +3359,21 @@ const angularJsService = (
                 // FIXME need to checks the typeof currentNest[currentPiece] and convert value to that type.
                 // This is mostly just to allow a whole object to be passed in and saved
                 if (
-                    !_.isArray(value) &&
+                    !isArray(value) &&
                     (
-                        _.isObject(currentNest[currentPiece]) ||
+                        isObject(currentNest[currentPiece]) ||
                         isJSON(value)
                     )
                 ) {
-                    // console.log('parsing', _.clone(value))
+                    // console.log('parsing', clone(value))
                     currentNest[currentPiece] = JSON.parse(value)
                 } else {
-                    currentNest[currentPiece] = _.clone(value)
+                    currentNest[currentPiece] = clone(value)
                 }
                 return value
             }
         } else {
-            console.warn('updateNestedPathValue couldn\'t find', currentPiece, 'in', _.clone(currentNest), 'It may need to be initialized first')
+            console.warn('updateNestedPathValue couldn\'t find', currentPiece, 'in', clone(currentNest), 'It may need to be initialized first')
             return null
         }
     }

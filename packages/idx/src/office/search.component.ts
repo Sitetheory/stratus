@@ -5,7 +5,7 @@
  */
 
 // Runtime
-import _ from 'lodash'
+import {camelCase, isArray, isEmpty, isNumber, isString, trim, uniqueId} from 'lodash'
 import {Stratus} from '@stratusjs/runtime/stratus'
 import * as angular from 'angular'
 
@@ -96,7 +96,7 @@ Stratus.Components.IdxOfficeSearch = {
     ) {
         // Initialize
         const $ctrl = this
-        $ctrl.uid = _.uniqueId(_.camelCase(packageName) + '_' + _.camelCase(moduleName) + '_' + _.camelCase(componentName) + '_')
+        $ctrl.uid = uniqueId(camelCase(packageName) + '_' + camelCase(moduleName) + '_' + camelCase(componentName) + '_')
         $scope.elementId = $attrs.elementId || $ctrl.uid
         Stratus.Instances[$scope.elementId] = $scope
         $scope.selectionGroup = {
@@ -124,10 +124,10 @@ Stratus.Components.IdxOfficeSearch = {
             // console.log('will update field', $scope.syncInstanceVariable)
             // syncInstanceVariableIndex will always be a number
             $scope.syncInstanceVariableIndex = (
-                $attrs.syncInstanceVariableIndex && _.isString($attrs.syncInstanceVariableIndex) ?
+                $attrs.syncInstanceVariableIndex && isString($attrs.syncInstanceVariableIndex) ?
                     parseInt($attrs.syncInstanceVariableIndex, 10) : null
                 ) || (
-                    $attrs.syncInstanceVariableIndex && _.isNumber($attrs.syncInstanceVariableIndex) ?
+                    $attrs.syncInstanceVariableIndex && isNumber($attrs.syncInstanceVariableIndex) ?
                         $attrs.syncInstanceVariableIndex : null
                 ) || 0
             // console.log('will update index', $scope.syncInstanceVariableIndex)
@@ -194,8 +194,8 @@ Stratus.Components.IdxOfficeSearch = {
             // TODO only update if handling a selector?
             // Give the group a default name
             if (
-                _.isEmpty(_.trim($scope.selectionGroup.name)) &&
-                !_.isEmpty(_.trim($scope.options.query.where.OfficeName))
+                isEmpty(trim($scope.selectionGroup.name)) &&
+                !isEmpty(trim($scope.options.query.where.OfficeName))
             ) {
                 $scope.selectionGroup.name = $scope.options.query.where.OfficeName
             }
@@ -248,18 +248,18 @@ Stratus.Components.IdxOfficeSearch = {
                 Stratus.Instances[$scope.syncInstance] &&
                 $scope.syncInstanceVariable
                 // check if we have anything to add/edit (not empty)
-                // !_.isEmpty($scope.selectionGroup.name) &&
-                // !_.isEmpty($scope.selectionGroup.group)
+                // !isEmpty($scope.selectionGroup.name) &&
+                // !isEmpty($scope.selectionGroup.group)
             ) {
                 // console.log('updating parent with', $scope.selectionGroup)
                 // need to fetch the existing array first and only update the one being editted/addign a new one
                 const parentVariable = Idx.getScopeValuePath(Stratus.Instances[$scope.syncInstance], $scope.syncInstanceVariable)
                 let updatedValue = null
-                if (_.isArray(parentVariable)) {
+                if (isArray(parentVariable)) {
                     if (
                         initialize &&
-                        !_.isEmpty(parentVariable[$scope.syncInstanceVariableIndex]) &&
-                        !_.isString(parentVariable[$scope.syncInstanceVariableIndex]) &&
+                        !isEmpty(parentVariable[$scope.syncInstanceVariableIndex]) &&
+                        !isString(parentVariable[$scope.syncInstanceVariableIndex]) &&
                         Object.prototype.hasOwnProperty.call(parentVariable[$scope.syncInstanceVariableIndex], 'name')
                     ) {
                         $scope.selectionGroup = parentVariable[$scope.syncInstanceVariableIndex]
@@ -314,7 +314,7 @@ Stratus.Components.IdxOfficeSearch = {
             //        template += optionKey + '=\'' + templateOptions[optionKey] + '\' '
             //    }
             // })
-            _.forEach(templateOptions, (optionValue, optionKey) => {
+            forEach(templateOptions, (optionValue, optionKey) => {
                 template += `${optionKey}='${optionValue}'`
             })
             template +=

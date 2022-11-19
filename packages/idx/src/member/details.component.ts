@@ -4,7 +4,7 @@
 // --------------
 
 // Runtime
-import _ from 'lodash'
+import {camelCase, extend, isArray, uniqueId} from 'lodash'
 import {Stratus} from '@stratusjs/runtime/stratus'
 import * as angular from 'angular'
 
@@ -63,7 +63,7 @@ Stratus.Components.IdxMemberDetails = {
     ) {
         // Initialize
         const $ctrl = this
-        $ctrl.uid = _.uniqueId(_.camelCase(packageName) + '_' + _.camelCase(moduleName) + '_' + _.camelCase(componentName) + '_')
+        $ctrl.uid = uniqueId(camelCase(packageName) + '_' + camelCase(moduleName) + '_' + camelCase(componentName) + '_')
         $scope.elementId = $attrs.elementId || $ctrl.uid
         Stratus.Instances[$scope.elementId] = $scope
         if ($attrs.tokenUrl) {
@@ -160,7 +160,7 @@ Stratus.Components.IdxMemberDetails = {
                 $scope.memberMerged = {}
                 const tempCollection = [].concat($scope.collection.models).reverse()
                 tempCollection.forEach((agent: any) => {
-                    _.extend($scope.memberMerged, agent)
+                    extend($scope.memberMerged, agent)
                 })
 
                 $scope.memberCombined = {}
@@ -168,8 +168,8 @@ Stratus.Components.IdxMemberDetails = {
                     Object.keys(agent).forEach((key: string) => {
                         // If not an empty array
                         if (
-                            !_.isArray(agent[key]) ||
-                            (_.isArray(agent[key]) && agent[key].length > 0)
+                            !isArray(agent[key]) ||
+                            (isArray(agent[key]) && agent[key].length > 0)
                         ) {
                             $scope.memberCombined[key] = $scope.memberCombined[key] || []
                             // If not already in the agentCombined
