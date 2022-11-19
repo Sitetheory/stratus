@@ -250,6 +250,10 @@ Stratus.Components.IdxPropertySearch = {
 
             // $scope.setQuery($scope.options.query)
             $scope.setWhere($scope.options.query.where)
+            $ctrl.defaultQuery = JSON.parse(JSON.stringify(_.cloneDeep($scope.options.query.where)))
+            if ($scope.options.query.order) {
+                $ctrl.defaultQuery.Order = $scope.options.query.order
+            }
 
             // console.log('$scope.options.query is starting at ', _.clone($scope.options.query))
 
@@ -677,7 +681,7 @@ Stratus.Components.IdxPropertySearch = {
                     $ctrl.lastQuery = _.cloneDeep($scope.options.query)
                     // console.warn('there was a change')
                     Idx.setUrlOptions('Search', $scope.options.query.where)
-                    $window.open($scope.listLinkUrl + '#!/' + Idx.getUrlOptionsPath(), $scope.listLinkTarget)
+                    $window.open($scope.listLinkUrl + '#!/' + Idx.getUrlOptionsPath($ctrl.defaultQuery), $scope.listLinkTarget)
                 }
             }
         }
