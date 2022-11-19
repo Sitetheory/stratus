@@ -77,6 +77,7 @@ export type IdxPropertySearchScope = IdxSearchScope & {
     arrayIntersect(itemArray: any[], array: any[]): boolean
     displayOfficeGroupSelector(searchTerm?: string, editIndex?: number, ev?: any): void
     getMLSVariables(reset?: boolean): MLSService[]
+    hasQueryChanged(): boolean
     inArray(item: any, array: any[]): boolean
     selectDefaultListingType(listingGroup?: string): void
     setQuery(newQuery?: CompileFilterOptions): void
@@ -616,6 +617,8 @@ Stratus.Components.IdxPropertySearch = {
                     // console.log('updating', $scope.options.query.where.ListingType)
                     $scope.selectDefaultListingType()
                 }
+                // console.log('setting lastQuery setWhereDefaults', _.cloneDeep($scope.options.query))
+                $ctrl.lastQuery = _.cloneDeep($scope.options.query)
             })
         }
 
@@ -668,8 +671,14 @@ Stratus.Components.IdxPropertySearch = {
                 }
                 $scope.throttledSearch()
             } else {
-                Idx.setUrlOptions('Search', $scope.options.query.where) // TODO may need to set Page and stuff?
-                $window.open($scope.listLinkUrl + '#!/' + Idx.getUrlOptionsPath(), $scope.listLinkTarget)
+                // console.log('comparing last', _.cloneDeep($ctrl.lastQuery))
+                // console.log('comparing current', _.cloneDeep($scope.options.query))
+                if ($scope.hasQueryChanged()) {
+                    $ctrl.lastQuery = _.cloneDeep($scope.options.query)
+                    // console.warn('there was a change')
+                    Idx.setUrlOptions('Search', $scope.options.query.where)
+                    $window.open($scope.listLinkUrl + '#!/' + Idx.getUrlOptionsPath(), $scope.listLinkTarget)
+                }
             }
         }
 
@@ -786,11 +795,14 @@ Stratus.Components.IdxPropertySearch = {
             }
             if (listScope) {
                 $scope.setQuery(listScope.query)
+                $ctrl.lastQuery = _.cloneDeep($scope.options.query)
                 $scope.listInitialized = true
             }
         }
 
         $scope.on = (emitterName: string, callback: IdxEmitter) => Idx.on($scope.elementId, emitterName, callback)
+
+        $scope.hasQueryChanged = (): boolean => !_.isEqual(_.clone($ctrl.lastQuery), _.clone($scope.options.query))
 
         /**
          * Destroy this widget
