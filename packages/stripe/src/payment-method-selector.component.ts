@@ -72,6 +72,7 @@ export class StripePaymentMethodSelectorComponent extends RootComponent implemen
     @Input() registryModel: boolean | string // inputs are strings.. // false will disable Registry
 
     // Component Attributes
+    @Input() disabled: boolean | string = false // inputs are strings..
     @Input() property: string
     @Input() detailedBillingInfo?: boolean
     @Input() defaultBillingName?: string
@@ -96,7 +97,7 @@ export class StripePaymentMethodSelectorComponent extends RootComponent implemen
     subscriber: Subscriber<any>
     // Note: It may be better to LifeCycle::tick(), but this works for now
     form: FormGroup = this.fb.group({
-        [this.fieldName]: new FormControl(),
+        [this.fieldName]: new FormControl(), // optionally disabled on init to avoid known issues
         [this.fieldNameId]: new FormControl({disabled: true})
     })
 
@@ -236,6 +237,9 @@ export class StripePaymentMethodSelectorComponent extends RootComponent implemen
         const dataControl = this.form.get(this.fieldName)
         // console.log('form', this.form)
 
+        if (this.disabled && this.disabled !== 'false') {
+            dataControl.disable()
+        }
         dataControl.valueChanges.forEach(
             // (value?: number) => {
             (value?: Model) => {
