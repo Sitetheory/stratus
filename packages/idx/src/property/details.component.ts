@@ -4,7 +4,7 @@
 // --------------
 
 // Runtime
-import _ from 'lodash'
+import {camelCase, extend, isArray, uniqueId} from 'lodash'
 import {Stratus} from '@stratusjs/runtime/stratus'
 import * as angular from 'angular'
 // import moment from 'moment'
@@ -120,7 +120,7 @@ Stratus.Components.IdxPropertyDetails = {
     ) {
         // Initialize
         const $ctrl = this
-        $ctrl.uid = _.uniqueId(_.camelCase(packageName) + '_' + _.camelCase(moduleName) + '_' + _.camelCase(componentName) + '_')
+        $ctrl.uid = uniqueId(camelCase(packageName) + '_' + camelCase(moduleName) + '_' + camelCase(componentName) + '_')
         $scope.elementId = $attrs.elementId || $ctrl.uid
         Stratus.Instances[$scope.elementId] = $scope
         $scope.instancePath = `Stratus.Instances.${$scope.elementId}`
@@ -1232,7 +1232,7 @@ Stratus.Components.IdxPropertyDetails = {
                 // Load Options from the provided URL settings
                 const urlOptions = Idx.getOptionsFromUrl()
                 if (Object.prototype.hasOwnProperty.call(urlOptions, 'Listing')) {
-                    _.extend($scope.options, urlOptions.Listing)
+                    extend($scope.options, urlOptions.Listing)
                 }
             }
             $scope.fetchProperty()
@@ -1363,7 +1363,7 @@ Stratus.Components.IdxPropertyDetails = {
             const images: SlideImage[] = []
             if (
                 $scope.model.data.Images &&
-                _.isArray($scope.model.data.Images)
+                isArray($scope.model.data.Images)
             ) {
                 $scope.model.data.Images.forEach((image: { MediaURL?: string, Lazy?: string }) => {
                     // TODO need title/description variables

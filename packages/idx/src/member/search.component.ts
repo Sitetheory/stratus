@@ -5,7 +5,7 @@
  */
 
 // Runtime
-import _ from 'lodash'
+import {camelCase, forEach, uniqueId} from 'lodash'
 import {Stratus} from '@stratusjs/runtime/stratus'
 import * as angular from 'angular'
 
@@ -66,7 +66,7 @@ Stratus.Components.IdxMemberSearch = {
     ) {
         // Initialize
         const $ctrl = this
-        $ctrl.uid = _.uniqueId(_.camelCase(packageName) + '_' + _.camelCase(moduleName) + '_' + _.camelCase(componentName) + '_')
+        $ctrl.uid = uniqueId(camelCase(packageName) + '_' + camelCase(moduleName) + '_' + camelCase(componentName) + '_')
         $scope.elementId = $attrs.elementId || $ctrl.uid
         Stratus.Instances[$scope.elementId] = $scope
         if ($attrs.tokenUrl) {
@@ -230,7 +230,7 @@ Stratus.Components.IdxMemberSearch = {
                     template += optionKey + '=\'' + templateOptions[optionKey] + '\' '
                 }
             })*/
-            _.forEach(templateOptions, (optionValue, optionKey) => {
+            forEach(templateOptions, (optionValue, optionKey) => {
                 template += `${optionKey}='${optionValue}'`
             })
             template +=

@@ -5,7 +5,7 @@
  */
 
 // Runtime
-import _ from 'lodash'
+import {camelCase, clone, cloneDeep, forEach, isNil, isNumber, isString, uniqueId} from 'lodash'
 import {Stratus} from '@stratusjs/runtime/stratus'
 import * as angular from 'angular'
 
@@ -89,7 +89,7 @@ Stratus.Components.IdxOfficeList = {
     ) {
         // Initialize
         const $ctrl = this
-        $ctrl.uid = _.uniqueId(_.camelCase(packageName) + '_' + _.camelCase(moduleName) + '_' + _.camelCase(componentName) + '_')
+        $ctrl.uid = uniqueId(camelCase(packageName) + '_' + camelCase(moduleName) + '_' + camelCase(componentName) + '_')
         $scope.elementId = $attrs.elementId || $ctrl.uid
         Stratus.Instances[$scope.elementId] = $scope
         if ($attrs.tokenUrl) {
@@ -117,12 +117,12 @@ Stratus.Components.IdxOfficeList = {
                 JSON.parse($attrs.queryService) : $scope.query.service || []
 
             $scope.query.order =
-                $scope.query.order && _.isString($scope.query.order) && isJSON($scope.query.order) ? JSON.parse($scope.query.order) :
+                $scope.query.order && isString($scope.query.order) && isJSON($scope.query.order) ? JSON.parse($scope.query.order) :
                     $attrs.queryOrder && isJSON($attrs.queryOrder) ? JSON.parse($attrs.queryOrder) : $scope.query.order || null
             $scope.query.page = $scope.query.page || null// will be set by Service
             $scope.query.perPage = $scope.query.perPage ||
-                ($attrs.queryPerPage && _.isString($attrs.queryPerPage) ? parseInt($attrs.queryPerPage, 10) : null) ||
-                ($attrs.queryPerPage && _.isNumber($attrs.queryPerPage) ? $attrs.queryPerPage : null) ||
+                ($attrs.queryPerPage && isString($attrs.queryPerPage) ? parseInt($attrs.queryPerPage, 10) : null) ||
+                ($attrs.queryPerPage && isNumber($attrs.queryPerPage) ? $attrs.queryPerPage : null) ||
                 25
 
             $scope.query.where = $attrs.queryWhere && isJSON($attrs.queryWhere) ? JSON.parse($attrs.queryWhere) : $scope.query.where || []
@@ -205,7 +205,7 @@ Stratus.Components.IdxOfficeList = {
 
         $scope.$watch('collection.models', () => { // models?: []
             if ($scope.collection.completed) {
-                Idx.emit('collectionUpdated', $scope, _.clone($scope.collection))
+                Idx.emit('collectionUpdated', $scope, clone($scope.collection))
             }
         })
 
@@ -240,7 +240,7 @@ Stratus.Components.IdxOfficeList = {
             $q(async (resolve: any) => {
                 query = query || {}
                 updateUrl = updateUrl === false ? updateUrl : true
-                // console.log('searching for', _.clone(query))
+                // console.log('searching for', clone(query))
 
                 // If refreshing, reset to page 1
                 /*if (refresh) {
@@ -269,7 +269,7 @@ Stratus.Components.IdxOfficeList = {
                 if (query.Page <= 1) {
                     delete (query.Page)
                 }*/
-                // console.log('searching now for', _.clone(query))
+                // console.log('searching now for', clone(query))
 
                 // Page checks
                 // If a different page, set it in the URL
@@ -324,12 +324,12 @@ Stratus.Components.IdxOfficeList = {
 
                 if (
                     query.hasOwnProperty('service') &&
-                    !_.isNil(query.service)
+                    !isNil(query.service)
                 ) {
                     // service does not affect URLs as it's a page specific thing
                     $scope.query.service = query.service
                 }
-                Idx.emit('searching', $scope, _.clone($scope.query))
+                Idx.emit('searching', $scope, clone($scope.query))
 
                 // Grab the new member listings
                 // console.log('fetching members:', $scope.query)
@@ -337,8 +337,8 @@ Stratus.Components.IdxOfficeList = {
                     // resolve(Idx.fetchProperties($scope, 'collection', $scope.query, refresh))
                     // Grab the new property listings
                     const results = await Idx.fetchOffices($scope, 'collection', $scope.query, refresh)
-                    $ctrl.lastQuery = _.cloneDeep($scope.query)
-                    Idx.emit('searched', $scope, _.clone($scope.query))
+                    $ctrl.lastQuery = cloneDeep($scope.query)
+                    Idx.emit('searched', $scope, clone($scope.query))
                     resolve(results)
                 } catch (e) {
                     console.error('Unable to fetchMembers:', e)
@@ -355,15 +355,15 @@ Stratus.Components.IdxOfficeList = {
                 // Do do anything if the collection isn't ready yet
                 return
             }
-            // Idx.emit('pageChanging', $scope, _.clone($scope.query.page))
-            Idx.emit('pageChanging', $scope, _.clone($scope.query.page))
+            // Idx.emit('pageChanging', $scope, clone($scope.query.page))
+            Idx.emit('pageChanging', $scope, clone($scope.query.page))
             if (ev) {
                 ev.preventDefault()
             }
             $scope.query.page = pageNumber
             await $scope.search()
-            // Idx.emit('pageChanged', $scope, _.clone($scope.query.page))
-            Idx.emit('pageChanged', $scope, _.clone($scope.query.page))
+            // Idx.emit('pageChanged', $scope, clone($scope.query.page))
+            Idx.emit('pageChanged', $scope, clone($scope.query.page))
         }
 
         /**
@@ -379,7 +379,7 @@ Stratus.Components.IdxOfficeList = {
                 $scope.query.page = 1
             }
             if ($scope.collection.completed && $scope.query.page < $scope.collection.meta.data.totalPages) {
-                if (_.isString($scope.query.page)) {
+                if (isString($scope.query.page)) {
                     $scope.query.page = parseInt($scope.query.page, 10)
                 }
                 await $scope.pageChange($scope.query.page + 1, ev)
@@ -399,7 +399,7 @@ Stratus.Components.IdxOfficeList = {
                 $scope.query.page = 1
             }
             if ($scope.collection.completed && $scope.query.page > 1) {
-                if (_.isString($scope.query.page)) {
+                if (isString($scope.query.page)) {
                     $scope.query.page = parseInt($scope.query.page, 10)
                 }
                 const prev = $scope.query.page - 1 || 1
@@ -418,13 +418,13 @@ Stratus.Components.IdxOfficeList = {
                 // TODO set old Order back?
                 return
             }
-            Idx.emit('orderChanging', $scope, _.clone(order))
+            Idx.emit('orderChanging', $scope, clone(order))
             if (ev) {
                 ev.preventDefault()
             }
             $scope.query.order = order
             await $scope.search(null, true, true)
-            Idx.emit('orderChanged', $scope, _.clone(order))
+            Idx.emit('orderChanged', $scope, clone(order))
         }
 
         $scope.highlightModel = (model: Office, timeout?: number): void => {
@@ -480,7 +480,7 @@ Stratus.Components.IdxOfficeList = {
                 let template =
                     '<md-dialog aria-label="' + model.MemberKey + '">' +
                     '<stratus-idx-member-details '
-                _.forEach(templateOptions, (optionValue, optionKey) => {
+                forEach(templateOptions, (optionValue, optionKey) => {
                     template += `${optionKey}='${optionValue}'`
                 })
                 template +=

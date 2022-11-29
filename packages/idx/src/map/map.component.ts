@@ -5,7 +5,7 @@
  */
 
 // Runtime
-import _ from 'lodash'
+import {camelCase, uniqueId} from 'lodash'
 import {Stratus} from '@stratusjs/runtime/stratus'
 import * as angular from 'angular'
 // import numeral from 'numeral'
@@ -192,7 +192,7 @@ Stratus.Components.IdxMap = {
     ) {
         // Initialize
         const $ctrl = this
-        $ctrl.uid = _.uniqueId(_.camelCase(packageName) + '_' + _.camelCase(componentName) + '_')
+        $ctrl.uid = uniqueId(camelCase(packageName) + '_' + camelCase(componentName) + '_')
         Stratus.Instances[$ctrl.uid] = $scope
         $scope.elementId = $attrs.elementId || $ctrl.uid
         $scope.instancePath = `Stratus.Instances.${$scope.elementId}`

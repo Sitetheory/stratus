@@ -5,7 +5,7 @@
  */
 
 // Runtime
-import _ from 'lodash'
+import {camelCase, clone, cloneDeep, extend, forEach, isArray, isEmpty, isEqual, isNil, isNumber, isString, uniqueId} from 'lodash'
 import {Stratus} from '@stratusjs/runtime/stratus'
 import * as angular from 'angular'
 // import moment from 'moment'
@@ -296,8 +296,8 @@ Stratus.Components.IdxPropertyList = {
     ) {
         // Initialize
         const $ctrl = this
-        /*$ctrl.uid = $attrs.uid && !_.isEmpty($attrs.uid) ? $attrs.uid :
-            _.uniqueId(_.camelCase(packageName) + '_' + _.camelCase(moduleName) + '_' + _.camelCase(componentName) + '_')
+        /*$ctrl.uid = $attrs.uid && !isEmpty($attrs.uid) ? $attrs.uid :
+            uniqueId(camelCase(packageName) + '_' + camelCase(moduleName) + '_' + camelCase(componentName) + '_')
          */
         $scope.localDir = localDir
         $scope.initialized = false
@@ -311,7 +311,7 @@ Stratus.Components.IdxPropertyList = {
          * Needs to be placed in a function, as the functions below need to the initialized first
          */
         const init = async () => {
-            $ctrl.uid = _.uniqueId(_.camelCase(packageName) + '_' + _.camelCase(moduleName) + '_' + _.camelCase(componentName) + '_')
+            $ctrl.uid = uniqueId(camelCase(packageName) + '_' + camelCase(moduleName) + '_' + camelCase(componentName) + '_')
             $scope.elementId = $attrs.elementId || $ctrl.uid
             Stratus.Instances[$scope.elementId] = $scope
             $scope.instancePath = `Stratus.Instances.${$scope.elementId}`
@@ -345,12 +345,12 @@ Stratus.Components.IdxPropertyList = {
                 JSON.parse($attrs.queryService) : $scope.query.service || []
             // If string, check if a json and parse first. Otherwise be null or what it is
             $scope.query.order =
-                $scope.query.order && _.isString($scope.query.order) && isJSON($scope.query.order) ? JSON.parse($scope.query.order) :
+                $scope.query.order && isString($scope.query.order) && isJSON($scope.query.order) ? JSON.parse($scope.query.order) :
                     $attrs.queryOrder && isJSON($attrs.queryOrder) ? JSON.parse($attrs.queryOrder) : $scope.query.order || null
             $scope.query.page = $scope.query.page || null // will be set by Service
             $scope.query.perPage = $scope.query.perPage ||
-                ($attrs.queryPerPage && _.isString($attrs.queryPerPage) ? parseInt($attrs.queryPerPage, 10) : null) ||
-                ($attrs.queryPerPage && _.isNumber($attrs.queryPerPage) ? $attrs.queryPerPage : null) ||
+                ($attrs.queryPerPage && isString($attrs.queryPerPage) ? parseInt($attrs.queryPerPage, 10) : null) ||
+                ($attrs.queryPerPage && isNumber($attrs.queryPerPage) ? $attrs.queryPerPage : null) ||
                 25
             $scope.query.where = $attrs.queryWhere && isJSON($attrs.queryWhere) ? JSON.parse($attrs.queryWhere) : $scope.query.where || []
             $scope.query.images = $scope.query.images || {limit: 1}
@@ -358,12 +358,12 @@ Stratus.Components.IdxPropertyList = {
             // Handle row displays
             $scope.displayPerRow = 2
             $scope.displayPerRowText = 'two'
-            if ($attrs.displayPerRowText && _.isString($attrs.displayPerRowText)) {
+            if ($attrs.displayPerRowText && isString($attrs.displayPerRowText)) {
                 $scope.displayPerRowText = $attrs.displayPerRowText
                 $scope.displayPerRow = $scope.displayPerRowText === 'one' ? 1 : $scope.displayPerRowText === 'two' ? 2 :
                     $scope.displayPerRowText === 'three' ? 3 : $scope.displayPerRowText === 'four' ? 4 : 2
-            } else if ($attrs.displayPerRow && (_.isString($attrs.displayPerRow) || _.isNumber($attrs.displayPerRow))) {
-                $scope.displayPerRow = _.isString($attrs.displayPerRow) ? parseInt($attrs.displayPerRow, 10) : $attrs.displayPerRow
+            } else if ($attrs.displayPerRow && (isString($attrs.displayPerRow) || isNumber($attrs.displayPerRow))) {
+                $scope.displayPerRow = isString($attrs.displayPerRow) ? parseInt($attrs.displayPerRow, 10) : $attrs.displayPerRow
                 $scope.displayPerRowText = $scope.displayPerRow === 1 ? 'one' : $scope.displayPerRow === 2 ? 'two' :
                     $scope.displayPerRow === 3 ? 'three' : $scope.displayPerRow === 4 ? 'four' : 'two'
             }
@@ -376,7 +376,7 @@ Stratus.Components.IdxPropertyList = {
             $scope.hideDisclaimer = $attrs.hideDisclaimer && isJSON($attrs.hideDisclaimer) ?
                 JSON.parse($attrs.hideDisclaimer) : false
 
-            if (_.isArray($scope.query.where)) {
+            if (isArray($scope.query.where)) {
                 delete $scope.query.where
             }
             /* List of default or blank values */
@@ -384,7 +384,7 @@ Stratus.Components.IdxPropertyList = {
             // If these are blank, set some defaults
             startingQuery.Status = startingQuery.Status || ['Active', 'Contract']
             startingQuery.ListingType = startingQuery.ListingType || ['House', 'Condo']
-            $scope.query.where = _.extend(Idx.getDefaultWhereOptions(), startingQuery || {})
+            $scope.query.where = extend(Idx.getDefaultWhereOptions(), startingQuery || {})
 
             $ctrl.defaultQuery = JSON.parse(JSON.stringify($scope.query.where)) // Extend/clone doesn't work for arrays
             $ctrl.lastQuery = {}
@@ -422,7 +422,7 @@ Stratus.Components.IdxPropertyList = {
                 // Load Query from the provided URL settings
                 urlQuery = Idx.getOptionsFromUrl()
                 // If a specific listing is provided, be sure to pop it up as well
-                // console.log('urlQuery', _.clone(urlQuery))
+                // console.log('urlQuery', clone(urlQuery))
                 if (
                     urlQuery.hasOwnProperty('Listing') &&
                     // urlQuery.Listing.service &&
@@ -434,13 +434,13 @@ Stratus.Components.IdxPropertyList = {
             }
 
             if ($scope.searchOnLoad) {
-                // console.log('at $scope.searchOnLoad', _.clone(urlQuery.Search))
+                // console.log('at $scope.searchOnLoad', clone(urlQuery.Search))
                 const searchQuery: CompileFilterOptions = {
-                    where: _.clone(urlQuery.Search) as WhereOptions
+                    where: clone(urlQuery.Search) as WhereOptions
                 }
                 // delete searchQuery.where.Page
                 // delete searchQuery.where.Order
-                // console.log('about to searchProperties for', _.clone(searchQuery))
+                // console.log('about to searchProperties for', clone(searchQuery))
                 await $scope.search(searchQuery, false, false)
             }
 
@@ -501,7 +501,7 @@ Stratus.Components.IdxPropertyList = {
             $anchorScroll(`${$scope.elementId}_${model._id}`)
         }
 
-        $scope.hasQueryChanged = (): boolean => !_.isEqual(_.clone($ctrl.lastQuery), _.clone($scope.query))
+        $scope.hasQueryChanged = (): boolean => !isEqual(clone($ctrl.lastQuery), clone($scope.query))
 
         /**
          * Functionality called when a search widget runs a query after the page has loaded
@@ -518,15 +518,15 @@ Stratus.Components.IdxPropertyList = {
                 if ($scope.collection.pending) {
                     // Do do anything if the collection isn't ready yet
                     // revert to last query as this never fired
-                    $scope.query = _.cloneDeep($ctrl.lastQuery)
+                    $scope.query = cloneDeep($ctrl.lastQuery)
                     resolve([])
                     return
                 }
-                query = query || _.clone($scope.query) || {}
+                query = query || clone($scope.query) || {}
                 query.where = query.where || {}
-                // console.log('searchProperties has query', _.clone(query))
+                // console.log('searchProperties has query', clone(query))
 
-                let urlWhere: UrlWhereOptions = _.clone(query.where) || {}
+                let urlWhere: UrlWhereOptions = clone(query.where) || {}
                 // updateUrl = updateUrl === false ? updateUrl : true
                 updateUrl = updateUrl === false ? updateUrl : $scope.urlLoad === false ? $scope.urlLoad : true
 
@@ -534,8 +534,8 @@ Stratus.Components.IdxPropertyList = {
                 if (Object.keys(query.where).length > 0) {
                     delete ($scope.query.where) // Remove the current settings
                     // console.log('searchProperties had a query.where with keys')
-                    // console.log('searchProperties $scope.query', _.clone($scope.query))
-                    // console.log('searchProperties query.where', _.clone(query.where))
+                    // console.log('searchProperties $scope.query', clone($scope.query))
+                    // console.log('searchProperties query.where', clone(query.where))
                     $scope.query.where = query.where // Add the new settings
                     // FIXME ensure Page doesn't get added here anymore
                     /* if ($scope.query.where.Page) { // removing
@@ -549,12 +549,12 @@ Stratus.Components.IdxPropertyList = {
                         delete ($scope.query.where.Order)
                     } */
                 } else {
-                    // console.log('query.where is blank, so loading', _.clone($scope.query.where))
-                    urlWhere = _.clone($scope.query.where) || {}
+                    // console.log('query.where is blank, so loading', clone($scope.query.where))
+                    urlWhere = clone($scope.query.where) || {}
                 }
 
                 // Check and remove incompatible where combinations. Basically if Location or neighborhood are used, remove the others
-                if (!_.isEmpty(query.where.Location)) {
+                if (!isEmpty(query.where.Location)) {
                     query.where.City = []
                     query.where.UnparsedAddress = ''
                     query.where.Neighborhood = []
@@ -562,7 +562,7 @@ Stratus.Components.IdxPropertyList = {
                     query.where.PostalCode = []
                     query.where.MLSAreaMajor = []
                 }
-                if (!_.isEmpty(query.where.Neighborhood)) {
+                if (!isEmpty(query.where.Neighborhood)) {
                     query.where.City = []
                     query.where.UnparsedAddress = ''
                     query.where.CityRegion = []
@@ -610,20 +610,20 @@ Stratus.Components.IdxPropertyList = {
                     // delete ($scope.query.where.Order)
                 }
                 if ($scope.query.order && $scope.query.order.length > 0) {
-                    // console.log('setting where to', _.clone($scope.query.order), 'from', _.clone(where.Order))
+                    // console.log('setting where to', clone($scope.query.order), 'from', clone(where.Order))
                     urlWhere.Order = $scope.query.order
                 }
 
                 if (
                     query.hasOwnProperty('service') &&
-                    !_.isNil(query.service)
+                    !isNil(query.service)
                 ) {
                     // service does not affect URLs as it's a page specific thing
                     $scope.query.service = query.service
                 }
                 if ($scope.hasQueryChanged()) {
-                    // console.log('setting this URL', _.clone(urlWhere))
-                    // console.log('$scope.query.where ending with', _.clone($scope.query.where))
+                    // console.log('setting this URL', clone(urlWhere))
+                    // console.log('$scope.query.where ending with', clone($scope.query.where))
                     // Set the URL query
                     Idx.setUrlOptions('Search', urlWhere)
                     // TODO need to avoid adding default variables to URL (Status/order/etc)
@@ -634,15 +634,15 @@ Stratus.Components.IdxPropertyList = {
                         Idx.refreshUrlOptions($ctrl.defaultQuery)
                     }
 
-                    Idx.emit('searching', $scope, _.clone($scope.query))
+                    Idx.emit('searching', $scope, clone($scope.query))
 
                     try {
                         // resolve(Idx.fetchProperties($scope, 'collection', $scope.query, refresh))
                         // Grab the new property listings
                         const results = await Idx.fetchProperties($scope, 'collection', $scope.query, refresh)
-                        $ctrl.lastQuery = _.cloneDeep($scope.query)
+                        $ctrl.lastQuery = cloneDeep($scope.query)
                         // $applyAsync will automatically be applied
-                        Idx.emit('searched', $scope, _.clone($scope.query))
+                        Idx.emit('searched', $scope, clone($scope.query))
                         resolve(results)
                     } catch (e) {
                         console.error('Unable to fetchProperties:', e)
@@ -660,7 +660,7 @@ Stratus.Components.IdxPropertyList = {
                 // Do do anything if the collection isn't ready yet
                 return
             }
-            Idx.emit('pageChanging', $scope, _.clone($scope.query.page))
+            Idx.emit('pageChanging', $scope, clone($scope.query.page))
             if (ev) {
                 ev.preventDefault()
             }
@@ -668,7 +668,7 @@ Stratus.Components.IdxPropertyList = {
             // Need scroll options
             $anchorScroll($scope.elementId) // Scroll to the top again
             await $scope.search()
-            Idx.emit('pageChanged', $scope, _.clone($scope.query.page))
+            Idx.emit('pageChanged', $scope, clone($scope.query.page))
         }
 
         /**
@@ -684,7 +684,7 @@ Stratus.Components.IdxPropertyList = {
                 $scope.query.page = 1
             }
             if ($scope.collection.completed && $scope.query.page < $scope.collection.meta.data.totalPages) {
-                if (_.isString($scope.query.page)) {
+                if (isString($scope.query.page)) {
                     $scope.query.page = parseInt($scope.query.page, 10)
                 }
                 await $scope.pageChange($scope.query.page + 1, ev)
@@ -704,7 +704,7 @@ Stratus.Components.IdxPropertyList = {
                 $scope.query.page = 1
             }
             if ($scope.collection.completed && $scope.query.page > 1) {
-                if (_.isString($scope.query.page)) {
+                if (isString($scope.query.page)) {
                     $scope.query.page = parseInt($scope.query.page, 10)
                 }
                 const prev = $scope.query.page - 1 || 1
@@ -723,13 +723,13 @@ Stratus.Components.IdxPropertyList = {
                 // TODO set old Order back?
                 return
             }
-            Idx.emit('orderChanging', $scope, _.clone(order))
+            Idx.emit('orderChanging', $scope, clone(order))
             if (ev) {
                 ev.preventDefault()
             }
             $scope.query.order = order
             await $scope.search(null, true, true)
-            Idx.emit('orderChanged', $scope, _.clone(order))
+            Idx.emit('orderChanged', $scope, clone(order))
         }
 
         $scope.getOrderOptions = (): OrderOptions => {
@@ -768,12 +768,12 @@ Stratus.Components.IdxPropertyList = {
             let name
             if (
                 $scope.query.order !== '' &&
-                !_.isEmpty($scope.query.order)
+                !isEmpty($scope.query.order)
             ) {
                 for (const index in $scope.orderOptions) {
                     if (
                         $scope.orderOptions.hasOwnProperty(index) &&
-                        _.isEqual($scope.orderOptions[index].value, $scope.query.order)
+                        isEqual($scope.orderOptions[index].value, $scope.query.order)
                     ) {
                         name = $scope.orderOptions[index].name
                         break
@@ -808,11 +808,11 @@ Stratus.Components.IdxPropertyList = {
                 if (
                     $scope.query &&
                     (
-                        _.isNumber($scope.query.service) ||
-                        !_.isEmpty($scope.query.service)
+                        isNumber($scope.query.service) ||
+                        !isEmpty($scope.query.service)
                     )
                 ) {
-                    if (!_.isArray($scope.query.service)) {
+                    if (!isArray($scope.query.service)) {
                         $scope.query.service = [$scope.query.service]
                     }
                     mlsServicesRequested = $scope.query.service
@@ -920,7 +920,7 @@ Stratus.Components.IdxPropertyList = {
                     `<div aria-label="Close Popup" class="close-button" data-ng-click="closePopup()" aria-label="Close Details Popup"></div>` +
                     `</div>` +
                     '<stratus-idx-property-details '
-                _.forEach(templateOptions, (optionValue, optionKey) => {
+                forEach(templateOptions, (optionValue, optionKey) => {
                     template += `data-${optionKey}='${optionValue}'`
                 })
                 template +=

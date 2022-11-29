@@ -5,7 +5,7 @@
  */
 
 // Runtime
-import _ from 'lodash'
+import {camelCase, clone, forEach, isString, uniqueId} from 'lodash'
 import {Stratus} from '@stratusjs/runtime/stratus'
 import * as angular from 'angular'
 
@@ -84,7 +84,7 @@ Stratus.Components.IdxMemberList = {
     ) {
         // Initialize
         const $ctrl = this
-        $ctrl.uid = _.uniqueId(_.camelCase(packageName) + '_' + _.camelCase(moduleName) + '_' + _.camelCase(componentName) + '_')
+        $ctrl.uid = uniqueId(camelCase(packageName) + '_' + camelCase(moduleName) + '_' + camelCase(componentName) + '_')
         $scope.elementId = $attrs.elementId || $ctrl.uid
         Stratus.Instances[$scope.elementId] = $scope
         if ($attrs.tokenUrl) {
@@ -227,7 +227,7 @@ Stratus.Components.IdxMemberList = {
                 /* if (updateUrl) {
                   Idx.refreshUrlOptions($ctrl.defaultOptions)
                 } */
-                Idx.emit('searching', $scope, _.clone($scope.query))
+                Idx.emit('searching', $scope, clone($scope.query))
 
                 // Grab the new member listings
                 // console.log('fetching members:', $scope.options)
@@ -235,7 +235,7 @@ Stratus.Components.IdxMemberList = {
                     // resolve(Idx.fetchProperties($scope, 'collection', $scope.query, refresh))
                     // Grab the new property listings
                     const results = await Idx.fetchMembers($scope, 'collection', $scope.options, refresh)
-                    Idx.emit('searched', $scope, _.clone($scope.query))
+                    Idx.emit('searched', $scope, clone($scope.query))
                     resolve(results)
                 } catch (e) {
                     console.error('Unable to fetchMembers:', e)
@@ -252,15 +252,15 @@ Stratus.Components.IdxMemberList = {
                 // Do do anything if the collection isn't ready yet
                 return
             }
-            // Idx.emit('pageChanging', $scope, _.clone($scope.query.page))
-            Idx.emit('pageChanging', $scope, _.clone($scope.options.page))
+            // Idx.emit('pageChanging', $scope, clone($scope.query.page))
+            Idx.emit('pageChanging', $scope, clone($scope.options.page))
             if (ev) {
                 ev.preventDefault()
             }
             $scope.options.page = pageNumber
             await $scope.search()
-            // Idx.emit('pageChanged', $scope, _.clone($scope.query.page))
-            Idx.emit('pageChanged', $scope, _.clone($scope.options.page))
+            // Idx.emit('pageChanged', $scope, clone($scope.query.page))
+            Idx.emit('pageChanged', $scope, clone($scope.options.page))
         }
 
         /**
@@ -276,7 +276,7 @@ Stratus.Components.IdxMemberList = {
                 $scope.options.page = 1
             }
             if ($scope.collection.completed && $scope.options.page < $scope.collection.meta.data.totalPages) {
-                if (_.isString($scope.options.page)) {
+                if (isString($scope.options.page)) {
                     $scope.options.page = parseInt($scope.options.page, 10)
                 }
                 await $scope.pageChange($scope.options.page + 1, ev)
@@ -296,7 +296,7 @@ Stratus.Components.IdxMemberList = {
                 $scope.options.page = 1
             }
             if ($scope.collection.completed && $scope.options.page > 1) {
-                if (_.isString($scope.options.page)) {
+                if (isString($scope.options.page)) {
                     $scope.options.page = parseInt($scope.options.page, 10)
                 }
                 const prev = $scope.options.page - 1 || 1
@@ -315,13 +315,13 @@ Stratus.Components.IdxMemberList = {
                 // TODO set old Order back?
                 return
             }
-            Idx.emit('orderChanging', $scope, _.clone(order))
+            Idx.emit('orderChanging', $scope, clone(order))
             if (ev) {
                 ev.preventDefault()
             }
             $scope.options.order = order
             await $scope.search(null, true, true)
-            Idx.emit('orderChanged', $scope, _.clone(order))
+            Idx.emit('orderChanged', $scope, clone(order))
         }
 
         $scope.highlightModel = (model: Member, timeout?: number): void => {
@@ -377,7 +377,7 @@ Stratus.Components.IdxMemberList = {
                 let template =
                     '<md-dialog aria-label="' + model.MemberKey + '">' +
                     '<stratus-idx-member-details '
-                _.forEach(templateOptions, (optionValue, optionKey) => {
+                forEach(templateOptions, (optionValue, optionKey) => {
                     template += `${optionKey}='${optionValue}'`
                 })
                 template +=

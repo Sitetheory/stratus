@@ -4,7 +4,7 @@
 // --------------
 
 // Runtime
-import _ from 'lodash'
+import {camelCase, isArray, isEmpty, isNumber, isString, isUndefined, uniqueId} from 'lodash'
 import {Stratus} from '@stratusjs/runtime/stratus'
 import * as angular from 'angular'
 
@@ -65,7 +65,7 @@ Stratus.Components.IdxDisclaimer = {
     ) {
         // Initialize
         const $ctrl = this
-        $ctrl.uid = _.uniqueId(_.camelCase(packageName) + '_' + _.camelCase(componentName) + '_')
+        $ctrl.uid = uniqueId(camelCase(packageName) + '_' + camelCase(componentName) + '_')
         Stratus.Instances[$ctrl.uid] = $scope
         $scope.elementId = $attrs.elementId || $ctrl.uid
         $scope.initialized = false
@@ -109,7 +109,7 @@ Stratus.Components.IdxDisclaimer = {
                     if (hideOnDuplicate !== true) {
                         // Check if if a raw value
                         $scope.hideOnDuplicate =
-                            $attrs.hideOnDuplicate ? (_.isString($attrs.hideOnDuplicate) && isJSON($attrs.hideOnDuplicate) ?
+                            $attrs.hideOnDuplicate ? (isString($attrs.hideOnDuplicate) && isJSON($attrs.hideOnDuplicate) ?
                                 JSON.parse($attrs.hideOnDuplicate) : false) : false
                     } else {
                         $scope.hideOnDuplicate = hideOnDuplicate || false
@@ -127,7 +127,7 @@ Stratus.Components.IdxDisclaimer = {
                                     instances[elementId].alwaysShow === true && // We need to ensure this always stays here
                                     (
                                         instances[elementId].modificationTimestamp === null || // This needs to be a Global, not single
-                                        _.isUndefined(instances[elementId].modificationTimestamp)
+                                        isUndefined(instances[elementId].modificationTimestamp)
                                     )
                                 ) {
                                     // console.log($scope.elementId, 'found a master disclaimer at', elementId)
@@ -190,11 +190,11 @@ Stratus.Components.IdxDisclaimer = {
                 if (
                     $scope.service &&
                     (
-                        _.isNumber($scope.service) ||
-                        !_.isEmpty($scope.service)
+                        isNumber($scope.service) ||
+                        !isEmpty($scope.service)
                     )
                 ) {
-                    if (!_.isArray($scope.service)) {
+                    if (!isArray($scope.service)) {
                         $scope.service = [$scope.service]
                     }
                     mlsServicesRequested = $scope.service

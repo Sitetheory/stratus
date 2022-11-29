@@ -5,7 +5,7 @@
  */
 
 // Runtime
-import _ from 'lodash'
+import _, {camelCase, clone, cloneDeep, extend, isArray, isEmpty, isEqual, isNumber, isString, map, throttle, uniqueId} from 'lodash'
 import {Stratus} from '@stratusjs/runtime/stratus'
 import * as angular from 'angular'
 
@@ -77,6 +77,7 @@ export type IdxPropertySearchScope = IdxSearchScope & {
     arrayIntersect(itemArray: any[], array: any[]): boolean
     displayOfficeGroupSelector(searchTerm?: string, editIndex?: number, ev?: any): void
     getMLSVariables(reset?: boolean): MLSService[]
+    hasQueryChanged(): boolean
     inArray(item: any, array: any[]): boolean
     selectDefaultListingType(listingGroup?: string): void
     setQuery(newQuery?: CompileFilterOptions): void
@@ -193,7 +194,7 @@ Stratus.Components.IdxPropertySearch = {
     ) {
         // Initialize
         const $ctrl = this
-        $ctrl.uid = _.uniqueId(_.camelCase(packageName) + '_' + _.camelCase(moduleName) + '_' + _.camelCase(componentName) + '_')
+        $ctrl.uid = uniqueId(camelCase(packageName) + '_' + camelCase(moduleName) + '_' + camelCase(componentName) + '_')
         $scope.elementId = $attrs.elementId || $ctrl.uid
         $scope._ = _
         Stratus.Instances[$scope.elementId] = $scope
@@ -235,7 +236,7 @@ Stratus.Components.IdxPropertySearch = {
             // $scope.options.officeGroups = $scope.options.officeGroups || []
 
             $scope.options.officeGroups =
-                ($scope.options.officeGroups && _.isString($scope.options.officeGroups) && isJSON($scope.options.officeGroups)
+                ($scope.options.officeGroups && isString($scope.options.officeGroups) && isJSON($scope.options.officeGroups)
                     ? JSON.parse($scope.options.officeGroups)
                     : ($attrs.optionsOfficeGroups && isJSON($attrs.optionsOfficeGroups)
                         ? JSON.parse($attrs.optionsOfficeGroups)
@@ -249,8 +250,12 @@ Stratus.Components.IdxPropertySearch = {
 
             // $scope.setQuery($scope.options.query)
             $scope.setWhere($scope.options.query.where)
+            $ctrl.defaultQuery = JSON.parse(JSON.stringify(cloneDeep($scope.options.query.where)))
+            if ($scope.options.query.order) {
+                $ctrl.defaultQuery.Order = $scope.options.query.order
+            }
 
-            // console.log('$scope.options.query is starting at ', _.clone($scope.options.query))
+            // console.log('$scope.options.query is starting at ', clone($scope.options.query))
 
             // If the List hasn't updated this widget after 1 second, make sure it's checked again. A workaround for
             // the race condition for now, up for suggestions
@@ -403,7 +408,7 @@ Stratus.Components.IdxPropertySearch = {
                     $scope.options.query.where.ListingType = []
                 }
 
-                if (!_.isArray($scope.options.query.where.ListingType)) {
+                if (!isArray($scope.options.query.where.ListingType)) {
                     $scope.options.query.where.ListingType = [$scope.options.query.where.ListingType]
                 }
                 $scope.options.selection.ListingType.group.Residential =
@@ -437,14 +442,14 @@ Stratus.Components.IdxPropertySearch = {
          */
         $scope.variableSync = async (): Promise<void> => {
             $scope.variableSyncing = $attrs.variableSync && isJSON($attrs.variableSync) ? JSON.parse($attrs.variableSync) : {}
-            // console.log('variables syncing: ', _.clone($scope.variableSyncing))
+            // console.log('variables syncing: ', clone($scope.variableSyncing))
             const promises: any[] = []
             Object.keys($scope.variableSyncing).forEach((elementId: string) => {
                 promises.push(
                     $q(async (resolve: void | any) => {
                         const varElement = Idx.getInput(elementId)
                         if (varElement) {
-                            // console.log('got input', varElement, _.clone(varElement.val()))
+                            // console.log('got input', varElement, clone(varElement.val()))
                             // Form Input exists
                             const scopeVarPath = $scope.variableSyncing[elementId]
                             // convert into a real var path and set the initial value from the exiting form value
@@ -457,8 +462,8 @@ Stratus.Components.IdxPropertySearch = {
                                 (value: any) => {
                                     // console.log('detecting', scopeVarPath, 'as', value)
                                     if (
-                                        _.isString(value) ||
-                                        _.isNumber(value) ||
+                                        isString(value) ||
+                                        isNumber(value) ||
                                         value == null
                                     ) {
                                         // console.log('updating', scopeVarPath, 'value to', value, 'was', varElement.val())
@@ -485,7 +490,7 @@ Stratus.Components.IdxPropertySearch = {
          * TODO move to global reference
          */
         $scope.inArray = (item: any, array: any[]): boolean => {
-            if (!_.isArray(array)) {
+            if (!isArray(array)) {
                 // console.warn('Array undefined, cannot search for', item)
                 return false
             }
@@ -497,8 +502,8 @@ Stratus.Components.IdxPropertySearch = {
          */
         $scope.arrayIntersect = (itemArray: any[], array: any[]): boolean => {
             if (
-                !_.isArray(array) ||
-                !_.isArray(itemArray)
+                !isArray(array) ||
+                !isArray(itemArray)
             ) {
                 console.warn('Array undefined, cannot search for', itemArray, 'in', array)
                 // return []
@@ -582,31 +587,31 @@ Stratus.Components.IdxPropertySearch = {
             newQuery = newQuery || {}
             newQuery.where = newQuery.where || {}
             // getDefaultWhereOptions returns the set a required WhereOptions with initialized arrays
-            // $scope.options.query = _.extend(Idx.getDefaultWhereOptions(), newQuery)
-            $scope.options.query = _.cloneDeep(newQuery)
+            // $scope.options.query = extend(Idx.getDefaultWhereOptions(), newQuery)
+            $scope.options.query = cloneDeep(newQuery)
             $scope.setWhere($scope.options.query.where)
-            // console.log('setQuery $scope.options.query to ', _.clone($scope.options.query))
+            // console.log('setQuery $scope.options.query to ', clone($scope.options.query))
         }
 
         /**
          * Update the entirety options.query.where in a safe manner to ensure undefined references are not produced
          */
         $scope.setWhere = (newWhere?: WhereOptions): void => {
-            // console.log('setWhere', _.clone(newWhere))
+            // console.log('setWhere', clone(newWhere))
             newWhere = newWhere || {}
             // getDefaultWhereOptions returns the set a required WhereOptions with initialized arrays
-            $scope.options.query.where = _.extend(Idx.getDefaultWhereOptions(), newWhere)
+            $scope.options.query.where = extend(Idx.getDefaultWhereOptions(), newWhere)
             // find the objects that aren't arrays and convert to arrays as require to prevent future and current errors
-            _.map(Idx.getDefaultWhereOptions(), (value, key: string) => {
+            map(Idx.getDefaultWhereOptions(), (value, key: string) => {
                 if (
-                    _.isArray(value) &&
+                    isArray(value) &&
                     Object.prototype.hasOwnProperty.call($scope.options.query.where, key) &&
-                    !_.isArray($scope.options.query.where[key])
+                    !isArray($scope.options.query.where[key])
                 ) {
                     $scope.options.query.where[key] = [$scope.options.query.where[key]]
                 }
             })
-            // console.log('setWhere', _.clone($scope.options.query.where))
+            // console.log('setWhere', clone($scope.options.query.where))
         }
 
         $scope.setWhereDefaults = (): void => {
@@ -616,6 +621,8 @@ Stratus.Components.IdxPropertySearch = {
                     // console.log('updating', $scope.options.query.where.ListingType)
                     $scope.selectDefaultListingType()
                 }
+                // console.log('setting lastQuery setWhereDefaults', cloneDeep($scope.options.query))
+                $ctrl.lastQuery = cloneDeep($scope.options.query)
             })
         }
 
@@ -653,23 +660,29 @@ Stratus.Components.IdxPropertySearch = {
                 // $scope.options.query.service = [1]
                 // $scope.options.query.where.Page = 1 // just a fall back, as it gets 'Page 2'
                 // $scope.options.query.page = 1 // just a fall back, as it gets 'Page 2'
-                // console.log('sending search', _.clone($scope.options.query))
+                // console.log('sending search', clone($scope.options.query))
 
                 /* const searchQuery: CompileFilterOptions = {
-                    where: _.clone($scope.options.query.where)
+                    where: clone($scope.options.query.where)
                 }*/
                 // FIXME need to ensure only where options
-                // console.log('but suppose to send', _.clone($scope.options.query))
+                // console.log('but suppose to send', clone($scope.options.query))
                 // listScope.search($scope.options.query, true)
                 // only allow a query every second
                 if (!$scope.throttledSearch) {
                     $scope.throttledSearch =
-                        _.throttle(() => {listScope.search($scope.options.query, true)}, 600, { trailing: false })
+                        throttle(() => {listScope.search($scope.options.query, true)}, 600, { trailing: false })
                 }
                 $scope.throttledSearch()
             } else {
-                Idx.setUrlOptions('Search', $scope.options.query.where) // TODO may need to set Page and stuff?
-                $window.open($scope.listLinkUrl + '#!/' + Idx.getUrlOptionsPath(), $scope.listLinkTarget)
+                // console.log('comparing last', cloneDeep($ctrl.lastQuery))
+                // console.log('comparing current', cloneDeep($scope.options.query))
+                if ($scope.hasQueryChanged()) {
+                    $ctrl.lastQuery = cloneDeep($scope.options.query)
+                    // console.warn('there was a change')
+                    Idx.setUrlOptions('Search', $scope.options.query.where)
+                    $window.open($scope.listLinkUrl + '#!/' + Idx.getUrlOptionsPath($ctrl.defaultQuery), $scope.listLinkTarget)
+                }
             }
         }
 
@@ -690,13 +703,13 @@ Stratus.Components.IdxPropertySearch = {
                     perPage: 100
                 }
             }
-            if (!_.isEmpty(searchTerm) && _.isString(searchTerm)) {
+            if (!isEmpty(searchTerm) && isString(searchTerm)) {
                 options.query.where = {
                     OfficeName: searchTerm
                 }
                 searchOnLoad = true
             }
-            if (!_.isNumber(editIndex)) {
+            if (!isNumber(editIndex)) {
                 editIndex = $scope.options.officeGroups.length
             }
 
@@ -760,7 +773,7 @@ Stratus.Components.IdxPropertySearch = {
 
         $scope.validateOfficeGroups = (search?: boolean): void => {
             $scope.options.officeGroups = $scope.options.officeGroups.filter((selection) => {
-                return (!_.isEmpty(selection.name) && !_.isEmpty(selection.group))
+                return (!isEmpty(selection.name) && !isEmpty(selection.group))
             })
             const officeNumbers: string[] = []
             $scope.options.query.where.OfficeNumber = [] as string[]
@@ -786,11 +799,14 @@ Stratus.Components.IdxPropertySearch = {
             }
             if (listScope) {
                 $scope.setQuery(listScope.query)
+                $ctrl.lastQuery = cloneDeep($scope.options.query)
                 $scope.listInitialized = true
             }
         }
 
         $scope.on = (emitterName: string, callback: IdxEmitter) => Idx.on($scope.elementId, emitterName, callback)
+
+        $scope.hasQueryChanged = (): boolean => !isEqual(clone($ctrl.lastQuery), clone($scope.options.query))
 
         /**
          * Destroy this widget

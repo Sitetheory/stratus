@@ -4,7 +4,7 @@
 // --------------
 
 // Runtime
-import _ from 'lodash'
+import {camelCase, forEach, get, isArray, isString, uniqueId} from 'lodash'
 import {Stratus} from '@stratusjs/runtime/stratus'
 import * as angular from 'angular'
 
@@ -86,11 +86,11 @@ Stratus.Components.IdxPropertyDetailsSubSection = {
         // Initialize
         const $ctrl = this
 
-        $ctrl.uid = _.uniqueId(_.camelCase(packageName) + '_' + _.camelCase(moduleName) + '_' + _.camelCase(componentName) + '_')
+        $ctrl.uid = uniqueId(camelCase(packageName) + '_' + camelCase(moduleName) + '_' + camelCase(componentName) + '_')
         $scope.elementId = $attrs.elementId || $ctrl.uid
         $scope.className = $attrs.className || 'sub-detail-section'
         $scope.sectionName = $attrs.sectionName || ''
-        $scope.sectionNameId = _.camelCase($scope.sectionName) + '_' + $scope.elementId
+        $scope.sectionNameId = camelCase($scope.sectionName) + '_' + $scope.elementId
         const defaultItems: SubSectionOptionItems = {} // Simply to type cast into SubSectionOptionItems
         $scope.items = $attrs.items && isJSON($attrs.items) ? JSON.parse($attrs.items) : defaultItems
 
@@ -104,11 +104,11 @@ Stratus.Components.IdxPropertyDetailsSubSection = {
                     $scope.model.data[item] !== 0 && // ensure we skip 0 or empty sections that can appear
                     $scope.model.data[item] !== '' && // ensure we skip "0" sections that can appear
                     $scope.model.data[item] !== '0' && // ensure we skip blanks or empty sections that can appear
-                    !_.isString($scope.items[item]) // skip SubSectionOptionItems that are just a string
+                    !isString($scope.items[item]) // skip SubSectionOptionItems that are just a string
                 ) {
                     if (!(
                         $scope.model.data[item] === false &&
-                        _.get($scope.items[item], 'false') === ''
+                        get($scope.items[item], 'false') === ''
                     )) {
                         // Adjust the text being appended if there is a appendField being set
                         if (
@@ -132,8 +132,8 @@ Stratus.Components.IdxPropertyDetailsSubSection = {
                         }
 
                         if (
-                            _.get($scope.items[item], 'hideEmpty') !== false &&
-                            (_.isArray($scope.model.data[item]) && $scope.model.data[item].length <= 0) // skip empty array
+                            get($scope.items[item], 'hideEmpty') !== false &&
+                            (isArray($scope.model.data[item]) && $scope.model.data[item].length <= 0) // skip empty array
                         ) {
                             ($scope.items[item] as SubSectionOptionItem).hide = true
                         } else {
@@ -142,7 +142,7 @@ Stratus.Components.IdxPropertyDetailsSubSection = {
 
                     } else if (
                         $scope.model.data[item] === false &&
-                        _.get($scope.items[item], 'hideEmpty') !== false
+                        get($scope.items[item], 'hideEmpty') !== false
                     ) {
                         ($scope.items[item] as SubSectionOptionItem).hide = true
                     }
@@ -153,7 +153,7 @@ Stratus.Components.IdxPropertyDetailsSubSection = {
         if ($scope.sectionName.startsWith('{')) {
             $ctrl.stopWatchingSectionName = $scope.$watch('$ctrl.sectionName', (data: string) => {
                 $scope.sectionName = data
-                $scope.sectionNameId = _.camelCase($scope.sectionName) + '_' + $scope.elementId
+                $scope.sectionNameId = camelCase($scope.sectionName) + '_' + $scope.elementId
                 $ctrl.stopWatchingSectionName()
             })
         }
@@ -190,7 +190,7 @@ Stratus.Components.IdxPropertyDetailsSubSection = {
                     }
                 }
             })*/
-            _.forEach($scope.items, (itemValue: any, itemKey: string) => {
+            forEach($scope.items, (itemValue: any, itemKey: string) => {
                 if (typeof itemValue === 'string') {
                     $scope.items[itemKey] = {
                         name: itemValue
@@ -199,9 +199,9 @@ Stratus.Components.IdxPropertyDetailsSubSection = {
             })
         }
 
-        $scope.typeOf = (item: any): string => _.isArray(item) ? 'array' : typeof item
+        $scope.typeOf = (item: any): string => isArray(item) ? 'array' : typeof item
 
-        $scope.isArray = (item: any): boolean => _.isArray(item)
+        $scope.isArray = (item: any): boolean => isArray(item)
     },
     templateUrl: ($attrs: angular.IAttributes): string => `${localDir}${$attrs.template || componentName}.component${min}.html`
 }
