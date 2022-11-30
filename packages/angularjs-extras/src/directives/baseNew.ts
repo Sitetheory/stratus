@@ -3,9 +3,7 @@
 
 // Runtime
 import {snakeCase, uniqueId} from 'lodash'
-import {
-    Stratus
-} from '@stratusjs/runtime/stratus'
+import {Stratus} from '@stratusjs/runtime/stratus'
 import {
     IAugmentedJQuery,
     IAttributes,
