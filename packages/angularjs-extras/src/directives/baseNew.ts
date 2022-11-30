@@ -40,9 +40,9 @@ Stratus.Directives.BaseNew = (
         stratusBaseNew: '='
     },
     link: (
-        $scope: BaseNewScope,
-        $element: IAugmentedJQuery & {elementId?: string},
         $attrs: IAttributes,
+        $element: IAugmentedJQuery & {elementId?: string},
+        $scope: BaseNewScope,
         ngModel: INgModelController
     ) => {
         // Initialize
