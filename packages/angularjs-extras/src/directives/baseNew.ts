@@ -2,11 +2,12 @@
 // -----------------
 
 // Runtime
-import _ from 'lodash'
+import {snakeCase, uniqueId} from 'lodash'
 import {
     Stratus
 } from '@stratusjs/runtime/stratus'
 import {
+    IAugmentedJQuery,
     IAttributes,
     IScope,
     INgModelController,
@@ -18,12 +19,17 @@ import 'angular-material'
 
 // Stratus Core
 import {cookie} from '@stratusjs/core/environment'
-import {LooseObject} from '@stratusjs/core/misc'
 
 // Environment
 const min = !cookie('env') ? '.min' : ''
 const name = 'baseNew'
 const localPath = '@stratusjs/angularjs-extras/src/directives'
+
+export type BaseNewScope = IScope & {
+    uid: string
+    elementId: string
+    initialized: boolean
+}
 
 // This directive intends to provide basic logic for extending
 // the Stratus Auto-Loader for various contextual uses.
@@ -36,13 +42,13 @@ Stratus.Directives.BaseNew = (
         stratusBaseNew: '='
     },
     link: (
-        $scope: IScope & LooseObject,
-        $element: JQLite & {elementId?: string},
+        $scope: BaseNewScope,
+        $element: IAugmentedJQuery & {elementId?: string},
         $attrs: IAttributes,
         ngModel: INgModelController
     ) => {
         // Initialize
-        $scope.uid = _.uniqueId(_.snakeCase(name) + '_')
+        $scope.uid = uniqueId(snakeCase(name) + '_')
         Stratus.Instances[$scope.uid] = $scope
         $scope.elementId = $element.elementId || $scope.uid
         $scope.initialized = false
