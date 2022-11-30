@@ -7,8 +7,8 @@ import {Stratus} from '@stratusjs/runtime/stratus'
 import {
     IAugmentedJQuery,
     IAttributes,
-    IScope,
     INgModelController,
+    IScope
     // IParseService
 } from 'angular'
 
