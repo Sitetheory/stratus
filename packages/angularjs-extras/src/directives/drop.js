@@ -1,27 +1,30 @@
-// Drop Directive
-// --------------
-
-/* global define */
-
-// Define AMD, Require.js, or Contextual Scope
-(function (root, factory) {
-  if (typeof define === 'function' && define.amd) {
-    define(['stratus', 'lodash', 'angular'], factory)
-  } else {
-    factory(root.Stratus, root._, root.angular)
-  }
-}(this, function (Stratus, _, angular) {
-  // This directive intends to handle binding of a dynamic variable to
-  Stratus.Directives.Drop = function ($parse, $log) {
+System.register(["lodash", "@stratusjs/runtime/stratus"], function (exports_1, context_1) {
+    "use strict";
+    var lodash_1, stratus_1, name;
+    var __moduleName = context_1 && context_1.id;
     return {
-      restrict: 'A',
-      scope: {
-        ngModel: '=ngModel'
-      },
-      link: function ($scope, $element, $attrs) {
-        Stratus.Instances[_.uniqueId('drop_')] = $scope
-        $log.log('drop:', $element)
-      }
-    }
-  }
-}))
+        setters: [
+            function (lodash_1_1) {
+                lodash_1 = lodash_1_1;
+            },
+            function (stratus_1_1) {
+                stratus_1 = stratus_1_1;
+            }
+        ],
+        execute: function () {
+            name = 'drop';
+            stratus_1.Stratus.Directives.Drop = ($log) => ({
+                restrict: 'A',
+                scope: {
+                    ngModel: '=ngModel'
+                },
+                link: ($scope, $element) => {
+                    stratus_1.Stratus.Instances[lodash_1.uniqueId(name + '_')] = $scope;
+                    $log.log('drop:', $element);
+                },
+            });
+        }
+    };
+});
+
+//# sourceMappingURL=drop.js.map

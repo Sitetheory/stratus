@@ -2,7 +2,7 @@
 // -----------------
 
 // Runtime
-import {uniqueId} from 'lodash'
+import {get, uniqueId} from 'lodash'
 import {Stratus} from '@stratusjs/runtime/stratus'
 import {
     IAugmentedJQuery,
@@ -35,7 +35,9 @@ Stratus.Directives.Drag = (
             console.log('dragstart:', event)
             event.dataTransfer.effectAllowed = 'copy' // only dropEffect='copy'
             // will be droppable
-            event.dataTransfer.setData('Text', this.id) // required otherwise
+            // event.dataTransfer.setData('Text', this.id) // required otherwise
+            // Typescript doesn't believe id exists
+            event.dataTransfer.setData('Text', get(this, 'id')) // required otherwise
             // doesn't work
         })
 

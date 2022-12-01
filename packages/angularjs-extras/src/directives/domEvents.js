@@ -1,78 +1,58 @@
-// Dom Events Extras Directive
-// -----------------
-// Intended to add the DOM events that https://github.com/angular/angular.js/blob/master/src/ng/directive/ngEventDirs.js has missed
-// Such as:
-// focusin: stratus-focusin (different than data-ng-focus) You can focus any element directly so long as you add tabindex="-1"
-//          Otherwise, this will always detect inner children being focused or directly on just input fields
-// focusout: stratus-focusout (different than data-ng-blur)
-
-/* global define */
-
-// Define AMD, Require.js, or Contextual Scope
-(function (root, factory) {
-  if (typeof define === 'function' && define.amd) {
-    define(['stratus', 'lodash', 'angular'], factory)
-  } else {
-    factory(root.Stratus, root._, root.angular)
-  }
-}(this, function (Stratus, _) {
-  /**
-   * List of DOM events that will be converted into Directives
-   * @type {string[]}
-   */
-  const directiveEvents = [
-    'focusin',
-    'focusout'
-  ]
-  /**
-   * For events that might fire synchronously during DOM manipulation
-   * we need to execute their event handlers asynchronously using $evalAsync,
-   * so that they are not executed in an inconsistent state.
-   */
-  const forceAsyncEvents = {
-    focusin: true,
-    focusout: true
-  }
-
-  directiveEvents.forEach(function (eventName) {
-    const directiveName = _.capitalize(eventName)
-    const attributeName = 'stratus' + directiveName
-    /* console.log({
-      'eventName': eventName,
-      'directiveName': directiveName,
-      'attributeName': attributeName
-    }) */
-
-    Stratus.Directives[directiveName] = function ($parse, $rootScope, $exceptionHandler) {
-      return {
-        restrict: 'A',
-        compile: function ($element, $attrs) {
-          const fn = $parse($attrs[attributeName])
-          // console.log('initied', attributeName, $attrs[attributeName], $attrs)
-          return function ngEventHandler (scope, element) {
-            element.on(eventName, function (event) {
-              // console.log(eventName, 'hit')
-              const callback = function () {
-                fn(scope, { $event: event })
-              }
-
-              if (!$rootScope.$$phase) {
-                scope.$apply(callback)
-              } else if (forceAsyncEvents[eventName]) {
-                scope.$evalAsync(callback)
-              } else {
-                try {
-                  callback()
-                } catch (error) {
-                  $exceptionHandler(error)
-                }
-              }
-            })
-          }
+System.register(["lodash", "@stratusjs/runtime/stratus"], function (exports_1, context_1) {
+    "use strict";
+    var lodash_1, stratus_1, directiveEvents, forceAsyncEvents;
+    var __moduleName = context_1 && context_1.id;
+    return {
+        setters: [
+            function (lodash_1_1) {
+                lodash_1 = lodash_1_1;
+            },
+            function (stratus_1_1) {
+                stratus_1 = stratus_1_1;
+            }
+        ],
+        execute: function () {
+            directiveEvents = [
+                'focusin',
+                'focusout'
+            ];
+            forceAsyncEvents = {
+                focusin: true,
+                focusout: true
+            };
+            directiveEvents.forEach(eventName => {
+                const directiveName = lodash_1.capitalize(eventName);
+                const attributeName = 'stratus' + directiveName;
+                stratus_1.Stratus.Directives[directiveName] = ($exceptionHandler, $parse, $rootScope) => ({
+                    restrict: 'A',
+                    compile: ($element, $attrs) => {
+                        const fn = $parse($attrs[attributeName]);
+                        return function ngEventHandler(scope, element) {
+                            element.on(eventName, event => {
+                                const callback = () => {
+                                    fn(scope, { $event: event });
+                                };
+                                if (!$rootScope.$$phase) {
+                                    scope.$apply(callback);
+                                }
+                                else if (forceAsyncEvents.hasOwnProperty(eventName) && forceAsyncEvents[eventName]) {
+                                    scope.$evalAsync(callback);
+                                }
+                                else {
+                                    try {
+                                        callback();
+                                    }
+                                    catch (error) {
+                                        $exceptionHandler(error);
+                                    }
+                                }
+                            });
+                        };
+                    }
+                });
+            });
         }
+    };
+});
 
-      }
-    }
-    // End Direction Additions loop
-  })
-}))
+//# sourceMappingURL=domEvents.js.map

@@ -1,42 +1,40 @@
-// SingleClick Directive
-// ---------------------
-
-/* global define */
-
-// Define AMD, Require.js, or Contextual Scope
-(function (root, factory) {
-  if (typeof define === 'function' && define.amd) {
-    define(['stratus', 'lodash', 'angular'], factory)
-  } else {
-    factory(root.Stratus, root._, root.angular)
-  }
-}(this, function (Stratus, _, angular) {
-  // This directive intends to handle binding of a dynamic variable to
-  Stratus.Directives.SingleClick = function ($parse, $log) {
+System.register(["@stratusjs/runtime/stratus"], function (exports_1, context_1) {
+    "use strict";
+    var stratus_1;
+    var __moduleName = context_1 && context_1.id;
     return {
-      restrict: 'A',
-      link: function ($scope, $element, $attr) {
-        const fn = $parse($attr.stratusSingleClick)
-        const delay = 300
-        let clicks = 0
-        let timer = null
-        $element.on('click', function (event) {
-          clicks++
+        setters: [
+            function (stratus_1_1) {
+                stratus_1 = stratus_1_1;
+            }
+        ],
+        execute: function () {
+            stratus_1.Stratus.Directives.SingleClick = ($log, $parse) => ({
+                restrict: 'A',
+                link: ($attrs, $element, $scope) => {
+                    const fn = $parse($attrs.stratusSingleClick);
+                    const delay = 300;
+                    let clicks = 0;
+                    let timer = null;
+                    $element.on('click', event => {
+                        clicks++;
+                        if (clicks === 1) {
+                            timer = setTimeout(() => {
+                                $scope.$applyAsync(() => {
+                                    fn($scope, { $event: event });
+                                });
+                                clicks = 0;
+                            }, delay);
+                        }
+                        else {
+                            clearTimeout(timer);
+                            clicks = 0;
+                        }
+                    });
+                }
+            });
+        }
+    };
+});
 
-          // count clicks
-          if (clicks === 1) {
-            timer = setTimeout(function () {
-              $scope.$applyAsync(function () {
-                fn($scope, { $event: event })
-              })
-              clicks = 0
-            }, delay)
-          } else {
-            clearTimeout(timer)
-            clicks = 0
-          }
-        })
-      }
-    }
-  }
-}))
+//# sourceMappingURL=singleClick.js.map

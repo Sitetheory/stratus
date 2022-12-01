@@ -1,40 +1,43 @@
-// HREF Directive
-// --------------
-
-/* global define */
-
-// Define AMD, Require.js, or Contextual Scope
-(function (root, factory) {
-  if (typeof define === 'function' && define.amd) {
-    define(['stratus', 'lodash', 'angular'], factory)
-  } else {
-    factory(root.Stratus, root._, root.angular)
-  }
-}(this, function (Stratus, _, angular) {
-  // This directive intends to handle binding of a dynamic variable to
-  Stratus.Directives.Href = function ($parse, $location, $log) {
+System.register(["lodash", "@stratusjs/runtime/stratus"], function (exports_1, context_1) {
+    "use strict";
+    var lodash_1, stratus_1, name;
+    var __moduleName = context_1 && context_1.id;
     return {
-      restrict: 'A',
-      link: function ($scope, $element, $attrs) {
-        Stratus.Instances[_.uniqueId('href_')] = $scope
-        $scope.href = null
-        if ($attrs.stratusHref) {
-          const href = $parse($attrs.stratusHref)
-          $scope.$watch('$parent', function (newValue) {
-            if (typeof newValue !== 'undefined') {
-              $scope.href = href($scope.$parent)
-              $log.log('stratus-href:', href($scope.href))
+        setters: [
+            function (lodash_1_1) {
+                lodash_1 = lodash_1_1;
+            },
+            function (stratus_1_1) {
+                stratus_1 = stratus_1_1;
             }
-          })
-          $element.bind('click', function () {
-            $scope.$applyAsync(function () {
-              if ($scope.href) {
-                $location.path($scope.href)
-              }
-            })
-          })
+        ],
+        execute: function () {
+            name = 'href';
+            stratus_1.Stratus.Directives.Href = ($location, $log, $parse) => ({
+                restrict: 'A',
+                link: ($scope, $element, $attrs) => {
+                    stratus_1.Stratus.Instances[lodash_1.uniqueId(name + '_')] = $scope;
+                    $scope.href = null;
+                    if ($attrs.stratusHref) {
+                        const href = $parse($attrs.stratusHref);
+                        $scope.$watch('$parent', newValue => {
+                            if (typeof newValue !== 'undefined') {
+                                $scope.href = href($scope.$parent);
+                                $log.log('stratus-href:', href($scope.href));
+                            }
+                        });
+                        $element.bind('click', () => {
+                            $scope.$applyAsync(() => {
+                                if ($scope.href) {
+                                    $location.path($scope.href);
+                                }
+                            });
+                        });
+                    }
+                }
+            });
         }
-      }
-    }
-  }
-}))
+    };
+});
+
+//# sourceMappingURL=href.js.map
