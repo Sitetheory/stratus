@@ -101,6 +101,8 @@ Stratus.Directives.OnScreen = (
                 isWaiting = true
                 setTimeout(() => {
                     isWaiting = false
+                    // isOnScreen and calculate require each other
+                    // tslint:disable-next-line:no-use-before-declare
                     calculate()
                 }, ((lastUpdate + update) - calculation) + 1)
             }
