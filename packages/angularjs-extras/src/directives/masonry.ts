@@ -1,4 +1,5 @@
 // Masonry Directive
+// @deprecated Masonry is not import and this directive will not work currently
 // --------------
 // Initialize on page by adding to a
 
