@@ -47,6 +47,7 @@ packages/angularjs/src/**/*.js
 packages/angularjs/src/**/*.js.map
 packages/angularjs/src/**/*.css
 packages/angularjs-extras/src/**/*.js.map
+packages/angularjs-extras/src/directives/*.js
 packages/angularjs-extras/src/filters/*.js
 packages/angularjs-extras/src/**/*.css
 packages/backend/src/**/*.js
