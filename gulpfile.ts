@@ -144,6 +144,7 @@ const locations: Locations = {
     },
     preserve: {
         core: [
+            'packages/*/dist/*.js',
             'packages/angularjs/src/**/*.js',
             'packages/angularjs-extras/src/**/*.js',
             'packages/calendar/src/**/*.js',
@@ -151,6 +152,7 @@ const locations: Locations = {
             'packages/swiper/src/**/*.js'
         ],
         min: [
+            'packages/*/dist/*.min.js',
             'packages/angularjs/src/**/*.min.js',
             'packages/angularjs-extras/src/**/*.min.js',
             'packages/calendar/src/**/*.min.js',
@@ -220,14 +222,13 @@ const locations: Locations = {
 function lintJS() {
     return src([
         // Pure JavaScript Files
-        'packages/angularjs-extras/**/*.js',
-        '!packages/angularjs-extras/**/*.min.js',
-        '!packages/angularjs-extras/node_modules/**/*.js',
-        'packages/boot/**/*.js',
-        '!packages/boot/**/*.min.js',
+        'packages/angularjs-extras/src/**/*.js',
+        '!packages/angularjs-extras/src/**/*.min.js',
+        'packages/boot/src/**/*.js',
+        '!packages/boot/src/**/*.min.js',
         '!packages/boot/node_modules/**/*.js',
-        'packages/runtime/**/*.js',
-        '!packages/runtime/**/*.min.js',
+        'packages/runtime/src/**/*.js',
+        '!packages/runtime/src/**/*.min.js',
         '!packages/runtime/node_modules/**/*.js',
         // TypeScript Supersedes
         '!packages/angularjs-extras/src/components/*.js',

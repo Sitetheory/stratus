@@ -1,5 +1,9 @@
 {
   "compilerOptions": {
+    // Rollup Compilation
+//    "target": "es6",
+//    "module": "ES2020",
+    // SystemJS Compilation
     "target": "es2019",
     "module": "system",
     "moduleResolution": "node",

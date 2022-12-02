@@ -39,10 +39,10 @@ import {
 import 'angular-material' // Reliant for $mdToast
 
 // AngularJS Dependency Injector
-import {getInjector} from '@stratusjs/angularjs/injector'
+import {getInjector} from '../injector'
 
 // AngularJS Services
-import {Collection} from '@stratusjs/angularjs/services/collection'
+import {Collection} from './collection'
 
 // Instantiate Injector
 let injector = getInjector()
@@ -600,6 +600,10 @@ export class Model<T = LooseObject> extends ModelBase<T> {
 
                 // TODO: Make this into an over-writable function
                 // Gather Data
+                // FIXME: This needs to be setting as the API data...
+                // FIXME: The API data coming in appears to have precedence after recent changes
+                // FIXME: This does not have to do with recent changes, where we handle incoming
+                //        change sets...  There's something else at play.
                 this.header.set(this.xhr.getAllResponseHeaders() || {})
                 this.meta.set((response as LooseObject).meta || {})
                 this.route.set((response as LooseObject).route || {})

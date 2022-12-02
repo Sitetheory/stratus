@@ -28,6 +28,7 @@ export function kebabToCamel(target: any) {
     return target.replace(/(-\w)/g, (m: any) => m[1].toUpperCase())
 }
 
+// TODO: Use native instead of lodash
 export function sanitize(data: any) {
     if (!_.isObject(data)) {
         return data
@@ -51,7 +52,7 @@ export function seconds(str: string): number {
         return null
     }
     const timePairs = str.match(/([\d+.]*[\d+])(?=[sSmMhHdDwWyY]+)([sSmMhHdDwWyY]+)/gi)
-    if (!_.size(timePairs)) {
+    if (!timePairs) {
         return null
     }
     const digest = /([\d+.]*[\d+])(?=[sSmMhHdDwWyY]+)([sSmMhHdDwWyY]+)/i
@@ -59,7 +60,7 @@ export function seconds(str: string): number {
     let unit
     let value
     let data = 0
-    _.forEach(timePairs, (timePair: string) => {
+    timePairs.forEach((timePair: string) => {
         time = digest.exec(timePair)
         value = parseFloat(time[1])
         unit = time[2]

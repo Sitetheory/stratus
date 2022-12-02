@@ -2,9 +2,9 @@
 // --------------
 
 import _ from 'lodash'
-import {seconds} from '@stratusjs/core/conversion'
-import {ModelBase} from '@stratusjs/core/datastore/modelBase'
-import {cookie} from '@stratusjs/core/environment'
+import {seconds} from '../conversion'
+import {ModelBase} from '../datastore/modelBase'
+import {cookie} from '../environment'
 
 // This constructor builds jobs for various methods.
 export class Job {

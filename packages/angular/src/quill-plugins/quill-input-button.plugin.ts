@@ -4,7 +4,7 @@ import {
 } from '@stratusjs/runtime/stratus'
 import {
     TriggerInterface
-} from '@stratusjs/angular/core/trigger.interface'
+} from '../core/trigger.interface'
 
 // External Dependencies
 import _ from 'lodash'

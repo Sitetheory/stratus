@@ -32,10 +32,10 @@ Stratus.Components.TwitterFeed = {
         $element: JQLite
     ) {
         // Initialize
-        const $ctrl = this
-        $ctrl.uid = _.uniqueId(_.snakeCase(name) + '_')
-        Stratus.Instances[$ctrl.uid] = $scope
-        $scope.elementId = $attrs.elementId || $ctrl.uid
+        // const $ctrl = this
+        $scope.uid = _.uniqueId(_.snakeCase(name) + '_')
+        Stratus.Instances[$scope.uid] = $scope
+        $scope.elementId = $attrs.elementId || $scope.uid
         $scope.initialized = false
 
         // Initialization

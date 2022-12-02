@@ -33,6 +33,10 @@ etc/*
 # Legacy Minifications
 dist/**/*.min.js
 
+# Webpack Builds
+packages/*/dist/**/*.js
+packages/*/dist/**/*.js.map
+
 # Package Minifications
 packages/*/src/**/*.min.js
 packages/*/src/**/*.min.css
@@ -54,8 +58,6 @@ packages/angularjs-extras/src/services/*.js
 packages/angularjs-extras/src/**/*.css
 packages/backend/src/**/*.js
 packages/backend/src/**/*.js.map
-packages/boot/dist/**/*.js
-packages/boot/dist/**/*.js.map
 packages/calendar/src/**/*.js
 packages/calendar/src/**/*.js.map
 packages/calendar/src/**/*.css

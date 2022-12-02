@@ -1,10 +1,10 @@
 // Interfaces
 import {
     BaseInterface
-} from '@stratusjs/angular/core/base.interface'
+} from './base.interface'
 import {
     ResponsiveInterface
-} from '@stratusjs/angular/core/responsive.interface'
+} from './responsive.interface'
 
 // Libraries
 import {

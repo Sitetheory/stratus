@@ -2,8 +2,8 @@
 // --------------------
 
 import _ from 'lodash'
-import {EventBase} from '@stratusjs/core/events/eventBase'
-import {cookie} from '@stratusjs/core/environment'
+import {EventBase} from './eventBase'
+import {cookie} from '../environment'
 
 export class EventManager {
     protected name = 'EventManager'

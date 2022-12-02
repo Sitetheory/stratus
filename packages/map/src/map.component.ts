@@ -29,12 +29,12 @@ import {isJSON} from '@stratusjs/core/misc'
 // Components
 import {
     RootComponent
-} from '@stratusjs/angular/core/root.component'
+} from '../../angular/src/core/root.component'
 
 // Local Setup
 const packageName = 'map'
 const systemDir = `@stratusjs/${packageName}`
-const localDir = `${Stratus.BaseUrl}${boot.configuration.paths[`${systemDir}/*`].replace(/[^/]*$/, '')}`
+const localDir = `${Stratus.BaseUrl}${boot.configuration.paths[`${systemDir}/*`].replace(/[^/]*$/, '').replace(/angular\/dist\/$/, 'map/src/')}`
 const moduleName = 'map'
 
 // Static Variables

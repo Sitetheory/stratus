@@ -44,7 +44,7 @@ import {
 // Extends
 import {
     ResponsiveComponent
-} from '@stratusjs/angular/core/responsive.component'
+} from '../core/responsive.component'
 
 // Local Setup
 const systemDir = '@stratusjs/angular'
@@ -53,7 +53,7 @@ const parentModuleName = 'editor'
 
 // Directory Template
 const min = !cookie('env') ? '.min' : ''
-const localDir = `${Stratus.BaseUrl}${boot.configuration.paths[`${systemDir}/*`].replace(/[^/]*$/, '')}`
+const localDir = `${Stratus.BaseUrl}${boot.configuration.paths[`${systemDir}/*`].replace(/[^/]*$/, '').replace(/\/dist\/$/, '/src/')}`
 
 /**
  * @title Dialog for Nested Tree

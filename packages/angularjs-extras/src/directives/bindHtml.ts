@@ -69,10 +69,10 @@ Stratus.Directives.BindHtml = (
         $attrs: IAttributes & any,
     ) => {
         // Initialize
-        const $ctrl: any = this
-        $ctrl.uid = _.uniqueId(_.snakeCase(name) + '_')
-        Stratus.Instances[$ctrl.uid] = $scope
-        $scope.elementId = $element.elementId || $ctrl.uid
+        // const $ctrl: any = this
+        $scope.uid = _.uniqueId(_.snakeCase(name) + '_')
+        Stratus.Instances[$scope.uid] = $scope
+        $scope.elementId = $element.elementId || $scope.uid
         $scope.initialized = false
 
         // Hoist Element for Debug Purposes
@@ -137,7 +137,7 @@ Stratus.Directives.BindHtml = (
             // Mark as initialized since the watcher isn't critical
             $scope.initialized = true
             // this isn't critical anymore, since we added a DOMSubtreeModified hook
-            // console.warn(`unable to set html on instance ${$ctrl.uid} via stratus-bind-html attributes.`)
+            // console.warn(`unable to set html on instance ${$scope.uid} via stratus-bind-html attributes.`)
             return
         }
 
@@ -146,23 +146,23 @@ Stratus.Directives.BindHtml = (
             () => $scope.$eval($attrs.stratusBindHtml),
             (newValue?: TrustedValueHolder, oldValue?: TrustedValueHolder) => {
                 if (!_.isObject(newValue)) {
-                    console.warn(`stratus-bind-html: unable to find trusted html on instance ${$ctrl.uid}`)
+                    console.warn(`stratus-bind-html: unable to find trusted html on instance ${$scope.uid}`)
                     return
                 }
                 if (!_.isFunction(newValue.$$unwrapTrustedValue)) {
-                    console.warn(`stratus-bind-html: unable to find trusted html on instance ${$ctrl.uid}`)
+                    console.warn(`stratus-bind-html: unable to find trusted html on instance ${$scope.uid}`)
                     return
                 }
                 // attempt to generate html
                 const newHtml = newValue.$$unwrapTrustedValue()
                 if (!_.isString(newHtml)) {
-                    console.warn(`stratus-bind-html: unable to unwrap html on instance ${$ctrl.uid}`)
+                    console.warn(`stratus-bind-html: unable to unwrap html on instance ${$scope.uid}`)
                     return
                 }
                 // stop infinite loops
                 if (newHtml === $scope.html) {
-                    console.warn(`stratus-bind-html: infinite loop detected for html on instance ${$ctrl.uid}`)
-                    console.warn(`stratus-bind-html: halting watcher on instance ${$ctrl.uid}`)
+                    console.warn(`stratus-bind-html: infinite loop detected for html on instance ${$scope.uid}`)
+                    console.warn(`stratus-bind-html: halting watcher on instance ${$scope.uid}`)
                     $scope.watcher()
                     return
                 }
@@ -173,7 +173,7 @@ Stratus.Directives.BindHtml = (
                 $scope.initialized = true
                 // handle single read binds
                 if (!_.startsWith($attrs.stratusBindHtml, '::')) {
-                    console.warn(`stratus-bind-html: it is recommended to prefix :: to compiled binds on instance ${$ctrl.uid}`)
+                    console.warn(`stratus-bind-html: it is recommended to prefix :: to compiled binds on instance ${$scope.uid}`)
                     return
                 }
                 // stop listening

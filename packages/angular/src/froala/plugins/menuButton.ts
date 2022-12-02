@@ -1,7 +1,7 @@
 // Universal Button
 import {
     InputButtonPlugin
-} from '@stratusjs/angular/froala/plugins/inputButton'
+} from './inputButton'
 
 // @ts-ignore
 import FroalaEditor from 'froala-editor'
@@ -64,25 +64,31 @@ FroalaEditor.PLUGINS.menuButton = function menuButton (editor: any) {
 }
 
 // Insert Plugin to Image Insert
-FroalaEditor.DEFAULTS.menuButtons.push('menuButton'),
-    FroalaEditor.RegisterCommand('menuButton', {
-        title: 'Insert from Menu Button',
-        undo: false,
-        focus: false,
-        modal: false,
-        refreshAfterCallback: true,
-        callback() {
-            const debug = false
-            if (debug) {
-                console.log('clicked:', this.menuButton)
-            }
-            this.menuButton.onClick()
-        },
-        plugin: 'menuButton',
-    }),
-    FroalaEditor.DefineIcon('menuButton', {NAME: 'folder', SVG_KEY: 'imageManager'}),
-    FroalaEditor.DefineIcon('menuButtonInsert', {NAME: 'plus', SVG_KEY: 'add'}),
-    FroalaEditor.DefineIcon('menuButtonDelete', {NAME: 'trash', SVG_KEY: 'remove'})
+// FIXME: This needs to ensure menuButtons exists!  can't push to undefined!!!
+if (FroalaEditor.DEFAULTS) {
+    if (typeof FroalaEditor.DEFAULTS.menuButtons === 'undefined') {
+        FroalaEditor.DEFAULTS.menuButtons = []
+    }
+    FroalaEditor.DEFAULTS.menuButtons.push('menuButton')
+}
+FroalaEditor.RegisterCommand('menuButton', {
+    title: 'Insert from Menu Button',
+    undo: false,
+    focus: false,
+    modal: false,
+    refreshAfterCallback: true,
+    callback() {
+        const debug = false
+        if (debug) {
+            console.log('clicked:', this.menuButton)
+        }
+        this.menuButton.onClick()
+    },
+    plugin: 'menuButton',
+})
+FroalaEditor.DefineIcon('menuButton', {NAME: 'folder', SVG_KEY: 'imageManager'})
+FroalaEditor.DefineIcon('menuButtonInsert', {NAME: 'plus', SVG_KEY: 'add'})
+FroalaEditor.DefineIcon('menuButtonDelete', {NAME: 'trash', SVG_KEY: 'remove'})
 
 // Define a quick insert button
 FroalaEditor.RegisterQuickInsertButton('menu', {

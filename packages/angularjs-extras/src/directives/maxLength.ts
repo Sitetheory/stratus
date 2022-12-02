@@ -38,16 +38,16 @@ Stratus.Directives.MaxLength = (
         ngModel: INgModelController
     ) => {
         // Initialize
-        const $ctrl: any = this
-        $ctrl.uid = uniqueId(snakeCase(name) + '_')
-        Stratus.Instances[$ctrl.uid] = $scope
-        $scope.elementId = $element.elementId || $ctrl.uid
+        // const $ctrl: any = this
+        $scope.uid = uniqueId(snakeCase(name) + '_')
+        Stratus.Instances[$scope.uid] = $scope
+        $scope.elementId = $element.elementId || $scope.uid
         $scope.initialized = false
 
         // Force Max Length in ngModel Parser
         const maxLength = Number($attrs.stratusMaxLength || $attrs.mdMaxlength)
         if (!maxLength) {
-            console.warn(`unable to set max length on instance ${$ctrl.uid} via stratus-max-length or md-maxlength attributes.`)
+            console.warn(`unable to set max length on instance ${$scope.uid} via stratus-max-length or md-maxlength attributes.`)
             return
         }
         ngModel.$parsers.push((data: string) => {

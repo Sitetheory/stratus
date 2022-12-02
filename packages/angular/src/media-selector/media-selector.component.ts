@@ -38,7 +38,7 @@ import {keys} from 'ts-transformer-keys'
 import {cookie} from '@stratusjs/core/environment'
 
 // Components
-import {RootComponent} from '@stratusjs/angular/core/root.component'
+import {RootComponent} from '../core/root.component'
 
 // Services
 import {Registry} from '@stratusjs/angularjs/services/registry'
@@ -58,7 +58,7 @@ const moduleName = 'media-selector'
 
 // Directory Template
 const min = !cookie('env') ? '.min' : ''
-const localDir = `${Stratus.BaseUrl}${boot.configuration.paths[`${systemDir}/*`].replace(/[^/]*$/, '')}`
+const localDir = `${Stratus.BaseUrl}${boot.configuration.paths[`${systemDir}/*`].replace(/[^/]*$/, '').replace(/\/dist\/$/, '/src/')}`
 
 // Utility Functions
 const has = (object: object, path: string) => _.has(object, path) && !_.isEmpty(_.get(object, path))

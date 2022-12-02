@@ -26,8 +26,8 @@ Stratus.Directives.JsonToObject = (): StratusDirective => ({
         ngModel: INgModelController
     ) => {
         const $ctrl: any = this
-        $ctrl.uid = _.uniqueId(_.camelCase(packageName) + '_' + _.camelCase(componentName) + '_')
-        Stratus.Instances[$ctrl.uid] = $scope
+        $scope.uid = _.uniqueId(_.camelCase(packageName) + '_' + _.camelCase(componentName) + '_')
+        Stratus.Instances[$scope.uid] = $scope
 
         $ctrl.convertToJsonString = (val: object) => !_.isString(val) && !_.isNumber(val) ? JSON.stringify(val) : val
 

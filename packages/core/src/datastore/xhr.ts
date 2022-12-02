@@ -1,5 +1,5 @@
 import _ from 'lodash'
-import {isJSON, LooseObject} from '@stratusjs/core/misc'
+import {isJSON, LooseObject} from '../misc'
 
 export interface XHRRequest {
     method?: string

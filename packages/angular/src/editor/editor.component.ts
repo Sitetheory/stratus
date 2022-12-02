@@ -62,19 +62,19 @@ import {
 // Components
 import {
     RootComponent
-} from '@stratusjs/angular/core/root.component'
+} from '../core/root.component'
 import {
     CitationDialogComponent,
     CitationDialogData
-} from '@stratusjs/angular/editor/citation-dialog.component'
+} from './citation-dialog.component'
 import {
     LinkDialogComponent,
     LinkDialogData
-} from '@stratusjs/angular/editor/link-dialog.component'
+} from './link-dialog.component'
 import {
     MediaDialogComponent,
     MediaDialogData
-} from '@stratusjs/angular/editor/media-dialog.component'
+} from './media-dialog.component'
 
 // Services
 import {Registry} from '@stratusjs/angularjs/services/registry'
@@ -91,7 +91,7 @@ import {
 // Core Interfaces
 import {
     TriggerInterface
-} from '@stratusjs/angular/core/trigger.interface'
+} from '../core/trigger.interface'
 
 // AngularJS Classes
 import {
@@ -103,7 +103,7 @@ import {
 import {
     CodeViewDialogComponent,
     CodeViewDialogData
-} from '@stratusjs/angular/editor/code-view-dialog.component'
+} from './code-view-dialog.component'
 
 // Transformers
 import {
@@ -113,8 +113,10 @@ import {LooseObject} from '@stratusjs/core/misc'
 
 // Froala External Requirements (Before Plugins are Loaded)
 // @ts-ignore
-import * as CodeMirror from 'codemirror/lib/codemirror'
-import 'codemirror/mode/xml/xml'
+// import * as CodeMirror from 'codemirror/lib/codemirror'
+// import 'codemirror/mode/xml/xml'
+// import {EditorView, basicSetup} from 'codemirror'
+// import {xml} from '@codemirror/lang-xml'
 import 'html2pdf'
 import 'font-awesome'
 
@@ -165,22 +167,22 @@ import 'froala-image-tui'
 // import 'froala-word-paste'
 
 // Froala Custom Plugins
-import '@stratusjs/angular/froala/plugins/citationManager'
-import '@stratusjs/angular/froala/plugins/linkManager'
-import '@stratusjs/angular/froala/plugins/mediaManager'
+import '../froala/plugins/citationManager'
+import '../froala/plugins/linkManager'
+import '../froala/plugins/mediaManager'
 import {FroalaEditorDirective} from 'angular-froala-wysiwyg'
-// import '@stratusjs/angular/froala/plugins/menuButton'
+// import '../froala/plugins/menuButton'
 
 // Local Setup
 const systemPackage = '@stratusjs/angular'
 const froalaPackage = 'froala-editor'
-const codeMirrorPackage = 'codemirror'
+// const codeMirrorPackage = 'codemirror'
 const moduleName = 'editor'
 
 // Directory Template
 const min = !cookie('env') ? '.min' : ''
-const localDir = `${Stratus.BaseUrl}${boot.configuration.paths[`${systemPackage}/*`].replace(/[^\/]*$/, '')}`
-const codeMirrorDir = `${Stratus.BaseUrl}${boot.configuration.paths[`${codeMirrorPackage}/*`].replace(/[^\/]*$/, '')}`
+const localDir = `${Stratus.BaseUrl}${boot.configuration.paths[`${systemPackage}/*`].replace(/[^\/]*$/, '').replace(/\/dist\/$/, '/src/')}`
+// const codeMirrorDir = `${Stratus.BaseUrl}${boot.configuration.paths[`${codeMirrorPackage}/*`].replace(/[^\/]*$/, '')}`
 const froalaDir = `${Stratus.BaseUrl}${boot.configuration.paths[froalaPackage].replace(/js\/[^\/]*$/, '')}`
 
 // Utility Functions
@@ -497,15 +499,15 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             indent_size: 4,
             wrap_line_length: 0
         },
-        codeMirror: CodeMirror,
-        codeMirrorOptions: {
-            indentWithTabs: false,
-            lineNumbers: true,
-            lineWrapping: true,
-            mode: 'text/html',
-            tabMode: 'space',
-            tabSize: 4
-        },
+        // codeMirror: CodeMirror,
+        // codeMirrorOptions: {
+        //     indentWithTabs: false,
+        //     lineNumbers: true,
+        //     lineWrapping: true,
+        //     mode: 'text/html',
+        //     tabMode: 'space',
+        //     tabSize: 4
+        // },
         fileInsertButtons: [
             'fileBack',
             // '|',
@@ -1002,7 +1004,7 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
         // Load Component CSS until System.js can import CSS properly.
         Stratus.Internals.LoadCss([
             `${localDir}${moduleName}/${moduleName}.component${min}.css`,
-            `${codeMirrorDir}lib/codemirror.css`,
+            // `${codeMirrorDir}lib/codemirror.css`,
             `${froalaDir}css/froala_editor.pkgd${min}.css`,
             // `${froalaDir}css/froala_style${min}.css`,
             `${froalaDir}css/third_party/embedly${min}.css`,

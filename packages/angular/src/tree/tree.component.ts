@@ -41,13 +41,13 @@ import {keys} from 'ts-transformer-keys'
 import {debounce} from '@agentepsilon/decko'
 
 // Components
-import {RootComponent} from '@stratusjs/angular/core/root.component'
+import {RootComponent} from '../core/root.component'
 
 // Interfaces
-import {RefreshInterface} from '@stratusjs/angular/core/refresh.interface'
+import {RefreshInterface} from '../core/refresh.interface'
 
 // Services
-import {BackendService} from '@stratusjs/angular/backend.service'
+import {BackendService} from '../backend.service'
 import {Registry} from '@stratusjs/angularjs/services/registry'
 import {cookie} from '@stratusjs/core/environment'
 
@@ -72,7 +72,7 @@ import '@stratusjs/angularjs/services/collection'
 import '@stratusjs/angularjs/services/model'
 
 import { DOCUMENT } from '@angular/common'
-import {TreeNodeComponent} from '@stratusjs/angular/tree/tree-node.component'
+import {TreeNodeComponent} from './tree-node.component'
 
 // Data Types
 export interface NodeMeta {
@@ -125,7 +125,7 @@ const moduleName = 'tree'
 
 // Directory Template
 const min = !cookie('env') ? '.min' : ''
-const localDir = `${Stratus.BaseUrl}${boot.configuration.paths[`${systemDir}/*`].replace(/[^/]*$/, '')}`
+const localDir = `${Stratus.BaseUrl}${boot.configuration.paths[`${systemDir}/*`].replace(/[^/]*$/, '').replace(/\/dist\/$/, '/src/')}`
 
 /**
  * @title Tree with Nested Drag & Drop

@@ -1,6 +1,6 @@
 // PURPOSE
 // - This is where we register every component that will be used or imported
-// - add an import to define where it is located, e.g. import { BaseComponent } from '@stratusjs/angular/base/base.component'
+// - add an import to define where it is located, e.g. import { BaseComponent } from './base/base.component'
 // - add to declarations and entryComponents
 
 // Stratus Libraries
@@ -29,28 +29,28 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations'
 // registerLocaleData(localeEs, 'es-ES')
 
 // Material Modules
-import {MaterialModules} from '@stratusjs/angular/material'
+import {MaterialModules} from './material'
 
 // Angular Packages
 import {FlexLayoutModule} from '@angular/flex-layout'
 
 // Base Components
-import {BaseComponent} from '@stratusjs/angular/base/base.component'
+import {BaseComponent} from './base/base.component'
 
 // Stratus Custom Directives/Components
-import {ConfirmDialogComponent} from '@stratusjs/angular/confirm-dialog/confirm-dialog.component'
-import {EditorComponent} from '@stratusjs/angular/editor/editor.component'
-import {MapComponent} from '@stratusjs/map/map.component'
-import {MediaSelectorComponent} from '@stratusjs/angular/media-selector/media-selector.component'
-import {SelectorComponent} from '@stratusjs/angular/selector/selector.component'
-import {StripePaymentMethodComponent} from '@stratusjs/stripe/payment-method.component'
-import {StripePaymentMethodItemComponent} from '@stratusjs/stripe/payment-method-item.component'
-import {StripePaymentMethodListComponent} from '@stratusjs/stripe/payment-method-list.component'
-import {StripePaymentMethodSelectorComponent} from '@stratusjs/stripe/payment-method-selector.component'
-import {StripeSetupIntentComponent} from '@stratusjs/stripe/setup-intent.component'
-import {TreeComponent} from '@stratusjs/angular/tree/tree.component'
-import {TreeDialogComponent} from '@stratusjs/angular/tree/tree-dialog.component'
-import {TreeNodeComponent} from '@stratusjs/angular/tree/tree-node.component'
+import {ConfirmDialogComponent} from './confirm-dialog/confirm-dialog.component'
+import {EditorComponent} from './editor/editor.component'
+import {MapComponent} from '../../map/src/map.component'
+import {MediaSelectorComponent} from './media-selector/media-selector.component'
+import {SelectorComponent} from './selector/selector.component'
+// import {StripePaymentMethodComponent} from '@stratusjs/stripe/payment-method.component'
+// import {StripePaymentMethodItemComponent} from '@stratusjs/stripe/payment-method-item.component'
+// import {StripePaymentMethodListComponent} from '@stratusjs/stripe/payment-method-list.component'
+// import {StripePaymentMethodSelectorComponent} from '@stratusjs/stripe/payment-method-selector.component'
+// import {StripeSetupIntentComponent} from '@stratusjs/stripe/setup-intent.component'
+import {TreeComponent} from './tree/tree.component'
+import {TreeDialogComponent} from './tree/tree-dialog.component'
+import {TreeNodeComponent} from './tree/tree-node.component'
 
 // Angular Components
 // import {
@@ -120,23 +120,23 @@ import {
 // import {QuillConfig} from 'ngx-quill/lib/quill-editor.interfaces'
 
 // Editor Dialogs
-import {CitationDialogComponent} from '@stratusjs/angular/editor/citation-dialog.component'
+import {CitationDialogComponent} from './editor/citation-dialog.component'
 import {
     CodeViewDialogComponent
-} from '@stratusjs/angular/editor/code-view-dialog.component'
+} from './editor/code-view-dialog.component'
 import {
     MediaDialogComponent
-} from '@stratusjs/angular/editor/media-dialog.component'
+} from './editor/media-dialog.component'
 import {
     LinkDialogComponent
-} from '@stratusjs/angular/editor/link-dialog.component'
+} from './editor/link-dialog.component'
 import {
     FroalaEditorModule,
     FroalaViewModule
 } from 'angular-froala-wysiwyg'
 
 // Quill Plugins
-// import {QuillInputButtonPlugin} from '@stratusjs/angular/editor/quill-input-button.plugin'
+// import {QuillInputButtonPlugin} from './editor/quill-input-button.plugin'
 
 // External Quill Modules
 // import ImageUploader from 'quill-image-uploader'
@@ -166,15 +166,15 @@ import {
 
 // Third Party Quill
 // TODO: Remove once our custom solutions are in place from the new QuillInputButton
-// import QuillDropzone from '@stratusjs/angular/editor/quill.dropzone'
-// import QuillHtmlEdit from '@stratusjs/angular/editor/quill.html.edit'
+// import QuillDropzone from './editor/quill.dropzone'
+// import QuillHtmlEdit from './editor/quill.html.edit'
 // Quill.register('modules/dropzone', QuillDropzone)
 // Quill.register('modules/htmlEdit', QuillHtmlEdit)
 
 // Dynamic Loader Prototype
 // import {
 //     AngularModules
-// } from '@stratusjs/angular/angular.modules'
+// } from './angular.modules'
 
 // let roster: {};
 // roster = {
@@ -397,11 +397,11 @@ const monacoConfig: NgxMonacoEditorConfig = {
         MediaDialogComponent,
         MediaSelectorComponent,
         SelectorComponent,
-        StripePaymentMethodComponent,
-        StripePaymentMethodItemComponent,
-        StripePaymentMethodListComponent,
-        StripePaymentMethodSelectorComponent,
-        StripeSetupIntentComponent,
+        // StripePaymentMethodComponent,
+        // StripePaymentMethodItemComponent,
+        // StripePaymentMethodListComponent,
+        // StripePaymentMethodSelectorComponent,
+        // StripeSetupIntentComponent,
         TreeComponent,
         TreeDialogComponent,
         TreeNodeComponent,
@@ -418,11 +418,11 @@ const monacoConfig: NgxMonacoEditorConfig = {
         MediaDialogComponent,
         MediaSelectorComponent,
         SelectorComponent,
-        StripePaymentMethodComponent,
-        StripePaymentMethodItemComponent,
-        StripePaymentMethodListComponent,
-        StripePaymentMethodSelectorComponent,
-        StripeSetupIntentComponent,
+        // StripePaymentMethodComponent,
+        // StripePaymentMethodItemComponent,
+        // StripePaymentMethodListComponent,
+        // StripePaymentMethodSelectorComponent,
+        // StripeSetupIntentComponent,
         TreeComponent,
         TreeDialogComponent,
         TreeNodeComponent,
@@ -443,8 +443,8 @@ export class AppModule {
         'sa-map': MapComponent,
         'sa-media-selector': MediaSelectorComponent,
         'sa-selector': SelectorComponent,
-        'sa-stripe-payment-method-list': StripePaymentMethodListComponent,
-        'sa-stripe-payment-method-selector': StripePaymentMethodSelectorComponent,
+        // 'sa-stripe-payment-method-list': StripePaymentMethodListComponent,
+        // 'sa-stripe-payment-method-selector': StripePaymentMethodSelectorComponent,
         'sa-tree': TreeComponent
     }
 

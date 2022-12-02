@@ -1,10 +1,10 @@
 // Universal Button
 import {
     InputButtonPlugin
-} from '@stratusjs/angular/froala/plugins/inputButton'
+} from './inputButton'
 import {
     MediaEmbed
-} from '@stratusjs/angular/editor/media-dialog.component'
+} from '../../editor/media-dialog.component'
 
 // @ts-ignore
 import FroalaEditor from 'froala-editor'

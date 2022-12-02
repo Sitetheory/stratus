@@ -45,25 +45,25 @@ import {Model} from '@stratusjs/angularjs/services/model'
 
 // Services
 import {HttpResponse} from '@angular/common/http'
-import {BackendService} from '@stratusjs/angular/backend.service'
+import {BackendService} from '../backend.service'
 import {Collection} from '@stratusjs/angularjs/services/collection'
 
 // Interfaces
-import {Convoy} from '@stratusjs/angular/data/convoy.interface'
-import {ContentEntity} from '@stratusjs/angular/data/content.interface'
+import {Convoy} from '../data/convoy.interface'
+import {ContentEntity} from '../data/content.interface'
 
 // Components
 import {
     TreeComponent
-} from '@stratusjs/angular/tree/tree.component'
+} from './tree.component'
 import {
     TreeNodeComponent
-} from '@stratusjs/angular/tree/tree-node.component'
+} from './tree-node.component'
 
 // Extends
 import {
     ResponsiveComponent
-} from '@stratusjs/angular/core/responsive.component'
+} from '../core/responsive.component'
 
 // Data Types
 export interface DialogData {
@@ -91,7 +91,7 @@ const parentModuleName = 'tree'
 
 // Directory Template
 const min = !cookie('env') ? '.min' : ''
-const localDir = `${Stratus.BaseUrl}${boot.configuration.paths[`${systemDir}/*`].replace(/[^/]*$/, '')}`
+const localDir = `${Stratus.BaseUrl}${boot.configuration.paths[`${systemDir}/*`].replace(/[^/]*$/, '').replace(/\/dist\/$/, '/src/')}`
 
 /**
  * @title Dialog for Nested Tree
@@ -164,6 +164,7 @@ export class TreeDialogComponent extends ResponsiveComponent implements OnInit, 
         // ref.detach()
     }
 
+    // TODO: Consider making the Custom Link field the default
     ngOnInit() {
         // Initialization
         this.uid = _.uniqueId(`sa_${_.snakeCase(moduleName)}_component_`)

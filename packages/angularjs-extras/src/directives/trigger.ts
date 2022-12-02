@@ -36,10 +36,10 @@ Stratus.Directives.Trigger = (
         ngModel: INgModelController
     ) => {
         // Initialize
-        const $ctrl: any = this
-        $ctrl.uid = _.uniqueId(_.snakeCase(name) + '_')
-        Stratus.Instances[$ctrl.uid] = $scope
-        $scope.elementId = $element.elementId || $ctrl.uid
+        // const $ctrl: any = this
+        $scope.uid = _.uniqueId(_.snakeCase(name) + '_')
+        Stratus.Instances[$scope.uid] = $scope
+        $scope.elementId = $element.elementId || $scope.uid
         $scope.initialized = false
 
         // Watch Trigger

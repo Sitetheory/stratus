@@ -26,10 +26,10 @@ import {XHR, XHRRequest} from '@stratusjs/core/datastore/xhr'
 import 'angular-material' // Reliant for $mdToast
 
 // AngularJS Dependency Injector
-import {getInjector} from '@stratusjs/angularjs/injector'
+import {getInjector} from '../injector'
 
 // AngularJS Services
-import {Model, ModelOptions} from '@stratusjs/angularjs/services/model'
+import {Model, ModelOptions} from './model'
 
 // Instantiate Injector
 let injector = getInjector()

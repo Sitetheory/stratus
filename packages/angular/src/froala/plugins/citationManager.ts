@@ -4,7 +4,7 @@ import {extend} from 'lodash'
 // Universal Button
 import {
     InputButtonPlugin
-} from '@stratusjs/angular/froala/plugins/inputButton'
+} from './inputButton'
 
 // @ts-ignore
 import FroalaEditor from 'froala-editor'
@@ -17,7 +17,7 @@ const parentModuleName = 'froala/plugins'
 
 // Directory Template
 const min = !cookie('env') ? '.min' : ''
-const localDir = `${Stratus.BaseUrl}${boot.configuration.paths[`${systemDir}/*`].replace(/[^/]*$/, '')}`
+const localDir = `${Stratus.BaseUrl}${boot.configuration.paths[`${systemDir}/*`].replace(/[^/]*$/, '').replace(/\/dist\/$/, '/src/')}`
 
 // Define toolbar template.
 extend(FroalaEditor.POPUP_TEMPLATES,{

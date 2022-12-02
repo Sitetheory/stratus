@@ -47,17 +47,17 @@ import {cookie} from '@stratusjs/core/environment'
 // Services
 import {
     BackendService
-} from '@stratusjs/angular/backend.service'
+} from '../backend.service'
 import {
     LooseObject
 } from '@stratusjs/core/misc'
 import {Model} from '@stratusjs/angularjs/services/model'
-import {TriggerInterface} from '@stratusjs/angular/core/trigger.interface'
+import {TriggerInterface} from '../core/trigger.interface'
 
 // Extends
 import {
     ResponsiveComponent
-} from '@stratusjs/angular/core/responsive.component'
+} from '../core/responsive.component'
 
 // Local Setup
 const systemDir = '@stratusjs/angular'
@@ -66,7 +66,7 @@ const parentModuleName = 'editor'
 
 // Directory Template
 const min = !cookie('env') ? '.min' : ''
-const localDir = `${Stratus.BaseUrl}${boot.configuration.paths[`${systemDir}/*`].replace(/[^/]*$/, '')}`
+const localDir = `${Stratus.BaseUrl}${boot.configuration.paths[`${systemDir}/*`].replace(/[^/]*$/, '').replace(/\/dist\/$/, '/src/')}`
 
 /**
  * @title Dialog for Nested Tree

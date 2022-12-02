@@ -12,15 +12,15 @@ import * as angular from 'angular'
 import 'angular-material'
 
 // Services
-import '@stratusjs/angularjs/services/model'
-import '@stratusjs/angularjs/services/collection'
-import '@stratusjs/angularjs/services/registry'
+import '../services/model'
+import '../services/collection'
+import '../services/registry'
 // tslint:disable-next-line:no-duplicate-imports
-import {Model} from '@stratusjs/angularjs/services/model'
+import {Model} from '../services/model'
 // tslint:disable-next-line:no-duplicate-imports
-import {Collection} from '@stratusjs/angularjs/services/collection'
+import {Collection} from '../services/collection'
 // tslint:disable-next-line:no-duplicate-imports
-import {Registry} from '@stratusjs/angularjs/services/registry'
+import {Registry} from '../services/registry'
 
 // Stratus Utilities
 import {
@@ -37,6 +37,7 @@ const localPath = '@stratusjs/angularjs/src/components'
 // This is a typed scope for the component below
 export type BaseScope = angular.IScope & LooseObject<LooseFunction> & {
     initialized: boolean
+    uid: string
     model: Model
     collection: Collection
     registry: Registry
@@ -84,10 +85,10 @@ Stratus.Components.Base = {
         $attrs: angular.IAttributes
     ) {
         // Initialize
-        const $ctrl = this
-        $ctrl.uid = _.uniqueId(_.snakeCase(name) + '_')
-        Stratus.Instances[$ctrl.uid] = $scope
-        $scope.elementId = $attrs.elementId || $ctrl.uid
+        // const $ctrl = this
+        $scope.uid = _.uniqueId(_.snakeCase(name) + '_')
+        Stratus.Instances[$scope.uid] = $scope
+        $scope.elementId = $attrs.elementId || $scope.uid
         Stratus.Internals.CssLoader(
             `${Stratus.BaseUrl + Stratus.BundlePath + localPath}/${name}${min}.css`
         )

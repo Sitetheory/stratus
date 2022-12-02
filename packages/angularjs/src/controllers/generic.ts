@@ -13,15 +13,15 @@ import 'angular'
 import 'angular-sanitize'
 
 // Forced Dependent Service Load
-import '@stratusjs/angularjs/services/registry'
-import '@stratusjs/angularjs/services/model'
-import '@stratusjs/angularjs/services/collection'
+import '../services/registry'
+import '../services/model'
+import '../services/collection'
 
 // Services
 // tslint:disable-next-line:no-duplicate-imports
-import {Registry} from '@stratusjs/angularjs/services/registry'
+import {Registry} from '../services/registry'
 // tslint:disable-next-line:no-duplicate-imports
-import {Model} from '@stratusjs/angularjs/services/model'
+import {Model} from '../services/model'
 
 // Stratus Dependencies
 import {
