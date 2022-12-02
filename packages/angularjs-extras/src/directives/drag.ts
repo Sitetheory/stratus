@@ -3,7 +3,7 @@
 
 // Runtime
 import {
-    get,
+    // get,
     uniqueId
 } from 'lodash'
 import {
@@ -47,7 +47,7 @@ Stratus.Directives.Drag = (
             // event.dataTransfer.setData('Text', this.id) // required otherwise
             // Typescript doesn't believe id exists
             // FIXME: this one works in es2019 with systemjs (toggle accordingly)
-            event.dataTransfer.setData('Text', get(this, 'id')) // required otherwise
+            // event.dataTransfer.setData('Text', get(this, 'id')) // required otherwise
             // doesn't work
         })
 
