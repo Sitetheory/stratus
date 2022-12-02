@@ -56,7 +56,7 @@
     "@angular/router": "^12.2.16",
     "@stratusjs/boot": "^0.3.0",
     "@stratusjs/core": "^0.5.0",
-    "@stratusjs/map": "^0.4.3",
+    "@stratusjs/map": "^0.5.0",
     "@stratusjs/runtime": "^0.12.0",
     "angular-froala-wysiwyg": "^3.2.7",
     "codemirror": "^5.65.10",
