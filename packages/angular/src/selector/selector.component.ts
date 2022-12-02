@@ -49,6 +49,9 @@ import {EventBase} from '@stratusjs/core/events/eventBase'
 import {Model} from '@stratusjs/angularjs/services/model'
 import {Collection} from '@stratusjs/angularjs/services/collection'
 
+import {XHR} from '@stratusjs/core/datastore/xhr'
+import {LooseObject} from '@stratusjs/core/misc'
+
 // Local Setup
 const systemDir = '@stratusjs/angular'
 const moduleName = 'selector'
@@ -156,6 +159,7 @@ export class SelectorComponent extends RootComponent { // implements OnInit, OnC
         // SVG Icons
         _.forEach({
             selector_delete: `${Stratus.BaseUrl}sitetheorycore/images/icons/actionButtons/delete.svg`,
+            selector_status: `${Stratus.BaseUrl}sitetheorycore/images/icons/actionButtons/visibility.svg`,
             selector_edit: `${Stratus.BaseUrl}sitetheorycore/images/icons/actionButtons/edit.svg`
         }, (value, key) => iconRegistry.addSvgIcon(key, sanitizer.bypassSecurityTrustResourceUrl(value)).getNamedSvgIcon(key))
 
@@ -250,6 +254,43 @@ export class SelectorComponent extends RootComponent { // implements OnInit, OnC
             return
         }
         window.open(model.contentType.editUrl + '?id=' + model.id, '_blank')
+    }
+
+    toggleStatus(model: any) {
+        // model is not directly a model, but just a sub entity of content.version.modules
+        // so we have to create a special API call to update just this one model
+        // 'Content/' + model.id
+        const statusOriginal = model.status
+        model.status = statusOriginal === 1 ? 0 : 1
+        // Create a direct XHR
+        const xhr = new XHR({
+            method: 'PUT',
+            url: '/Api/Content/' + model.id,
+            data: {
+                route: {},
+                meta: {},
+                payload: {
+                    status: model.status
+                }
+            },
+            type: 'application/json'
+        })
+        xhr.send()
+            .then((response: LooseObject | Array<LooseObject> | string) => {
+                if (!_.isObject(response) || _.get(response, 'meta.status[0].code') !== 'SUCCESS') {
+                    console.error('error[toggleStatus]:', response)
+                    model.status = statusOriginal
+                    this.refresh()
+                    return
+                }
+                console.log('success[toggleStatus]:', response)
+            })
+            .catch((error: any) => {
+                console.error('error[toggleStatus]:', error)
+                model.status = statusOriginal
+                this.refresh()
+            })
+        return
     }
 
     remove(model: any) {

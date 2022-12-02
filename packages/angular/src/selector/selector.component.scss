@@ -177,10 +177,11 @@ sa-selector {
     }
   }
   .column-title {
-    width: 70%;
+    width: 60%;
+    padding-right: 10px;
   }
   .column-action {
-    width: 15%;
+    width: 25%;
     > * {
       display: inline-block;
       vertical-align: middle;
@@ -249,13 +250,13 @@ sa-selector {
         background: #DDD;
       }
     }
-    .btn.btn-delete, .btn.btn-edit {
+    .btn.btn-delete, .btn.btn-edit, .btn.btn-status {
       float: right;
       width: 35px;
       min-width: unset;
       height: 35px;
       font-size: 10px;
-      margin-left: 12px;
+      margin-left: 3px;
       padding: 0;
       background: #fff;
       box-shadow: 0 0 2px rgba(0, 0, 0, 0.3);

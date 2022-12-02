@@ -96,11 +96,18 @@
                 </div>
                 <div class="column-action">
                     <a mat-button
-                            [matTooltip]="'Delete ' + (_.get(selectedModel, 'contentType.name') || _.get(selectedModel, 'name'))"
+                            [matTooltip]="'Delete ' + (_.get(selectedModel, 'contentType.name') || _.get(selectedModel, 'name')) + ' [THIS COLLECTION ONLY]'"
                             aria-label="Delete Item"
                             class="btn btn-delete"
                             (click)="remove(selectedModel)">
                         <mat-icon svgIcon="selector_delete" aria-hidden="false" aria-label="Delete Item">Delete</mat-icon>
+                    </a>
+                    <a mat-button
+                       [matTooltip]="'Toggle ' + (_.get(selectedModel, 'contentType.name') || _.get(selectedModel, 'name')) + ' Status ' + (_.get(selectedModel, 'status') ? 'Off' : 'On') + ' [ALL CONTEXTS]'"
+                       aria-label="Toggle Status"
+                       class="btn btn-status"
+                       (click)="toggleStatus(selectedModel)">
+                        <mat-icon svgIcon="selector_status" aria-hidden="false" aria-label="Toggle Status">Toggle Status</mat-icon>
                     </a>
                     <a mat-button
                             *ngIf="has(selectedModel, 'contentType.editUrl')"
@@ -108,7 +115,7 @@
                             aria-label="Edit Item in New Window"
                             class="btn btn-edit"
                             (click)="goToUrl(selectedModel, '_blank');">
-                        <mat-icon svgIcon="selector_edit" aria-hidden="false" aria-label="Edit Item">Edit</mat-icon>
+                        <mat-icon svgIcon="selector_edit" aria-hidden="false" aria-label="Edit">Edit</mat-icon>
                     </a>
                 </div>
             </div>
