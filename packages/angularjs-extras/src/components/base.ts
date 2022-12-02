@@ -74,6 +74,7 @@ Stratus.Components.Base = {
         $attrs: IAttributes
     ) {
         // Initialize
+        // $scope.uid = safeUniqueId(packageName, moduleName, componentName)
         $scope.uid = uniqueId(camelCase(packageName) + '_' + camelCase(moduleName) + '_' + camelCase(componentName) + '_')
         Stratus.Instances[$scope.uid] = $scope
         $scope.elementId = $attrs.elementId || $scope.uid
