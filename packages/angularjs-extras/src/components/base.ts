@@ -16,7 +16,7 @@ import {Collection} from '../../../angularjs/src/services/collection'
 const min = !cookie('env') ? '.min' : ''
 const packageName = 'angularjs-extras'
 const moduleName = 'components'
-const componentName = 'citation'
+const componentName = 'base'
 const localDir = `${Stratus.BaseUrl}${Stratus.DeploymentPath}@stratusjs/${packageName}/src/${moduleName}/`
 
 export type BaseScope = IScope &  {
