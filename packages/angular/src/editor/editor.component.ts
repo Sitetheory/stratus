@@ -1113,10 +1113,22 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
         const dataControl = this.form.get('dataString')
         // This valueChanges field is an Event Emitter
         if (this.debounceSave) {
+            // Pipe for Model Debounce
             dataControl.valueChanges.pipe(
                 debounce(() => timer(this.debounceTime)),
                 catchError(this.handleError)
             ).subscribe((evt: string) => this.modelSave(evt))
+            // Pipe for changedExternal
+            dataControl.valueChanges.pipe(
+                debounce(() => timer(250)),
+                catchError(this.handleError)
+            ).subscribe((evt: string) => {
+                if (this.model.changedExternal) {
+                    return
+                }
+                this.model.changedExternal = true
+                this.model.trigger('change')
+            })
         } else {
             dataControl.valueChanges.forEach(
                 (value: string) => this.modelSave(value)
@@ -1163,7 +1175,8 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             this.property,
             this.normalizeOut(innerHTML || value)
         )
-        if (this.forceSave) {
+        this.model.changedExternal = false
+        if (this.forceSave && !_.isEmpty(this.model.getIdentifier())) {
             this.model.save()
         }
     }

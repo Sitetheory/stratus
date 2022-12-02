@@ -148,6 +148,9 @@ export class Model<T = LooseObject> extends ModelBase<T> {
     completed = false
     saving = false
 
+    // External Controls
+    changedExternal = false
+
     // Temporarily force watching to all direct models
     watch = true
 
@@ -682,6 +685,7 @@ export class Model<T = LooseObject> extends ModelBase<T> {
                 this.data = _.cloneDeep(intermediateData) as T
                 // Before handling changes make sure we set to false
                 this.changed = false
+                this.changedExternal = false
                 this.saving = false
                 // FIXME: This should be finding the changed identifier...
                 this.handleChanges()
