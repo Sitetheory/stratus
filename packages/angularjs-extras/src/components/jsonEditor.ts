@@ -46,7 +46,8 @@ Stratus.Components.JsonEditor = {
         $attrs: IAttributes
     ) {
         // Initialize
-        $scope.uid = uniqueId(camelCase(packageName) + '_' + camelCase(moduleName) + '_' + snakeCase(camelCase(componentName)) + '_')
+        // $scope.uid = safeUniqueId(packageName, moduleName, componentName)
+        $scope.uid = uniqueId(camelCase(packageName) + '_' + camelCase(moduleName) + '_' + camelCase(componentName) + '_')
         Stratus.Instances[$scope.uid] = $scope
         $scope.elementId = $attrs.elementId || $scope.uid
         Stratus.Internals.CssLoader(`${localDir}${componentName}${min}.css`)
