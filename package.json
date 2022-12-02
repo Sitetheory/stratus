@@ -7,7 +7,7 @@
     "test": "test"
   },
   "scripts": {
-    "test": "gulp dist && gulp compile && gulp compress && gulp lint && ng lint",
+    "test": "gulp dist && gulp compile && gulp compress && gulp lint",
     "rollup": "gulp compile && rollup -c --bundleConfigAsCjs && ./dist-names.sh && gulp compress",
     "webpack": "webpack build",
     "karma": "node_modules/karma/bin/karma start karma.conf.js --single-run",
