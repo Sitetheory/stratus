@@ -15,6 +15,7 @@ import {
 
 // Angular 1 Modules
 import 'angular-material'
+import {StratusDirective} from './baseNew'
 
 // Environment
 // const min = !cookie('env') ? '.min' : ''
@@ -25,7 +26,7 @@ const name = 'trigger'
 // triggered upon true
 Stratus.Directives.Trigger = (
     $parse: IParseService
-) => ({
+): StratusDirective => ({
     restrict: 'A',
     require: 'ngModel',
     link: (

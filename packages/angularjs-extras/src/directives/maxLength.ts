@@ -2,7 +2,7 @@
 // -----------------
 
 // Runtime
-import _ from 'lodash'
+import {snakeCase, uniqueId} from 'lodash'
 import {
     Stratus
 } from '@stratusjs/runtime/stratus'
@@ -10,11 +10,12 @@ import {
     IAttributes,
     IScope,
     INgModelController,
-    IParseService
+    // IParseService
 } from 'angular'
 
 // Angular 1 Modules
 import 'angular-material'
+import {StratusDirective} from './baseNew'
 
 // Environment
 // const min = !cookie('env') ? '.min' : ''
@@ -26,8 +27,8 @@ const name = 'maxLength'
 // bound by an data-ng-model directive gets completely removed if
 // the input field goes beyond the maxlength character limit.
 Stratus.Directives.MaxLength = (
-    $parse: IParseService
-) => ({
+    // $parse: IParseService
+): StratusDirective => ({
     restrict: 'A',
     require: 'ngModel',
     link: (
@@ -38,7 +39,7 @@ Stratus.Directives.MaxLength = (
     ) => {
         // Initialize
         const $ctrl: any = this
-        $ctrl.uid = _.uniqueId(_.snakeCase(name) + '_')
+        $ctrl.uid = uniqueId(snakeCase(name) + '_')
         Stratus.Instances[$ctrl.uid] = $scope
         $scope.elementId = $element.elementId || $ctrl.uid
         $scope.initialized = false

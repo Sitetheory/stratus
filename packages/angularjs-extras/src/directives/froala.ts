@@ -5,6 +5,7 @@
 import _ from 'lodash'
 import jQuery from 'jquery'
 import angular from 'angular'
+import {StratusDirective} from './baseNew'
 
 // Stratus Services
 import {Stratus} from '@stratusjs/runtime/stratus'
@@ -40,7 +41,7 @@ import 'froala-word-paste'
 import {Collection} from '@stratusjs/angularjs/services/collection'
 
 // This directive intends to provide basic froala capabilities.
-Stratus.Directives.Froala = () => {
+Stratus.Directives.Froala = (): StratusDirective => {
     let generatedIds: any = 0
     const defaultConfig: any = {
         immediateAngularModelUpdate: false,

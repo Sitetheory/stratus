@@ -12,6 +12,7 @@ import * as angular from 'angular'
 
 // Angular 1 Modules
 import {isJSON} from '@stratusjs/core/misc'
+import {StratusDirective} from './baseNew'
 
 
 // Environment
@@ -48,7 +49,7 @@ type ElementSize = {
 Stratus.Directives.FullHeight = (
     $timeout: angular.ITimeoutService,
     $window: angular.IWindowService
-) => ({
+): StratusDirective => ({
     restrict: 'A',
     scope: {
         stratusFullHeight: '@',
@@ -56,9 +57,9 @@ Stratus.Directives.FullHeight = (
         fullHeightReferenceParent: '@',
     },
     link: (
-        $attrs: angular.IAttributes,
-        $element: angular.IAugmentedJQuery,
         $scope: FullHeightScope,
+        $element: angular.IAugmentedJQuery,
+        $attrs: angular.IAttributes
     ) => {
         // Initialize
         const $ctrl: any = this
