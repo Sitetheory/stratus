@@ -45,9 +45,9 @@ Stratus.Directives.Masonry = (): StratusDirective => ({
     ) => {
         // Initialize
         const $ctrl: any = this
-        $ctrl.uid = uniqueId(snakeCase(name) + '_')
-        Stratus.Instances[$ctrl.uid] = $scope
-        $scope.elementId = $element.elementId || $ctrl.uid
+        $scope.uid = uniqueId(snakeCase(name) + '_')
+        Stratus.Instances[$scope.uid] = $scope
+        $scope.elementId = $element.elementId || $scope.uid
         $scope.initialized = false
 
         // Get Masonry Options
