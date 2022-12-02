@@ -127,36 +127,23 @@ export default [
         // Non-TypeScript Components
         './packages/angularjs-extras/src/components/base.js',
         './packages/angularjs-extras/src/components/facebook.js',
-        './packages/angularjs-extras/src/components/tweet.js',
-        // Non-TypeScript Directives
-        './packages/angularjs-extras/src/directives/base.js',
-        './packages/angularjs-extras/src/directives/domEvents.js',
-        './packages/angularjs-extras/src/directives/drag.js',
-        './packages/angularjs-extras/src/directives/drop.js',
-        './packages/angularjs-extras/src/directives/href.js',
-        './packages/angularjs-extras/src/directives/masonry.js',
-        './packages/angularjs-extras/src/directives/onScreen.js',
-        './packages/angularjs-extras/src/directives/redactor.js',
-        './packages/angularjs-extras/src/directives/singleClick.js',
-        './packages/angularjs-extras/src/directives/src.js',
-        './packages/angularjs-extras/src/directives/stringToNumber.js',
-        './packages/angularjs-extras/src/directives/timestampToDate.js',
-        './packages/angularjs-extras/src/directives/validate.js',
-        // Unused Directives (Note: Froala is huge)
-        './packages/angularjs-extras/src/directives/froala.js',
-        // FIXME: Broken Files
-        './packages/angularjs-extras/src/components/embed.js',
         './packages/angularjs-extras/src/components/jsonEditor.js',
+        './packages/angularjs-extras/src/components/tweet.js',
+        // Non-Bundled Directives
+        // Note: Froala is huge and should be optional
+        './packages/angularjs-extras/src/directives/froala.js',
+        // Note: Redactor is large and should be optional
+        './packages/angularjs-extras/src/directives/redactor.js',
+        // Unused Components
+        // Twitter is an external dependency, so it should be optional
         './packages/angularjs-extras/src/components/twitterFeed.js',
-        './packages/angularjs-extras/src/directives/bindHtml.js',
-        './packages/angularjs-extras/src/directives/maxLength.js',
-        './packages/angularjs-extras/src/directives/fullHeight.js',
-        './packages/angularjs-extras/src/directives/jsonToObject.js',
-        './packages/angularjs-extras/src/directives/trigger.js',
       ]
     },
     external: [
       'angular',
+      'angular-material',
+      'angular-sanitize',
+      'jquery',
       'lodash',
       'moment',
       'moment-timezone',
