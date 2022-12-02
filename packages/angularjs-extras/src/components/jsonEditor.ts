@@ -1,10 +1,10 @@
-// Base Component
+// JsonEditor Component
 // --------------
 
 // Runtime
 import {camelCase, snakeCase, uniqueId} from 'lodash'
 import {Stratus} from '../../../runtime/src/stratus'
-import {IAttributes, IScope, ITranscludeFunction} from 'angular'
+import {IAttributes, IScope} from 'angular'
 
 // Stratus Dependencies
 import {cookie} from '../../../core/src/environment'
@@ -17,7 +17,7 @@ const moduleName = 'components'
 const componentName = 'jsonEditor'
 const localDir = `${Stratus.BaseUrl}${Stratus.DeploymentPath}@stratusjs/${packageName}/src/${moduleName}/`
 
-export type BaseScope = IScope &  {
+export type JsonEditorScope = IScope &  {
     uid: string
     elementId: string
     initialized: boolean
@@ -42,8 +42,7 @@ Stratus.Components.JsonEditor = {
         rows: '@'
     },
     controller(
-        $scope: BaseScope,
-        $transclude: ITranscludeFunction,
+        $scope: JsonEditorScope,
         $attrs: IAttributes
     ) {
         // Initialize
