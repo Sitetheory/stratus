@@ -4,11 +4,11 @@
 // Runtime
 import _ from 'lodash'
 import {Stratus} from '@stratusjs/runtime/stratus'
+import {StratusDirective} from './baseNew'
 
 // Angular 1 Modules
 import {isJSON} from '@stratusjs/core/misc'
 import {IScope, INgModelController} from 'angular'
-
 
 // Environment
 // const min = !cookie('env') ? '.min' : ''
@@ -16,13 +16,13 @@ const packageName = 'angularjs-extras'
 // const moduleName = 'directives'
 const componentName = 'jsonToObject'
 
-Stratus.Directives.JsonToObject = () => ({
+Stratus.Directives.JsonToObject = (): StratusDirective => ({
     restrict: 'A',
     require: 'ngModel',
     link: (
-        $attrs: angular.IAttributes, // Required for ngModel.$formatters and ngModel.$parsers
-        $element: angular.IAugmentedJQuery, // Required for ngModel.$formatters and ngModel.$parsers
         $scope: IScope & any,
+        $element: angular.IAugmentedJQuery, // Required for ngModel.$formatters and ngModel.$parsers
+        $attrs: angular.IAttributes, // Required for ngModel.$formatters and ngModel.$parsers
         ngModel: INgModelController
     ) => {
         const $ctrl: any = this

@@ -10,16 +10,17 @@ import {
     IParseService,
     IScope
 } from 'angular'
+import {StratusDirective} from './baseNew'
 
 Stratus.Directives.SingleClick = (
     $log: ILogService,
     $parse: IParseService
-) => ({
+): StratusDirective => ({
     restrict: 'A',
     link: (
-        $attrs: IAttributes,
+        $scope: IScope,
         $element: IAugmentedJQuery,
-        $scope: IScope
+        $attrs: IAttributes,
     ) => {
         const fn = $parse($attrs.stratusSingleClick)
         const delay = 300

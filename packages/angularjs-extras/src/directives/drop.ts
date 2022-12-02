@@ -9,6 +9,7 @@ import {
     ILogService,
     IScope
 } from 'angular'
+import {StratusDirective} from './baseNew'
 
 
 // Environment
@@ -19,7 +20,7 @@ const name = 'drop'
 Stratus.Directives.Drop = (
     $log: ILogService,
     // $parse: IParseService
-) => ({
+): StratusDirective => ({
     restrict: 'A',
     scope: {
         ngModel: '=ngModel'

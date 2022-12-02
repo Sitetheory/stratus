@@ -18,6 +18,7 @@ import 'angular-material'
 
 // Stratus Core
 import {LooseObject} from '@stratusjs/core/misc'
+import {StratusDirective} from './baseNew'
 
 // Stratus Core
 // import {cookie} from '@stratusjs/core/environment'
@@ -31,7 +32,7 @@ const name = 'parentClass'
 // at the defined selector.
 Stratus.Directives.ParentClass = (
     // $parse: IParseService
-) => ({
+): StratusDirective => ({
     restrict: 'A',
     scope: {
         // Class we're adding

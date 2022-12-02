@@ -10,6 +10,7 @@ import {
     IAugmentedJQuery,
     IScope
 } from 'angular'
+import {StratusDirective} from './baseNew'
 
 // Environment
 const name = 'src'
@@ -29,7 +30,7 @@ export type SrcScope = IScope & {
 }
 
 // This directive intends to handle binding of a dynamic variable to
-Stratus.Directives.Src = () => ({
+Stratus.Directives.Src = (): StratusDirective => ({
     restrict: 'A',
     scope: {
         src: '@src',
@@ -39,9 +40,9 @@ Stratus.Directives.Src = () => ({
         style: '@style'
     },
     link: (
-        $attrs: IAttributes,
-        $element: IAugmentedJQuery,
         $scope: SrcScope,
+        $element: IAugmentedJQuery,
+        $attrs: IAttributes
     ) => {
         // Initialize
         Stratus.Instances[uniqueId(name + '_')] = $scope

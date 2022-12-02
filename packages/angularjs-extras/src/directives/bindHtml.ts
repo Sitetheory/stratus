@@ -16,6 +16,7 @@ import {
 
 // Angular 1 Modules
 import 'angular-material'
+import {StratusDirective} from './baseNew'
 
 // Interfaces
 interface TrustedValueHolder {
@@ -32,7 +33,7 @@ Stratus.Directives.BindHtml = (
     $sce: ISCEService,
     $parse: IParseService,
     $compile: ICompileService & any,
-) => ({
+): StratusDirective => ({
     restrict: 'A',
     // ng-bind-html for reference:
     //

@@ -8,6 +8,7 @@ import {
     IAugmentedJQuery,
     IScope
 } from 'angular'
+import {StratusDirective} from './baseNew'
 
 
 // Environment
@@ -18,7 +19,7 @@ const name = 'drag'
 Stratus.Directives.Drag = (
     // $log: ILogService,,
     // $parse: IParseService
-) => ({
+): StratusDirective => ({
     restrict: 'A',
     scope: {
         ngModel: '=ngModel'

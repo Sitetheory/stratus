@@ -13,6 +13,7 @@ import {
 
 // Stratus Core
 import {hydrate} from '@stratusjs/core/misc'
+import {StratusDirective} from './baseNew'
 
 // Environment
 const name = 'onScreen'
@@ -27,7 +28,7 @@ export type OnScreenScope = IScope & {
 // the Stratus Auto-Loader for various contextual uses.
 Stratus.Directives.OnScreen = (
     // $parse: IParseService
-) => ({
+): StratusDirective => ({
     restrict: 'A',
     scope: {
         onScreen: '@onScreen',
@@ -43,9 +44,9 @@ Stratus.Directives.OnScreen = (
         reset: '@reset' // The location on the page that should trigger a reset (removal of all classes). Defaults to 0 (top of page)
     },
     link: (
-        $attrs: IAttributes,
+        $scope: OnScreenScope,
         $element: IAugmentedJQuery,
-        $scope: OnScreenScope
+        $attrs: IAttributes
     ) => {
         // Initialize
         $scope.uid = uniqueId(snakeCase(name) + '_')

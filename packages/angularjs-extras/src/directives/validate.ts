@@ -42,6 +42,7 @@ import {
     IScope,
     INgModelController
 } from 'angular'
+import {StratusDirective} from './baseNew'
 
 // Environment
 // const min = !cookie('env') ? '.min' : ''
@@ -61,7 +62,7 @@ export type ValidateScope = IScope & {
 
 Stratus.Directives.Validate = (
     // $parse: IParseService
-) => ({
+): StratusDirective => ({
     restrict: 'A',
     require: 'ngModel',
     scope: {

@@ -13,6 +13,7 @@ import {
     ITimeoutService,
     module
 } from 'angular'
+import {StratusDirective} from './baseNew'
 
 export type RedactorScope = IScope & {
     redactorLoaded?: boolean
@@ -25,13 +26,13 @@ type RedactorOptions = {
 // the Stratus Auto-Loader for various contextual uses.
 Stratus.Directives.Redactor = (
     $timeout: ITimeoutService
-) => ({
+): StratusDirective => ({
     restrict: 'A',
     require: 'ngModel',
     link: (
-        $attrs: IAttributes,
-        $element: IAugmentedJQuery & {redactor: (value1?: unknown, value2?: unknown) => unknown},
         $scope: RedactorScope,
+        $element: IAugmentedJQuery & {redactor: (value1?: unknown, value2?: unknown) => unknown},
+        $attrs: IAttributes,
         ngModel: INgModelController
     ) => {
         // Initialize

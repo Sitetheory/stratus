@@ -17,6 +17,16 @@ import 'angular-material'
 
 // Stratus Core
 import {cookie} from '@stratusjs/core/environment'
+import {LooseObject} from '@stratusjs/core/misc'
+
+export type StratusDirective = ({
+    restrict: 'A' | string
+    require?: 'ngModel' | string
+    scope?: LooseObject<string>
+    template?: string | (($attrs?: IAttributes) => string)
+    compile?($element: IAugmentedJQuery, $attrs: IAttributes): void
+    link?($scope: IScope, $element: IAugmentedJQuery, $attrs: IAttributes, ngModel?: INgModelController): void
+})
 
 // Environment
 const min = !cookie('env') ? '.min' : ''
@@ -33,16 +43,17 @@ export type BaseNewScope = IScope & {
 // the Stratus Auto-Loader for various contextual uses.
 Stratus.Directives.BaseNew = (
     // $parse: IParseService
-) => ({
+): StratusDirective => ({
     restrict: 'A',
     require: 'ngModel',
     scope: {
         stratusBaseNew: '='
     },
     link: (
-        $attrs: IAttributes,
-        $element: IAugmentedJQuery & {elementId?: string},
+        // Order or parameters matter (unlike components)
         $scope: BaseNewScope,
+        $element: IAugmentedJQuery & {elementId?: string},
+        $attrs: IAttributes,
         ngModel: INgModelController
     ) => {
         // Initialize

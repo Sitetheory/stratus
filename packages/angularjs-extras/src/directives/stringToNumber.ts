@@ -11,6 +11,7 @@ import {
     INgModelController,
     IScope
 } from 'angular'
+import {StratusDirective} from './baseNew'
 
 // Environment
 const name = 'stringToNumber'
@@ -18,13 +19,13 @@ const name = 'stringToNumber'
 // This directive intends to handle binding of a model to convert value string to number
 Stratus.Directives.StringToNumber = (
     $filter: IFilterService
-) => ({
+): StratusDirective => ({
     restrict: 'A',
     require: 'ngModel',
     link: (
-        $attrs: IAttributes,
-        $element: IAugmentedJQuery,
         $scope: IScope,
+        $element: IAugmentedJQuery,
+        $attrs: IAttributes,
         ngModel: INgModelController
     ) => {
         // Initialize

@@ -20,6 +20,7 @@ import {
 
 // Stratus Core
 import {LooseObject} from '@stratusjs/core/misc'
+import {StratusDirective} from './baseNew'
 
 /**
  * List of DOM events that will be converted into Directives
@@ -47,7 +48,7 @@ directiveEvents.forEach(eventName => {
         $exceptionHandler: IExceptionHandlerService,
         $parse: IParseService,
         $rootScope: IRootScopeService
-    ) => ({
+    ): StratusDirective => ({
         restrict: 'A',
         compile: (
             $element: IAugmentedJQuery,

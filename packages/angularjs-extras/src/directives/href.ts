@@ -12,6 +12,7 @@ import {
     IScope,
     IParseService
 } from 'angular'
+import {StratusDirective} from './baseNew'
 
 // Environment
 // const min = !cookie('env') ? '.min' : ''
@@ -27,7 +28,7 @@ Stratus.Directives.Href = (
     $location: ILocationService,
     $log: ILogService,
     $parse: IParseService
-) => ({
+): StratusDirective => ({
     restrict: 'A',
     link: (
         $scope: HrefScope,

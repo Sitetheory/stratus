@@ -19,6 +19,7 @@ import 'angular-material'
 
 // Stratus Core
 import {isJSON} from '@stratusjs/core/misc'
+import {StratusDirective} from './baseNew'
 
 // Environment
 const name = 'masonry'
@@ -31,16 +32,16 @@ export type MasonryScope = IScope & {
 
 // This directive intends to provide basic logic for extending
 // the Stratus Auto-Loader for various contextual uses.
-Stratus.Directives.Masonry = () => ({
+Stratus.Directives.Masonry = (): StratusDirective => ({
     restrict: 'A',
     // NOTE: at the moment we don't pass in a conditional, because it requires more planning
     // scope: {
     //   conditional: '<'
     // },
     link: (
-        $attrs: IAttributes,
+        $scope: MasonryScope,
         $element: IAugmentedJQuery & {elementId?: string},
-        $scope: MasonryScope
+        $attrs: IAttributes
     ) => {
         // Initialize
         const $ctrl: any = this

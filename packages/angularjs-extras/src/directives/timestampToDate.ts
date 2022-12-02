@@ -10,6 +10,7 @@ import {
     INgModelController,
     IScope
 } from 'angular'
+import {StratusDirective} from './baseNew'
 
 // Environment
 const name = 'baseNew'
@@ -23,16 +24,16 @@ export type TimestampToDateScope = IScope & {
  * timestamp to date, the value is persisted into data-ng-model still timestamp
  * type.
  */
-Stratus.Directives.TimestampToDate = () => ({
+Stratus.Directives.TimestampToDate = (): StratusDirective => ({
     restrict: 'A',
     require: 'ngModel',
     scope: {
         format: '<'
     },
     link: (
-        $attrs: IAttributes,
-        $element: IAugmentedJQuery,
         $scope: TimestampToDateScope,
+        $element: IAugmentedJQuery,
+        $attrs: IAttributes,
         ngModel: INgModelController
     ) => {
         Stratus.Instances[uniqueId(snakeCase(name) + '_')] = $scope
