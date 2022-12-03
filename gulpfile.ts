@@ -230,12 +230,7 @@ function lintJS() {
         '!packages/runtime/**/*.min.js',
         '!packages/runtime/node_modules/**/*.js',
         // TypeScript Supersedes
-        '!packages/angularjs-extras/src/components/base.js',
-        '!packages/angularjs-extras/src/components/citation.js',
-        '!packages/angularjs-extras/src/components/embed.js',
-        '!packages/angularjs-extras/src/components/image-carousel.js',
-        '!packages/angularjs-extras/src/components/jsonEditor.js',
-        '!packages/angularjs-extras/src/components/twitterFeed.js',
+        '!packages/angularjs-extras/src/components/*.js',
         '!packages/angularjs-extras/src/directives/*.js',
         '!packages/angularjs-extras/src/filters/*.js',
         '!packages/runtime/src/stratus.js',
