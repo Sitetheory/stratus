@@ -2,7 +2,7 @@
 // --------------
 
 // Runtime
-import {camelCase, snakeCase, uniqueId} from 'lodash'
+import {camelCase, uniqueId} from 'lodash'
 import {Stratus} from '../../../runtime/src/stratus'
 import {IAttributes, IScope} from 'angular'
 
