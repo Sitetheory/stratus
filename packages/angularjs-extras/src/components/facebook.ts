@@ -1,5 +1,6 @@
 // Facebook Component
 // --------------
+// FIXME FB obejct does not get imported
 
 // Runtime
 import {camelCase, uniqueId} from 'lodash'
@@ -54,7 +55,7 @@ Stratus.Components.Facebook = {
         const relatedContainer = document.getElementById((relatedContainerId || containerId))
 
         // Functions
-        function resizePlugin() {
+        const resizePlugin = () => {
             // Manually resize Facebook Plugin's span and iframe to be 100%
             const plugin = document.querySelector('.fb-page')
             const containerSpan = plugin.querySelector('span')
@@ -73,7 +74,7 @@ Stratus.Components.Facebook = {
             }
         }
 
-        function loadPlugin() {
+        const loadPlugin = () => {
             // Get height of the related Container (e.g. in another column)
             let height = relatedContainer.offsetHeight
             height = height > 0 ? (height + relatedContainerOffset) : height
