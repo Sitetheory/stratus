@@ -20,7 +20,7 @@ const moduleName = 'components'
 const componentName = 'tweet'
 const localDir = `${Stratus.BaseUrl}${Stratus.DeploymentPath}@stratusjs/${packageName}/src/${moduleName}/`
 
-export type JsonEditorScope = IScope &  {
+export type TweetScope = IScope &  {
     uid: string
     elementId: string
     initialized: boolean
@@ -36,7 +36,7 @@ Stratus.Components.Tweet = {
         ngModel: '='
     },
     controller(
-        $scope: JsonEditorScope,
+        $scope: TweetScope,
         $element: IAugmentedJQuery,
         $attrs: IAttributes,
         $parse: IParseService,
