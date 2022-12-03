@@ -55,6 +55,7 @@ Stratus.Components.Facebook = {
         const relatedContainer = document.getElementById((relatedContainerId || containerId))
 
         // Functions
+        // tslint:disable-next-line:no-unused-variable
         const resizePlugin = () => {
             // Manually resize Facebook Plugin's span and iframe to be 100%
             const plugin = document.querySelector('.fb-page')

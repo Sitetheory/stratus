@@ -6,7 +6,7 @@
 // Runtime
 import {camelCase, uniqueId} from 'lodash'
 import {Stratus} from '../../../runtime/src/stratus'
-import {IAttributes, IAugmentedJQuery, ILogService, IParseService, IScope, IWindowService} from 'angular'
+import {IAttributes, IAugmentedJQuery, IParseService, IScope, IWindowService} from 'angular'
 // import 'https://platform.twitter.com/widgets.js'
 
 // Stratus Dependencies
