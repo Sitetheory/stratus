@@ -50,6 +50,7 @@ packages/angularjs-extras/src/**/*.js.map
 packages/angularjs-extras/src/components/*.js
 packages/angularjs-extras/src/directives/*.js
 packages/angularjs-extras/src/filters/*.js
+packages/angularjs-extras/src/services/*.js
 packages/angularjs-extras/src/**/*.css
 packages/backend/src/**/*.js
 packages/backend/src/**/*.js.map
