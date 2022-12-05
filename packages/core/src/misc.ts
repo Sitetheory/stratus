@@ -311,6 +311,17 @@ export function strcmp(a: string, b: string) {
 }
 
 /**
+ * Create a universally usable id string from various names
+ */
+export function safeUniqueId(...names: string[]): string {
+    return _.uniqueId(
+        _.map(names, (name) => {
+            return _.camelCase(name) + '_'
+        }).join()
+    )
+}
+
+/**
  * @deprecated use _.truncate() instead
  * https://lodash.com/docs/4.17.15#truncate
  *
