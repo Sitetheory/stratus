@@ -9,10 +9,10 @@ export default [
   {
     input: {
       include: [
-        './packages/core/src/**/*.js',
+        './packages/core/src/**/*.js'
       ],
       exclude: [
-        './packages/core/src/**/*.min.js',
+        './packages/core/src/**/*.min.js'
       ]
     },
     external: [
@@ -27,7 +27,7 @@ export default [
     plugins: [
       multi({
         exports: true,
-        entryFileName: 'core.bundle.js',
+        entryFileName: 'core.bundle.js'
       }),
       nodeResolve()
     ]
@@ -39,7 +39,7 @@ export default [
   {
     input: {
       include: [
-        './packages/angular/src/**/*.js',
+        './packages/angular/src/**/*.js'
       ],
       exclude: [
         // min files
@@ -60,7 +60,7 @@ export default [
       'lodash',
       'zone.js/dist/zone',
       // TODO: This one may be a transformer, so it shouldn't need to be imported.
-      '@agentepsilon/decko',
+      '@agentepsilon/decko'
     ],
     output: {
       // file: 'packages/angular/dist/angular.bundle.js',
@@ -70,7 +70,7 @@ export default [
     plugins: [
       multi({
         exports: true,
-        entryFileName: 'angular.bundle.js',
+        entryFileName: 'angular.bundle.js'
       }),
       nodeResolve()
     ]
@@ -81,10 +81,10 @@ export default [
   {
     input: {
       include: [
-        './packages/angularjs/src/**/*.js',
+        './packages/angularjs/src/**/*.js'
       ],
       exclude: [
-        './packages/angularjs/src/**/*.min.js',
+        './packages/angularjs/src/**/*.min.js'
       ]
     },
     external: [
@@ -103,7 +103,7 @@ export default [
     plugins: [
       multi({
         exports: true,
-        entryFileName: 'angularjs.bundle.js',
+        entryFileName: 'angularjs.bundle.js'
       }),
       nodeResolve()
     ]
@@ -114,7 +114,7 @@ export default [
   {
     input: {
       include: [
-        './packages/angularjs-extras/src/**/*.js',
+        './packages/angularjs-extras/src/**/*.js'
       ],
       exclude: [
         './packages/angularjs-extras/src/**/*.min.js',
@@ -136,7 +136,7 @@ export default [
         './packages/angularjs-extras/src/directives/redactor.js',
         // Unused Components
         // Twitter is an external dependency, so it should be optional
-        './packages/angularjs-extras/src/components/twitterFeed.js',
+        './packages/angularjs-extras/src/components/twitterFeed.js'
       ]
     },
     external: [
@@ -149,7 +149,7 @@ export default [
       'moment-timezone',
       'numeral',
       'js-md5',
-      '@stratusjs',
+      '@stratusjs'
     ],
     output: {
       // file: 'packages/angularjs-extras/dist/angularjs-extras.bundle.js',
@@ -159,11 +159,11 @@ export default [
     plugins: [
       multi({
         exports: true,
-        entryFileName: 'angularjs-extras.bundle.js',
+        entryFileName: 'angularjs-extras.bundle.js'
       }),
       nodeResolve()
     ]
-  },
+  }
   // ------------------------
   // Map Config
   // ------------------------

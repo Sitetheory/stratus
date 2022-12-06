@@ -1,6 +1,5 @@
 const glob = require('glob')
 const path = require('path')
-const ts = require('gulp-typescript')
 const keysTransformer = require('ts-transformer-keys/transformer').default
 
 module.exports = {
@@ -41,7 +40,7 @@ module.exports = {
   // },
   output: {
     path: path.resolve(__dirname, 'packages'),
-    filename: '[name]/dist/[name].bundle.js',
+    filename: '[name]/dist/[name].bundle.js'
     // libraryTarget: 'system'
   },
   plugins: [],

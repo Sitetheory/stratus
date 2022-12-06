@@ -10,6 +10,6 @@ for package in "${packages[@]}"
 do
 	if [[ -f "packages/$package/dist/multi-entry.js" ]]; then
       echo "Rename packages/$package/dist/multi-entry.js -> packages/$package/dist/$package.bundle.js"
-      mv packages/$package/dist/multi-entry.js packages/$package/dist/$package.bundle.js
+      mv "packages/$package/dist/multi-entry.js" "packages/$package/dist/$package.bundle.js"
   fi
 done
