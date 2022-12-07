@@ -92,8 +92,7 @@ export default [
       'angular',
       '@stratusjs',
       'angular-material',
-      'angular-sanitize',
-      'ts-transformer-keys'
+      'angular-sanitize'
     ],
     output: {
       // file: 'packages/angularjs/dist/angularjs.bundle.js',
@@ -123,19 +122,14 @@ export default [
         './packages/angularjs-extras/src/controllers/*.js',
         './packages/angularjs-extras/src/loaders/*.js',
         './packages/angularjs-extras/src/normalizers/*.js',
-        './packages/angularjs-extras/src/services/*.js',
-        // Non-TypeScript Components (todo: remove soon!)
-        // './packages/angularjs-extras/src/components/base.js',
-        // './packages/angularjs-extras/src/components/facebook.js',
-        // './packages/angularjs-extras/src/components/jsonEditor.js',
-        // './packages/angularjs-extras/src/components/tweet.js',
         // Non-Bundled Directives
         // Note: Froala is huge and should be optional
         './packages/angularjs-extras/src/directives/froala.js',
         // Note: Redactor is large and should be optional
         './packages/angularjs-extras/src/directives/redactor.js',
-        // Unused Components
+        // Non-Bundled Components
         // Twitter is an external dependency, so it should be optional
+        './packages/angularjs-extras/src/components/tweet.js',
         './packages/angularjs-extras/src/components/twitterFeed.js'
       ]
     },
