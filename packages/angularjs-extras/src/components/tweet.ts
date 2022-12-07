@@ -5,12 +5,12 @@
 
 // Runtime
 import {camelCase, uniqueId} from 'lodash'
-import {Stratus} from '../../../runtime/src/stratus'
+import {Stratus} from '@stratusjs/runtime/stratus'
 import {IAttributes, IAugmentedJQuery, IParseService, IScope, IWindowService} from 'angular'
 // import 'https://platform.twitter.com/widgets.js'
 
 // Stratus Dependencies
-import {cookie} from '../../../core/src/environment'
+import {cookie} from '@stratusjs/core/environment'
 import {Model} from '@stratusjs/angularjs/services/model'
 
 // Environment
