@@ -256,9 +256,12 @@ export class Registry {
         if (typeof data === 'object' && data !== null) {
             if (typeof $scope !== 'undefined') {
                 $scope.data = data
+                // TODO: Add null values to ensure strict typing (disable scope inheritance)
                 if (data instanceof Model) {
                     $scope.model = data
+                    // $scope.collection = null
                 } else if (data instanceof Collection) {
+                    // $scope.model = null
                     $scope.collection = data
                 }
                 // bind changes to redraw
