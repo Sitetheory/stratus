@@ -15,8 +15,8 @@ import {keys} from 'ts-transformer-keys'
 import {
     Stratus
 } from '@stratusjs/runtime/stratus'
-import {RootComponent} from '@stratusjs/angular/core/root.component'
-import {ConfirmDialogComponent} from '@stratusjs/angular/confirm-dialog/confirm-dialog.component'
+import {RootComponent} from '../../angular/src/core/root.component'
+import {ConfirmDialogComponent} from '../../angular/src/confirm-dialog/confirm-dialog.component'
 import {Model} from '@stratusjs/angularjs/services/model'
 import {cookie} from '@stratusjs/core/environment'
 

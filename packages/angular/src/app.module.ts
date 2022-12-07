@@ -43,11 +43,11 @@ import {EditorComponent} from './editor/editor.component'
 import {MapComponent} from '../../map/src/map.component'
 import {MediaSelectorComponent} from './media-selector/media-selector.component'
 import {SelectorComponent} from './selector/selector.component'
-// import {StripePaymentMethodComponent} from '@stratusjs/stripe/payment-method.component'
-// import {StripePaymentMethodItemComponent} from '@stratusjs/stripe/payment-method-item.component'
-// import {StripePaymentMethodListComponent} from '@stratusjs/stripe/payment-method-list.component'
-// import {StripePaymentMethodSelectorComponent} from '@stratusjs/stripe/payment-method-selector.component'
-// import {StripeSetupIntentComponent} from '@stratusjs/stripe/setup-intent.component'
+import {StripePaymentMethodComponent} from '../../stripe/src/payment-method.component'
+import {StripePaymentMethodItemComponent} from '../../stripe/src/payment-method-item.component'
+import {StripePaymentMethodListComponent} from '../../stripe/src/payment-method-list.component'
+import {StripePaymentMethodSelectorComponent} from '../../stripe/src/payment-method-selector.component'
+import {StripeSetupIntentComponent} from '../../stripe/src/setup-intent.component'
 import {TreeComponent} from './tree/tree.component'
 import {TreeDialogComponent} from './tree/tree-dialog.component'
 import {TreeNodeComponent} from './tree/tree-node.component'
@@ -397,11 +397,11 @@ const monacoConfig: NgxMonacoEditorConfig = {
         MediaDialogComponent,
         MediaSelectorComponent,
         SelectorComponent,
-        // StripePaymentMethodComponent,
-        // StripePaymentMethodItemComponent,
-        // StripePaymentMethodListComponent,
-        // StripePaymentMethodSelectorComponent,
-        // StripeSetupIntentComponent,
+        StripePaymentMethodComponent,
+        StripePaymentMethodItemComponent,
+        StripePaymentMethodListComponent,
+        StripePaymentMethodSelectorComponent,
+        StripeSetupIntentComponent,
         TreeComponent,
         TreeDialogComponent,
         TreeNodeComponent,
@@ -418,11 +418,11 @@ const monacoConfig: NgxMonacoEditorConfig = {
         MediaDialogComponent,
         MediaSelectorComponent,
         SelectorComponent,
-        // StripePaymentMethodComponent,
-        // StripePaymentMethodItemComponent,
-        // StripePaymentMethodListComponent,
-        // StripePaymentMethodSelectorComponent,
-        // StripeSetupIntentComponent,
+        StripePaymentMethodComponent,
+        StripePaymentMethodItemComponent,
+        StripePaymentMethodListComponent,
+        StripePaymentMethodSelectorComponent,
+        StripeSetupIntentComponent,
         TreeComponent,
         TreeDialogComponent,
         TreeNodeComponent,
@@ -443,8 +443,8 @@ export class AppModule {
         'sa-map': MapComponent,
         'sa-media-selector': MediaSelectorComponent,
         'sa-selector': SelectorComponent,
-        // 'sa-stripe-payment-method-list': StripePaymentMethodListComponent,
-        // 'sa-stripe-payment-method-selector': StripePaymentMethodSelectorComponent,
+        'sa-stripe-payment-method-list': StripePaymentMethodListComponent,
+        'sa-stripe-payment-method-selector': StripePaymentMethodSelectorComponent,
         'sa-tree': TreeComponent
     }
 

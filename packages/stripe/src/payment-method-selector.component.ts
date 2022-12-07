@@ -18,13 +18,13 @@ import {keys} from 'ts-transformer-keys'
 import {
     Stratus
 } from '@stratusjs/runtime/stratus'
-import {RootComponent} from '@stratusjs/angular/core/root.component'
+import {RootComponent} from '../../angular/src/core/root.component'
 
 import {cookie} from '@stratusjs/core/environment'
 // import {StripePaymentMethodItemComponent} from '@stratusjs/stripe/payment-method-item.component'
 
 // Services
-import {StripeService} from '@stratusjs/stripe/stripe.service'
+import {StripeService} from './stripe.service'
 import {Registry} from '@stratusjs/angularjs/services/registry'
 import {Collection} from '@stratusjs/angularjs/services/collection'
 import {Model} from '@stratusjs/angularjs/services/model'
