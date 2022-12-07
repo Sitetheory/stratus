@@ -124,11 +124,11 @@ export default [
         './packages/angularjs-extras/src/loaders/*.js',
         './packages/angularjs-extras/src/normalizers/*.js',
         './packages/angularjs-extras/src/services/*.js',
-        // Non-TypeScript Components
-        './packages/angularjs-extras/src/components/base.js',
-        './packages/angularjs-extras/src/components/facebook.js',
-        './packages/angularjs-extras/src/components/jsonEditor.js',
-        './packages/angularjs-extras/src/components/tweet.js',
+        // Non-TypeScript Components (todo: remove soon!)
+        // './packages/angularjs-extras/src/components/base.js',
+        // './packages/angularjs-extras/src/components/facebook.js',
+        // './packages/angularjs-extras/src/components/jsonEditor.js',
+        // './packages/angularjs-extras/src/components/tweet.js',
         // Non-Bundled Directives
         // Note: Froala is huge and should be optional
         './packages/angularjs-extras/src/directives/froala.js',

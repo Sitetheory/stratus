@@ -7,8 +7,8 @@
     "test": "test"
   },
   "scripts": {
-    "test": "gulp dist && gulp compile && gulp compress && gulp lint",
-    "rollup": "gulp compile && rollup -c --bundleConfigAsCjs && ./dist-names.sh && gulp compress",
+    "test": "npm run build && gulp lint",
+    "build": "gulp dist && gulp compileES6 && rollup -c --bundleConfigAsCjs && ./dist-names.sh && gulp compileTypeScript && gulp compress",
     "webpack": "webpack build",
     "karma": "node_modules/karma/bin/karma start karma.conf.js --single-run",
     "mocha": "mocha --recursive --reporter mochawesome --reporter-options reportDir=reports",

@@ -29,15 +29,6 @@ const ts = require('gulp-typescript')
 // TypeScript Transformers
 const keysTransformer = require('ts-transformer-keys/transformer').default
 
-// Project
-const tsProject = ts.createProject('tsconfig.json', {
-    getCustomTransformers: (program: any) => ({
-        before: [
-            keysTransformer(program)
-        ]
-    })
-})
-
 // Helper Functions
 const nullify = (proto: any) => {
     proto = proto || []
@@ -511,6 +502,51 @@ function compileTypeScript() {
     if (!locations.typescript.core.length) {
         return Promise.resolve('No files selected.')
     }
+    const tsProject = ts.createProject('tsconfig.json', {
+        getCustomTransformers: (program: any) => ({
+            before: [
+                keysTransformer(program)
+            ]
+        })
+    })
+    return src(
+        _.union(locations.typescript.core,
+            nullify(
+                _.union(
+                    locations.typescript.compile,
+                    locations.typescript.external
+                )
+            )
+        ),
+        {base: '.'}
+    )
+        // .pipe(debug({ title: 'Compile TypeScript:' }))
+        .pipe(sourcemaps.init())
+        .pipe(tsProject())
+        .pipe(sourcemaps.mapSources(
+            (sourcePath: string, file: any) => sourcePath.substring(sourcePath.lastIndexOf('/') + 1))
+        )
+        .pipe(sourcemaps.write('.', {
+            includeContent: false
+            // sourceRoot: '.'
+        }))
+        // .pipe(gulpDest('.', { ext: '.js' }))
+        .pipe(dest('.'))
+}
+
+function compileES6TypeScript() {
+    if (!locations.typescript.core.length) {
+        return Promise.resolve('No files selected.')
+    }
+    const tsProject = ts.createProject('tsconfig.json', {
+        target: "es6",
+        module: "ES2020",
+        getCustomTransformers: (program: any) => ({
+            before: [
+                keysTransformer(program)
+            ]
+        })
+    })
     return src(
         _.union(locations.typescript.core,
             nullify(
@@ -599,6 +635,7 @@ exports.dist = parallel(
 exports.compileLESS = series(cleanLESS, compileLESS)
 exports.compileSASS = series(cleanSASS, compileSASS)
 exports.compileTypeScript = series(cleanTypeScript, compileTypeScript)
+exports.compileES6TypeScript = series(cleanTypeScript, compileES6TypeScript)
 exports.compileCoffee = series(cleanCoffee, compileCoffee)
 
 // specific compressions
@@ -633,6 +670,14 @@ exports.compile = parallel(
     exports.compileLESS,
     exports.compileSASS,
     exports.compileTypeScript,
+    exports.compileCoffee
+)
+
+// compile all files
+exports.compileES6 = parallel(
+    exports.compileLESS,
+    exports.compileSASS,
+    exports.compileES6TypeScript,
     exports.compileCoffee
 )
 
