@@ -1,7 +1,7 @@
 // import glob from 'glob'
 import multi from '@rollup/plugin-multi-entry'
 import { nodeResolve } from '@rollup/plugin-node-resolve'
-//import commonjs from '@rollup/plugin-commonjs'
+// import commonjs from '@rollup/plugin-commonjs'
 
 export default [
   // ------------------------
@@ -107,7 +107,7 @@ export default [
       }),
       nodeResolve({
         // browser: true
-      }),
+      })
       // This was added in an attempt to compile angularjs inside this, but it doesn't work correctly in my tests.
       // commonjs({
       //   include: 'node_modules/**',
