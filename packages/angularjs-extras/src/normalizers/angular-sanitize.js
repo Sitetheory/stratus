@@ -1,7 +1,7 @@
 // Angular-Sanitize Definition
 // ------------------
 
-/* global define */
+/* global define, System */
 
 // Ensure angular gets injected first
 (function (root, factory) {
