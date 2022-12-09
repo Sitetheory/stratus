@@ -7,7 +7,7 @@ import {
 } from '@angular/core'
 import {
     ResponsiveComponent
-} from '@stratusjs/angular/core/responsive.component'
+} from './responsive.component'
 
 /**
  * This provides common functionality for root components.

@@ -3,12 +3,12 @@
 
 // Runtime
 import {forEach, isNumber, isObject, isString, isUndefined, size} from 'lodash'
-import {Stratus} from '../../../runtime/src/stratus'
+import {Stratus} from '@stratusjs/runtime/stratus'
 import {auto, IHttpService, IScope, IInterpolateService, IAugmentedJQuery, IHttpResponse} from 'angular'
 
 // Stratus Dependencies
-import {LooseObject} from '../../../core/src/misc'
-import {Model} from '../../../angularjs/src/services/model'
+import {LooseObject} from '@stratusjs/core/misc'
+import {Model} from '@stratusjs/angularjs/services/model'
 
 
 // FIXME the checks below for this are not handled correctly. in the future we need some better testing

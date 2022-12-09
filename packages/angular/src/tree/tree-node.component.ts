@@ -15,17 +15,18 @@ import {
 } from '@angular/material/dialog'
 
 // Components
-import {
-    Node,
-    TreeComponent
-} from '@stratusjs/angular/tree/tree.component'
+// TODO: Move these to interface files...  This creates a circular reference otherwise...
+// import {
+//     Node,
+//     TreeComponent
+// } from './tree.component'
 import {
     DialogData,
     TreeDialogComponent
-} from '@stratusjs/angular/tree/tree-dialog.component'
+} from './tree-dialog.component'
 import {
     ConfirmDialogComponent
-} from '@stratusjs/angular/confirm-dialog/confirm-dialog.component'
+} from '../confirm-dialog/confirm-dialog.component'
 
 // Services
 import {
@@ -42,7 +43,7 @@ import {Observable} from 'rxjs'
 // Extends
 import {
     ResponsiveComponent
-} from '@stratusjs/angular/core/responsive.component'
+} from '../core/responsive.component'
 
 // Local Setup
 const systemDir = '@stratusjs/angular'
@@ -51,7 +52,7 @@ const parentModuleName = 'tree'
 
 // Directory Template
 const min = !cookie('env') ? '.min' : ''
-const localDir = `${Stratus.BaseUrl}${boot.configuration.paths[`${systemDir}/*`].replace(/[^/]*$/, '')}`
+const localDir = `${Stratus.BaseUrl}${boot.configuration.paths[`${systemDir}/*`].replace(/[^/]*$/, '').replace(/\/dist\/$/, '/src/')}`
 
 /**
  * @title Node for Nested Tree
@@ -77,16 +78,24 @@ export class TreeNodeComponent extends ResponsiveComponent implements OnInit, On
     Stratus = Stratus
 
     // Inputs
-    @Input() tree: TreeComponent
-    @Input() parent: Node
-    @Input() node: Node
+    // @Input() tree: TreeComponent
+    // @Input() parent: Node
+    // @Input() node: Node
+
+    // Inputs
+    @Input() tree: any
+    @Input() parent: any
+    @Input() node: any
 
     // Click Handling
     isSingleClick: boolean
 
     // Methods
-    hasChild = (node: Node) => node.children && node.children.length > 0
-    isExpanded = (node: Node) => node.meta ? node.meta.expanded : true
+    // hasChild = (node: Node) => node.children && node.children.length > 0
+    // isExpanded = (node: Node) => node.meta ? node.meta.expanded : true
+
+    hasChild = (node: any) => node.children && node.children.length > 0
+    isExpanded = (node: any) => node.meta ? node.meta.expanded : true
 
     constructor(
         public dialog: MatDialog,
@@ -331,7 +340,9 @@ export class TreeNodeComponent extends ResponsiveComponent implements OnInit, On
                 }
             ).map((model: Model) => model.get('priority'))
         ) || -1
-        priority++
+        if (typeof priority === 'number') {
+            priority++
+        }
         this.tree.collection.add({
             name:'Untitled Child',
             parent: this.node.model.data.parent,

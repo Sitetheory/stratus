@@ -29,15 +29,6 @@ const ts = require('gulp-typescript')
 // TypeScript Transformers
 const keysTransformer = require('ts-transformer-keys/transformer').default
 
-// Project
-const tsProject = ts.createProject('tsconfig.json', {
-    getCustomTransformers: (program: any) => ({
-        before: [
-            keysTransformer(program)
-        ]
-    })
-})
-
 // Helper Functions
 const nullify = (proto: any) => {
     proto = proto || []
@@ -144,6 +135,7 @@ const locations: Locations = {
     },
     preserve: {
         core: [
+            'packages/*/dist/*.js',
             'packages/angularjs/src/**/*.js',
             'packages/angularjs-extras/src/**/*.js',
             'packages/calendar/src/**/*.js',
@@ -151,6 +143,7 @@ const locations: Locations = {
             'packages/swiper/src/**/*.js'
         ],
         min: [
+            'packages/*/dist/*.min.js',
             'packages/angularjs/src/**/*.min.js',
             'packages/angularjs-extras/src/**/*.min.js',
             'packages/calendar/src/**/*.min.js',
@@ -220,14 +213,13 @@ const locations: Locations = {
 function lintJS() {
     return src([
         // Pure JavaScript Files
-        'packages/angularjs-extras/**/*.js',
-        '!packages/angularjs-extras/**/*.min.js',
-        '!packages/angularjs-extras/node_modules/**/*.js',
-        'packages/boot/**/*.js',
-        '!packages/boot/**/*.min.js',
+        'packages/angularjs-extras/src/**/*.js',
+        '!packages/angularjs-extras/src/**/*.min.js',
+        'packages/boot/src/**/*.js',
+        '!packages/boot/src/**/*.min.js',
         '!packages/boot/node_modules/**/*.js',
-        'packages/runtime/**/*.js',
-        '!packages/runtime/**/*.min.js',
+        'packages/runtime/src/**/*.js',
+        '!packages/runtime/src/**/*.min.js',
         '!packages/runtime/node_modules/**/*.js',
         // TypeScript Supersedes
         '!packages/angularjs-extras/src/components/*.js',
@@ -510,6 +502,51 @@ function compileTypeScript() {
     if (!locations.typescript.core.length) {
         return Promise.resolve('No files selected.')
     }
+    const tsProject = ts.createProject('tsconfig.json', {
+        getCustomTransformers: (program: any) => ({
+            before: [
+                keysTransformer(program)
+            ]
+        })
+    })
+    return src(
+        _.union(locations.typescript.core,
+            nullify(
+                _.union(
+                    locations.typescript.compile,
+                    locations.typescript.external
+                )
+            )
+        ),
+        {base: '.'}
+    )
+        // .pipe(debug({ title: 'Compile TypeScript:' }))
+        .pipe(sourcemaps.init())
+        .pipe(tsProject())
+        .pipe(sourcemaps.mapSources(
+            (sourcePath: string, file: any) => sourcePath.substring(sourcePath.lastIndexOf('/') + 1))
+        )
+        .pipe(sourcemaps.write('.', {
+            includeContent: false
+            // sourceRoot: '.'
+        }))
+        // .pipe(gulpDest('.', { ext: '.js' }))
+        .pipe(dest('.'))
+}
+
+function compileES6TypeScript() {
+    if (!locations.typescript.core.length) {
+        return Promise.resolve('No files selected.')
+    }
+    const tsProject = ts.createProject('tsconfig.json', {
+        target: "es6",
+        module: "ES2020",
+        getCustomTransformers: (program: any) => ({
+            before: [
+                keysTransformer(program)
+            ]
+        })
+    })
     return src(
         _.union(locations.typescript.core,
             nullify(
@@ -598,6 +635,7 @@ exports.dist = parallel(
 exports.compileLESS = series(cleanLESS, compileLESS)
 exports.compileSASS = series(cleanSASS, compileSASS)
 exports.compileTypeScript = series(cleanTypeScript, compileTypeScript)
+exports.compileES6TypeScript = series(cleanTypeScript, compileES6TypeScript)
 exports.compileCoffee = series(cleanCoffee, compileCoffee)
 
 // specific compressions
@@ -632,6 +670,14 @@ exports.compile = parallel(
     exports.compileLESS,
     exports.compileSASS,
     exports.compileTypeScript,
+    exports.compileCoffee
+)
+
+// compile all files
+exports.compileES6 = parallel(
+    exports.compileLESS,
+    exports.compileSASS,
+    exports.compileES6TypeScript,
     exports.compileCoffee
 )
 

@@ -1,10 +1,10 @@
 // Universal Button
 import {
     InputButtonPlugin
-} from '@stratusjs/angular/froala/plugins/inputButton'
+} from './inputButton'
 import {
     Link
-} from '@stratusjs/angular/editor/link-dialog.component'
+} from '../../editor/link-dialog.component'
 import {
     LooseObject
 } from '@stratusjs/core/misc'

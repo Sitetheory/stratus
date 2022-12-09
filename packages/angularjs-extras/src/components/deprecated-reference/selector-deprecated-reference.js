@@ -50,10 +50,10 @@
     },
     controller: function ($scope, $attrs, $log, Registry, Model, Collection) {
       // Initialize
-      const $ctrl = this
-      $ctrl.uid = _.uniqueId('selector_')
-      Stratus.Instances[$ctrl.uid] = $scope
-      $scope.elementId = $attrs.elementId || $ctrl.uid
+      // const $ctrl = this
+      $scope.uid = _.uniqueId('selector_')
+      Stratus.Instances[$scope.uid] = $scope
+      $scope.elementId = $attrs.elementId || $scope.uid
 
       // Hydrate Settings
       $scope.api = _.isJSON($attrs.api) ? JSON.parse($attrs.api) : false

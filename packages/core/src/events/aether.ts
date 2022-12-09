@@ -2,9 +2,9 @@
 // --------------
 
 import _ from 'lodash'
-import {cookie} from '@stratusjs/core/environment'
-import {ModelBase} from '@stratusjs/core/datastore/modelBase'
-import {EventBase} from '@stratusjs/core/events/eventBase'
+import {cookie} from '../environment'
+import {ModelBase} from '../datastore/modelBase'
+import {EventBase} from './eventBase'
 
 // This model handles all event related logic.
 export class Aether extends ModelBase {

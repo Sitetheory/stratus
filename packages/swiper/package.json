@@ -28,9 +28,9 @@
     "yarn": ">= 1.21.1"
   },
   "dependencies": {
-    "@stratusjs/angularjs": "^0.2.56",
-    "@stratusjs/angularjs-extras": "^0.8.3",
-    "@stratusjs/runtime": "^0.11.9",
+    "@stratusjs/angularjs": "^0.6.1",
+    "@stratusjs/angularjs-extras": "^0.12.1",
+    "@stratusjs/runtime": "^0.12.0",
     "swiper": "^7.3.1"
   }
 }

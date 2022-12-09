@@ -48,9 +48,9 @@ Stratus.Components.TwitterFeed = {
     ) {
         // Initialize
         const $ctrl = this
-        $ctrl.uid = _.uniqueId(_.snakeCase(name) + '_')
-        Stratus.Instances[$ctrl.uid] = $scope
-        $scope.elementId = $attrs.elementId || $ctrl.uid
+        $scope.uid = _.uniqueId(_.snakeCase(name) + '_')
+        Stratus.Instances[$scope.uid] = $scope
+        $scope.elementId = $attrs.elementId || $scope.uid
         $scope.initialized = false
 
         // Settings

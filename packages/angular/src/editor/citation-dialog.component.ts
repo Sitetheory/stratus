@@ -38,17 +38,17 @@ import {
     LooseObject
 } from '@stratusjs/core/misc'
 import {Model} from '@stratusjs/angularjs/services/model'
-import {TriggerInterface} from '@stratusjs/angular/core/trigger.interface'
+import {TriggerInterface} from '../core/trigger.interface'
 
 // Extends
 import {
     ResponsiveComponent
-} from '@stratusjs/angular/core/responsive.component'
-// import {ContentEntity} from '@stratusjs/angular/data/content.interface'
+} from '../core/responsive.component'
+// import {ContentEntity} from '../data/content.interface'
 import {IconOptions, MatIconRegistry} from '@angular/material/icon'
 import {DomSanitizer} from '@angular/platform-browser'
-import {InputButtonPlugin} from '@stratusjs/angular/froala/plugins/inputButton'
-import {CitationManager} from '@stratusjs/angular/froala/plugins/citationManager'
+import {InputButtonPlugin} from '../froala/plugins/inputButton'
+import {CitationManager} from '../froala/plugins/citationManager'
 
 // Local Setup
 const systemDir = '@stratusjs/angular'
@@ -57,7 +57,7 @@ const parentModuleName = 'editor'
 
 // Directory Template
 const min = !cookie('env') ? '.min' : ''
-const localDir = `${Stratus.BaseUrl}${boot.configuration.paths[`${systemDir}/*`].replace(/[^/]*$/, '')}`
+const localDir = `${Stratus.BaseUrl}${boot.configuration.paths[`${systemDir}/*`].replace(/[^/]*$/, '').replace(/\/dist\/$/, '/src/')}`
 
 /**
  * @title Dialog for Nested Tree

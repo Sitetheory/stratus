@@ -2,12 +2,12 @@
 // ---------------
 
 import _ from 'lodash'
-import {EventManager} from '@stratusjs/core/events/eventManager'
+import {EventManager} from '../events/eventManager'
 import {
     LooseObject,
     patch
-} from '@stratusjs/core/misc'
-import {cookie} from '@stratusjs/core/environment'
+} from '../misc'
+import {cookie} from '../environment'
 
 export interface ModelBaseOptions {
     ignoreKeys?: Array<string>,

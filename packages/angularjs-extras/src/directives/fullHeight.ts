@@ -25,6 +25,7 @@ const componentName = 'fullHeight'
 
 export type FullHeightScope = angular.IScope & { // & LooseObject<LooseFunction>
     initialized: boolean
+    uid: string
 
     height: string
     referenceParent: string // 'document' // 'document' | 'window' |  '#elementName'
@@ -62,9 +63,9 @@ Stratus.Directives.FullHeight = (
         $attrs: angular.IAttributes
     ) => {
         // Initialize
-        const $ctrl: any = this
-        $ctrl.uid = _.uniqueId(_.camelCase(packageName) + '_' + _.camelCase(componentName) + '_')
-        Stratus.Instances[$ctrl.uid] = $scope
+        // const $ctrl: any = this
+        $scope.uid = _.uniqueId(_.camelCase(packageName) + '_' + _.camelCase(componentName) + '_')
+        Stratus.Instances[$scope.uid] = $scope
         $scope.initialized = false
         $scope.referenceParent = 'document'
         $scope.fullHeight = true

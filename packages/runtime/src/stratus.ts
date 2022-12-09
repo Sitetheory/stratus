@@ -2047,30 +2047,36 @@ Stratus.Loaders.Angular = function AngularLoader() {
         // TODO: Move this reference to the stylesheets block above
         const css: any = container.stylesheet
         const cssLoaded: any = Stratus.Select('link[satisfies]').map((node: Element) => node.getAttribute('satisfies'))
-        if (!_.includes(cssLoaded, 'angular-material.css') && 'angular-material' in boot.configuration.paths) {
-            css.push(
-                Stratus.BaseUrl + boot.configuration.paths['angular-material'].replace(/\.js$/, '') + '.css'
-            )
+        if (!_.includes(cssLoaded, 'angular-material.css')) {
+            if ('angular-material-css' in boot.configuration.paths) {
+                css.push(
+                    `${Stratus.BaseUrl}${boot.configuration.paths['angular-material-css']}`
+                )
+            } else if ('angular-material' in boot.configuration.paths) {
+                css.push(
+                    `${Stratus.BaseUrl}${boot.configuration.paths['angular-material'].replace(/\.js$/, '')}.css`
+                )
+            }
         }
         if (Stratus.Directives.Froala || Stratus.Select('[froala]').length) {
             const froalaPath: any = boot.configuration.paths.froala.replace(/\/[^/]+\/?[^/]+\/?$/, '')
             _.forEach([
                     // FIXME this is sitetheory only
-                    Stratus.BaseUrl + 'sitetheorycore/css/sitetheory.codemirror.css',
-                    Stratus.BaseUrl + boot.configuration.paths.codemirror.replace(/\/([^/]+)\/?$/, '') + '/codemirror.css',
-                    Stratus.BaseUrl + froalaPath + '/css/froala_editor.min.css',
-                    Stratus.BaseUrl + froalaPath + '/css/froala_style.min.css',
-                    Stratus.BaseUrl + froalaPath + '/css/plugins/code_view.min.css',
-                    Stratus.BaseUrl + froalaPath + '/css/plugins/draggable.min.css',
-                    Stratus.BaseUrl + froalaPath + '/css/plugins/file.min.css',
-                    Stratus.BaseUrl + froalaPath + '/css/plugins/fullscreen.min.css',
-                    Stratus.BaseUrl + froalaPath + '/css/plugins/help.min.css',
-                    Stratus.BaseUrl + froalaPath + '/css/plugins/image.min.css',
-                    Stratus.BaseUrl + froalaPath + '/css/plugins/image_manager.min.css',
-                    Stratus.BaseUrl + froalaPath + '/css/plugins/quick_insert.min.css',
-                    Stratus.BaseUrl + froalaPath + '/css/plugins/special_characters.min.css',
-                    Stratus.BaseUrl + froalaPath + '/css/plugins/table.min.css',
-                    Stratus.BaseUrl + froalaPath + '/css/plugins/video.min.css'
+                    `${Stratus.BaseUrl}sitetheorycore/css/sitetheory.codemirror.css`,
+                    `${Stratus.BaseUrl}${boot.configuration.paths.codemirror.replace(/\/([^/]+)\/?$/, '')}/codemirror.css`,
+                    `${Stratus.BaseUrl}${froalaPath}/css/froala_editor.min.css`,
+                    `${Stratus.BaseUrl}${froalaPath}/css/froala_style.min.css`,
+                    `${Stratus.BaseUrl}${froalaPath}/css/plugins/code_view.min.css`,
+                    `${Stratus.BaseUrl}${froalaPath}/css/plugins/draggable.min.css`,
+                    `${Stratus.BaseUrl}${froalaPath}/css/plugins/file.min.css`,
+                    `${Stratus.BaseUrl}${froalaPath}/css/plugins/fullscreen.min.css`,
+                    `${Stratus.BaseUrl}${froalaPath}/css/plugins/help.min.css`,
+                    `${Stratus.BaseUrl}${froalaPath}/css/plugins/image.min.css`,
+                    `${Stratus.BaseUrl}${froalaPath}/css/plugins/image_manager.min.css`,
+                    `${Stratus.BaseUrl}${froalaPath}/css/plugins/quick_insert.min.css`,
+                    `${Stratus.BaseUrl}${froalaPath}/css/plugins/special_characters.min.css`,
+                    `${Stratus.BaseUrl}${froalaPath}/css/plugins/table.min.css`,
+                    `${Stratus.BaseUrl}${froalaPath}/css/plugins/video.min.css`
                 ],
                 stylesheet => css.push(stylesheet)
             )

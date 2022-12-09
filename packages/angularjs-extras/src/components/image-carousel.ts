@@ -37,10 +37,10 @@ Stratus.Components.ImageCarousel = {
         Model: any,
     ) {
         // Initialize
-        const $ctrl = this
-        $ctrl.uid = _.uniqueId(_.camelCase(packageName) + '_' + _.camelCase(moduleName) + '_' + _.camelCase(componentName) + '_')
-        Stratus.Instances[$ctrl.uid] = $scope
-        $scope.elementId = $attrs.elementId || $ctrl.uid
+        // const $ctrl = this
+        $scope.uid = _.uniqueId(_.camelCase(packageName) + '_' + _.camelCase(moduleName) + '_' + _.camelCase(componentName) + '_')
+        Stratus.Instances[$scope.uid] = $scope
+        $scope.elementId = $attrs.elementId || $scope.uid
         Stratus.Internals.CssLoader(`${localDir}${$attrs.template || componentName}${min}.css`)
 
         $scope.initialized = false

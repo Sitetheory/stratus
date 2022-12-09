@@ -39,10 +39,10 @@ import {
 import 'angular-material' // Reliant for $mdToast
 
 // AngularJS Dependency Injector
-import {getInjector} from '@stratusjs/angularjs/injector'
+import {getInjector} from '../injector'
 
 // AngularJS Services
-import {Collection} from '@stratusjs/angularjs/services/collection'
+import {Collection} from './collection'
 
 // Instantiate Injector
 let injector = getInjector()
@@ -147,6 +147,9 @@ export class Model<T = LooseObject> extends ModelBase<T> {
     error = false
     completed = false
     saving = false
+
+    // External Controls
+    changedExternal = false
 
     // Temporarily force watching to all direct models
     watch = true
@@ -600,6 +603,10 @@ export class Model<T = LooseObject> extends ModelBase<T> {
 
                 // TODO: Make this into an over-writable function
                 // Gather Data
+                // FIXME: This needs to be setting as the API data...
+                // FIXME: The API data coming in appears to have precedence after recent changes
+                // FIXME: This does not have to do with recent changes, where we handle incoming
+                //        change sets...  There's something else at play.
                 this.header.set(this.xhr.getAllResponseHeaders() || {})
                 this.meta.set((response as LooseObject).meta || {})
                 this.route.set((response as LooseObject).route || {})
@@ -678,6 +685,7 @@ export class Model<T = LooseObject> extends ModelBase<T> {
                 this.data = _.cloneDeep(intermediateData) as T
                 // Before handling changes make sure we set to false
                 this.changed = false
+                this.changedExternal = false
                 this.saving = false
                 // FIXME: This should be finding the changed identifier...
                 this.handleChanges()

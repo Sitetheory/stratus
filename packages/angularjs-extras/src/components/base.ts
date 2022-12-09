@@ -3,14 +3,14 @@
 
 // Runtime
 import {camelCase, isEqual, uniqueId} from 'lodash'
-import {Stratus} from '../../../runtime/src/stratus'
+import {Stratus} from '@stratusjs/runtime/stratus'
 import {IAttributes, IScope, ITranscludeFunction} from 'angular'
 
 // Stratus Dependencies
-import {cookie} from '../../../core/src/environment'
-import {Registry} from '../../../angularjs/src/services/registry'
-import {Model} from '../../../angularjs/src/services/model'
-import {Collection} from '../../../angularjs/src/services/collection'
+import {cookie} from '@stratusjs/core/environment'
+import {Registry} from '@stratusjs/angularjs/services/registry'
+import {Model} from '@stratusjs/angularjs/services/model'
+import {Collection} from '@stratusjs/angularjs/services/collection'
 
 // Environment
 const min = !cookie('env') ? '.min' : ''

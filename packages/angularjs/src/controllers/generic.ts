@@ -12,16 +12,10 @@ import 'angular'
 // Modules
 import 'angular-sanitize'
 
-// Forced Dependent Service Load
-import '@stratusjs/angularjs/services/registry'
-import '@stratusjs/angularjs/services/model'
-import '@stratusjs/angularjs/services/collection'
-
 // Services
-// tslint:disable-next-line:no-duplicate-imports
-import {Registry} from '@stratusjs/angularjs/services/registry'
-// tslint:disable-next-line:no-duplicate-imports
-import {Model} from '@stratusjs/angularjs/services/model'
+import {Registry} from '../services/registry'
+import {Model} from '../services/model'
+import {Collection} from '../services/collection'
 
 // Stratus Dependencies
 import {
@@ -52,7 +46,8 @@ Stratus.Controllers.Generic = [
         R: Registry
     ) => {
         // Store Instance
-        Stratus.Instances[_.uniqueId('generic_')] = $scope
+        $scope.uid = _.uniqueId('controller_generic_')
+        Stratus.Instances[$scope.uid] = $scope
 
         // Registry
         await R.fetch($element, $scope)
@@ -94,7 +89,7 @@ Stratus.Controllers.Generic = [
         }
 
         // Handle Selected
-        if (!$scope.collection) {
+        if (!$scope.collection || !($scope.collection instanceof Collection)) {
             return
         }
         const selected: {

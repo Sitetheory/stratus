@@ -5,7 +5,7 @@
 //          dynamically.
 // 2. /packages/angular/src/app.module.ts
 //      - This is where we register every component that will be used or imported
-//      - add an import to define where it is located, e.g. import { BaseComponent } from '@stratusjs/angular/base/base.component'
+//      - add an import to define where it is located, e.g. import { BaseComponent } from './base.component'
 //      - add to declarations and entryComponents
 
 // Angular Core
@@ -31,7 +31,7 @@ import _ from 'lodash'
 import {cookie} from '@stratusjs/core/environment'
 
 // Stratus Angular Core
-import {RootComponent} from '@stratusjs/angular/core/root.component'
+import {RootComponent} from '../core/root.component'
 
 // Transformers
 import {keys} from 'ts-transformer-keys'
@@ -42,7 +42,7 @@ const moduleName = 'base'
 
 // Directory Template
 const min = !cookie('env') ? '.min' : ''
-const localDir = `${Stratus.BaseUrl}${boot.configuration.paths[`${systemDir}/*`].replace(/[^/]*$/, '')}`
+const localDir = `${Stratus.BaseUrl}${boot.configuration.paths[`${systemDir}/*`].replace(/[^/]*$/, '').replace(/\/dist\/$/, '/src/')}`
 
 /**
  * @title Basic Load

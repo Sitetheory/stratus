@@ -1,5 +1,5 @@
 // Internal
-import {seconds} from '@stratusjs/core/conversion'
+import {seconds} from './conversion'
 
 // External
 import _ from 'lodash'

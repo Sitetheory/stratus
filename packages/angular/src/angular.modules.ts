@@ -1,10 +1,12 @@
+// Note: This is an example, but not a functional dynamic importer, yet.
+
 // Core
 import {NgModule} from '@angular/core'
 
 // Component List
 import {
     EditorComponent
-} from '@stratusjs/angular/editor/editor.component'
+} from './editor/editor.component'
 
 // Package List
 // import {

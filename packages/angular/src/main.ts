@@ -1,12 +1,12 @@
 // Normalizers
-import '@stratusjs/angular/polyfills'
+import './polyfills'
 
 // Angular Core
 import {enableProdMode, NgModuleRef} from '@angular/core'
 import {platformBrowserDynamic} from '@angular/platform-browser-dynamic'
 
 // Bootstrap
-import {AppModule} from '@stratusjs/angular/app.module'
+import {AppModule} from './app.module'
 
 // Stratus Core
 import {cookie} from '@stratusjs/core/environment'

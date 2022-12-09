@@ -38,25 +38,25 @@
       // CONTROLLERS:
       // ------------
       // 'stratus.controllers.*': boot.deployment + '@stratusjs/controllers/*' + boot.suffix,
-      'stratus.controllers.generic': boot.deployment + '@stratusjs/angularjs/src/controllers/generic' + boot.suffix,
+      // 'stratus.controllers.generic': boot.deployment + '@stratusjs/angularjs/src/controllers/generic' + boot.suffix,
 
       // SERVICES:
       // ---------
       // 'stratus.services.*': boot.deployment + '@stratusjs/angularjs/src/services/*' + boot.suffix,
-      'stratus.services.model': boot.deployment + '@stratusjs/angularjs/src/services/model' + boot.suffix,
-      'stratus.services.collection': boot.deployment + '@stratusjs/angularjs/src/services/collection' + boot.suffix,
-      'stratus.services.registry': boot.deployment + '@stratusjs/angularjs/src/services/registry' + boot.suffix,
-      'stratus.services.details': boot.deployment + '@stratusjs/angularjs-extras/src/services/details' + boot.suffix,
+      // 'stratus.services.model': boot.deployment + '@stratusjs/angularjs/src/services/model' + boot.suffix,
+      // 'stratus.services.collection': boot.deployment + '@stratusjs/angularjs/src/services/collection' + boot.suffix,
+      // 'stratus.services.registry': boot.deployment + '@stratusjs/angularjs/src/services/registry' + boot.suffix,
+      // 'stratus.services.details': boot.deployment + '@stratusjs/angularjs-extras/src/services/details' + boot.suffix,
 
       // COMPONENTS:
       // -----------
       // 'stratus.components.*': boot.deployment + '@stratusjs/angularjs/src/components/*' + boot.suffix,
-      'stratus.components.base': boot.deployment + '@stratusjs/angularjs/src/components/base' + boot.suffix,
+      // 'stratus.components.base': boot.deployment + '@stratusjs/angularjs/src/components/base' + boot.suffix,
 
       // DIRECTIVES:
       // -----------
       // 'stratus.directives.*': boot.deployment + '@stratusjs/angularjs/src/directives/*' + boot.suffix,
-      'stratus.directives.base': boot.deployment + '@stratusjs/angularjs/src/directives/base' + boot.suffix,
+      // 'stratus.directives.base': boot.deployment + '@stratusjs/angularjs/src/directives/base' + boot.suffix,
 
       // THIRD PARTY: NODE MODULES
 

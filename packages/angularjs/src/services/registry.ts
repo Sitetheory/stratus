@@ -12,11 +12,11 @@ import {flatten, isJSON, poll, ucfirst} from '@stratusjs/core/misc'
 import {cookie} from '@stratusjs/core/environment'
 
 // AngularJS Dependency Injector
-import {getInjector} from '@stratusjs/angularjs/injector'
+import {getInjector} from '../injector'
 
 // AngularJS Services
-import {Model, ModelOptionKeys, ModelOptions} from '@stratusjs/angularjs/services/model'
-import {Collection, CollectionOptionKeys, CollectionOptions} from '@stratusjs/angularjs/services/collection'
+import {Model, ModelOptionKeys, ModelOptions} from './model'
+import {Collection, CollectionOptionKeys, CollectionOptions} from './collection'
 import {EventManager} from '@stratusjs/core/events/eventManager'
 
 // Instantiate Injector
@@ -256,9 +256,12 @@ export class Registry {
         if (typeof data === 'object' && data !== null) {
             if (typeof $scope !== 'undefined') {
                 $scope.data = data
+                // TODO: Add null values to ensure strict typing (disable scope inheritance)
                 if (data instanceof Model) {
                     $scope.model = data
+                    // $scope.collection = null
                 } else if (data instanceof Collection) {
+                    // $scope.model = null
                     $scope.collection = data
                 }
                 // bind changes to redraw

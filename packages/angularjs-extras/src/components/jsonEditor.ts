@@ -3,12 +3,12 @@
 
 // Runtime
 import {camelCase, uniqueId} from 'lodash'
-import {Stratus} from '../../../runtime/src/stratus'
+import {Stratus} from '@stratusjs/runtime/stratus'
 import {IAttributes, IScope} from 'angular'
 
 // Stratus Dependencies
-import {cookie} from '../../../core/src/environment'
-import {isJSON} from '../../../core/src/misc'
+import {cookie} from '@stratusjs/core/environment'
+import {isJSON} from '@stratusjs/core/misc'
 
 // Environment
 const min = !cookie('env') ? '.min' : ''

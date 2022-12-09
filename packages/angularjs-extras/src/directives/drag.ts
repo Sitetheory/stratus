@@ -2,13 +2,20 @@
 // -----------------
 
 // Runtime
-import {get, uniqueId} from 'lodash'
-import {Stratus} from '@stratusjs/runtime/stratus'
+import {
+    // get,
+    uniqueId
+} from 'lodash'
+import {
+    Stratus
+} from '@stratusjs/runtime/stratus'
 import {
     IAugmentedJQuery,
     IScope
 } from 'angular'
-import {StratusDirective} from './baseNew'
+import {
+    StratusDirective
+} from './baseNew'
 
 
 // Environment
@@ -36,9 +43,11 @@ Stratus.Directives.Drag = (
             console.log('dragstart:', event)
             event.dataTransfer.effectAllowed = 'copy' // only dropEffect='copy'
             // will be droppable
+            // FIXME: this one works in es6 with rollup (toggle accordingly)
             // event.dataTransfer.setData('Text', this.id) // required otherwise
             // Typescript doesn't believe id exists
-            event.dataTransfer.setData('Text', get(this, 'id')) // required otherwise
+            // FIXME: this one works in es2019 with systemjs (toggle accordingly)
+            // event.dataTransfer.setData('Text', get(this, 'id')) // required otherwise
             // doesn't work
         })
 

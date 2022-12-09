@@ -11,6 +11,7 @@ import {LooseFunction, LooseObject} from '@stratusjs/core/misc'
 import {cookie} from '@stratusjs/core/environment'
 
 export type CitationComponentScope = angular.IScope & LooseObject<LooseFunction> & {
+    uid: string
     title: string
     content: string // HTML
     citationOpened: boolean
@@ -37,8 +38,8 @@ Stratus.Components.Citation = {
     ) {
         // Initialize
         const $ctrl = this
-        $ctrl.uid = uniqueId(camelCase(packageName) + '_' + camelCase(moduleName) + '_' + camelCase(componentName) + '_')
-        Stratus.Instances[$ctrl.uid] = $scope
+        $scope.uid = uniqueId(camelCase(packageName) + '_' + camelCase(moduleName) + '_' + camelCase(componentName) + '_')
+        Stratus.Instances[$scope.uid] = $scope
         $scope.auto = true
 
         Stratus.Internals.CssLoader(`${localDir}${componentName}${min}.css`)

@@ -1,5 +1,18 @@
-import {dehydrate, hydrate, isAngular, isjQuery, LooseFunction} from '@stratusjs/core/misc'
-import {first, includes, startsWith, size, forEach, map} from 'lodash'
+import {
+    dehydrate,
+    hydrate,
+    isAngular,
+    isjQuery,
+    LooseFunction
+} from './misc'
+import {
+    first,
+    includes,
+    startsWith,
+    size,
+    forEach,
+    map
+} from 'lodash'
 
 // DOM Complete as a Promise instead of Callback
 export function DOMComplete(): Promise<void> {
@@ -34,11 +47,15 @@ export function unload(fn: (e: BeforeUnloadEvent) => void){
 }
 
 export class Selector {
-    context: Document | Element
+    context: HTMLDocument | HTMLElement
     length: number
-    selection: any
-    selector: string | Element | JQuery
-    constructor(context: Document | Element, length?: number, selection?: any, selector?: string | Element | JQuery) {
+    selection: HTMLElement
+    selector: string | Node | HTMLElement | JQuery
+    constructor(
+        context: HTMLDocument | HTMLElement,
+        length?: number, selection?: HTMLElement,
+        selector?: string | Node | HTMLElement | JQuery
+    ) {
         if (!context) {
             context = document
         }
@@ -48,160 +65,148 @@ export class Selector {
         this.selector = selector
     }
     attr(attribute: any, value?: any) {
-        const that: any = this
-        if (that.selection instanceof NodeList) {
-            console.warn('Unable to find "' + attribute + '" for list:', that.selection)
+        if (this.selection instanceof NodeList) {
+            console.warn('Unable to find "' + attribute + '" for list:', this.selection)
             return null
         }
         if (!attribute) {
             return this
         }
         if (typeof value === 'undefined') {
-            value = that.selection.getAttribute(attribute)
-            return hydrate(value)
-        } else {
-            that.selection.setAttribute(attribute, dehydrate(value))
+            return hydrate(
+                this.selection.getAttribute(attribute)
+            )
         }
-        return that
+        this.selection.setAttribute(attribute, dehydrate(value))
+        return this
     }
     addEventListener(type: any, listener: any, options?: any) {
-        const that: any = this
-        if (!that.selection) {
+        if (!this.selection) {
             console.warn('Unable to add EventListener on empty selection.')
-            return that
+            return this
         }
         const listen: any = (node: Element) => node.addEventListener(type, listener, options)
-        if (that.selection instanceof NodeList) {
-            forEach(that.selection, listen)
-            return that
+        if (this.selection instanceof NodeList) {
+            forEach(this.selection, listen)
+            return this
         }
-        if (that.selection instanceof EventTarget) {
-            listen(that.selection)
-            return that
+        if (this.selection instanceof EventTarget) {
+            listen(this.selection)
+            return this
         }
-        console.warn('Unable to add EventListener on:', that.selection)
-        return that
+        console.warn('Unable to add EventListener on:', this.selection)
+        return this
     }
     each(callable: any) {
-        const that: any = this
         if (typeof callable !== 'function') {
             callable = (element: any) => {
                 console.warn('each running on element:', element)
             }
         }
-        if (that.selection instanceof NodeList) {
-            forEach(that.selection, callable)
+        if (this.selection instanceof NodeList) {
+            forEach(this.selection, callable)
         }
-        return that
+        return this
     }
     find(selector: any) {
-        const that: any = this
-        if (that.selection instanceof NodeList) {
-            console.warn('Unable to find "' + selector + '" for list:', that.selection)
+        if (this.selection instanceof NodeList) {
+            console.warn('Unable to find "' + selector + '" for list:', this.selection)
         } else if (selector) {
-            // return Stratus.Select(selector, that.selection)
-            return Select(selector, that.selection)
+            // return Stratus.Select(selector, this.selection)
+            return Select(selector, this.selection)
         }
         return null
     }
     map(callable: any) {
-        const that: any = this
         if (typeof callable !== 'function') {
             callable = (element: any) => {
                 console.warn('map running on element:', element)
             }
         }
-        if (that.selection instanceof NodeList) {
-            return map(that.selection, callable)
+        if (this.selection instanceof NodeList) {
+            return map(this.selection, callable)
         }
-        return that
+        return this
     }
     // TODO: Merge with prepend
     append(child: any) {
-        const that: any = this
-        if (that.selection instanceof NodeList) {
-            console.warn('Unable to append child:', child, 'to list:', that.selection)
+        if (this.selection instanceof NodeList) {
+            console.warn('Unable to append child:', child, 'to list:', this.selection)
         } else if (child) {
-            that.selection.insertBefore(child, that.selection.lastChild)
+            // TODO: This should be insertAfter
+            this.selection.insertBefore(child, this.selection.lastChild)
         }
-        return that
+        return this
     }
     // TODO: Merge with append
     prepend(child: any) {
-        const that: any = this
-        if (that.selection instanceof NodeList) {
-            console.warn('Unable to prepend child:', child, 'to list:', that.selection)
+        if (this.selection instanceof NodeList) {
+            console.warn('Unable to prepend child:', child, 'to list:', this.selection)
         } else if (child) {
-            that.selection.insertBefore(child, that.selection.firstChild)
+            this.selection.insertBefore(child, this.selection.firstChild)
         }
-        return that
+        return this
     }
     // Design Plugins
     addClass(className: any) {
-        const that: any = this
-        if (that.selection instanceof NodeList) {
-            console.warn('Unable to add class "' + className + '" to list:', that.selection)
+        if (this.selection instanceof NodeList) {
+            console.warn('Unable to add class "' + className + '" to list:', this.selection)
         } else {
             forEach(className.split(' '), (name: any) => {
-                if (that.selection.classList) {
-                    that.selection.classList.add(name)
+                if (this.selection.classList) {
+                    this.selection.classList.add(name)
                 } else {
-                    that.selection.className += ' ' + name
+                    this.selection.className += ' ' + name
                 }
             })
         }
-        return that
+        return this
     }
     removeClass(className: string) {
-        const that: any = this
-        if (that.selection instanceof NodeList) {
-            console.warn('Unable to remove class "' + className + '" from list:', that.selection)
-        } else if (that.selection.classList) {
+        if (this.selection instanceof NodeList) {
+            console.warn('Unable to remove class "' + className + '" from list:', this.selection)
+        } else if (this.selection.classList) {
             forEach(className.split(' '), name => {
-                that.selection.classList.remove(name)
+                this.selection.classList.remove(name)
             })
         } else {
-            that.selection.className = that.selection.className.replace(
+            this.selection.className = this.selection.className.replace(
                 new RegExp('(^|\\b)' + className.split(' ').join('|') + '(\\b|$)',
                     'gi'), ' ')
         }
-        return that
+        return this
     }
     style() {
-        const that: any = this
-        if (that.selection instanceof NodeList) {
-            console.warn('Unable to find style for list:', that.selection)
-        } else if (that.selection instanceof Node) {
-            return window.getComputedStyle(that.selection)
+        if (this.selection instanceof NodeList) {
+            console.warn('Unable to find style for list:', this.selection)
+        } else if (this.selection instanceof Node) {
+            return window.getComputedStyle(this.selection)
         }
         return null
     }
     // Positioning Plugins
     height() {
-        const that: any = this
-        if (that.selection instanceof NodeList) {
-            console.warn('Unable to find height for list:', that.selection)
+        if (this.selection instanceof NodeList) {
+            console.warn('Unable to find height for list:', this.selection)
             return null
         }
-        return that.selection.offsetHeight || 0
+        return this.selection.offsetHeight || 0
     }
     width() {
-        const that: any = this
-        if (that.selection instanceof NodeList) {
-            console.warn('Unable to find width for list:', that.selection)
+        if (this.selection instanceof NodeList) {
+            console.warn('Unable to find width for list:', this.selection)
             return null
         }
         // if (cookie('env')) {
-        //     console.log('width:', that.selection.scrollWidth, that.selection.clientWidth, that.selection.offsetWidth)
+        //     console.log('width:', this.selection.scrollWidth, this.selection.clientWidth, this.selection.offsetWidth)
         // }
-        return that.selection.offsetWidth || 0
+        return this.selection.offsetWidth || 0
     }
     offset() {
-        const that: any = this
-        if (that.selection instanceof NodeList) {
-            console.warn('Unable to find offset for list:', that.selection)
-        } else if (that.selection.getBoundingClientRect) {
-            const rect: any = that.selection.getBoundingClientRect()
+        if (this.selection instanceof NodeList) {
+            console.warn('Unable to find offset for list:', this.selection)
+        } else if (this.selection.getBoundingClientRect) {
+            const rect: any = this.selection.getBoundingClientRect()
             return {
                 top: rect.top + document.body.scrollTop,
                 left: rect.left + document.body.scrollLeft
@@ -213,16 +218,15 @@ export class Selector {
         }
     }
     parent() {
-        const that: any = this
-        if (that.selection instanceof NodeList) {
-            console.warn('Unable to find offset for list:', that.selection)
+        if (this.selection instanceof NodeList) {
+            console.warn('Unable to find offset for list:', this.selection)
             return null
         }
-        return Select(that.selection.parentNode)
+        return Select(this.selection.parentNode)
     }
 }
 
-export function Select(selector: string | Element | JQuery, context?: Document | Element): Selector {
+export function Select(selector: string | Node | HTMLElement | JQuery, context?: HTMLDocument | HTMLElement): Selector {
     if (!context) {
         context = document
     }
