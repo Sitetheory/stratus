@@ -10,8 +10,13 @@
   } else {
     factory()
   }
-}(this, function () {
-  require(['angular-aria', 'angular-animate', 'angular-messages'], function () {
-    require(['angular-material-native'])
-  })
+}(this, async function () {
+  // FIXME: This never actually sets the correct timing for what's referencing the import...
+  await Promise.all([
+    System.import('angular-aria'),
+    System.import('angular-animate'),
+    System.import('angular-messages')
+  ])
+  await System.import('angular-material-native')
+  console.log('[angular-material] timing set via normalizer')
 }))
