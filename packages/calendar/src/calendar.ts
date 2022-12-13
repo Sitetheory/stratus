@@ -19,7 +19,7 @@ import * as moment from 'moment'
 import 'moment-range'
 
 // FullCalendar
-import '@fullcalendar/core/vdom.cjs'
+import '@fullcalendar/core/vdom'
 import * as momentPlugin from '@fullcalendar/moment'
 import * as momentTimezonePlugin from '@fullcalendar/moment-timezone'
 import * as fullCalendarDayGridPlugin from '@fullcalendar/daygrid'

@@ -2,6 +2,7 @@
 import multi from '@rollup/plugin-multi-entry'
 import { nodeResolve } from '@rollup/plugin-node-resolve'
 // import commonjs from '@rollup/plugin-commonjs'
+import postcss from 'rollup-plugin-postcss'
 
 export default [
   // ------------------------
@@ -165,6 +166,43 @@ export default [
         entryFileName: 'angularjs-extras.bundle.js'
       }),
       nodeResolve()
+    ]
+  },
+  // ------------------------
+  // Calendar Config
+  // ------------------------
+  {
+    input: {
+      include: [
+        './packages/calendar/src/**/*.js'
+      ],
+      exclude: []
+    },
+    external: [
+      'angular',
+      'angular-material',
+      'lodash',
+      'moment',
+      'moment-range',
+      'moment-timezone',
+      '@stratusjs'
+    ],
+    output: {
+      // file: 'packages/calendar/dist/calendar.bundle.js',
+      dir: 'packages/calendar/dist/',
+      format: 'system'
+    },
+    plugins: [
+      multi({
+        exports: true,
+        entryFileName: 'calendar.bundle.js'
+      }),
+      nodeResolve({
+        // browser: true
+      }),
+      postcss({
+        config: false
+      })
     ]
   }
   // ------------------------
