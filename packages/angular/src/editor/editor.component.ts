@@ -75,18 +75,32 @@ import {
     MediaDialogComponent,
     MediaDialogData
 } from './media-dialog.component'
+import {
+    CodeViewDialogComponent,
+    CodeViewDialogData
+} from './code-view-dialog.component'
+
+// Bridges
+import {
+    CodeMirrorBridge
+} from './code-mirror-bridge'
 
 // Services
 import {Registry} from '@stratusjs/angularjs/services/registry'
-import {cookie} from '@stratusjs/core/environment'
 
 // Core Classes
+import {
+    cookie
+} from '@stratusjs/core/environment'
 import {
     EventManager
 } from '@stratusjs/core/events/eventManager'
 import {
     EventBase
 } from '@stratusjs/core/events/eventBase'
+import {
+    LooseObject
+} from '@stratusjs/core/misc'
 
 // Core Interfaces
 import {
@@ -100,23 +114,15 @@ import {
 import {
     Collection
 } from '@stratusjs/angularjs/services/collection'
-import {
-    CodeViewDialogComponent,
-    CodeViewDialogData
-} from './code-view-dialog.component'
 
 // Transformers
 import {
     keys
 } from 'ts-transformer-keys'
-import {LooseObject} from '@stratusjs/core/misc'
 
 // Froala External Requirements (Before Plugins are Loaded)
-// @ts-ignore
-// import * as CodeMirror from 'codemirror/lib/codemirror'
-// import 'codemirror/mode/xml/xml'
-// import {EditorView, basicSetup} from 'codemirror'
-// import {xml} from '@codemirror/lang-xml'
+import {EditorView, basicSetup} from 'codemirror'
+import {html} from '@codemirror/lang-html'
 import 'html2pdf'
 import 'font-awesome'
 
@@ -499,15 +505,35 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             indent_size: 4,
             wrap_line_length: 0
         },
-        // codeMirror: CodeMirror,
-        // codeMirrorOptions: {
-        //     indentWithTabs: false,
-        //     lineNumbers: true,
-        //     lineWrapping: true,
-        //     mode: 'text/html',
-        //     tabMode: 'space',
-        //     tabSize: 4
-        // },
+        // fromTextArea
+        codeMirror: {
+            fromTextArea: (el: HTMLTextAreaElement, opts: LooseObject) => {
+                // Note: We're instantiating a Bridge Class to act as an intermediate for Froala's legacy implementation.
+                return new CodeMirrorBridge({
+                    extensions: [
+                        basicSetup,
+                        html({
+                            // extraTags: [
+                            //     'sa-editor'
+                            // ],
+                            // extraGlobalAttributes: [
+                            //     'stratus-src'
+                            // ],
+                        }),
+                        // TODO: Make this an optional extension, based on options
+                        EditorView.lineWrapping
+                    ]
+                }).fromTextArea(el, opts)
+            }
+        },
+        codeMirrorOptions: {
+            indentWithTabs: false,
+            lineNumbers: true,
+            lineWrapping: true,
+            mode: 'text/html',
+            tabMode: 'space',
+            tabSize: 4
+        },
         fileInsertButtons: [
             'fileBack',
             // '|',
