@@ -5,14 +5,14 @@
  */
 
 // Runtime
-import {camelCase, forEach, uniqueId} from 'lodash'
+import {forEach} from 'lodash'
 import {Stratus} from '@stratusjs/runtime/stratus'
 import {element, material, IAttributes, ITimeoutService, IScope, IQService, IWindowService} from 'angular'
 import 'angular-material'
 import {CompileFilterOptions, IdxEmitter, IdxSearchScope, IdxService} from '@stratusjs/idx/idx'
 
 // Stratus Dependencies
-import {hydrate, isJSON, LooseObject} from '@stratusjs/core/misc'
+import {hydrate, isJSON, LooseObject, safeUniqueId} from '@stratusjs/core/misc'
 import {cookie} from '@stratusjs/core/environment'
 import {IdxMemberListScope} from '@stratusjs/idx/member/list.component'
 
@@ -60,8 +60,7 @@ Stratus.Components.IdxMemberSearch = {
     ) {
         // Initialize
         const $ctrl = this
-        // $scope.uid = safeUniqueId(packageName, moduleName, componentName)
-        $scope.uid = uniqueId(camelCase(packageName) + '_' + camelCase(moduleName) + '_' + camelCase(componentName) + '_')
+        $scope.uid = safeUniqueId(packageName, moduleName, componentName)
         $scope.elementId = $attrs.elementId || $scope.uid
         Stratus.Instances[$scope.elementId] = $scope
         if ($attrs.tokenUrl) {

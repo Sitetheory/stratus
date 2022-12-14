@@ -6,7 +6,6 @@
 
 // Runtime
 import _, {
-    camelCase,
     clone,
     cloneDeep,
     extend,
@@ -16,8 +15,7 @@ import _, {
     isNumber,
     isString,
     map,
-    throttle,
-    uniqueId
+    throttle
 } from 'lodash'
 import {Stratus} from '@stratusjs/runtime/stratus'
 import {element, material, IAttributes, ITimeoutService, IQService, IWindowService} from 'angular'
@@ -39,7 +37,7 @@ import {
 import {IdxPropertyListScope} from '@stratusjs/idx/property/list.component'
 
 // Stratus Dependencies
-import {isJSON, LooseObject} from '@stratusjs/core/misc'
+import {isJSON, LooseObject, safeUniqueId} from '@stratusjs/core/misc'
 import {cookie} from '@stratusjs/core/environment'
 // FIXME should we be renaming the old 'stratus.directives' variables to something else now that we're @stratusjs?
 import 'stratus.directives.stringToNumber'
@@ -204,8 +202,7 @@ Stratus.Components.IdxPropertySearch = {
     ) {
         // Initialize
         const $ctrl = this
-        // $scope.uid = safeUniqueId(packageName, moduleName, componentName)
-        $scope.uid = uniqueId(camelCase(packageName) + '_' + camelCase(moduleName) + '_' + camelCase(componentName) + '_')
+        $scope.uid = safeUniqueId(packageName, moduleName, componentName)
         $scope.elementId = $attrs.elementId || $scope.uid
         $scope._ = _
         Stratus.Instances[$scope.elementId] = $scope

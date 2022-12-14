@@ -5,7 +5,7 @@
  */
 
 // Runtime
-import {camelCase, clone, forEach, isString, uniqueId} from 'lodash'
+import {clone, forEach, isString} from 'lodash'
 import {Stratus} from '@stratusjs/runtime/stratus'
 import {
     element, material, IAnchorScrollService, IAttributes, IQService, IRootScopeService, ISCEService, ITimeoutService, IWindowService
@@ -22,7 +22,7 @@ import {
 
 // Stratus Dependencies
 import {Collection} from '@stratusjs/angularjs/services/collection' // Needed as Class
-import {isJSON, LooseObject} from '@stratusjs/core/misc'
+import {isJSON, LooseObject, safeUniqueId} from '@stratusjs/core/misc'
 import {cookie} from '@stratusjs/core/environment'
 
 // Component Preload
@@ -79,8 +79,7 @@ Stratus.Components.IdxMemberList = {
         Idx: IdxService,
     ) {
         // Initialize
-        // $scope.uid = safeUniqueId(packageName, moduleName, componentName)
-        $scope.uid = uniqueId(camelCase(packageName) + '_' + camelCase(moduleName) + '_' + camelCase(componentName) + '_')
+        $scope.uid = safeUniqueId(packageName, moduleName, componentName)
         $scope.elementId = $attrs.elementId || $scope.uid
         Stratus.Instances[$scope.elementId] = $scope
         if ($attrs.tokenUrl) {
