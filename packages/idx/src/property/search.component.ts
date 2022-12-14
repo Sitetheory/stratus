@@ -5,16 +5,27 @@
  */
 
 // Runtime
-import _, {camelCase, clone, cloneDeep, extend, isArray, isEmpty, isEqual, isNumber, isString, map, throttle, uniqueId} from 'lodash'
+import _, {
+    camelCase,
+    clone,
+    cloneDeep,
+    extend,
+    isArray,
+    isEmpty,
+    isEqual,
+    isNumber,
+    isString,
+    map,
+    throttle,
+    uniqueId
+} from 'lodash'
 import {Stratus} from '@stratusjs/runtime/stratus'
-import * as angular from 'angular'
-
-// Angular 1 Modules
+import {element, material, IAttributes, ITimeoutService, IQService, IWindowService} from 'angular'
 import 'angular-material'
 
 // Services
-import '@stratusjs/idx/idx'
-// tslint:disable-next-line:no-duplicate-imports
+// import '@stratusjs/idx/idx'
+// slint:disable-next-line:no-duplicate-imports
 import {
     CompileFilterOptions,
     IdxComponentScope,
@@ -28,7 +39,7 @@ import {
 import {IdxPropertyListScope} from '@stratusjs/idx/property/list.component'
 
 // Stratus Dependencies
-import {isJSON} from '@stratusjs/core/misc'
+import {isJSON, LooseObject} from '@stratusjs/core/misc'
 import {cookie} from '@stratusjs/core/environment'
 // FIXME should we be renaming the old 'stratus.directives' variables to something else now that we're @stratusjs?
 import 'stratus.directives.stringToNumber'
@@ -71,7 +82,7 @@ export type IdxPropertySearchScope = IdxSearchScope & {
     }
     displayFilterFullHeight: boolean
     variableSyncing: object | any
-    filterMenu?: any // angular.material.IPanelRef // disabled because we need to set reposition()
+    filterMenu?: material.IPanelRef & any // material.IPanelRef // disabled because we need to set reposition()
 
     // Functions
     arrayIntersect(itemArray: any[], array: any[]): boolean
@@ -181,21 +192,21 @@ Stratus.Components.IdxPropertySearch = {
         widgetName: '@'
     },
     controller(
-        $attrs: angular.IAttributes,
-        $q: angular.IQService,
+        $attrs: IAttributes,
+        $q: IQService,
         $mdConstant: any, // mdChips item
-        $mdDialog: angular.material.IDialogService,
-        $mdPanel: angular.material.IPanelService,
-        // $scope: object | any, // angular.IScope breaks references so far
+        $mdDialog: material.IDialogService,
+        $mdPanel: material.IPanelService,
         $scope: IdxPropertySearchScope,
-        $timeout: angular.ITimeoutService,
-        $window: angular.IWindowService,
+        $timeout: ITimeoutService,
+        $window: IWindowService,
         Idx: IdxService,
     ) {
         // Initialize
         const $ctrl = this
-        $ctrl.uid = uniqueId(camelCase(packageName) + '_' + camelCase(moduleName) + '_' + camelCase(componentName) + '_')
-        $scope.elementId = $attrs.elementId || $ctrl.uid
+        // $scope.uid = safeUniqueId(packageName, moduleName, componentName)
+        $scope.uid = uniqueId(camelCase(packageName) + '_' + camelCase(moduleName) + '_' + camelCase(componentName) + '_')
+        $scope.elementId = $attrs.elementId || $scope.uid
         $scope._ = _
         Stratus.Instances[$scope.elementId] = $scope
         $scope.localDir = localDir
@@ -203,9 +214,12 @@ Stratus.Components.IdxPropertySearch = {
             Idx.setTokenURL($attrs.tokenUrl)
         }
 
-        Stratus.Internals.CssLoader(`${localDir}${$attrs.template || componentName}.component${min}.css`)
+        Stratus.Internals.CssLoader(`${localDir}${$attrs.template || componentName}.component${min}.css`).then()
 
         // Default values
+        let defaultQuery: LooseObject
+        let lastQuery: CompileFilterOptions
+        let mlsVariables: MLSService[]
         $scope.openPrice = false
         $scope.advancedFiltersStatus = false
         $scope.advancedSearchUrl = ''
@@ -250,9 +264,9 @@ Stratus.Components.IdxPropertySearch = {
 
             // $scope.setQuery($scope.options.query)
             $scope.setWhere($scope.options.query.where)
-            $ctrl.defaultQuery = JSON.parse(JSON.stringify(cloneDeep($scope.options.query.where)))
+            defaultQuery = JSON.parse(JSON.stringify(cloneDeep($scope.options.query.where)))
             if ($scope.options.query.order) {
-                $ctrl.defaultQuery.Order = $scope.options.query.order
+                defaultQuery.Order = $scope.options.query.order
             }
 
             // console.log('$scope.options.query is starting at ', clone($scope.options.query))
@@ -368,7 +382,7 @@ Stratus.Components.IdxPropertySearch = {
         }
 
         // Initialization by Event
-        $ctrl.$onInit = () => {
+        this.$onInit = () => {
             $scope.Idx = Idx
 
             let initNow = true
@@ -378,19 +392,19 @@ Stratus.Components.IdxPropertySearch = {
             }
 
             if (initNow) {
-                init()
+                init().then()
                 return
             }
 
-            $ctrl.stopWatchingInitNow = $scope.$watch('$ctrl.initNow', (initNowCtrl: boolean) => {
+            const stopWatchingInitNow = $scope.$watch('$ctrl.initNow', (initNowCtrl: boolean) => {
                 // console.log('CAROUSEL initNow called later')
                 if (initNowCtrl !== true) {
                     return
                 }
                 if (!$scope.initialized) {
-                    init()
+                    init().then()
                 }
-                $ctrl.stopWatchingInitNow()
+                stopWatchingInitNow()
             })
         }
 
@@ -534,7 +548,7 @@ Stratus.Components.IdxPropertySearch = {
          */
         $scope.showInlinePopup = (ev: any, menuElement: string): void => {
             if (!$scope.filterMenu) {
-                const position: angular.material.IPanelPosition | any = $mdPanel.newPanelPosition()
+                const position: material.IPanelPosition | any = $mdPanel.newPanelPosition()
                     .relativeTo(ev.srcElement)
                     .addPanelPosition($mdPanel.xPosition.CENTER, $mdPanel.yPosition.BELOW)
 
@@ -543,12 +557,12 @@ Stratus.Components.IdxPropertySearch = {
                 animation.closeTo(position)
                 animation.withAnimation($mdPanel.animation.FADE)
 
-                const config: angular.material.IPanelConfig & {
+                const config: material.IPanelConfig & {
                     contentElement: string,
                     openFrom: any
                 } = {
                     animation,
-                    attachTo: angular.element(document.body),
+                    attachTo: element(document.body),
                     contentElement: menuElement,
                     position,
                     openFrom: ev,
@@ -574,10 +588,10 @@ Stratus.Components.IdxPropertySearch = {
          * @param reset - set true to force reset
          */
         $scope.getMLSVariables = (reset?: boolean): MLSService[] => {
-            if (!$ctrl.mlsVariables || reset) {
-                $ctrl.mlsVariables = Idx.getMLSVariables()
+            if (!mlsVariables || reset) {
+                mlsVariables = Idx.getMLSVariables()
             }
-            return $ctrl.mlsVariables
+            return mlsVariables
         }
 
         /**
@@ -622,7 +636,7 @@ Stratus.Components.IdxPropertySearch = {
                     $scope.selectDefaultListingType()
                 }
                 // console.log('setting lastQuery setWhereDefaults', cloneDeep($scope.options.query))
-                $ctrl.lastQuery = cloneDeep($scope.options.query)
+                lastQuery = cloneDeep($scope.options.query)
             })
         }
 
@@ -678,10 +692,10 @@ Stratus.Components.IdxPropertySearch = {
                 // console.log('comparing last', cloneDeep($ctrl.lastQuery))
                 // console.log('comparing current', cloneDeep($scope.options.query))
                 if ($scope.hasQueryChanged()) {
-                    $ctrl.lastQuery = cloneDeep($scope.options.query)
+                    lastQuery = cloneDeep($scope.options.query)
                     // console.warn('there was a change')
                     Idx.setUrlOptions('Search', $scope.options.query.where)
-                    $window.open($scope.listLinkUrl + '#!/' + Idx.getUrlOptionsPath($ctrl.defaultQuery), $scope.listLinkTarget)
+                    $window.open($scope.listLinkUrl + '#!/' + Idx.getUrlOptionsPath(defaultQuery), $scope.listLinkTarget)
                 }
             }
         }
@@ -735,14 +749,14 @@ Stratus.Components.IdxPropertySearch = {
 
             $mdDialog.show({
                 template,
-                parent: angular.element(document.body),
+                parent: element(document.body),
                 targetEvent: ev,
                 clickOutsideToClose: true,
                 fullscreen: true, // Only for -xs, -sm breakpoints.
                 // bindToController: true,
                 controllerAs: 'ctrl',
                 // tslint:disable-next-line:no-shadowed-variable
-                controller: ($scope: any, $mdDialog: any) => { // shadowing is needed for inline controllers
+                controller: ($scope: any, $mdDialog: material.IDialogService) => { // shadowing is needed for inline controllers
                     const dc = this
 
                     dc.$onInit = () => {
@@ -799,14 +813,14 @@ Stratus.Components.IdxPropertySearch = {
             }
             if (listScope) {
                 $scope.setQuery(listScope.query)
-                $ctrl.lastQuery = cloneDeep($scope.options.query)
+                lastQuery = cloneDeep($scope.options.query)
                 $scope.listInitialized = true
             }
         }
 
         $scope.on = (emitterName: string, callback: IdxEmitter) => Idx.on($scope.elementId, emitterName, callback)
 
-        $scope.hasQueryChanged = (): boolean => !isEqual(clone($ctrl.lastQuery), clone($scope.options.query))
+        $scope.hasQueryChanged = (): boolean => !isEqual(clone(lastQuery), clone($scope.options.query))
 
         /**
          * Destroy this widget
@@ -815,5 +829,5 @@ Stratus.Components.IdxPropertySearch = {
             // TODO need to kill any attached slideshows
         }
     },
-    templateUrl: ($attrs: angular.IAttributes): string => `${localDir}${$attrs.template || componentName}.component${min}.html`
+    templateUrl: ($attrs: IAttributes): string => `${localDir}${$attrs.template || componentName}.component${min}.html`
 }

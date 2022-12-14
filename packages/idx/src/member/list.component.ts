@@ -7,15 +7,11 @@
 // Runtime
 import {camelCase, clone, forEach, isString, uniqueId} from 'lodash'
 import {Stratus} from '@stratusjs/runtime/stratus'
-import * as angular from 'angular'
-
-// Angular 1 Modules
+import {
+    element, material, IAnchorScrollService, IAttributes, IQService, IRootScopeService, ISCEService, ITimeoutService, IWindowService
+} from 'angular'
 import 'angular-material'
 import 'angular-sanitize'
-
-// Services
-import '@stratusjs/idx/idx'
-// tslint:disable-next-line:no-duplicate-imports
 import {
     CompileFilterOptions,
     IdxEmitter,
@@ -71,32 +67,34 @@ Stratus.Components.IdxMemberList = {
         variableSync: '@'
     },
     controller(
-        $anchorScroll: angular.IAnchorScrollService,
-        $attrs: angular.IAttributes,
-        $q: angular.IQService,
-        $mdDialog: angular.material.IDialogService,
-        $rootScope: angular.IRootScopeService,
-        $sce: angular.ISCEService,
+        $anchorScroll: IAnchorScrollService,
+        $attrs: IAttributes,
+        $q: IQService,
+        $mdDialog: material.IDialogService,
+        $rootScope: IRootScopeService,
+        $sce: ISCEService,
         $scope: IdxMemberListScope,
-        $timeout: angular.ITimeoutService,
-        $window: angular.IWindowService,
+        $timeout: ITimeoutService,
+        $window: IWindowService,
         Idx: IdxService,
     ) {
         // Initialize
-        const $ctrl = this
-        $ctrl.uid = uniqueId(camelCase(packageName) + '_' + camelCase(moduleName) + '_' + camelCase(componentName) + '_')
-        $scope.elementId = $attrs.elementId || $ctrl.uid
+        // $scope.uid = safeUniqueId(packageName, moduleName, componentName)
+        $scope.uid = uniqueId(camelCase(packageName) + '_' + camelCase(moduleName) + '_' + camelCase(componentName) + '_')
+        $scope.elementId = $attrs.elementId || $scope.uid
         Stratus.Instances[$scope.elementId] = $scope
         if ($attrs.tokenUrl) {
             Idx.setTokenURL($attrs.tokenUrl)
         }
-        Stratus.Internals.CssLoader(`${localDir}${$attrs.template || componentName}.component${min}.css`)
+        Stratus.Internals.CssLoader(`${localDir}${$attrs.template || componentName}.component${min}.css`).then()
+
+        let defaultOptions: LooseObject
 
         /**
          * All actions that happen first when the component loads
          * Needs to be placed in a function, as the functions below need to the initialized first
          */
-        $ctrl.$onInit = async () => {
+        this.$onInit = async () => {
             /**
              * Allow options to be loaded initially from the URL
              */
@@ -120,7 +118,7 @@ Stratus.Components.IdxMemberList = {
             // $scope.options.where.MemberKey = $scope.options.where.MemberKey || '91045'
             // $scope.options.where.AgentLicense = $scope.options.where.AgentLicense || []*/
 
-            $ctrl.defaultOptions = JSON.parse(JSON.stringify($scope.options.where))// Extend/clone doesn't work for arrays
+            defaultOptions = JSON.parse(JSON.stringify($scope.options.where))// Extend/clone doesn't work for arrays
 
             /* $scope.orderOptions = $scope.orderOptions || {
               'Price (high to low)': '-ListPrice',
@@ -386,7 +384,7 @@ Stratus.Components.IdxMemberList = {
 
                 $mdDialog.show({
                     template,
-                    parent: angular.element(document.body),
+                    parent: element(document.body),
                     targetEvent: ev,
                     clickOutsideToClose: true,
                     fullscreen: true // Only for -xs, -sm breakpoints.
@@ -486,5 +484,5 @@ Stratus.Components.IdxMemberList = {
         $scope.remove = (): void => {
         }
     },
-    templateUrl: ($attrs: angular.IAttributes): string => `${localDir}${$attrs.template || componentName}.component${min}.html`
+    templateUrl: ($attrs: IAttributes): string => `${localDir}${$attrs.template || componentName}.component${min}.html`
 }
