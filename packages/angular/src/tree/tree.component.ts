@@ -63,16 +63,8 @@ import {
     Model
 } from '@stratusjs/angularjs/services/model'
 
-// Force Dependent Services
-// tslint:disable-next-line:no-duplicate-imports
-import '@stratusjs/angularjs/services/registry'
-// tslint:disable-next-line:no-duplicate-imports
-import '@stratusjs/angularjs/services/collection'
-// tslint:disable-next-line:no-duplicate-imports
-import '@stratusjs/angularjs/services/model'
-
 import { DOCUMENT } from '@angular/common'
-import {TreeNodeComponent} from './tree-node.component'
+// import {TreeNodeComponent} from './tree-node.component'
 
 // Data Types
 export interface NodeMeta {
@@ -304,7 +296,10 @@ export class TreeComponent extends RootComponent implements OnInit, OnDestroy {
                             return
                         }
                         const node = this.treeMap[model.getIdentifier()]
-                        if (!node.meta.component || !(node.meta.component instanceof TreeNodeComponent)) {
+                        // FIXME: If we include the TreeNodeComponent, this creates a circular reference,
+                        // since it includes TreeComponent (this), so it's commented out for now.
+                        // if (!node.meta.component || !(node.meta.component instanceof TreeNodeComponent)) {
+                        if (!node.meta.component || !('openDialog' in node.meta.component)) {
                             // Hook to be handled by TreeNodeComponent
                             // console.log('postPersist:', model)
                             model.meta.set('postPersist', true)
@@ -312,6 +307,8 @@ export class TreeComponent extends RootComponent implements OnInit, OnDestroy {
                         }
                         // Since the Node is available, create the dialog
                         // console.log('direct dialog:', model)
+                        // FIXME: This is set to ignore because it previously checked if `instanceof TreeNodeComponent`, which caused a circular reference.
+                        // @ts-ignore
                         node.meta.component.openDialog()
                     }
                     model.on('change', onModelChange)

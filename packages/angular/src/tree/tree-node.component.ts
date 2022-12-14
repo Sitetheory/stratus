@@ -15,11 +15,11 @@ import {
 } from '@angular/material/dialog'
 
 // Components
-// TODO: Move these to interface files...  This creates a circular reference otherwise...
-// import {
-//     Node,
-//     TreeComponent
-// } from './tree.component'
+// TODO: We may want to move these imports to interface files to avoid circular references
+import {
+    Node,
+    TreeComponent
+} from './tree.component'
 import {
     DialogData,
     TreeDialogComponent
@@ -78,24 +78,16 @@ export class TreeNodeComponent extends ResponsiveComponent implements OnInit, On
     Stratus = Stratus
 
     // Inputs
-    // @Input() tree: TreeComponent
-    // @Input() parent: Node
-    // @Input() node: Node
-
-    // Inputs
-    @Input() tree: any
-    @Input() parent: any
-    @Input() node: any
+    @Input() tree: TreeComponent
+    @Input() parent: Node
+    @Input() node: Node
 
     // Click Handling
     isSingleClick: boolean
 
     // Methods
-    // hasChild = (node: Node) => node.children && node.children.length > 0
-    // isExpanded = (node: Node) => node.meta ? node.meta.expanded : true
-
-    hasChild = (node: any) => node.children && node.children.length > 0
-    isExpanded = (node: any) => node.meta ? node.meta.expanded : true
+    hasChild = (node: Node) => node.children && node.children.length > 0
+    isExpanded = (node: Node) => node.meta ? node.meta.expanded : true
 
     constructor(
         public dialog: MatDialog,
