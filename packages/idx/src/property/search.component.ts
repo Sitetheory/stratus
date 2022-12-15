@@ -22,7 +22,7 @@ import {element, material, IAttributes, ITimeoutService, IQService, IWindowServi
 import 'angular-material'
 
 // Services
-// import '@stratusjs/idx/idx'
+import '@stratusjs/idx/idx'
 // slint:disable-next-line:no-duplicate-imports
 import {
     CompileFilterOptions,

@@ -21,6 +21,8 @@ import {
 // Angular 1 Modules
 import 'angular-material'
 import 'angular-sanitize'
+import '@stratusjs/idx/idx'
+// tslint:disable-next-line:no-duplicate-imports
 import {
     CompileFilterOptions,
     IdxEmitter,

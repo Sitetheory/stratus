@@ -9,6 +9,8 @@ import {forEach} from 'lodash'
 import {Stratus} from '@stratusjs/runtime/stratus'
 import {element, material, IAttributes, ITimeoutService, IScope, IQService, IWindowService} from 'angular'
 import 'angular-material'
+import '@stratusjs/idx/idx'
+// tslint:disable-next-line:no-duplicate-imports
 import {CompileFilterOptions, IdxEmitter, IdxSearchScope, IdxService} from '@stratusjs/idx/idx'
 import {hydrate, isJSON, LooseObject, safeUniqueId} from '@stratusjs/core/misc'
 import {cookie} from '@stratusjs/core/environment'

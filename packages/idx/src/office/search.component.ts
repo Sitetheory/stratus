@@ -14,6 +14,8 @@ import {
     IQService,
     IWindowService
 } from 'angular'
+import '@stratusjs/idx/idx'
+// tslint:disable-next-line:no-duplicate-imports
 import {
     IdxEmitter,
     IdxSearchScope,

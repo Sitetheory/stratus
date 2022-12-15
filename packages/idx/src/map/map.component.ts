@@ -11,6 +11,8 @@ import {IAttributes} from 'angular'
 // Stratus Dependencies
 import {cookie} from '@stratusjs/core/environment'
 import {isJSON, safeUniqueId} from '@stratusjs/core/misc'
+import '@stratusjs/idx/idx'
+// tslint:disable-next-line:no-duplicate-imports
 import {IdxComponentScope, IdxEmitter, IdxListScope, IdxService, Member, Property} from '@stratusjs/idx/idx'
 import {MapComponent, MarkerSettings} from '@stratusjs/map/map.component'
 import {numeralFormat} from '@stratusjs/angularjs-extras/filters/numeral'

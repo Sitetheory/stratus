@@ -14,6 +14,8 @@ import 'angular-sanitize'
 import {MarkerSettings} from '@stratusjs/map/map.component'
 
 // Services
+import '@stratusjs/idx/idx'
+// tslint:disable-next-line:no-duplicate-imports
 import {
     IdxDetailsScope,
     IdxEmitter,

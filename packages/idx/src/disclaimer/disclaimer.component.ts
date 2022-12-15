@@ -8,10 +8,11 @@ import {isArray, isEmpty, isNumber, isString, isUndefined} from 'lodash'
 import {Stratus} from '@stratusjs/runtime/stratus'
 import {IAttributes, ISCEService} from 'angular'
 
-
 // Stratus Dependencies
 import {isJSON, safeUniqueId} from '@stratusjs/core/misc'
 import {cookie} from '@stratusjs/core/environment'
+import '@stratusjs/idx/idx'
+// tslint:disable-next-line:no-duplicate-imports
 import {IdxComponentScope, IdxEmitter, IdxService, MLSService} from '@stratusjs/idx/idx'
 import moment from 'moment'
 
