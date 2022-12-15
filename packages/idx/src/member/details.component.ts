@@ -4,11 +4,9 @@
 // --------------
 
 // Runtime
-import {camelCase, extend, isArray, uniqueId} from 'lodash'
+import {extend, isArray} from 'lodash'
 import {Stratus} from '@stratusjs/runtime/stratus'
-import * as angular from 'angular'
-
-// Angular 1 Modules
+import {IAttributes, ILocationService, ISCEService, IQService} from 'angular'
 import 'angular-material'
 import 'angular-sanitize'
 
@@ -18,7 +16,7 @@ import '@stratusjs/idx/idx'
 import {CompileFilterOptions, IdxDetailsScope, IdxEmitter, IdxService, Member} from '@stratusjs/idx/idx'
 
 // Stratus Dependencies
-import {isJSON, LooseObject} from '@stratusjs/core/misc'
+import {isJSON, LooseObject, safeUniqueId} from '@stratusjs/core/misc'
 import {cookie} from '@stratusjs/core/environment'
 
 // Custom Filters
@@ -52,26 +50,25 @@ Stratus.Components.IdxMemberDetails = {
         defaultListOptions: '@'
     },
     controller(
-        $attrs: angular.IAttributes,
-        $location: angular.ILocationService,
-        $q: angular.IQService,
-        $sce: angular.ISCEService,
+        $attrs: IAttributes,
+        $location: ILocationService,
+        $q: IQService,
+        $sce: ISCEService,
         $scope: IdxMemberDetailsScope,
         // tslint:disable-next-line:no-shadowed-variable
         Model: any,
         Idx: IdxService,
     ) {
         // Initialize
-        const $ctrl = this
-        $ctrl.uid = uniqueId(camelCase(packageName) + '_' + camelCase(moduleName) + '_' + camelCase(componentName) + '_')
-        $scope.elementId = $attrs.elementId || $ctrl.uid
+        $scope.uid = safeUniqueId(packageName, moduleName, componentName)
+        $scope.elementId = $attrs.elementId || $scope.uid
         Stratus.Instances[$scope.elementId] = $scope
         if ($attrs.tokenUrl) {
             Idx.setTokenURL($attrs.tokenUrl)
         }
-        Stratus.Internals.CssLoader(`${localDir}${$attrs.template || componentName}.component${min}.css`)
+        Stratus.Internals.CssLoader(`${localDir}${$attrs.template || componentName}.component${min}.css`).then()
 
-        $ctrl.$onInit = () => {
+        this.$onInit = () => {
             // console.log('loaded!')
             $scope.options = $attrs.options && isJSON($attrs.options) ? JSON.parse($attrs.options) : {}
             $scope.options.urlLoad = $attrs.urlLoad && isJSON($attrs.urlLoad) ? JSON.parse($attrs.urlLoad) : true
@@ -202,5 +199,5 @@ Stratus.Components.IdxMemberDetails = {
             }
         }
     },
-    templateUrl: ($attrs: angular.IAttributes): string => `${localDir}${$attrs.template || componentName}.component${min}.html`
+    templateUrl: ($attrs: IAttributes): string => `${localDir}${$attrs.template || componentName}.component${min}.html`
 }

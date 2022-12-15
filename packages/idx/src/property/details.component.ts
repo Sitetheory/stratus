@@ -4,12 +4,9 @@
 // --------------
 
 // Runtime
-import {camelCase, extend, isArray, uniqueId} from 'lodash'
+import {extend, isArray} from 'lodash'
 import {Stratus} from '@stratusjs/runtime/stratus'
-import * as angular from 'angular'
-// import moment from 'moment'
-
-// Angular 1 Modules
+import {IAttributes, ILocationService, ISCEService} from 'angular'
 import 'angular-material'
 import 'angular-sanitize'
 
@@ -17,7 +14,6 @@ import 'angular-sanitize'
 import {MarkerSettings} from '@stratusjs/map/map.component'
 
 // Services
-import '@stratusjs/angularjs/services/model'
 import '@stratusjs/idx/idx'
 // tslint:disable-next-line:no-duplicate-imports
 import {
@@ -33,7 +29,7 @@ import '@stratusjs/idx/listTrac'
 // Stratus Dependencies
 // tslint:disable-next-line:no-duplicate-imports
 import {Model} from '@stratusjs/angularjs/services/model'
-import {isJSON} from '@stratusjs/core/misc'
+import {isJSON, safeUniqueId} from '@stratusjs/core/misc'
 import {cookie} from '@stratusjs/core/environment'
 import {SlideImage} from '@stratusjs/swiper/carousel.component'
 
@@ -109,18 +105,18 @@ Stratus.Components.IdxPropertyDetails = {
         defaultListOptions: '@'
     },
     controller(
-        $attrs: angular.IAttributes,
-        $location: angular.ILocationService,
-        $sce: angular.ISCEService,
+        $attrs: IAttributes,
+        $location: ILocationService,
+        $sce: ISCEService,
         $scope: IdxPropertyDetailsScope,
         ListTrac: any,
         // tslint:disable-next-line:no-shadowed-variable
-        Model: any,
+        // Model: any,
         Idx: IdxService,
     ) {
         // Initialize
         const $ctrl = this
-        $ctrl.uid = uniqueId(camelCase(packageName) + '_' + camelCase(moduleName) + '_' + camelCase(componentName) + '_')
+        $scope.uid = safeUniqueId(packageName, moduleName, componentName)
         $scope.elementId = $attrs.elementId || $ctrl.uid
         Stratus.Instances[$scope.elementId] = $scope
         $scope.instancePath = `Stratus.Instances.${$scope.elementId}`
@@ -128,13 +124,13 @@ Stratus.Components.IdxPropertyDetails = {
         if ($attrs.tokenUrl) {
             Idx.setTokenURL($attrs.tokenUrl)
         }
-        Stratus.Internals.CssLoader(`${localDir}${$attrs.template || componentName}.component${min}.css`)
+        Stratus.Internals.CssLoader(`${localDir}${$attrs.template || componentName}.component${min}.css`).then()
 
         /**
          * All actions that happen first when the component loads
          * Needs to be placed in a function, as the functions below need to the initialized first
          */
-        $ctrl.$onInit = () => {
+        this.$onInit = () => {
             $scope.model = new Model() as Model<Property>
             $scope.Idx = Idx
             $scope.urlLoad = $attrs.urlLoad && isJSON($attrs.urlLoad) ? JSON.parse($attrs.urlLoad) : true
@@ -1235,7 +1231,7 @@ Stratus.Components.IdxPropertyDetails = {
                     extend($scope.options, urlOptions.Listing)
                 }
             }
-            $scope.fetchProperty()
+            $scope.fetchProperty().then()
             Idx.emit('init', $scope)
         }
 
@@ -1402,7 +1398,7 @@ Stratus.Components.IdxPropertyDetails = {
             ($scope.model.data.CoBuyerAgentLastName ? $scope.model.data.CoBuyerAgentLastName : null)
 
         $scope.getGoogleMapsKey = (): string | null => {
-            let googleApiKey = null
+            let googleApiKey
             if (
                 $scope.integrations
                 && Object.prototype.hasOwnProperty.call($scope.integrations, 'maps')
@@ -1452,5 +1448,5 @@ Stratus.Components.IdxPropertyDetails = {
             // TODO need to kill any attached slideshows
         }
     },
-    templateUrl: ($attrs: angular.IAttributes): string => `${localDir}${$attrs.template || componentName}.component${min}.html`
+    templateUrl: ($attrs: IAttributes): string => `${localDir}${$attrs.template || componentName}.component${min}.html`
 }
