@@ -5,24 +5,15 @@
  */
 
 // Runtime
-import {camelCase, uniqueId} from 'lodash'
 import {Stratus} from '@stratusjs/runtime/stratus'
-import * as angular from 'angular'
-// import numeral from 'numeral'
-
-// Services
-import '@stratusjs/angularjs/services/model'
+import {IAttributes} from 'angular'
 
 // Stratus Dependencies
 import {cookie} from '@stratusjs/core/environment'
-import {isJSON} from '@stratusjs/core/misc'
+import {isJSON, safeUniqueId} from '@stratusjs/core/misc'
 import {IdxComponentScope, IdxEmitter, IdxListScope, IdxService, Member, Property} from '@stratusjs/idx/idx'
 import {MapComponent, MarkerSettings} from '@stratusjs/map/map.component'
 import {numeralFormat} from '@stratusjs/angularjs-extras/filters/numeral'
-
-// Component Preload
-// tslint:disable-next-line:no-duplicate-imports
-import '@stratusjs/map/map.component'
 
 // Environment
 const min = !cookie('env') ? '.min' : ''
@@ -186,15 +177,15 @@ Stratus.Components.IdxMap = {
     },
     controller(
         // $anchorScroll: angular.IAnchorScrollService,
-        $attrs: angular.IAttributes,
+        $attrs: IAttributes,
         $scope: IdxMapScope,
         Idx: IdxService,
     ) {
         // Initialize
         const $ctrl = this
-        $ctrl.uid = uniqueId(camelCase(packageName) + '_' + camelCase(componentName) + '_')
-        Stratus.Instances[$ctrl.uid] = $scope
-        $scope.elementId = $attrs.elementId || $ctrl.uid
+        $scope.uid = safeUniqueId(packageName, moduleName, componentName)
+        Stratus.Instances[$scope.uid] = $scope
+        $scope.elementId = $attrs.elementId || $scope.uid
         $scope.instancePath = `Stratus.Instances.${$scope.elementId}`
 
         $ctrl.$onInit = () => {
@@ -230,17 +221,17 @@ Stratus.Components.IdxMap = {
 
             if ($scope.listId) {
                 Idx.devLog($scope.elementId, 'is watching for map to update from', $scope.listId)
-                Idx.on($scope.listId, 'init', (source: IdxListScope) => {
+                Idx.on($scope.listId, 'init', (source: IdxListScope<Member | Property>) => {
                     $scope.list = source
                     $scope.listInitialized = true
                     // $scope.initialized = true
                     $ctrl.prepareMapMarkers(source)
-                    $scope.mapUpdate()
+                    $scope.mapUpdate().then()
                 })
-                Idx.on($scope.listId, 'searched', (source: IdxListScope) => {
+                Idx.on($scope.listId, 'searched', (source: IdxListScope<Member | Property>) => {
                     // page changing and searched triggers 'searched'
                     $ctrl.prepareMapMarkers(source)
-                    $scope.mapUpdate()
+                    $scope.mapUpdate().then()
                 })
             }
             if ($scope.googleMapsKey) {
@@ -370,5 +361,5 @@ Stratus.Components.IdxMap = {
         $scope.remove = (): void => {
         }
     },
-    templateUrl: ($attrs: angular.IAttributes): string => `${localDir}${$attrs.template || componentName}.component${min}.html`
+    templateUrl: ($attrs: IAttributes): string => `${localDir}${$attrs.template || componentName}.component${min}.html`
 }

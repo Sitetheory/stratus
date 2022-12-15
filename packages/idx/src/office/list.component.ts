@@ -5,17 +5,22 @@
  */
 
 // Runtime
-import {camelCase, clone, cloneDeep, forEach, isNil, isNumber, isString, uniqueId} from 'lodash'
+import {clone, cloneDeep, forEach, isNil, isNumber, isString} from 'lodash'
 import {Stratus} from '@stratusjs/runtime/stratus'
-import * as angular from 'angular'
+import {
+    element,
+    material,
+    IAnchorScrollService,
+    IAttributes,
+    ISCEService,
+    ITimeoutService,
+    IQService,
+    IWindowService
+} from 'angular'
 
 // Angular 1 Modules
 import 'angular-material'
 import 'angular-sanitize'
-
-// Services
-import '@stratusjs/idx/idx'
-// tslint:disable-next-line:no-duplicate-imports
 import {
     CompileFilterOptions,
     IdxEmitter,
@@ -26,7 +31,7 @@ import {
 
 // Stratus Dependencies
 import {Collection} from '@stratusjs/angularjs/services/collection' // Needed as Class
-import {isJSON, LooseObject} from '@stratusjs/core/misc'
+import {isJSON, LooseObject, safeUniqueId} from '@stratusjs/core/misc'
 import {cookie} from '@stratusjs/core/environment'
 
 // Component Preload
@@ -77,20 +82,20 @@ Stratus.Components.IdxOfficeList = {
         variableSync: '@'
     },
     controller(
-        $anchorScroll: angular.IAnchorScrollService,
-        $attrs: angular.IAttributes,
-        $q: angular.IQService,
-        $mdDialog: angular.material.IDialogService,
-        $timeout: angular.ITimeoutService,
-        $sce: angular.ISCEService,
+        $anchorScroll: IAnchorScrollService,
+        $attrs: IAttributes,
+        $q: IQService,
+        $mdDialog: material.IDialogService,
+        $timeout: ITimeoutService,
+        $sce: ISCEService,
         $scope: IdxOfficeListScope,
-        $window: angular.IWindowService,
+        $window: IWindowService,
         Idx: IdxService,
     ) {
         // Initialize
         const $ctrl = this
-        $ctrl.uid = uniqueId(camelCase(packageName) + '_' + camelCase(moduleName) + '_' + camelCase(componentName) + '_')
-        $scope.elementId = $attrs.elementId || $ctrl.uid
+        $scope.uid = safeUniqueId(packageName, moduleName, componentName)
+        $scope.elementId = $attrs.elementId || $scope.uid
         Stratus.Instances[$scope.elementId] = $scope
         if ($attrs.tokenUrl) {
             Idx.setTokenURL($attrs.tokenUrl)
@@ -177,7 +182,7 @@ Stratus.Components.IdxOfficeList = {
         }
 
         // Initialization by Event
-        $ctrl.$onInit = () => {
+        this.$onInit = () => {
             $scope.Idx = Idx
             $scope.collection = new Collection<Office>({})
 
@@ -188,18 +193,18 @@ Stratus.Components.IdxOfficeList = {
             }
 
             if (initNow) {
-                init()
+                init().then()
                 return
             }
 
-            $ctrl.stopWatchingInitNow = $scope.$watch('$ctrl.initNow', (initNowCtrl: boolean) => {
+            const stopWatchingInitNow = $scope.$watch('$ctrl.initNow', (initNowCtrl: boolean) => {
                 if (initNowCtrl !== true) {
                     return
                 }
                 if (!$scope.initialized) {
-                    init()
+                    init().then()
                 }
-                $ctrl.stopWatchingInitNow()
+                stopWatchingInitNow()
             })
         }
 
@@ -489,7 +494,7 @@ Stratus.Components.IdxOfficeList = {
 
                 $mdDialog.show({
                     template,
-                    parent: angular.element(document.body),
+                    parent: element(document.body),
                     targetEvent: ev,
                     clickOutsideToClose: true,
                     fullscreen: true // Only for -xs, -sm breakpoints.
@@ -581,5 +586,5 @@ Stratus.Components.IdxOfficeList = {
         $scope.remove = (): void => {
         }
     },
-    templateUrl: ($attrs: angular.IAttributes): string => `${localDir}${$attrs.template || componentName}.component${min}.html`
+    templateUrl: ($attrs: IAttributes): string => `${localDir}${$attrs.template || componentName}.component${min}.html`
 }

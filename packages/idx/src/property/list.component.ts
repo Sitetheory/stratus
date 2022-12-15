@@ -5,12 +5,9 @@
  */
 
 // Runtime
-import {camelCase, clone, cloneDeep, extend, forEach, isArray, isEmpty, isEqual, isNil, isNumber, isString, uniqueId} from 'lodash'
+import {clone, cloneDeep, extend, forEach, isArray, isEmpty, isEqual, isNil, isNumber, isString} from 'lodash'
 import {Stratus} from '@stratusjs/runtime/stratus'
-import * as angular from 'angular'
-// import moment from 'moment'
-
-// Angular 1 Modules
+import {element, material, IAnchorScrollService, IAttributes, ISCEService, ITimeoutService, IQService, IWindowService} from 'angular'
 import 'angular-material'
 import 'angular-sanitize'
 
@@ -35,7 +32,7 @@ import {
 // Stratus Dependencies
 import {Collection} from '@stratusjs/angularjs/services/collection' // Needed as Class
 
-import {isJSON} from '@stratusjs/core/misc'
+import {isJSON, safeUniqueId} from '@stratusjs/core/misc'
 import {cookie} from '@stratusjs/core/environment'
 
 // Stratus Directives
@@ -284,14 +281,14 @@ Stratus.Components.IdxPropertyList = {
         displayPager: '@',
     },
     controller(
-        $anchorScroll: angular.IAnchorScrollService,
-        $attrs: angular.IAttributes,
-        $q: angular.IQService,
-        $mdDialog: angular.material.IDialogService,
+        $anchorScroll: IAnchorScrollService,
+        $attrs: IAttributes,
+        $q: IQService,
+        $mdDialog: material.IDialogService,
         $scope: IdxPropertyListScope,
-        $timeout: angular.ITimeoutService,
-        $window: angular.IWindowService,
-        $sce: angular.ISCEService,
+        $timeout: ITimeoutService,
+        $window: IWindowService,
+        $sce: ISCEService,
         Idx: IdxService,
     ) {
         // Initialize
@@ -311,14 +308,14 @@ Stratus.Components.IdxPropertyList = {
          * Needs to be placed in a function, as the functions below need to the initialized first
          */
         const init = async () => {
-            $ctrl.uid = uniqueId(camelCase(packageName) + '_' + camelCase(moduleName) + '_' + camelCase(componentName) + '_')
-            $scope.elementId = $attrs.elementId || $ctrl.uid
+            $scope.uid = safeUniqueId(packageName, moduleName, componentName)
+            $scope.elementId = $attrs.elementId || $scope.uid
             Stratus.Instances[$scope.elementId] = $scope
             $scope.instancePath = `Stratus.Instances.${$scope.elementId}`
             if (!$scope.tokenLoaded && $attrs.tokenUrl) {
                 Idx.setTokenURL($attrs.tokenUrl)
             }
-            Stratus.Internals.CssLoader(`${localDir}${$attrs.template || componentName}.component${min}.css`)
+            Stratus.Internals.CssLoader(`${localDir}${$attrs.template || componentName}.component${min}.css`).then()
 
             /**
              * Allow query to be loaded initially from the URL
@@ -451,7 +448,7 @@ Stratus.Components.IdxPropertyList = {
         }
 
         // Initialization by Event
-        $ctrl.$onInit = () => {
+        this.$onInit = () => {
             $scope.Idx = Idx
             $scope.collection = new Collection<Property>({})
 
@@ -462,18 +459,18 @@ Stratus.Components.IdxPropertyList = {
             }
 
             if (initNow) {
-                init()
+                init().then()
                 return
             }
 
-            $ctrl.stopWatchingInitNow = $scope.$watch('$ctrl.initNow', (initNowCtrl: boolean) => {
+            const stopWatchingInitNow = $scope.$watch('$ctrl.initNow', (initNowCtrl: boolean) => {
                 if (initNowCtrl !== true) {
                     return
                 }
                 if (!$scope.initialized) {
-                    init()
+                    init().then()
                 }
-                $ctrl.stopWatchingInitNow()
+                stopWatchingInitNow()
             })
         }
 
@@ -929,14 +926,14 @@ Stratus.Components.IdxPropertyList = {
 
                 $mdDialog.show({
                     template, // equates to `template: template`
-                    parent: angular.element(document.body),
+                    parent: element(document.body),
                     targetEvent: ev,
                     clickOutsideToClose: true,
                     fullscreen: true, // Only for -xs, -sm breakpoints.
                     scope: $scope,
                     preserveScope: true,
                     // tslint:disable-next-line:no-shadowed-variable
-                    controller: ($scope: object | any, $mdDialog: angular.material.IDialogService) => {
+                    controller: ($scope: object | any, $mdDialog: material.IDialogService) => {
                         $scope.closePopup = () => {
                             if ($mdDialog) {
                                 $mdDialog.hide()
@@ -974,5 +971,5 @@ Stratus.Components.IdxPropertyList = {
             // TODO need to destroy any attached widgets
         }
     },
-    templateUrl: ($attrs: angular.IAttributes): string => `${localDir}${$attrs.template || componentName}.component${min}.html`
+    templateUrl: ($attrs: IAttributes): string => `${localDir}${$attrs.template || componentName}.component${min}.html`
 }
