@@ -157,7 +157,7 @@ export class Collection<T = LooseObject> extends EventManager {
     // Methods
     throttle = _.throttle(this.fetch, 1000)
 
-    constructor(options: CollectionOptions) {
+    constructor(options: CollectionOptions = {}) {
         super()
 
         if (options && typeof options === 'object') {
