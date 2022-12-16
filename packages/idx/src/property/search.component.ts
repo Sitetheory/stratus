@@ -23,7 +23,7 @@ import 'angular-material'
 
 // Services
 import '@stratusjs/idx/idx'
-// slint:disable-next-line:no-duplicate-imports
+// tslint:disable-next-line:no-duplicate-imports
 import {
     CompileFilterOptions,
     IdxComponentScope,
