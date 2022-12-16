@@ -5,14 +5,15 @@
  */
 
 // Runtime
-import {camelCase, isArray, isEmpty, isNumber, isString, trim, uniqueId} from 'lodash'
+import {isArray, isEmpty, isNumber, isString, trim} from 'lodash'
 import {Stratus} from '@stratusjs/runtime/stratus'
-import * as angular from 'angular'
-
-// Angular 1 Modules
-// import 'angular-material'
-
-// Services
+import {
+    material,
+    IAttributes,
+    ITimeoutService,
+    IQService,
+    IWindowService
+} from 'angular'
 import '@stratusjs/idx/idx'
 // tslint:disable-next-line:no-duplicate-imports
 import {
@@ -25,7 +26,7 @@ import {
 
 // Stratus Dependencies
 import {Collection} from '@stratusjs/angularjs/services/collection' // Needed as Class
-import {isJSON} from '@stratusjs/core/misc'
+import {isJSON, safeUniqueId} from '@stratusjs/core/misc'
 import {cookie} from '@stratusjs/core/environment'
 import {IdxOfficeListScope} from '@stratusjs/idx/office/list.component'
 
@@ -85,19 +86,18 @@ Stratus.Components.IdxOfficeSearch = {
         syncInstanceVariableIndex: '@'
     },
     controller(
-        $attrs: angular.IAttributes,
-        $q: angular.IQService,
-        $mdDialog: angular.material.IDialogService,
-        $mdPanel: angular.material.IPanelService,
+        $attrs: IAttributes,
+        $q: IQService,
+        $mdDialog: material.IDialogService,
+        $mdPanel: material.IPanelService,
         $scope: IdxOfficeSearchScope,
-        $timeout: angular.ITimeoutService,
-        $window: angular.IWindowService,
+        $timeout: ITimeoutService,
+        $window: IWindowService,
         Idx: IdxService,
     ) {
         // Initialize
-        const $ctrl = this
-        $ctrl.uid = uniqueId(camelCase(packageName) + '_' + camelCase(moduleName) + '_' + camelCase(componentName) + '_')
-        $scope.elementId = $attrs.elementId || $ctrl.uid
+        $scope.uid = safeUniqueId(packageName, moduleName, componentName)
+        $scope.elementId = $attrs.elementId || $scope.uid
         Stratus.Instances[$scope.elementId] = $scope
         $scope.selectionGroup = {
             name: '',
@@ -108,12 +108,12 @@ Stratus.Components.IdxOfficeSearch = {
         if ($attrs.tokenUrl) {
             Idx.setTokenURL($attrs.tokenUrl)
         }
-        Stratus.Internals.CssLoader(`${localDir}${$attrs.template || componentName}.component${min}.css`)
+        Stratus.Internals.CssLoader(`${localDir}${$attrs.template || componentName}.component${min}.css`).then()
 
         // FIXME need to add sync-instance
         // FIXME need to add sync-instance-variable
 
-        $ctrl.$onInit = () => {
+        this.$onInit = () => {
             $scope.listId = $attrs.listId || null
             $scope.listInitialized = false
             $scope.listLinkUrl = $attrs.listLinkUrl || '/property/office/list'
@@ -170,16 +170,15 @@ Stratus.Components.IdxOfficeSearch = {
 
         /**
          * Call a List widget to perform a search
-         * TODO await until complete?
          */
-        $scope.search = (): void => {
+        $scope.search = async (): Promise<void> => {
             let listScope: IdxOfficeListScope
             if ($scope.listId) {
                 listScope = Idx.getListInstance($scope.listId, 'office') as IdxOfficeListScope
             }
             if (listScope) {
                 // $scope.options.query.Page = 1
-                listScope.search($scope.options.query, true)
+                await listScope.search($scope.options.query, true)
                 // TODO open popup
             } /*else {
                 // IDX.setUrlOptions('Search', $scope.options.query)
@@ -254,7 +253,7 @@ Stratus.Components.IdxOfficeSearch = {
                 // console.log('updating parent with', $scope.selectionGroup)
                 // need to fetch the existing array first and only update the one being editted/addign a new one
                 const parentVariable = Idx.getScopeValuePath(Stratus.Instances[$scope.syncInstance], $scope.syncInstanceVariable)
-                let updatedValue = null
+                let updatedValue
                 if (isArray(parentVariable)) {
                     if (
                         initialize &&
@@ -270,7 +269,7 @@ Stratus.Components.IdxOfficeSearch = {
                     updatedValue = $scope.selectionGroup
                 }
                 // update parent PropertySearch
-                Idx.updateScopeValuePath(Stratus.Instances[$scope.syncInstance], $scope.syncInstanceVariable, updatedValue)
+                Idx.updateScopeValuePath(Stratus.Instances[$scope.syncInstance], $scope.syncInstanceVariable, updatedValue).then()
             }
         }
 
@@ -323,7 +322,7 @@ Stratus.Components.IdxOfficeSearch = {
 
             $mdDialog.show({
                 template,
-                parent: angular.element(document.body),
+                parent: element(document.body),
                 // targetEvent: ev,
                 clickOutsideToClose: true,
                 fullscreen: true, // Only for -xs, -sm breakpoints.
@@ -378,6 +377,6 @@ Stratus.Components.IdxOfficeSearch = {
         }
 
     },
-    templateUrl: ($attrs: angular.IAttributes): string => `${localDir}${$attrs.template || componentName}.component${min}.html`
+    templateUrl: ($attrs: IAttributes): string => `${localDir}${$attrs.template || componentName}.component${min}.html`
 
 }

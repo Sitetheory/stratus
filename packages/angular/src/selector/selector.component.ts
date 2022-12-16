@@ -100,6 +100,7 @@ export class SelectorComponent extends RootComponent { // implements OnInit, OnC
     @Input() type: string
     @Input() property: string
     @Input() endpoint: string
+    @Input() ignorePriority: boolean
 
     // Dependencies
     _ = _
@@ -239,8 +240,10 @@ export class SelectorComponent extends RootComponent { // implements OnInit, OnC
             return
         }
         moveItemInArray(models, event.previousIndex, event.currentIndex)
-        let priority = 0
-        _.forEach(models, (model: any) => model.priority = priority++)
+        if (!this.ignorePriority) {
+            let priority = 0
+            _.forEach(models, (model: any) => model.priority = priority++)
+        }
         this.model.trigger('change')
     }
 
@@ -386,8 +389,10 @@ export class SelectorComponent extends RootComponent { // implements OnInit, OnC
         if (!models || !models.length) {
             return
         }
-        let priority = 0
-        _.forEach(models, (model) => model.priority = priority++)
+        if (!this.ignorePriority) {
+            let priority = 0
+            _.forEach(models, (model) => model.priority = priority++)
+        }
     }
 
     getSvg(url: string, options?: IconOptions): Observable<string> {

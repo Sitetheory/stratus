@@ -5,20 +5,14 @@
  */
 
 // Runtime
-import {camelCase, forEach, uniqueId} from 'lodash'
+import {forEach} from 'lodash'
 import {Stratus} from '@stratusjs/runtime/stratus'
-import * as angular from 'angular'
-
-// Angular 1 Modules
-// import 'angular-material'
-
-// Services
+import {element, material, IAttributes, ITimeoutService, IScope, IQService, IWindowService} from 'angular'
+import 'angular-material'
 import '@stratusjs/idx/idx'
 // tslint:disable-next-line:no-duplicate-imports
 import {CompileFilterOptions, IdxEmitter, IdxSearchScope, IdxService} from '@stratusjs/idx/idx'
-
-// Stratus Dependencies
-import {hydrate, isJSON, LooseObject} from '@stratusjs/core/misc'
+import {hydrate, isJSON, LooseObject, safeUniqueId} from '@stratusjs/core/misc'
 import {cookie} from '@stratusjs/core/environment'
 import {IdxMemberListScope} from '@stratusjs/idx/member/list.component'
 
@@ -55,24 +49,24 @@ Stratus.Components.IdxMemberSearch = {
         variableSync: '@'
     },
     controller(
-        $attrs: angular.IAttributes,
-        $q: angular.IQService,
-        $mdDialog: angular.material.IDialogService,
-        $mdPanel: angular.material.IPanelService,
+        $attrs: IAttributes,
+        $q: IQService,
+        $mdDialog: material.IDialogService,
+        $mdPanel: material.IPanelService,
         $scope: IdxMemberSearchScope,
-        $timeout: angular.ITimeoutService,
-        $window: angular.IWindowService,
+        $timeout: ITimeoutService,
+        $window: IWindowService,
         Idx: IdxService,
     ) {
         // Initialize
         const $ctrl = this
-        $ctrl.uid = uniqueId(camelCase(packageName) + '_' + camelCase(moduleName) + '_' + camelCase(componentName) + '_')
-        $scope.elementId = $attrs.elementId || $ctrl.uid
+        $scope.uid = safeUniqueId(packageName, moduleName, componentName)
+        $scope.elementId = $attrs.elementId || $scope.uid
         Stratus.Instances[$scope.elementId] = $scope
         if ($attrs.tokenUrl) {
             Idx.setTokenURL($attrs.tokenUrl)
         }
-        Stratus.Internals.CssLoader(`${localDir}${$attrs.template || componentName}.component${min}.css`)
+        Stratus.Internals.CssLoader(`${localDir}${$attrs.template || componentName}.component${min}.css`).then()
 
         $ctrl.$onInit = () => {
             $scope.listId = $attrs.listId || null
@@ -158,7 +152,7 @@ Stratus.Components.IdxMemberSearch = {
             }
             if (listScope) {
                 $scope.options.query.Page = 1
-                listScope.search($scope.options.query, true)
+                listScope.search($scope.options.query, true).then()
                 // TODO open popup
             } else {
                 // IDX.setUrlOptions('Search', $scope.options.query)
@@ -223,7 +217,7 @@ Stratus.Components.IdxMemberSearch = {
 
             let template =
                 '<md-dialog aria-label="Property Member Selector" class="transparent">' +
-                '<md-button style="text-align: center" data-ng-click="ctrl.close()">Close and Accept</md-button>' +
+                '<md-button style="text-align: center" data-ng-click="close()">Close and Accept</md-button>' +
                 '<stratus-idx-member-list '
             /*Object.keys(templateOptions).forEach(function (optionKey) {
                 if (Object.prototype.hasOwnProperty.call(templateOptions, optionKey)) {
@@ -239,22 +233,24 @@ Stratus.Components.IdxMemberSearch = {
 
             $mdDialog.show({
                 template,
-                parent: angular.element(document.body),
+                parent: element(document.body),
                 // targetEvent: ev,
                 clickOutsideToClose: true,
                 fullscreen: true, // Only for -xs, -sm breakpoints.
                 // bindToController: true,
-                controllerAs: 'ctrl',
+                // controllerAs: 'ctrl',
                 // tslint:disable-next-line:no-shadowed-variable
-                controller: ($scope: any, $mdDialog: any) => { // shadowing is needed for inline controllers
+                controller: ($scope: IScope & LooseObject, $mdDialog: material.IDialogService) => {
                     const dc = this
 
                     dc.$onInit = () => {
-                        dc.close = close
+                        dc.close = $scope.close
                     }
 
-                    function close() {
+                    $scope.close = () => {
+                        console.log('Close clicked!')
                         if ($mdDialog) {
+                            console.log('Will close dialog!')
                             $mdDialog.hide()
                         }
                     }
@@ -294,6 +290,6 @@ Stratus.Components.IdxMemberSearch = {
         }
 
     },
-    templateUrl: ($attrs: angular.IAttributes): string => `${localDir}${$attrs.template || componentName}.component${min}.html`
+    templateUrl: ($attrs: IAttributes): string => `${localDir}${$attrs.template || componentName}.component${min}.html`
 
 }

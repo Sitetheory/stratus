@@ -4,21 +4,13 @@
 // --------------
 
 // Runtime
-import {camelCase, forEach, get, isArray, isString, uniqueId} from 'lodash'
+import {camelCase, forEach, get, isArray, isString} from 'lodash'
 import {Stratus} from '@stratusjs/runtime/stratus'
-import * as angular from 'angular'
-
-// Services
-import '@stratusjs/angularjs/services/model'
-// tslint:disable-next-line:no-duplicate-imports
+import {IAttributes, IScope} from 'angular'
 import {Model} from '@stratusjs/angularjs/services/model'
 
 // Stratus Dependencies
-import {
-    isJSON,
-    LooseFunction,
-    LooseObject
-} from '@stratusjs/core/misc'
+import {isJSON, LooseFunction, LooseObject, safeUniqueId} from '@stratusjs/core/misc'
 import {cookie} from '@stratusjs/core/environment'
 
 // Environment
@@ -53,7 +45,8 @@ interface SubSectionOptionItems {
     [key: string]: string | SubSectionOptionItem
 }
 
-export type IdxPropertyDetailsSubSectionScope = angular.IScope & LooseObject<LooseFunction> & {
+export type IdxPropertyDetailsSubSectionScope = IScope & LooseObject<LooseFunction> & {
+    uid: string
     elementId: string
     initialized: boolean
     model: Model
@@ -78,16 +71,12 @@ Stratus.Components.IdxPropertyDetailsSubSection = {
         template: '@',
     },
     controller(
-        $attrs: angular.IAttributes,
+        $attrs: IAttributes,
         $scope: IdxPropertyDetailsSubSectionScope,
-        // tslint:disable-next-line:no-shadowed-variable
-        Model: any,
     ) {
         // Initialize
-        const $ctrl = this
-
-        $ctrl.uid = uniqueId(camelCase(packageName) + '_' + camelCase(moduleName) + '_' + camelCase(componentName) + '_')
-        $scope.elementId = $attrs.elementId || $ctrl.uid
+        $scope.uid = safeUniqueId(packageName, moduleName, componentName)
+        $scope.elementId = $attrs.elementId || $scope.uid
         $scope.className = $attrs.className || 'sub-detail-section'
         $scope.sectionName = $attrs.sectionName || ''
         $scope.sectionNameId = camelCase($scope.sectionName) + '_' + $scope.elementId
@@ -151,34 +140,34 @@ Stratus.Components.IdxPropertyDetailsSubSection = {
         }
 
         if ($scope.sectionName.startsWith('{')) {
-            $ctrl.stopWatchingSectionName = $scope.$watch('$ctrl.sectionName', (data: string) => {
+            const stopWatchingSectionName = $scope.$watch('$ctrl.sectionName', (data: string) => {
                 $scope.sectionName = data
                 $scope.sectionNameId = camelCase($scope.sectionName) + '_' + $scope.elementId
-                $ctrl.stopWatchingSectionName()
+                stopWatchingSectionName()
             })
         }
 
         if (Object.keys($scope.items).length === 0) {
-            $ctrl.stopWatchingItems = $scope.$watch('$ctrl.items', (data: string) => {
+            const stopWatchingItems = $scope.$watch('$ctrl.items', (data: string) => {
                 if (Object.keys($scope.items).length === 0) {
                     const blankItems: SubSectionOptionItems = {} // Simply to type cast into SubSectionOptionItems
                     $scope.items = data && isJSON(data) ? JSON.parse(data) : blankItems
                     $scope.convertItemsToObject()
                 }
-                $ctrl.stopWatchingItems()
+                stopWatchingItems()
             })
         }
 
-        $ctrl.stopWatchingModel = $scope.$watch('$ctrl.ngModel', (data: any) => {
+        const stopWatchingModel = $scope.$watch('$ctrl.ngModel', (data: any) => {
             // TODO might wanna check something else just to not import Model
             if (data instanceof Model && data !== $scope.model) {
                 $scope.model = data
                 checkForVisibleFields()
-                $ctrl.stopWatchingModel()
+                stopWatchingModel()
             }
         })
 
-        $ctrl.$onInit = () => {
+        this.$onInit = () => {
             $scope.convertItemsToObject()
         }
 
@@ -203,5 +192,5 @@ Stratus.Components.IdxPropertyDetailsSubSection = {
 
         $scope.isArray = (item: any): boolean => isArray(item)
     },
-    templateUrl: ($attrs: angular.IAttributes): string => `${localDir}${$attrs.template || componentName}.component${min}.html`
+    templateUrl: ($attrs: IAttributes): string => `${localDir}${$attrs.template || componentName}.component${min}.html`
 }

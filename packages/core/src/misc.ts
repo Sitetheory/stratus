@@ -317,7 +317,7 @@ export function safeUniqueId(...names: string[]): string {
     return _.uniqueId(
         _.map(names, (name) => {
             return _.camelCase(name) + '_'
-        }).join()
+        }).join('')
     )
 }
 

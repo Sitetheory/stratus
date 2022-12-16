@@ -4,8 +4,19 @@
 // Runtime
 import {clone, extend, get, isArray, isDate, isEmpty, isEqual, isNumber, isObject, isPlainObject, isString, uniqueId} from 'lodash'
 import {Stratus} from '@stratusjs/runtime/stratus'
-import * as angular from 'angular'
-import {IPromise, IScope} from 'angular'
+import {
+    auto,
+    element,
+    material,
+    IFilterOrderBy,
+    IHttpService,
+    ILocationService,
+    IPromise,
+    IRootScopeService,
+    IScope,
+    IQService,
+    IWindowService
+} from 'angular'
 
 // Services
 import '@stratusjs/angularjs/services/model' // Needed as $provider
@@ -38,8 +49,6 @@ import {IdxMemberListScope} from '@stratusjs/idx/member/list.component'
 // const localDir = `/${boot.bundle}node_modules/@stratusjs/${packageName}/src/${moduleName}/`
 
 export interface IdxService {
-    [key: string]: LooseFunction | IdxSharedValue
-
     // Variables
     sharedValues: IdxSharedValue
 
@@ -129,7 +138,12 @@ export interface IdxService {
         $scope: IdxComponentScope,
         var1?: any, var2?: any, var3?: any
     ): void
-
+    emitManual(
+        emitterName: string,
+        uid: string,
+        $scope: IdxComponentScope,
+        var1?: any, var2?: any, var3?: any
+    ): void
     on(
         uid: string,
         emitterName: string,
@@ -138,12 +152,16 @@ export interface IdxService {
 
     getFriendlyStatus(property: Property, preferredStatus?: 'Closed' | 'Leased' | 'Rented'): string
     getFriendlyPriceLabel(property: Property): 'List Price' | 'Sale Price' | 'Lease Price' | 'Rent Price' | string
+    getFullStatus(property: Property, preferredStatus: 'Closed' | 'Leased' | 'Rented'): 'Active' | 'Contingent' | 'Closed' | 'Leased' | 'Rented' | string
     getFullAddress(property: Property, encode?: boolean): string
-
     getGoogleMapsKey(): string | null
+    getWebsiteMainContact(): {
+        name: string
+        email: string | null
+        phone: string | null
+    } | null
 
     getIdxServices(): number[]
-
     getMLSVariables(serviceIds?: number[]): MLSService[]
 
     getStreetAddress(property: Property): string
@@ -179,7 +197,8 @@ export interface IdxService {
     updateScopeValuePath(scope: IScope, scopeVarPath: string, value: any): Promise<string | any>
 }
 
-export type IdxComponentScope = angular.IScope & LooseObject<LooseFunction> & {
+export type IdxComponentScope = IScope & LooseObject<LooseFunction> & {
+    uid: string
     elementId: string
     localDir: string
     Idx: IdxService
@@ -608,19 +627,19 @@ export type IdxEmitterSearched = IdxEmitter & ((source: IdxComponentScope, query
 
 // All Service functionality
 const angularJsService = (
-    $injector: angular.auto.IInjectorService,
-    $http: angular.IHttpService,
-    $location: angular.ILocationService,
-    $mdToast: angular.material.IToastService,
-    $q: angular.IQService,
-    $rootScope: angular.IRootScopeService,
-    $window: angular.IWindowService,
+    $injector: auto.IInjectorService,
+    $http: IHttpService,
+    $location: ILocationService,
+    $mdToast: material.IToastService,
+    $q: IQService,
+    $rootScope: IRootScopeService,
+    $window: IWindowService,
     // tslint:disable-next-line:no-shadowed-variable
     Collection: any, // FIXME type 'Collection' is invalid, need to fix
     ListTrac: any,
     // tslint:disable-next-line:no-shadowed-variable
     Model: any, // FIXME type 'Model' is invalid, need to fix
-    orderByFilter: angular.IFilterOrderBy
+    orderByFilter: IFilterOrderBy
 ): IdxService => {
     const sharedValues: IdxSharedValue = {
         contactUrl: null,
@@ -1581,8 +1600,8 @@ const angularJsService = (
                     // Inject the local server's Service Id loaded from
                     .then(() => {
                         resolve(modelInjectProperty<T>([newModel.data], {
-                            _ServiceId: newModel.serviceId
-                        }))
+                                _ServiceId: newModel.serviceId
+                            }))
                         /*const fetchTime = newModel.header.get('x-fetch-time')
                         if (fetchTime) {
                             session.services[newModel.serviceId].fetchTime[modelName] = new Date(fetchTime)
@@ -1622,10 +1641,11 @@ const angularJsService = (
      * @param properties - {Object<String, *>}
      * TODO define Model?
      */
-    function modelInjectProperty<T>(modelDatas: (Model<T>['data'])[], properties: { [key: string]: any }): void {
+    function modelInjectProperty<T>(modelDatas: (Model<T>['data'])[], properties: { [key: string]: any }): boolean {
         modelDatas.forEach(modelData => {
             extend(modelData, properties)
         })
+        return true
     }
 
     /**
@@ -3285,7 +3305,7 @@ const angularJsService = (
      * Get the Input element of a specified ID
      */
     function getInput(elementId: string): JQLite {
-        return angular.element(document.getElementById(elementId))
+        return element(document.getElementById(elementId))
     }
 
     function getScopeValuePath(scope: IScope, scopeVarPath: string): any {
@@ -3442,7 +3462,7 @@ const angularJsService = (
 
 Stratus.Services.Idx = [
     '$provide',
-    ($provide: angular.auto.IProvideService) => {
+    ($provide: auto.IProvideService) => {
         $provide.factory('Idx', angularJsService)
     }
 ]

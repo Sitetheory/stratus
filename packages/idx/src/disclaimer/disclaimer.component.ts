@@ -4,16 +4,15 @@
 // --------------
 
 // Runtime
-import {camelCase, isArray, isEmpty, isNumber, isString, isUndefined, uniqueId} from 'lodash'
+import {isArray, isEmpty, isNumber, isString, isUndefined} from 'lodash'
 import {Stratus} from '@stratusjs/runtime/stratus'
-import * as angular from 'angular'
-
-// Services
-import '@stratusjs/angularjs/services/model'
+import {IAttributes, ISCEService} from 'angular'
 
 // Stratus Dependencies
-import {isJSON} from '@stratusjs/core/misc'
+import {isJSON, safeUniqueId} from '@stratusjs/core/misc'
 import {cookie} from '@stratusjs/core/environment'
+import '@stratusjs/idx/idx'
+// tslint:disable-next-line:no-duplicate-imports
 import {IdxComponentScope, IdxEmitter, IdxService, MLSService} from '@stratusjs/idx/idx'
 import moment from 'moment'
 
@@ -57,17 +56,17 @@ Stratus.Components.IdxDisclaimer = {
         modificationTimestamp: '=',
     },
     controller(
-        // $anchorScroll: angular.IAnchorScrollService,
-        $attrs: angular.IAttributes,
-        $sce: angular.ISCEService,
+        // $anchorScroll: IAnchorScrollService,
+        $attrs: IAttributes,
+        $sce: ISCEService,
         $scope: IdxDisclaimerScope,
         Idx: IdxService,
     ) {
         // Initialize
         const $ctrl = this
-        $ctrl.uid = uniqueId(camelCase(packageName) + '_' + camelCase(componentName) + '_')
-        Stratus.Instances[$ctrl.uid] = $scope
-        $scope.elementId = $attrs.elementId || $ctrl.uid
+        $scope.uid = safeUniqueId(packageName, moduleName, componentName)
+        Stratus.Instances[$scope.uid] = $scope
+        $scope.elementId = $attrs.elementId || $scope.uid
         $scope.initialized = false
         $scope.onWatchers = []
         $scope.service = $attrs.service && isJSON($attrs.service) ? JSON.parse($attrs.service) : []
@@ -76,7 +75,7 @@ Stratus.Components.IdxDisclaimer = {
         // FIXME if type !'Property' | 'Media' | 'Member' | 'Office' | 'OpenHouse', revert to Property
         // FIXME can later use this for last time checks
         $scope.alwaysShow = typeof $attrs.hideOnDuplicate === 'undefined'
-        Stratus.Internals.CssLoader(`${localDir}${$attrs.template || componentName}.component${min}.css`)
+        Stratus.Internals.CssLoader(`${localDir}${$attrs.template || componentName}.component${min}.css`).then()
 
         /**
          * All actions that happen first when the component loads
@@ -92,7 +91,7 @@ Stratus.Components.IdxDisclaimer = {
                     $scope.initialized = true
                 }
                 // This only gets called once
-                Idx.on('Idx', 'fetchTimeUpdate', (scope: null, serviceId, modelName, fetchTime) => {
+                Idx.on('Idx', 'fetchTimeUpdate', (_scope: null, _serviceId, _modelName, _fetchTime) => {
                     $scope.processMLSDisclaimer(true)
                     // console.log('Fetch Times have updated!!!', serviceId, modelName, fetchTime)
                 })
@@ -163,7 +162,7 @@ Stratus.Components.IdxDisclaimer = {
             }
 
             if (initNow) {
-                init()
+                init().then()
                 return
             }
 
@@ -173,7 +172,7 @@ Stratus.Components.IdxDisclaimer = {
                     return
                 }
                 if (!$scope.initialized) {
-                    init()
+                    init().then()
                 }
                 $ctrl.stopWatchingInitNow()
             })
@@ -251,5 +250,5 @@ Stratus.Components.IdxDisclaimer = {
             $scope.onWatchers.forEach(killOnWatcher => killOnWatcher())
         }
     },
-    template: '<div id="{{::elementId}}" class="disclaimer-outer-container" data-ng-cloak data-ng-show="idxService.length > 0 && !hideMe" role="contentinfo" aria-label="IDX Disclaimers"><div class="disclaimer-container" data-ng-repeat="service in idxService" data-ng-bind-html="service.disclaimerHTML"></div><div class="mls-logos-container" aria-label="Logos"><img class="mls-service-logo" data-ng-show="service.logo.default" data-ng-repeat="service in idxService" aria-label="{{service.name}}" data-ng-src="{{service.logo.medium || service.logo.default}}"></div></div>'
+    template: '<div id="{{::elementId}}" class="disclaimer-outer-container" data-ng-cloak data-ng-show="idxService.length > 0 && !hideMe" role="contentinfo" aria-label="IDX Disclaimers"><div class="disclaimer-container" data-ng-repeat="service in idxService" data-ng-bind-html="service.disclaimerHTML"></div><div class="mls-logos-container" aria-label="Logos"><img class="mls-service-logo" alt="MLS Brand Logo" data-ng-show="service.logo.default" data-ng-repeat="service in idxService" aria-label="{{service.name}}" data-ng-src="{{service.logo.medium || service.logo.default}}"></div></div>'
 }
