@@ -12,6 +12,7 @@
     "bundle": "gulp compileES6TypeScript && rollup -c --bundleConfigAsCjs && ./dist-names.sh",
     "compile": "gulp compile",
     "compress": "gulp compress",
+    "design": "gulp design",
     "dist": "gulp dist",
     "compileCSS": "gulp compileCSS",
     "compileCoffee": "gulp compileCoffee",
