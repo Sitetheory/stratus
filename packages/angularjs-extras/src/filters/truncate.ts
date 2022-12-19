@@ -25,5 +25,9 @@ Stratus.Filters.Truncate = () =>
         if (isObject(options)) {
             extend(tempScope, options)
         }
-        return truncate(input, {length: tempScope.limit, omission: tempScope.suffix})
+        return truncate(input, {
+            length: tempScope.limit,
+            omission: tempScope.suffix,
+            separator: /,? +/
+        })
     }

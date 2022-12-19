@@ -32,12 +32,13 @@ const keysTransformer = require('ts-transformer-keys/transformer').default
 // Helper Functions
 const nullify = (proto: any) => {
     proto = proto || []
-    const clone = _.clone(proto)
-    if (_.size(proto)) {
-        _.each(clone, (value: any, key: any, list: any) => {
-            list[key] = '!' + value
-        })
+    if (!_.size(proto)) {
+        return proto
     }
+    const clone = _.clone(proto)
+    _.each(clone, (value: string, key: number, list: string[]) => {
+        list[key] = '!' + value
+    })
     return clone
 }
 
@@ -71,27 +72,35 @@ interface Locations {
     template: {
         core: string[]
         min: string[]
+        external: string[]
+        nonstandard: string[]
     }
     css: {
         core: string[]
         min: string[]
+        external: string[]
         nonstandard: string[]
     }
     coffee: {
         core: string[]
         compile: any[]
+        external: string[]
     }
     preserve: {
         core: string[]
         min: string[]
+        external: string[]
+        nonstandard: string[]
     }
     less: {
         core: string[]
         compile: string[]
+        external: string[]
     }
     sass: {
         core: string[]
         compile: string[]
+        external: string[]
     }
     typescript: {
         core: string[]
@@ -149,21 +158,25 @@ const locations: Locations = {
             'packages/calendar/src/**/*.min.js',
             'packages/idx/src/**/*.min.js',
             'packages/swiper/src/**/*.min.js'
-        ]
+        ],
+        external: [],
+        nonstandard: []
     },
     less: {
         core: [
             // 'stratus.less',
             'packages/*/src/**/*.less'
         ],
-        compile: []
+        compile: [],
+        external: []
     },
     sass: {
         core: [
             // 'stratus.scss',
             'packages/*/src/**/*.scss'
         ],
-        compile: []
+        compile: [],
+        external: []
     },
     css: {
         core: [
@@ -174,6 +187,7 @@ const locations: Locations = {
             // 'stratus.min.css',
             'packages/*/src/**/*.min.css'
         ],
+        external: [],
         nonstandard: [
             'packages/*/src/**/*.css'
         ]
@@ -182,7 +196,8 @@ const locations: Locations = {
         core: [
             'packages/*/src/**/*.coffee'
         ],
-        compile: []
+        compile: [],
+        external: [],
     },
     typescript: {
         core: [
@@ -205,7 +220,9 @@ const locations: Locations = {
         ],
         min: [
             'packages/*/src/**/*.min.html'
-        ]
+        ],
+        external: [],
+        nonstandard: []
     }
 }
 
@@ -365,14 +382,14 @@ function cleanPreserve() {
     if (!locations.preserve.min.length) {
         return Promise.resolve('No files selected.')
     }
-    return del(_.union(locations.preserve.min, nullify(locations.mangle.min)))
+    return del(_.union(locations.preserve.min, nullify(locations.mangle.min), nullify(locations.preserve.external)))
 }
 
 function compressPreserve() {
     if (!locations.preserve.core.length) {
         return Promise.resolve('No files selected.')
     }
-    return src(_.union(locations.preserve.core, nullify(locations.preserve.min), nullify(locations.mangle.min)), {
+    return src(_.union(locations.preserve.core, nullify(locations.preserve.min), nullify(locations.preserve.external), nullify(locations.mangle.min)), {
         base: '.'
     })
         /* *
@@ -407,22 +424,33 @@ const cleanLESS = () => {
     if (!locations.less.compile.length) {
         return Promise.resolve('No files selected.')
     }
-    return del(locations.less.compile)
+    return del(_.union(locations.less.compile, nullify(locations.less.external)))
 }
 
 function compileLESS() {
     if (!locations.less.core.length) {
         return Promise.resolve('No files selected.')
     }
-    return src(_.union(locations.less.core, nullify(locations.less.compile)), {base: '.'})
+    return src(_.union(locations.less.core, nullify(locations.less.compile), nullify(locations.less.external)), {base: '.'})
         // .pipe(debug({ title: 'Compile LESS:' }))
         .pipe(sourcemaps.init())
         .pipe(less({
             globalVars: {
-                asset: '\'/assets/1/0\''
+                asset: `'/assets/1/0'`
             }
         }))
-        .pipe(sourcemaps.write('.'))
+        .pipe(sourcemaps.mapSources(
+            (sourcePath: string, file: any) => sourcePath.substring(sourcePath.lastIndexOf('/') + 1))
+        )
+        .pipe(sourcemaps.write('.', {
+            includeContent: false,
+            /* *
+            sourceRoot: (file: any) => {
+                console.log(file, _.keys(file))
+                return '/assets/1/0/bundles'
+            }
+            /* */
+        }))
         // .pipe(gulpDest('.', { ext: '.css' }))
         .pipe(dest('.'))
 }
@@ -432,14 +460,14 @@ function cleanSASS() {
     if (!locations.sass.compile.length) {
         return Promise.resolve('No files selected.')
     }
-    return del(locations.sass.compile)
+    return del(_.union(locations.sass.compile, nullify(locations.sass.external)))
 }
 
 function compileSASS() {
     if (!locations.sass.core.length) {
         return Promise.resolve('No files selected.')
     }
-    return src(_.union(locations.sass.core, nullify(locations.sass.compile)), {base: '.'})
+    return src(_.union(locations.sass.core, nullify(locations.sass.compile), nullify(locations.sass.external)), {base: '.'})
         // .pipe(debug({ title: 'Compile SASS:' }))
         .pipe(sourcemaps.init())
         .pipe(sass.sync().on('error', sass.logError))
@@ -453,14 +481,14 @@ function cleanCSS() {
     if (!locations.css.min.length) {
         return Promise.resolve('No files selected.')
     }
-    return del(locations.css.min)
+    return del(_.union(locations.css.min, nullify(locations.css.external)))
 }
 
 function compressCSS() {
     if (!locations.css.core.length) {
         return Promise.resolve('No files selected.')
     }
-    return src(_.union(locations.css.core, nullify(locations.css.min)), {base: '.'})
+    return src(_.union(locations.css.core, nullify(locations.css.min), nullify(locations.css.external)), {base: '.'})
         // .pipe(debug({ title: 'Compress CSS:' }))
         .pipe(minCSS({
             compatibility: '*',
@@ -476,14 +504,14 @@ function cleanCoffee() {
     if (!locations.coffee.compile.length) {
         return Promise.resolve('No files selected.')
     }
-    return del(locations.coffee.compile)
+    return del(_.union(locations.coffee.compile, nullify(locations.coffee.external)))
 }
 
 function compileCoffee() {
     if (!locations.coffee.core.length) {
         return Promise.resolve('No files selected.')
     }
-    return src(_.union(locations.coffee.core, nullify(locations.coffee.compile)), {base: '.'})
+    return src(_.union(locations.coffee.core, nullify(locations.coffee.compile), nullify(locations.coffee.external)), {base: '.'})
         // .pipe(debug({ title: 'Compile Coffee:' }))
         .pipe(coffee({}))
         .pipe(gulpDest('.', {ext: '.js'}))
@@ -495,7 +523,7 @@ function cleanTypeScript() {
     if (!locations.typescript.compile.length) {
         return Promise.resolve('No files selected.')
     }
-    return del(locations.typescript.compile)
+    return del(_.union(locations.typescript.compile, nullify(locations.typescript.external)))
 }
 
 function compileTypeScript() {
