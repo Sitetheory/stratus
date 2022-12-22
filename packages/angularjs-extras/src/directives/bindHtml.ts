@@ -2,7 +2,7 @@
 // -----------------
 
 // Runtime
-import _ from 'lodash'
+import {clone, head, isEmpty, isString, startsWith, throttle} from 'lodash'
 import {
     Stratus
 } from '@stratusjs/runtime/stratus'
@@ -11,22 +11,30 @@ import {
     IScope,
     IParseService,
     ICompileService,
-    ISCEService,
+    ISCEService, IAugmentedJQuery,
 } from 'angular'
-
-// Angular 1 Modules
-import 'angular-material'
 import {StratusDirective} from './baseNew'
+import {safeUniqueId} from '@stratusjs/core/misc'
 
-// Interfaces
-interface TrustedValueHolder {
-    $$unwrapTrustedValue: () => string
+export type BindHtmlScope = IScope & {
+    uid: string
+    initialized: boolean
+    element: IAugmentedJQuery
+    compiling: boolean
+    compiled: boolean
+    html?: string
+
+    canCompile(): boolean
+    compile(el?: HTMLElement): void
+    safeCompile(): void
+    safeCompileThrottle(): void
+    evalStratusBind(): void
 }
 
 // Environment
-// const min = !cookie('env') ? '.min' : ''
-const name = 'bindHtml'
-// const localPath = '@stratusjs/angularjs-extras/src/directives'
+const packageName = 'angularjs-extras'
+const moduleName = 'directives'
+const directiveName = 'bindHtml'
 
 // This directive binds html and also compiles the AngularJS Components in the child elements.
 Stratus.Directives.BindHtml = (
@@ -64,15 +72,13 @@ Stratus.Directives.BindHtml = (
     //     }
     // },
     link: (
-        $scope: IScope & any,
-        $element: JQLite & any,
-        $attrs: IAttributes & any,
+        $scope: BindHtmlScope,
+        $element: IAugmentedJQuery,
+        $attrs: IAttributes,
     ) => {
         // Initialize
-        // const $ctrl: any = this
-        $scope.uid = _.uniqueId(_.snakeCase(name) + '_')
+        $scope.uid = safeUniqueId(packageName, moduleName, directiveName)
         Stratus.Instances[$scope.uid] = $scope
-        $scope.elementId = $element.elementId || $scope.uid
         $scope.initialized = false
 
         // Hoist Element for Debug Purposes
@@ -96,21 +102,25 @@ Stratus.Directives.BindHtml = (
         }
 
         // Run Compilation, Deep...
-        $scope.compile = (el?: any) => {
+        $scope.compile = (el?: HTMLElement) => {
             // evaluate element
-            el = el || _.first($element)
+            // console.log($scope.uid, 'running', copy(el))
+            el = el || head($element)
             if (!el || !el.nodeType) {
                 return
             }
             if (el.nodeType !== Node.ELEMENT_NODE) {
                 return
             }
-            const children: NodeList = el.querySelectorAll(':not(.ng-scope)')
+            // console.log($scope.uid, 'parsing', copy(el))
+            const children: NodeList = el.querySelectorAll(':scope > :not(.ng-scope)') // only get direct children :scope
             if (!children || !children.length) {
+                // console.log($scope.uid, 'bind html has no children', copy(el), copy(children))
                 return
             }
             // lock compilation
             $scope.compiling = true
+            // console.log($scope.uid, 'bind html compiling children', children, $scope)
             // compile node
             $compile(children)($scope)
             // unlock compilation
@@ -119,66 +129,67 @@ Stratus.Directives.BindHtml = (
 
         $scope.safeCompile = () => {
             if (!$scope.canCompile()) {
+                console.log($scope.uid, 'in process of compiling, can\'t, attempt')
                 return
             }
             $scope.compile()
         }
-        $scope.safeCompile = _.throttle($scope.safeCompile, 250)
+        $scope.safeCompileThrottle = () => throttle($scope.safeCompile, 250)
+        $scope.evalStratusBind = () => {
+            const newHtml = $scope.$eval($attrs.stratusBindHtml)
+            if (!isString(newHtml)) {
+                console.warn(`stratus-bind-html: unable to grab html on instance ${$scope.uid}`, clone(newHtml), typeof newHtml)
+                return
+            }
+            // stop infinite loops
+            if (newHtml === $scope.html) {
+                console.warn(`stratus-bind-html: infinite loop detected for html on instance ${$scope.uid}`)
+                return
+            }
+            // set html to scope and element
+            $scope.html = newHtml
+            $element.html($scope.html)
+            // mark as initialized
+            $scope.initialized = true
+            // handle single read binds
+            if (!startsWith($attrs.stratusBindHtml, '::')) {
+                console.warn(`stratus-bind-html: it is recommended to prefix :: to compiled binds on instance ${$scope.uid}`)
+            }
+            // Process all that we now have
+            $scope.safeCompile()
+        }
+
+        // Check what we are given and attempt to Compile Data.
+        if (isString($attrs.stratusBindHtml) && !isEmpty($attrs.stratusBindHtml)) {
+            // console.log($scope.uid, 'has stratusBindHtml, will eval it', clone($attrs.stratusBindHtml))
+            $scope.evalStratusBind()
+            return // Skip any other init processing
+        }
+
+        if (isString($attrs.ngBindHtml) && !isEmpty($attrs.ngBindHtml)) {
+            // console.log($scope.uid, 'has ngBindHtml. will compile in a second')
+            // ng-bind can take time which is difficult to determine... compile after 2 seconds
+            console.warn(
+                `stratus-bind-html: combined with ng-bind is unpredictable and slower.
+                recommendation to move binding logic within ${$scope.uid}`
+            )
+            setTimeout(
+                () => $scope.safeCompile(), // Attempt compile once
+                2000
+            )
+            // Note: reducing this delay has been found to compile too soon... and never process the components
+        } else {
+            // console.log($scope.uid, 'has no variables. compiling immediately')
+            // No ng-bind so we're not waiting on anything. Compile now
+            $scope.safeCompileThrottle()
+        }
 
         // Add Change Listener
         // When changes are detected, compile child nodes (build directives and components for child elements)
-        $element.on('DOMSubtreeModified', $scope.safeCompile)
+        // Note that recompiling already existing components -could- break them
+        $element.on('DOMSubtreeModified', $scope.safeCompileThrottle)
 
-        // Attempt compile once
-        $scope.safeCompile()
-
-        // Attempt to Compile Data
-        if (!$attrs.stratusBindHtml) {
-            // Mark as initialized since the watcher isn't critical
-            $scope.initialized = true
-            // this isn't critical anymore, since we added a DOMSubtreeModified hook
-            // console.warn(`unable to set html on instance ${$scope.uid} via stratus-bind-html attributes.`)
-            return
-        }
-
-        // Start Watcher
-        $scope.watcher = $scope.$watch(
-            () => $scope.$eval($attrs.stratusBindHtml),
-            (newValue?: TrustedValueHolder, oldValue?: TrustedValueHolder) => {
-                if (!_.isObject(newValue)) {
-                    console.warn(`stratus-bind-html: unable to find trusted html on instance ${$scope.uid}`)
-                    return
-                }
-                if (!_.isFunction(newValue.$$unwrapTrustedValue)) {
-                    console.warn(`stratus-bind-html: unable to find trusted html on instance ${$scope.uid}`)
-                    return
-                }
-                // attempt to generate html
-                const newHtml = newValue.$$unwrapTrustedValue()
-                if (!_.isString(newHtml)) {
-                    console.warn(`stratus-bind-html: unable to unwrap html on instance ${$scope.uid}`)
-                    return
-                }
-                // stop infinite loops
-                if (newHtml === $scope.html) {
-                    console.warn(`stratus-bind-html: infinite loop detected for html on instance ${$scope.uid}`)
-                    console.warn(`stratus-bind-html: halting watcher on instance ${$scope.uid}`)
-                    $scope.watcher()
-                    return
-                }
-                // set html to scope and element
-                $scope.html = newHtml
-                $element.html($scope.html)
-                // mark as initialized
-                $scope.initialized = true
-                // handle single read binds
-                if (!_.startsWith($attrs.stratusBindHtml, '::')) {
-                    console.warn(`stratus-bind-html: it is recommended to prefix :: to compiled binds on instance ${$scope.uid}`)
-                    return
-                }
-                // stop listening
-                $scope.watcher()
-            }
-        )
+        // Mark as initialized
+        $scope.initialized = true
     }
 })
