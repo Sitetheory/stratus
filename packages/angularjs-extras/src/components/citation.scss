@@ -5,6 +5,11 @@
 stratus-citation {
   position: relative;
   display: inline;
+  > stratus-citation-content,
+  > stratus-citation-title {
+    /* This content has yet to load/process, so hide for now */
+    display: none;
+  }
   .citation-title-sup {
     color: #f85b3b; /* handle generic color better */
     cursor: pointer;
