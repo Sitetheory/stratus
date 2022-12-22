@@ -5,6 +5,11 @@
 stratus-citation {
   position: relative;
   display: inline;
+  > stratus-citation-content,
+  > stratus-citation-title {
+    /* This content has yet to load/process, so hide for now */
+    display: none;
+  }
   .citation-title-sup {
     color: #f85b3b; /* handle generic color better */
     cursor: pointer;
@@ -57,6 +62,15 @@ stratus-citation {
     &.opened {
       opacity: 1;
       z-index: 9;
+    }
+
+    @media (max-width: 767px) {
+      position: fixed;
+      left: 10%;
+      right: 10%;
+      bottom: 50%;
+      width: 80%;
+      transform: translateY(50%);
     }
   }
 }

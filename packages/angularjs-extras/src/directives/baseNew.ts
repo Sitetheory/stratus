@@ -22,6 +22,7 @@ import {LooseObject} from '@stratusjs/core/misc'
 export type StratusDirective = ({
     restrict: 'A' | string
     require?: 'ngModel' | string
+    transclude?: boolean | LooseObject<string>
     scope?: LooseObject<string>
     template?: string | (($attrs?: IAttributes) => string)
     compile?($element: IAugmentedJQuery, $attrs: IAttributes): void

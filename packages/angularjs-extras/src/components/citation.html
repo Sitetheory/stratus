@@ -1,6 +1,6 @@
-<span data-ng-cloak class="citation-popup" data-ng-class="{'opened': citationOpened}">
+<span data-ng-cloak data-ng-if="initialized" class="citation-popup" data-ng-class="{'opened': citationOpened}">
     <span class="citation-title" data-ng-class="{'auto-counter': auto}" data-ng-transclude="title"></span>
     <span class="citation-popup-close" data-ng-click="toggleCitation()"><span class="citation-popup-close-btn"></span></span>
     <span class="citation-text" data-ng-transclude="content"></span>
 </span>
-<sup class="citation-title-sup" data-ng-class="{'auto-counter': auto}" data-ng-click="toggleCitation()" data-ng-transclude="title"></sup>
+<sup data-ng-if="initialized" class="citation-title-sup" data-ng-class="{'auto-counter': auto}" data-ng-click="toggleCitation()" data-ng-transclude="title"></sup>
