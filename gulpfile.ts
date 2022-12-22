@@ -115,6 +115,7 @@ interface Locations {
     mangle: {
         core: string[]
         min: string[]
+        nonstandard: string[]
     }
 }
 
@@ -140,7 +141,8 @@ const locations: Locations = {
         min: [
             'dist/**/*.min.js',
             'packages/*/src/**/*.min.js'
-        ]
+        ],
+        nonstandard: []
     },
     preserve: {
         core: [
@@ -295,14 +297,14 @@ function cleanMangle() {
     if (!locations.mangle.min.length) {
         return Promise.resolve('No files selected.')
     }
-    return del(_.union(locations.mangle.min, nullify(locations.preserve.min)))
+    return del(_.union(locations.mangle.min, nullify(locations.mangle.nonstandard), nullify(locations.preserve.min)))
 }
 
 function compressMangle() {
     if (!locations.mangle.core.length) {
         return Promise.resolve('No files selected.')
     }
-    return src(_.union(locations.mangle.core, nullify(locations.mangle.min), nullify(locations.preserve.core)), {
+    return src(_.union(locations.mangle.core, nullify(locations.mangle.min), nullify(locations.mangle.nonstandard), nullify(locations.preserve.core)), {
         base: '.'
     })
         /* *
