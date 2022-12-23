@@ -22,12 +22,12 @@ stratus-citation {
     z-index: -1;
     position: absolute;
     width: 300px;
-    background-color: #e2e7ed;
+    background-color: #f2f2f2;
     padding: 1.5em;
     line-height: 1.5;
     bottom: 30px;
     right: 0;
-    box-shadow: 0 0 10px #ccc;
+    box-shadow: 0 0 10px rgb(0 0 0 / 10%);
     .citation-popup-close {
       position: absolute;
       top: 0;
