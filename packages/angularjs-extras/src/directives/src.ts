@@ -2,18 +2,21 @@
 // -----------------
 
 // Runtime
-import {filter, size, uniqueId} from 'lodash'
+import {filter, size} from 'lodash'
 import {Stratus} from '@stratusjs/runtime/stratus'
-import jQuery from 'jquery' // FIXME jQuery needs to be removed and tested
 import {
+    element,
     IAttributes,
     IAugmentedJQuery,
     IScope
 } from 'angular'
 import {StratusDirective} from './baseNew'
+import {safeUniqueId} from '@stratusjs/core/misc'
 
 // Environment
-const name = 'src'
+const packageName = 'angularjs-extras'
+const moduleName = 'directives'
+const directiveName = 'src'
 
 export type SrcScope = IScope & {
     whitelist: string[]
@@ -45,7 +48,7 @@ Stratus.Directives.Src = (): StratusDirective => ({
         $attrs: IAttributes
     ) => {
         // Initialize
-        Stratus.Instances[uniqueId(name + '_')] = $scope
+        Stratus.Instances[safeUniqueId(packageName, moduleName, directiveName)] = $scope
 
         $scope.whitelist = [
             'jpg',
@@ -160,7 +163,7 @@ Stratus.Directives.Src = (): StratusDirective => ({
                 el: $element,
                 // Could be replaced with spy: $element.data('spy') ? $document[0].querySelector($element.data('spy')) : $element
                 // TODO need spy examples to test with
-                spy: $element.data('spy') ? jQuery($element.data('spy')) : $element
+                spy: $element.data('spy') ? element($element.data('spy')) : $element
                 // spy: $element.data('spy') ? Stratus.Select($element.data('spy')) : $element
             }
             Stratus.RegisterGroup.add('OnScroll', $scope.group) // TODO Stratus.RegisterGroup typings needed
