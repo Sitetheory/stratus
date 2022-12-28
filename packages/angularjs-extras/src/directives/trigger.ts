@@ -2,25 +2,32 @@
 // -----------------
 
 // Runtime
-import _ from 'lodash'
+import {isUndefined} from 'lodash'
 import {
     Stratus
 } from '@stratusjs/runtime/stratus'
 import {
     IAttributes,
-    IScope,
+    IAugmentedJQuery,
+    ICompiledExpression,
     INgModelController,
-    IParseService
+    IParseService,
+    IScope
 } from 'angular'
-
-// Angular 1 Modules
-import 'angular-material'
 import {StratusDirective} from './baseNew'
+import {safeUniqueId} from '@stratusjs/core/misc'
+
+export type TriggerScope = IScope & {
+    uid: string
+    elementId: string
+    initialized: boolean
+    trigger: ICompiledExpression
+}
 
 // Environment
-// const min = !cookie('env') ? '.min' : ''
-const name = 'trigger'
-// const localPath = '@stratusjs/angularjs-extras/src/directives'
+const packageName = 'angularjs-extras'
+const moduleName = 'directives'
+const directiveName = 'trigger'
 
 // This directive intends to handle binding of a model to a function,
 // triggered upon true
@@ -30,14 +37,14 @@ Stratus.Directives.Trigger = (
     restrict: 'A',
     require: 'ngModel',
     link: (
-        $scope: IScope & any,
-        $element: JQLite & any,
-        $attrs: IAttributes & any,
+        $scope: TriggerScope,
+        $element: IAugmentedJQuery & any,
+        $attrs: IAttributes,
         ngModel: INgModelController
     ) => {
         // Initialize
         // const $ctrl: any = this
-        $scope.uid = _.uniqueId(_.snakeCase(name) + '_')
+        $scope.uid = safeUniqueId(packageName, moduleName, directiveName)
         Stratus.Instances[$scope.uid] = $scope
         $scope.elementId = $element.elementId || $scope.uid
         $scope.initialized = false
@@ -46,7 +53,7 @@ Stratus.Directives.Trigger = (
         $scope.trigger = null
         $scope.$watch(() => $attrs.stratusTrigger,
             (newValue: any) => {
-                if (_.isUndefined(newValue)) {
+                if (isUndefined(newValue)) {
                     return
                 }
                 $scope.trigger = $parse($attrs.stratusTrigger)
@@ -55,7 +62,7 @@ Stratus.Directives.Trigger = (
         // Watch ngModel
         $scope.$watch(() => ngModel.$modelValue,
             (newValue: any) => {
-                if (_.isUndefined(newValue)) {
+                if (isUndefined(newValue)) {
                     return
                 }
                 if (!$scope.trigger) {

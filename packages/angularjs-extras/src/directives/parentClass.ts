@@ -2,7 +2,7 @@
 // -----------------
 
 // Runtime
-import _ from 'lodash'
+import {includes} from 'lodash'
 import {
     Stratus
 } from '@stratusjs/runtime/stratus'
@@ -13,20 +13,25 @@ import {
     // IParseService
 } from 'angular'
 
-// Angular 1 Modules
-import 'angular-material'
-
 // Stratus Core
-import {LooseObject} from '@stratusjs/core/misc'
+import {safeUniqueId} from '@stratusjs/core/misc'
 import {StratusDirective} from './baseNew'
+import {Selector} from '@stratusjs/core/dom'
 
-// Stratus Core
-// import {cookie} from '@stratusjs/core/environment'
+export type ParentClassScope = IScope & {
+    uid: string
+    elementId: string
+    initialized: boolean
+    limitNode: HTMLElement | Selector
+    elements: (HTMLElement | Selector)[]
+
+    addParentClass(el: any, className?: string): void
+}
 
 // Environment
-// const min = !cookie('env') ? '.min' : ''
-const name = 'parentClass'
-// const localPath = '@stratusjs/angularjs-extras/src/directives'
+const packageName = 'angularjs-extras'
+const moduleName = 'directives'
+const directiveName = 'parentClass'
 
 // This directive adds a class to all parent nodes and stops
 // at the defined selector.
@@ -43,13 +48,13 @@ Stratus.Directives.ParentClass = (
         limitBelow: '@',
     },
     link: (
-        $scope: IScope & LooseObject,
+        $scope: ParentClassScope,
         $element: JQLite & {elementId?: string},
         $attrs: IAttributes,
         // ngModel: INgModelController
     ) => {
         // Initialize
-        $scope.uid = _.uniqueId(_.snakeCase(name) + '_')
+        $scope.uid = safeUniqueId(packageName, moduleName, directiveName)
         Stratus.Instances[$scope.uid] = $scope
         $scope.elementId = $element.elementId || $scope.uid
         $scope.initialized = false
@@ -58,7 +63,7 @@ Stratus.Directives.ParentClass = (
         $scope.limitNode = document.querySelector($attrs.limit || 'body')
 
         $scope.elements = []
-        $scope.addParentClass = (el: any, className?: string) => {
+        $scope.addParentClass = (el: Selector, className?: string) => {
             // Ensure class name exists
             if (!className) {
                 return
@@ -73,7 +78,7 @@ Stratus.Directives.ParentClass = (
                 return
             }
             // Ensure we only visit a node once
-            if (_.includes($scope.elements, node)) {
+            if (includes($scope.elements, node)) {
                 return
             }
             $scope.elements.push(node)

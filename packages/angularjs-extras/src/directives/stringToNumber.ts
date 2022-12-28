@@ -2,7 +2,6 @@
 // -----------------
 
 // Runtime
-import {snakeCase, uniqueId} from 'lodash'
 import {Stratus} from '@stratusjs/runtime/stratus'
 import {
     IAttributes,
@@ -12,9 +11,12 @@ import {
     IScope
 } from 'angular'
 import {StratusDirective} from './baseNew'
+import {safeUniqueId} from '@stratusjs/core/misc'
 
 // Environment
-const name = 'stringToNumber'
+const packageName = 'angularjs-extras'
+const moduleName = 'directives'
+const directiveName = 'stringToNumber'
 
 // This directive intends to handle binding of a model to convert value string to number
 Stratus.Directives.StringToNumber = (
@@ -29,7 +31,7 @@ Stratus.Directives.StringToNumber = (
         ngModel: INgModelController
     ) => {
         // Initialize
-        Stratus.Instances[uniqueId(snakeCase(name) + '_')] = $scope
+        Stratus.Instances[safeUniqueId(packageName, moduleName, directiveName)] = $scope
 
         const setDisplayNumber = (val: string | number, formatter?: boolean) => {
             let displayValue

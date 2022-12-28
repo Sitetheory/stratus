@@ -3,7 +3,6 @@
 
 // Runtime
 import {
-    // get,
     uniqueId
 } from 'lodash'
 import {
@@ -16,12 +15,13 @@ import {
 import {
     StratusDirective
 } from './baseNew'
+import {safeUniqueId} from "@stratusjs/core/misc";
 
 
 // Environment
-// const min = !cookie('env') ? '.min' : ''
-const name = 'drag'
-// const localPath = '@stratusjs/angularjs-extras/src/directives'
+const packageName = 'angularjs-extras'
+const moduleName = 'directives'
+const directiveName = 'drag'
 
 Stratus.Directives.Drag = (
     // $log: ILogService,,
@@ -36,9 +36,9 @@ Stratus.Directives.Drag = (
         $element: IAugmentedJQuery,
     ) => {
         // Initialize
-        Stratus.Instances[uniqueId(name + '_')] = $scope
+        Stratus.Instances[safeUniqueId(packageName, moduleName, directiveName)] = $scope
 
-        $element.bind('dragstart', function (rawEvent) {
+        $element.bind('dragstart', (rawEvent) => {
             const event = rawEvent as unknown as DragEvent // Needs way to convert
             console.log('dragstart:', event)
             event.dataTransfer.effectAllowed = 'copy' // only dropEffect='copy'

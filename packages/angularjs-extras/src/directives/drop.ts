@@ -2,7 +2,6 @@
 // -----------------
 
 // Runtime
-import {uniqueId} from 'lodash'
 import {Stratus} from '@stratusjs/runtime/stratus'
 import {
     IAugmentedJQuery,
@@ -10,12 +9,13 @@ import {
     IScope
 } from 'angular'
 import {StratusDirective} from './baseNew'
+import {safeUniqueId} from '@stratusjs/core/misc'
 
 
 // Environment
-// const min = !cookie('env') ? '.min' : ''
-const name = 'drop'
-// const localPath = '@stratusjs/angularjs-extras/src/directives'
+const packageName = 'angularjs-extras'
+const moduleName = 'directives'
+const directiveName = 'drop'
 
 Stratus.Directives.Drop = (
     $log: ILogService,
@@ -30,7 +30,7 @@ Stratus.Directives.Drop = (
         $element: IAugmentedJQuery,
     ) => {
         // Initialize
-        Stratus.Instances[uniqueId(name + '_')] = $scope
+        Stratus.Instances[safeUniqueId(packageName, moduleName, directiveName)] = $scope
         $log.log('drop:', $element)
     },
 })

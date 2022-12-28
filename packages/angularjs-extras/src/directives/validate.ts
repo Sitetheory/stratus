@@ -34,7 +34,7 @@
 // data-ng-message="validateAny">Ya you really messed up.</div> </div>
 
 // Runtime
-import {every, forEach, includes, isArray, uniqueId} from 'lodash'
+import {every, forEach, includes, isArray} from 'lodash'
 import {Stratus} from '@stratusjs/runtime/stratus'
 import {
     IAugmentedJQuery,
@@ -43,11 +43,12 @@ import {
     INgModelController
 } from 'angular'
 import {StratusDirective} from './baseNew'
+import {safeUniqueId} from '@stratusjs/core/misc'
 
 // Environment
-// const min = !cookie('env') ? '.min' : ''
-const name = 'validate'
-// const localPath = '@stratusjs/angularjs-extras/src/directives'
+const packageName = 'angularjs-extras'
+const moduleName = 'directives'
+const directiveName = 'validate'
 
 export type ValidateScope = IScope & {
     checks: {
@@ -77,7 +78,7 @@ Stratus.Directives.Validate = (
         $ctrl: INgModelController
     ) => {
         // Initialize
-        Stratus.Instances[uniqueId(name + '_')] = $scope
+        Stratus.Instances[safeUniqueId(packageName, moduleName, directiveName)] = $scope
 
         // Check Allowed Values
         const checkValues = (ngModelValue: string | number) => {

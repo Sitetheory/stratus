@@ -6,22 +6,19 @@
 // full-height-reference-parent: 'document' | 'window' |  '#elementName'
 
 // Runtime
-import _ from 'lodash'
+import {isArray, isString} from 'lodash'
 import {Stratus} from '@stratusjs/runtime/stratus'
-import * as angular from 'angular'
+import {IAttributes, IAugmentedJQuery, ITimeoutService, IWindowService} from 'angular'
 
 // Angular 1 Modules
-import {isJSON} from '@stratusjs/core/misc'
+import {isJSON, safeUniqueId} from '@stratusjs/core/misc'
 import {StratusDirective} from './baseNew'
 
 
 // Environment
-// const min = !cookie('env') ? '.min' : ''
 const packageName = 'angularjs-extras'
-// const moduleName = 'directives'
-const componentName = 'fullHeight'
-// There is not a very consistent way of pathing in Stratus at the moment
-// const localDir = `${Stratus.BaseUrl}${Stratus.DeploymentPath}@stratusjs/${packageName}/src/${moduleName}/`
+const moduleName = 'directives'
+const directiveName = 'fullHeight'
 
 export type FullHeightScope = angular.IScope & { // & LooseObject<LooseFunction>
     initialized: boolean
@@ -48,8 +45,8 @@ type ElementSize = {
 }
 
 Stratus.Directives.FullHeight = (
-    $timeout: angular.ITimeoutService,
-    $window: angular.IWindowService
+    $timeout: ITimeoutService,
+    $window: IWindowService
 ): StratusDirective => ({
     restrict: 'A',
     scope: {
@@ -59,12 +56,11 @@ Stratus.Directives.FullHeight = (
     },
     link: (
         $scope: FullHeightScope,
-        $element: angular.IAugmentedJQuery,
-        $attrs: angular.IAttributes
+        $element: IAugmentedJQuery,
+        $attrs: IAttributes
     ) => {
         // Initialize
-        // const $ctrl: any = this
-        $scope.uid = _.uniqueId(_.camelCase(packageName) + '_' + _.camelCase(componentName) + '_')
+        $scope.uid = safeUniqueId(packageName, moduleName, directiveName)
         Stratus.Instances[$scope.uid] = $scope
         $scope.initialized = false
         $scope.referenceParent = 'document'
@@ -75,7 +71,7 @@ Stratus.Directives.FullHeight = (
             $scope.fullHeight = $attrs.stratusFullHeight && isJSON($attrs.stratusFullHeight) ? JSON.parse($attrs.stratusFullHeight) : true
 
             // Sizing Options
-            if ($attrs.fullHeightReferenceParent && _.isString($attrs.fullHeightReferenceParent)) {
+            if ($attrs.fullHeightReferenceParent && isString($attrs.fullHeightReferenceParent)) {
                 $scope.referenceParent = $attrs.fullHeightReferenceParent
             }
             if ($attrs.fullHeightMinusElements) {
@@ -84,7 +80,7 @@ Stratus.Directives.FullHeight = (
             }
             const fullHeightMinusElementNames = $scope.fullHeightMinusElements && isJSON($scope.fullHeightMinusElements) ?
                 JSON.parse($scope.fullHeightMinusElements) : null
-            if (_.isArray(fullHeightMinusElementNames)) {
+            if (isArray(fullHeightMinusElementNames)) {
                 // $scope.fullHeight = true
                 $scope.fullHeightMinusElementNames = fullHeightMinusElementNames
             }

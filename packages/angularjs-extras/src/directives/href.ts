@@ -2,7 +2,6 @@
 // -----------------
 
 // Runtime
-import {uniqueId} from 'lodash'
 import {Stratus} from '@stratusjs/runtime/stratus'
 import {
     IAugmentedJQuery,
@@ -13,11 +12,12 @@ import {
     IParseService
 } from 'angular'
 import {StratusDirective} from './baseNew'
+import {safeUniqueId} from '@stratusjs/core/misc'
 
 // Environment
-// const min = !cookie('env') ? '.min' : ''
-const name = 'href'
-// const localPath = '@stratusjs/angularjs-extras/src/directives'
+const packageName = 'angularjs-extras'
+const moduleName = 'directives'
+const directiveName = 'href'
 
 export type HrefScope = IScope & {
     href?: string
@@ -36,7 +36,7 @@ Stratus.Directives.Href = (
         $attrs: IAttributes
     ) => {
         // Initialize
-        Stratus.Instances[uniqueId(name + '_')] = $scope
+        Stratus.Instances[safeUniqueId(packageName, moduleName, directiveName)] = $scope
         $scope.href = null
 
         if ($attrs.stratusHref) {
