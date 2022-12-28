@@ -322,7 +322,7 @@ export function safeUniqueId(...names: string[]): string {
 }
 
 /**
- * @deprecated use _.truncate() instead
+ * _.truncate() is faster if target doesn't contain html
  * https://lodash.com/docs/4.17.15#truncate
  *
  * @param target string to truncate

@@ -121,7 +121,7 @@ import {
 } from 'ts-transformer-keys'
 
 // Froala External Requirements (Before Plugins are Loaded)
-import {EditorView, basicSetup} from 'codemirror'
+import {EditorView, basicSetup, minimalSetup} from 'codemirror'
 import {html} from '@codemirror/lang-html'
 import 'html2pdf'
 import 'font-awesome'
@@ -506,12 +506,13 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             wrap_line_length: 0
         },
         // fromTextArea
-        codeMirror: {
+        codeMirror: !cookie('codemirror') ? null : {
             fromTextArea: (el: HTMLTextAreaElement, opts: LooseObject) => {
                 // Note: We're instantiating a Bridge Class to act as an intermediate for Froala's legacy implementation.
                 return new CodeMirrorBridge({
                     extensions: [
-                        basicSetup,
+                        // basicSetup,
+                        minimalSetup,
                         html({
                             // extraTags: [
                             //     'sa-editor'
@@ -521,7 +522,7 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
                             // ],
                         }),
                         // TODO: Make this an optional extension, based on options
-                        EditorView.lineWrapping
+                        // EditorView.lineWrapping
                     ]
                 }).fromTextArea(el, opts)
             }
@@ -637,6 +638,7 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
         ],
         htmlAllowedEmptyTags: [
             'textarea', 'a', 'iframe', 'object', 'video', 'style', 'script',
+            'form',
             // '.fa', '.fr-emoticon', '.fr-inner',
             // 'path', 'line',
             'hr', 'div',
@@ -671,7 +673,29 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             // AngularJS Material Secondary Tags
             'md-svg-src',
             // Stratus AngularJS Tags
+            'stratus-base',
+            'stratus-citation',
             'stratus-citation-notitle',
+            'stratus-content-selector',
+            'stratus-date-time',
+            'stratus-error-message',
+            'stratus-facebook',
+            'stratus-filter',
+            'stratus-help',
+            'stratus-image-carousel',
+            'stratus-json-editor',
+            'stratus-media-details',
+            'stratus-media-library',
+            'stratus-media-selector',
+            'stratus-media-short-details',
+            'stratus-media-uploader',
+            'stratus-option-value',
+            'stratus-pagination',
+            'stratus-permissions',
+            'stratus-publish',
+            'stratus-search',
+            'stratus-tag',
+            'stratus-twitter-feed',
             // Stratus Angular+ Tags
             'sa-boot',
             'sa-editor',
@@ -865,7 +889,9 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             'sa-.+'
         ],
         pasteDeniedTags: [
-            'form', 'input', 'label',
+            'form',
+            'input',
+            'label',
             'style'
         ],
         pastePlain: false,
