@@ -2,21 +2,23 @@
 // -----------------
 
 // Runtime
-import {isNumber, isUndefined, snakeCase, uniqueId} from 'lodash'
+import {isNumber, isUndefined} from 'lodash'
 import {Stratus} from '@stratusjs/runtime/stratus'
-import jQuery from 'jquery' // FIXME jQuery needs to be removed and tested
 import {
+    element,
     IAttributes,
     IAugmentedJQuery,
     IScope
 } from 'angular'
 
 // Stratus Core
-import {hydrate} from '@stratusjs/core/misc'
+import {hydrate, safeUniqueId} from '@stratusjs/core/misc'
 import {StratusDirective} from './baseNew'
 
 // Environment
-const name = 'onScreen'
+const packageName = 'angularjs-extras'
+const moduleName = 'directives'
+const directiveName = 'onScreen'
 
 export type OnScreenScope = IScope & {
     uid: string
@@ -49,7 +51,7 @@ Stratus.Directives.OnScreen = (
         $attrs: IAttributes
     ) => {
         // Initialize
-        $scope.uid = uniqueId(snakeCase(name) + '_')
+        $scope.uid = safeUniqueId(packageName, moduleName, directiveName)
         Stratus.Instances[$scope.uid] = $scope
         // const $element = element instanceof jQuery ? element : jQuery(element) // Already JQLite
         $scope.elementId = $attrs.elementId || $scope.uid
@@ -57,8 +59,8 @@ Stratus.Directives.OnScreen = (
 
         // event can be multiple listeners: reset
         const event: string[] = $attrs.event ? $attrs.event.split(' ') : []
-        const target: IAugmentedJQuery = $attrs.target ? jQuery($attrs.target) : $element
-        let spy: IAugmentedJQuery = $attrs.spy ? jQuery($attrs.spy) : $element
+        const target: IAugmentedJQuery = $attrs.target ? element($attrs.target) : $element
+        let spy: IAugmentedJQuery = $attrs.spy ? element($attrs.spy) : $element
         if (!spy.length) {
             spy = $element
         }
@@ -134,7 +136,7 @@ Stratus.Directives.OnScreen = (
                 event.indexOf('reset') !== -1 &&
                 (
                     (reset > 0 && $element.offset().top <= reset) ||
-                    jQuery(Stratus.Environment.get('viewPort') || window).scrollTop() <= 0
+                    element(Stratus.Environment.get('viewPort') || window).scrollTop() <= 0
                 )
             ) {
                 target.removeClass('on-screen off-screen scroll-up scroll-down reveal conceal')
