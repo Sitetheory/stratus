@@ -2,25 +2,31 @@
 // -----------------
 
 // Runtime
-import {snakeCase, uniqueId} from 'lodash'
 import {
     Stratus
 } from '@stratusjs/runtime/stratus'
 import {
     IAttributes,
+    IAugmentedJQuery,
     IScope,
     INgModelController,
     // IParseService
 } from 'angular'
 
 // Angular 1 Modules
-import 'angular-material'
 import {StratusDirective} from './baseNew'
+import {safeUniqueId} from '@stratusjs/core/misc'
+
+export type MaxLengthScope = IScope & {
+    uid: string
+    elementId: string
+    initialized: boolean
+}
 
 // Environment
-// const min = !cookie('env') ? '.min' : ''
-const name = 'maxLength'
-// const localPath = '@stratusjs/angularjs-extras/src/directives'
+const packageName = 'angularjs-extras'
+const moduleName = 'directives'
+const directiveName = 'maxLength'
 
 // This directive blocks input beyond the md-maxlength limit,
 // which solves a core issue in Angular Material where data
@@ -32,14 +38,13 @@ Stratus.Directives.MaxLength = (
     restrict: 'A',
     require: 'ngModel',
     link: (
-        $scope: IScope & any,
-        $element: JQLite & any,
-        $attrs: IAttributes & any,
+        $scope: MaxLengthScope,
+        $element: IAugmentedJQuery & any,
+        $attrs: IAttributes,
         ngModel: INgModelController
     ) => {
         // Initialize
-        // const $ctrl: any = this
-        $scope.uid = uniqueId(snakeCase(name) + '_')
+        $scope.uid = safeUniqueId(packageName, moduleName, directiveName)
         Stratus.Instances[$scope.uid] = $scope
         $scope.elementId = $element.elementId || $scope.uid
         $scope.initialized = false

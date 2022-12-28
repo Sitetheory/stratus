@@ -4,7 +4,6 @@
 // Initialize on page by adding to a
 
 // Runtime
-import {snakeCase, uniqueId} from 'lodash'
 import {Stratus} from '@stratusjs/runtime/stratus'
 import {
     IAttributes,
@@ -18,11 +17,13 @@ import {
 import 'angular-material'
 
 // Stratus Core
-import {isJSON} from '@stratusjs/core/misc'
+import {isJSON, safeUniqueId} from '@stratusjs/core/misc'
 import {StratusDirective} from './baseNew'
 
 // Environment
-const name = 'masonry'
+const packageName = 'angularjs-extras'
+const moduleName = 'directives'
+const directiveName = 'masonry'
 
 export type MasonryScope = IScope & {
     uid: string
@@ -44,8 +45,8 @@ Stratus.Directives.Masonry = (): StratusDirective => ({
         $attrs: IAttributes
     ) => {
         // Initialize
-        const $ctrl: any = this
-        $scope.uid = uniqueId(snakeCase(name) + '_')
+        // const $ctrl: any = this
+        $scope.uid = safeUniqueId(packageName, moduleName, directiveName)
         Stratus.Instances[$scope.uid] = $scope
         $scope.elementId = $element.elementId || $scope.uid
         $scope.initialized = false
@@ -61,7 +62,7 @@ Stratus.Directives.Masonry = (): StratusDirective => ({
         masonryOptions.horizontalOrder = masonryOptions.horizontalOrder || true
 
         // Load Element
-        $ctrl.init = () => {
+        const init = () => {
             // TODO: According to Masonry docs (https://masonry.desandro.com/) we should be able to pass in $element
             //  instead of the element selector (since that is a jQuery Lite Object), but that doesn't work. The problem
             //  with this method is that this will call on every instance of .grid on the page
@@ -79,7 +80,7 @@ Stratus.Directives.Masonry = (): StratusDirective => ({
         // NOTE: Temporary solution to timing issue is to set timeout of 1 millisecond which seems to force it to load
         // AFTER everything else (put it at the end of the queue)
         setTimeout(() => {
-            $ctrl.init()
+            init()
         }, 1)
 
         // console.log('onInit setup function');

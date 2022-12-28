@@ -2,7 +2,6 @@
 // -----------------
 
 // Runtime
-import {snakeCase, uniqueId} from 'lodash'
 import {Stratus} from '@stratusjs/runtime/stratus'
 import {
     IAugmentedJQuery,
@@ -11,9 +10,12 @@ import {
     IScope
 } from 'angular'
 import {StratusDirective} from './baseNew'
+import {safeUniqueId} from '@stratusjs/core/misc'
 
 // Environment
-const name = 'baseNew'
+const packageName = 'angularjs-extras'
+const moduleName = 'directives'
+const directiveName = 'timestampToDate'
 
 export type TimestampToDateScope = IScope & {
     format?: string
@@ -36,7 +38,7 @@ Stratus.Directives.TimestampToDate = (): StratusDirective => ({
         $attrs: IAttributes,
         ngModel: INgModelController
     ) => {
-        Stratus.Instances[uniqueId(snakeCase(name) + '_')] = $scope
+        Stratus.Instances[safeUniqueId(packageName, moduleName, directiveName)] = $scope
         $scope.format = $scope.format || 'yyyy/MM/dd'
         ngModel.$parsers.push(value => new Date(value).getTime() / 1000)
         ngModel.$formatters.push(value => new Date(value * 1000))

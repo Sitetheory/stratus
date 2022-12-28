@@ -17,7 +17,7 @@ import 'angular-material'
 
 // Stratus Core
 import {cookie} from '@stratusjs/core/environment'
-import {LooseObject} from '@stratusjs/core/misc'
+import {LooseObject, safeUniqueId} from '@stratusjs/core/misc'
 
 export type StratusDirective = ({
     restrict: 'A' | string
@@ -31,7 +31,9 @@ export type StratusDirective = ({
 
 // Environment
 const min = !cookie('env') ? '.min' : ''
-const name = 'baseNew'
+const packageName = 'angularjs-extras'
+const moduleName = 'directives'
+const directiveName = 'baseNew'
 const localPath = '@stratusjs/angularjs-extras/src/directives'
 
 export type BaseNewScope = IScope & {
@@ -58,19 +60,19 @@ Stratus.Directives.BaseNew = (
         ngModel: INgModelController
     ) => {
         // Initialize
-        $scope.uid = uniqueId(snakeCase(name) + '_')
+        $scope.uid = safeUniqueId(packageName, moduleName, directiveName)
         Stratus.Instances[$scope.uid] = $scope
         $scope.elementId = $element.elementId || $scope.uid
         $scope.initialized = false
 
         // Inject CSS
         Stratus.Internals.CssLoader(
-            `${Stratus.BaseUrl}${Stratus.BundlePath}${localPath}${name}${min}.css`
+            `${Stratus.BaseUrl}${Stratus.BundlePath}${localPath}${directiveName}${min}.css`
         ).then(() => $scope.initialized = true)
 
         // Begin
-        console.log(`${name} directive:`, {$scope, $element, $attrs, ngModel})
+        console.log(`${directiveName} directive:`, {$scope, $element, $attrs, ngModel})
     },
     template: '<div id="{{ elementId }}" class="no-template"></div>',
-    // templateUrl: `${Stratus.BaseUrl}${Stratus.BundlePath}${localPath}${name}${min}.html`
+    // templateUrl: `${Stratus.BaseUrl}${Stratus.BundlePath}${localPath}${directiveName}${min}.html`
 })
