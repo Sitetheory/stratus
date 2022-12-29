@@ -8,7 +8,8 @@ import {
     element,
     IAttributes,
     IAugmentedJQuery,
-    IScope
+    IScope,
+    IWindowService
 } from 'angular'
 import {StratusDirective} from './baseNew'
 import {safeUniqueId} from '@stratusjs/core/misc'
@@ -33,7 +34,9 @@ export type SrcScope = IScope & {
 }
 
 // This directive intends to handle binding of a dynamic variable to
-Stratus.Directives.Src = (): StratusDirective => ({
+Stratus.Directives.Src = (
+    $window: IWindowService
+): StratusDirective => ({
     restrict: 'A',
     scope: {
         src: '@src',
@@ -163,7 +166,7 @@ Stratus.Directives.Src = (): StratusDirective => ({
                 el: $element,
                 // Could be replaced with spy: $element.data('spy') ? $document[0].querySelector($element.data('spy')) : $element
                 // TODO need spy examples to test with
-                spy: $element.data('spy') ? element($element.data('spy')) : $element
+                spy: $element.data('spy') ? element($window.document.querySelector($element.data('spy'))) : $element
                 // spy: $element.data('spy') ? Stratus.Select($element.data('spy')) : $element
             }
             Stratus.RegisterGroup.add('OnScroll', $scope.group) // TODO Stratus.RegisterGroup typings needed

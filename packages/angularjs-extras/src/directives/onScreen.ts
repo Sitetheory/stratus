@@ -8,7 +8,8 @@ import {
     element,
     IAttributes,
     IAugmentedJQuery,
-    IScope
+    IScope,
+    IWindowService
 } from 'angular'
 
 // Stratus Core
@@ -24,12 +25,13 @@ export type OnScreenScope = IScope & {
     uid: string
     elementId: string
     initialized: boolean
+    viewPortElement: HTMLElement
 }
 
 // This directive intends to provide basic logic for extending
 // the Stratus Auto-Loader for various contextual uses.
 Stratus.Directives.OnScreen = (
-    // $parse: IParseService
+    $window: IWindowService
 ): StratusDirective => ({
     restrict: 'A',
     scope: {
@@ -57,10 +59,13 @@ Stratus.Directives.OnScreen = (
         $scope.elementId = $attrs.elementId || $scope.uid
         $scope.initialized = false
 
+        const setViewPort = () => $scope.viewPortElement = element(Stratus.Environment.get('viewPort') || $window)[0]
+        setViewPort()
+
         // event can be multiple listeners: reset
         const event: string[] = $attrs.event ? $attrs.event.split(' ') : []
-        const target: IAugmentedJQuery = $attrs.target ? element($attrs.target) : $element
-        let spy: IAugmentedJQuery = $attrs.spy ? element($attrs.spy) : $element
+        const target: IAugmentedJQuery = $attrs.target ? element($window.document.querySelector($attrs.target)) : $element
+        let spy: IAugmentedJQuery = $attrs.spy ? element($window.document.querySelector($attrs.spy)) : $element
         if (!spy.length) {
             spy = $element
         }
@@ -86,7 +91,6 @@ Stratus.Directives.OnScreen = (
 
         // The location on the page that should trigger a reset (removal of all classes). Defaults to 0 (top of page)
         const reset = hydrate($attrs.reset) || 0
-
         // Custom Methods for On/Off Screen
         // TODO: Add Parsing Here
         const onScreen = () => $attrs.onScreen && typeof $attrs.onScreen === 'function' ? $attrs.onScreen() : true
@@ -132,11 +136,14 @@ Stratus.Directives.OnScreen = (
         const calculate = () => {
             // remove all classes when the scroll is all the way back at the top of the page (or the spy is above a
             // specific location specified location)
+            if (isUndefined($scope.viewPortElement)) {
+                setViewPort()
+            }
             if (
                 event.indexOf('reset') !== -1 &&
                 (
                     (reset > 0 && $element.offset().top <= reset) ||
-                    element(Stratus.Environment.get('viewPort') || window).scrollTop() <= 0
+                    $scope.viewPortElement.scrollTop <= 0
                 )
             ) {
                 target.removeClass('on-screen off-screen scroll-up scroll-down reveal conceal')
