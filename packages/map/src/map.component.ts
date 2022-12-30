@@ -1,6 +1,6 @@
 // See https://github.com/angular/components/tree/master/src/google-maps#readme
 
-// Angular Core
+// Runtime
 import {
     AfterViewInit,
     // ChangeDetectorRef,
@@ -13,25 +13,15 @@ import {
     OnInit,
     ViewChild,
 } from '@angular/core'
-
-// External
 import {DomSanitizer} from '@angular/platform-browser'
 import {keys} from 'ts-transformer-keys'
-
-// External Dependencies
-import {
-    Stratus
-} from '@stratusjs/runtime/stratus'
+import {Stratus} from '@stratusjs/runtime/stratus'
 // import {GoogleMap, MapInfoWindow, MapMarker} from '@angular/google-maps'
-import _ from 'lodash'
-import {isJSON} from '@stratusjs/core/misc'
+import {debounce, isArray, isBoolean, isEmpty, isFunction, isNumber, isString} from 'lodash'
+import {isJSON, safeUniqueId} from '@stratusjs/core/misc'
+import {RootComponent} from '../../angular/src/core/root.component'
 
-// Components
-import {
-    RootComponent
-} from '../../angular/src/core/root.component'
-
-// Local Setup
+// Environment
 const packageName = 'map'
 const systemDir = `@stratusjs/${packageName}`
 const localDir = `${Stratus.BaseUrl}${boot.configuration.paths[`${systemDir}/*`].replace(/[^/]*$/, '').replace(/angular\/dist\/$/, 'map/src/')}`
@@ -39,10 +29,6 @@ const moduleName = 'map'
 
 // Static Variables
 const devGoogleMapsKey = 'AIzaSyBAyMH-A99yD5fHQPz7uzqk8glNJYGEqus' // Public dev key as placeholder
-
-type lodashDebounce = (() => void) & {
-    cancel(): void
-}
 
 export interface MarkerSettingsClick {
     action: 'open' | 'function' | ''
@@ -112,7 +98,7 @@ class Watcher {
                     const change = watcher.differ.diff(newValue)
                     if (change) {
                         watcher.action(newValue, change)
-                        // console.info(watcher.path, 'variable changed', _.clone(variable))
+                        // console.info(watcher.path, 'variable changed', clone(variable))
                     }
                 })
             }
@@ -251,8 +237,8 @@ export class MapComponent extends RootComponent implements OnInit, AfterViewInit
     protected storedMarkers: google.maps.Marker[] = []
     private highestMarkerZIndex = 0
     // Debounce holders
-    private resizeDebounce: lodashDebounce
-    private fitMarkerBoundsDebounce: lodashDebounce
+    private resizeDebounce: ReturnType<typeof debounce>
+    private fitMarkerBoundsDebounce: ReturnType<typeof debounce>
 
     constructor(
         private Differ: KeyValueDiffers,
@@ -265,7 +251,7 @@ export class MapComponent extends RootComponent implements OnInit, AfterViewInit
         super()
 
         // Initialization
-        this.uid = _.uniqueId(`sa_${_.snakeCase(moduleName)}_component_`)
+        this.uid = safeUniqueId('sa', moduleName, 'component')
         Stratus.Instances[this.uid] = this
 
         // TODO: Assess & Possibly Remove when the System.js ecosystem is complete
@@ -287,7 +273,7 @@ export class MapComponent extends RootComponent implements OnInit, AfterViewInit
         this.updateWidgetSize()
 
         // Ensure there is at least a Dev key
-        if (_.isEmpty(this.googleMapsKey)) {
+        if (isEmpty(this.googleMapsKey)) {
             this.googleMapsKey = devGoogleMapsKey
         }
         // Warn if website has not provided a Google Maps Api Key
@@ -354,7 +340,7 @@ export class MapComponent extends RootComponent implements OnInit, AfterViewInit
         // console.log('window resized:', this.getParentSize())
         if (!this.resizeDebounce) {
             // Try to update every 150 milliseconds if not currently resizing. Otherwise, wait no longer than 1.5 secs to update
-            this.resizeDebounce = _.debounce(this.resize.bind(this), 150,{leading: false, trailing: true, maxWait: 1500})
+            this.resizeDebounce = debounce(this.resize.bind(this), 150,{leading: false, trailing: true, maxWait: 1500})
         }
         this.resizeDebounce()
     }
@@ -364,7 +350,7 @@ export class MapComponent extends RootComponent implements OnInit, AfterViewInit
         this.updateWidgetSize()
         if (!this.fitMarkerBoundsDebounce) {
             // Try to fitMarkerBounds once within 300 milliseconds if not currently resizing (only if the resizing temporarily stops).
-            this.fitMarkerBoundsDebounce = _.debounce(this.fitMarkerBounds.bind(this), 300,{leading: false, trailing: true})
+            this.fitMarkerBoundsDebounce = debounce(this.fitMarkerBounds.bind(this), 300,{leading: false, trailing: true})
         }
         this.fitMarkerBoundsDebounce()
     }
@@ -425,7 +411,7 @@ export class MapComponent extends RootComponent implements OnInit, AfterViewInit
      * Center and possibly zoom map on current Markers
      */
     public fitMarkerBounds() {
-        // console.info('fitMarkerBounds start', _.clone(this.storedMarkers.length))
+        // console.info('fitMarkerBounds start', clone(this.storedMarkers.length))
         if (this.storedMarkers.length === 1) {
             // If this is the only marker, center it
             // TODO Zoom....?
@@ -433,14 +419,14 @@ export class MapComponent extends RootComponent implements OnInit, AfterViewInit
         } else if (this.storedMarkers.length > 1) {
             // This has multiple markers. Find the balance between all of them
             let bounds = this.getMarkerBounds()
-            // console.info('got map bounds', _.clone(bounds))
+            // console.info('got map bounds', clone(bounds))
             // this.centerAtPosition(bounds.getCenter())
             this.panToPosition(bounds.getCenter())
             this.fitBounds(bounds)
             setTimeout(() => {
                 // console.info('fitting once again')
                 bounds = this.getMarkerBounds()
-                // console.info('got map bounds again', _.clone(bounds))
+                // console.info('got map bounds again', clone(bounds))
                 this.fitBounds(bounds)
             }, 1000) // fit bounds once more a second later
         }
@@ -455,18 +441,18 @@ export class MapComponent extends RootComponent implements OnInit, AfterViewInit
 
     private processOptions() {
         // Sanitize Numbers
-        if (!_.isNumber(this.zoom)) {
+        if (!isNumber(this.zoom)) {
             this.zoom = Number.parseInt(this.zoom, 10)
         }
         if (
-            _.isString(this.defaultIconLabelOriginX) &&
+            isString(this.defaultIconLabelOriginX) &&
             !isNaN(parseFloat(this.defaultIconLabelOriginX as unknown as string)) &&
             isFinite(this.defaultIconLabelOriginX)
         ) {
             this.defaultIconLabelOriginX = Number.parseInt(this.defaultIconLabelOriginX as string, 10)
         }
         if (
-            _.isString(this.defaultIconLabelOriginY) &&
+            isString(this.defaultIconLabelOriginY) &&
             !isNaN(parseFloat(this.defaultIconLabelOriginY as unknown as string)) &&
             isFinite(this.defaultIconLabelOriginY)
         ) {
@@ -474,16 +460,16 @@ export class MapComponent extends RootComponent implements OnInit, AfterViewInit
         }
 
         // Sanitize Booleans
-        if (!_.isBoolean(this.zoomControl)) {
+        if (!isBoolean(this.zoomControl)) {
             this.zoomControl = (this.zoomControl === 'true')
         }
-        if (!_.isBoolean(this.scrollwheel)) {
+        if (!isBoolean(this.scrollwheel)) {
             this.scrollwheel = (this.scrollwheel === 'true')
         }
-        if (!_.isBoolean(this.disableDoubleClickZoom)) {
+        if (!isBoolean(this.disableDoubleClickZoom)) {
             this.disableDoubleClickZoom = (this.disableDoubleClickZoom === 'true')
         }
-        if (!_.isBoolean(this.fullHeight)) {
+        if (!isBoolean(this.fullHeight)) {
             this.fullHeight = (this.fullHeight === 'true')
         }
 
@@ -504,7 +490,7 @@ export class MapComponent extends RootComponent implements OnInit, AfterViewInit
         }
         const fullHeightMinusElementNames = this.fullHeightMinusElements && isJSON(this.fullHeightMinusElements) ?
             JSON.parse(this.fullHeightMinusElements) : null
-        if (_.isArray(fullHeightMinusElementNames)) {
+        if (isArray(fullHeightMinusElementNames)) {
             this.fullHeight = true
             this.fullHeightMinusElementNames = fullHeightMinusElementNames
         }
@@ -514,12 +500,12 @@ export class MapComponent extends RootComponent implements OnInit, AfterViewInit
      * With currently input this.markers, create markers on the Map
      */
     private processProvidedMarkersPath() {
-        if (_.isString(this.markers)) {
+        if (isString(this.markers)) {
             // console.info('the test var markers is string', this.markers)
             // Watch for any changes to this.markers as we treat it as a variable reference
             this.watcher.watch(this.window, this.markers, (newValue) => {
-                // console.info(this.markers, 'variable changed', _.clone(newValue))
-                if (_.isArray(newValue)) {
+                // console.info(this.markers, 'variable changed', clone(newValue))
+                if (isArray(newValue)) {
                     // We're just assuming that this is a MarkerSettings[] or Marker[] Need better way of checking?
                     this.removeMarkers()
                     newValue.forEach((mark: MarkerSettings | google.maps.Marker) => {
@@ -528,7 +514,7 @@ export class MapComponent extends RootComponent implements OnInit, AfterViewInit
                     this.fitMarkerBounds()
                 }
             })
-        } else if (_.isArray(this.markers)) {
+        } else if (isArray(this.markers)) {
             // console.info('the test var markers is a already prepared array', this.markers)
             // TODO need to verify its MarkSettings and not LatLng
             this.markers.forEach((mark: MarkerSettings) => {
@@ -541,13 +527,13 @@ export class MapComponent extends RootComponent implements OnInit, AfterViewInit
     }
 
     private processProvidedCallback() {
-        if (_.isString(this.callback)) {
+        if (isString(this.callback)) {
             // This callback is probably reference a path to a function. let's grab it
             this.callback = this.watcher.getFromPath(window, this.callback)
             // We'll use this below
         }
 
-        if (_.isFunction(this.callback)) {
+        if (isFunction(this.callback)) {
             // We can only assume that this is a function created properly
             this.callback(this)
         }
@@ -566,7 +552,7 @@ export class MapComponent extends RootComponent implements OnInit, AfterViewInit
 
     private fitBounds(latLngBounds: google.maps.LatLngBounds) {
         // TODO padding?
-        // console.info('setting bounds to', _.clone(latLngBounds))
+        // console.info('setting bounds to', clone(latLngBounds))
         this.map.fitBounds(latLngBounds)
     }
 
@@ -672,9 +658,9 @@ export class MapComponent extends RootComponent implements OnInit, AfterViewInit
         } else {
             marker.icon = marker.icon || this.defaultIcon
             if (
-                _.isString(marker.icon) &&
-                _.isNumber(this.defaultIconLabelOriginX) &&
-                _.isNumber(this.defaultIconLabelOriginY)
+                isString(marker.icon) &&
+                isNumber(this.defaultIconLabelOriginX) &&
+                isNumber(this.defaultIconLabelOriginY)
             ) {
                 marker.icon = {
                     url: marker.icon,
@@ -690,9 +676,9 @@ export class MapComponent extends RootComponent implements OnInit, AfterViewInit
             marker.iconHover = marker.iconHover || this.defaultIconHover
             if (marker.iconHover) {
                 if (
-                    _.isString(marker.iconHover) &&
-                    _.isNumber(this.defaultIconLabelOriginX) &&
-                    _.isNumber(this.defaultIconLabelOriginY)
+                    isString(marker.iconHover) &&
+                    isNumber(this.defaultIconLabelOriginX) &&
+                    isNumber(this.defaultIconLabelOriginY)
                 ) {
                     marker.iconHover = {
                         url: marker.iconHover,
@@ -740,7 +726,7 @@ export class MapComponent extends RootComponent implements OnInit, AfterViewInit
     mapClick(marker: google.maps.Marker, markerSetting: MarkerSettings) {
         // TODO need other options other than this marker popup
         let clickOptions = markerSetting.click || {action: ''}
-        if (_.isFunction(clickOptions)) {
+        if (isFunction(clickOptions)) {
             clickOptions = {
                 action: 'function',
                 function: clickOptions
