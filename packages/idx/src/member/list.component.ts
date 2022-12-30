@@ -132,7 +132,7 @@ Stratus.Components.IdxMemberList = {
             const urlOptions: { Search?: any } = {}
             /* if ($scope.urlLoad) {
               // first set the UrlOptions via defaults (cloning so it can't be altered)
-              Idx.setUrlOptions('Search', JSON.parse(JSON.stringify($ctrl.defaultOptions)))
+              Idx.setUrlOptions('Search', JSON.parse(JSON.stringify(defaultOptions)))
               // Load Options from the provided URL settings
               urlOptions = Idx.getOptionsFromUrl()
               // If a specific listing is provided, be sure to pop it up as well
@@ -222,7 +222,7 @@ Stratus.Components.IdxMemberList = {
 
                 // Display the URL options in the address bar
                 /* if (updateUrl) {
-                  Idx.refreshUrlOptions($ctrl.defaultOptions)
+                  Idx.refreshUrlOptions(defaultOptions)
                 } */
                 Idx.emit('searching', $scope, clone($scope.query))
 
@@ -391,7 +391,7 @@ Stratus.Components.IdxMemberList = {
                     .then(() => {
                     }, () => {
                         // Idx.setUrlOptions('Listing', {})
-                        // Idx.refreshUrlOptions($ctrl.defaultOptions)
+                        // Idx.refreshUrlOptions(defaultOptions)
                         // Revery page title back to what it was
                         Idx.setPageTitle()
                         // Let's destroy it to save memory

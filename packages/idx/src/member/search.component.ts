@@ -258,7 +258,7 @@ Stratus.Components.IdxMemberSearch = {
                 .then(() => {
                 }, () => {
                     // IDX.setUrlOptions('Listing', {})
-                    // IDX.refreshUrlOptions($ctrl.defaultOptions)
+                    // IDX.refreshUrlOptions(defaultOptions)
                     // Revery page title back to what it was
                     // IDX.setPageTitle()
                     // Let's destroy it to save memory

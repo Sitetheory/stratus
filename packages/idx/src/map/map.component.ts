@@ -319,7 +319,7 @@ Stratus.Components.IdxMap = {
             $scope.mapMarkers = markers
         }
 
-        /*$scope.stopWatchingModel = $scope.$watch('$ctrl.ngModel', (data: any) => {
+        /*$scope.stopWatchingModel = $scope.$watch('ngModel', (data: any) => {
             // TODO might wanna check something else just to not import Model
             if (data instanceof Model && data !== $scope.model) {
                 $scope.model = data

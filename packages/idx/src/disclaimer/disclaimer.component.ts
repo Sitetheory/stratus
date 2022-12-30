@@ -102,7 +102,7 @@ Stratus.Components.IdxDisclaimer = {
             })
 
             $scope.$watch('$ctrl.hideOnDuplicate', (hideOnDuplicate) => {
-                // console.log('$ctrl.hideOnDuplicate raw is', hideOnDuplicate, '$attrs.hideOnDuplicate is', $attrs.hideOnDuplicate)
+                // console.log('hideOnDuplicate raw is', hideOnDuplicate, '$attrs.hideOnDuplicate is', $attrs.hideOnDuplicate)
                 if (typeof $attrs.hideOnDuplicate !== 'undefined') {
                     $scope.alwaysShow = false
                     if (hideOnDuplicate !== true) {
@@ -117,7 +117,7 @@ Stratus.Components.IdxDisclaimer = {
                     $scope.$applyAsync(() => {
                         $scope.hideMe = false
                         if ($scope.hideOnDuplicate) {
-                            // console.log('$ctrl.hideOnDuplicate detects true looking for main disclaimer')
+                            // console.log('hideOnDuplicate detects true looking for main disclaimer')
                             // check if there is a duplicate disclaimer showing
                             const instances = Idx.getDisclaimerInstance()
                             Object.keys(instances).forEach((elementId: string) => {
@@ -166,7 +166,7 @@ Stratus.Components.IdxDisclaimer = {
                 return
             }
 
-            const stopWatchingInitNow = $scope.$watch('$ctrl.initNow', (initNowCtrl: boolean) => {
+            const stopWatchingInitNow = $scope.$watch('initNow', (initNowCtrl: boolean) => {
                 // console.log('CAROUSEL initNow called later')
                 if (initNowCtrl !== true) {
                     return
