@@ -664,7 +664,7 @@ Stratus.Components.IdxPropertySearch = {
                 }
                 $scope.throttledSearch()
             } else {
-                // console.log('comparing last', cloneDeep($ctrl.lastQuery))
+                // console.log('comparing last', cloneDeep(lastQuery))
                 // console.log('comparing current', cloneDeep($scope.options.query))
                 if ($scope.hasQueryChanged()) {
                     lastQuery = cloneDeep($scope.options.query)
@@ -752,7 +752,7 @@ Stratus.Components.IdxPropertySearch = {
                 }, () => {
                     $scope.validateOfficeGroups()
                     // IDX.setUrlOptions('Listing', {})
-                    // IDX.refreshUrlOptions($ctrl.defaultOptions)
+                    // IDX.refreshUrlOptions(defaultOptions)
                     // Revery page title back to what it was
                     // IDX.setPageTitle()
                     // Let's destroy it to save memory
