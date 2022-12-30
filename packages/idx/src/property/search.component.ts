@@ -10,6 +10,7 @@ import {
     clone,
     cloneDeep,
     extend,
+    includes,
     isArray,
     isEmpty,
     isEqual,
@@ -86,6 +87,7 @@ export type IdxPropertySearchScope = IdxSearchScope & {
     displayOfficeGroupSelector(searchTerm?: string, editIndex?: number, ev?: any): void
     getMLSVariables(reset?: boolean): MLSService[]
     hasQueryChanged(): boolean
+    /** @deprecated use _.includes */
     inArray(item: any, array: any[]): boolean
     selectDefaultListingType(listingGroup?: string): void
     setQuery(newQuery?: CompileFilterOptions): void
@@ -391,7 +393,7 @@ Stratus.Components.IdxPropertySearch = {
                 return
             }
 
-            const stopWatchingInitNow = $scope.$watch('$ctrl.initNow', (initNowCtrl: boolean) => {
+            const stopWatchingInitNow = $scope.$watch('initNow', (initNowCtrl: boolean) => {
                 // console.log('CAROUSEL initNow called later')
                 if (initNowCtrl !== true) {
                     return
@@ -404,16 +406,8 @@ Stratus.Components.IdxPropertySearch = {
         }
 
         $scope.$watch('options.query.where.ListingType', () => {
-            // on load this isn't defined yet
-            if (typeof $scope.options === 'undefined' || typeof $scope.options.query === 'undefined' ) {
-                return
-            }
-            // TODO: Consider Better solution? I just added the check to see if $scope.options.query is set
-            // because there are cases where $scope.options.query is not defined (null). This happens on admin
-            // edit page load  for a new record where nothing has been set on a page yet.
-            // Davis: removed check for $scope.options.query.ListingType as if it's not an Array will create it
-            if ($scope.options.query && $scope.options.query.where && $scope.options.selection.ListingType.list) {
-                if (!Object.prototype.hasOwnProperty.call($scope.options.query.where, 'ListingType')) {
+            if ($scope.options?.query?.where && $scope.options?.selection?.ListingType?.list) {
+                if (!$scope.options?.query?.where?.ListingType) {
                     $scope.options.query.where.ListingType = []
                 }
 
@@ -494,17 +488,8 @@ Stratus.Components.IdxPropertySearch = {
             await $q.all(promises)
         }
 
-        /**
-         * If element exists in Array shortcut helper
-         * TODO move to global reference
-         */
-        $scope.inArray = (item: any, array: any[]): boolean => {
-            if (!isArray(array)) {
-                // console.warn('Array undefined, cannot search for', item)
-                return false
-            }
-            return (array.indexOf(item) !== -1)
-        }
+        /** @deprecated use _.includes */
+        $scope.inArray = (item: any, array: any[]) => includes(array, item)
 
         /**
          * TODO move to global reference

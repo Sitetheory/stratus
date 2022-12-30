@@ -78,7 +78,7 @@
 
                     <div data-layout="row" data-ng-show="!options.forRent" data-layout-align="space-around center" aria-label="Listing Status">
                         <md-button class="md-raised font-primary"
-                                   data-ng-class="{'md-primary': inArray('Active', options.query.where.Status)}"
+                                   data-ng-class="{'md-primary': _.includes(options.query.where.Status, 'Active')}"
                                    data-ng-click="options.query.where.Status = ['Active', 'Contract'];"
                                    aria-label="For Sale"
                                    data-md-prevent-menu-close
@@ -86,7 +86,7 @@
                             For Sale
                         </md-button>
                         <md-button class="md-raised font-primary"
-                                   data-ng-class="{'md-primary': inArray('Closed', options.query.where.Status)}"
+                                   data-ng-class="{'md-primary': _.includes(options.query.where.Status, 'Closed')}"
                                    data-ng-click="options.query.where.Status = ['Closed']"
                                    aria-label="Sold"
                                    data-md-prevent-menu-close
@@ -95,10 +95,10 @@
                         </md-button>
                     </div>
 
-                    <div data-ng-show="!options.forRent && inArray('Active', options.query.where.Status)">
+                    <div data-ng-show="!options.forRent && _.includes(options.query.where.Status, 'Active')">
                         <md-checkbox
                                 class="show-under-contract font-secondary"
-                                data-ng-checked="inArray('Contract', options.query.where.Status)"
+                                data-ng-checked="_.includes(options.query.where.Status, 'Contract')"
                                 data-ng-click="toggleArrayElement('Contract', options.query.where.Status)"
                                 aria-label="Under Contract"
                                 data-md-prevent-menu-close
@@ -161,7 +161,7 @@
                                 data-ng-repeat="listType in ::options.selection.ListingType.All"
                                 class="md-raised font-primary"
                                 data-ng-show="options.forRent === listType.lease && options.selection.ListingType.group[listType.group]"
-                                data-ng-class="{'md-primary': inArray(listType.value, options.query.where.ListingType)}"
+                                data-ng-class="{'md-primary': _.includes(options.query.where.ListingType, listType.value)}"
                                 data-ng-click="toggleArrayElement(listType.value, options.query.where.ListingType)"
                                 aria-label="{{::listType.name}}"
                                 data-md-prevent-menu-close
