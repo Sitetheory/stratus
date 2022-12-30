@@ -1,16 +1,14 @@
-// IdxPropertyDetailsSubSection Component
-// @stratusjs/idx/property/details-sub-section.component
-// <stratus-idx-property-details-sub-section>
-// --------------
+/**
+ * @file IdxPropertyDetailsSubSection Component @stratusjs/idx/property/details-sub-section.component
+ * @example <stratus-idx-property-details-sub-section>
+ */
 
 // Runtime
 import {camelCase, forEach, get, isArray, isString} from 'lodash'
 import {Stratus} from '@stratusjs/runtime/stratus'
 import {IAttributes, IScope} from 'angular'
 import {Model} from '@stratusjs/angularjs/services/model'
-
-// Stratus Dependencies
-import {isJSON, LooseFunction, LooseObject, safeUniqueId} from '@stratusjs/core/misc'
+import {isJSON, safeUniqueId} from '@stratusjs/core/misc'
 import {cookie} from '@stratusjs/core/environment'
 
 // Environment
@@ -45,7 +43,7 @@ interface SubSectionOptionItems {
     [key: string]: string | SubSectionOptionItem
 }
 
-export type IdxPropertyDetailsSubSectionScope = IScope & LooseObject<LooseFunction> & {
+export type IdxPropertyDetailsSubSectionScope = IScope & {
     uid: string
     elementId: string
     initialized: boolean

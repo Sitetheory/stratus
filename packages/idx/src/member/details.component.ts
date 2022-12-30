@@ -1,7 +1,7 @@
-// IdxMemberDetails Component
-// @stratusjs/idx/member/details.component
-// <stratus-idx-member-details>
-// --------------
+/**
+ * @file IdxMemberDetails Component @stratusjs/idx/member/details.component
+ * @example <stratus-idx-member-details>
+ */
 
 // Runtime
 import {extend, isArray} from 'lodash'
@@ -9,19 +9,15 @@ import {Stratus} from '@stratusjs/runtime/stratus'
 import {IAttributes, ILocationService, ISCEService, IQService} from 'angular'
 import 'angular-material'
 import 'angular-sanitize'
-
-// Services
-import '@stratusjs/idx/idx'
-// tslint:disable-next-line:no-duplicate-imports
 import {CompileFilterOptions, IdxDetailsScope, IdxEmitter, IdxService, Member} from '@stratusjs/idx/idx'
-
-// Stratus Dependencies
 import {isJSON, LooseObject, safeUniqueId} from '@stratusjs/core/misc'
 import {cookie} from '@stratusjs/core/environment'
 
-// Custom Filters
-import 'stratus.filters.math'
-import 'stratus.filters.moment'
+// Stratus Preload
+import '@stratusjs/angularjs-extras/filters/math'
+import '@stratusjs/angularjs-extras/filters/moment'
+// tslint:disable-next-line:no-duplicate-imports
+import '@stratusjs/idx/idx'
 
 // Environment
 const min = !cookie('env') ? '.min' : ''
@@ -32,6 +28,10 @@ const componentName = 'details'
 const localDir = `${Stratus.BaseUrl}${Stratus.DeploymentPath}@stratusjs/${packageName}/src/${moduleName}/`
 
 export type IdxMemberDetailsScope = IdxDetailsScope<Member> & LooseObject & { // FIXME do not extend LooseObject
+    devLog(item1?: any, item2?: any): void
+    fetchMember(): Promise<void>
+    getMLSName(): string
+    individualMember(): Promise<void>
 }
 
 Stratus.Components.IdxMemberDetails = {
@@ -97,7 +97,7 @@ Stratus.Components.IdxMemberDetails = {
             // console.log(this.uid)
 
             console.log('options', $scope.options, $attrs)
-            $scope.fetchMember()
+            $scope.fetchMember().then()
             Idx.emit('init', $scope)
         }
 

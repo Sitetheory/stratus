@@ -1,5 +1,7 @@
-// Idx Service
-// @stratusjs/idx/idx
+/**
+ * @file Idx Service @stratusjs/idx/idx
+ * @example import '@stratusjs/idx/idx'
+ */
 
 // Runtime
 import {clone, extend, get, isArray, isDate, isEmpty, isEqual, isNumber, isObject, isPlainObject, isString, uniqueId} from 'lodash'
@@ -17,17 +19,8 @@ import {
     IQService,
     IWindowService
 } from 'angular'
-
-// Services
-import '@stratusjs/angularjs/services/model' // Needed as $provider
-// tslint:disable-next-line:no-duplicate-imports
 import {Model, ModelOptions, ModelSyncOptions} from '@stratusjs/angularjs/services/model' // Needed as Class
-import '@stratusjs/angularjs/services/collection' // Needed as $provider
-// tslint:disable-next-line:no-duplicate-imports
 import {Collection, CollectionSyncOptions} from '@stratusjs/angularjs/services/collection' // Needed as Class
-import '@stratusjs/idx/listTrac'
-
-// Stratus Dependencies
 import {
     isJSON,
     LooseFunction,
@@ -39,14 +32,13 @@ import {IdxMapScope} from '@stratusjs/idx/map/map.component'
 import {IdxPropertyListScope} from '@stratusjs/idx/property/list.component'
 import {IdxPropertySearchScope} from '@stratusjs/idx/property/search.component'
 import {IdxMemberListScope} from '@stratusjs/idx/member/list.component'
-// import {IdxPropertyDetailsScope} from '@stratusjs/idx/property/details.component'
-// import {IdxMapScope} from '@stratusjs/idx/map.component'
 
-
-// Environment
-// const min = !cookie('env') ? '.min' : ''
-// There is not a very consistent way of pathing in Stratus at the moment
-// const localDir = `/${boot.bundle}node_modules/@stratusjs/${packageName}/src/${moduleName}/`
+// Stratus Preload
+// tslint:disable-next-line:no-duplicate-imports
+import '@stratusjs/angularjs/services/model' // Needed as $provider
+// tslint:disable-next-line:no-duplicate-imports
+import '@stratusjs/angularjs/services/collection' // Needed as $provider
+import '@stratusjs/idx/listTrac'
 
 export interface IdxService {
     // Variables
@@ -348,6 +340,7 @@ export interface MLSService {
     }
 }
 
+/** Sitetheory contact information */
 export interface WidgetContact {
     name: string,
     emails: {
@@ -367,6 +360,7 @@ export interface WidgetContact {
     }
 }
 
+/** Sitetheory provided integrations */
 export interface WidgetIntegrations {
     analytics?: {
         googleAnalytics?: {
@@ -383,6 +377,7 @@ export interface WidgetIntegrations {
     }
 }
 
+/** Sitetheory provided preferences */
 interface IdxSharedValue {
     contactUrl: string | null,
     contactCommentVariable: string | null,
@@ -399,6 +394,7 @@ interface Session {
     contacts: WidgetContact[]
 }
 
+/** Sitetheory authentication token format */
 interface TokenResponse {
     data: {
         contact?: {

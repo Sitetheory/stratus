@@ -30,10 +30,10 @@
     "yarn": ">= 1.21.1"
   },
   "dependencies": {
-    "@stratusjs/angular": "^0.5.4",
+    "@stratusjs/angular": "^0.5.5",
     "@stratusjs/angularjs": "^0.6.2",
-    "@stratusjs/angularjs-extras": "^0.12.2",
-    "@stratusjs/map": "^0.5.0",
+    "@stratusjs/angularjs-extras": "^0.12.8",
+    "@stratusjs/map": "^0.5.1",
     "@stratusjs/runtime": "^0.12.1",
     "@stratusjs/swiper": "^1.1.0"
   }

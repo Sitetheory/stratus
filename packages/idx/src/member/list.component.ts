@@ -12,8 +12,6 @@ import {
 } from 'angular'
 import 'angular-material'
 import 'angular-sanitize'
-import '@stratusjs/idx/idx'
-// tslint:disable-next-line:no-duplicate-imports
 import {
     CompileFilterOptions,
     IdxEmitter,
@@ -21,15 +19,15 @@ import {
     IdxService,
     Member
 } from '@stratusjs/idx/idx'
-
-// Stratus Dependencies
 import {Collection} from '@stratusjs/angularjs/services/collection' // Needed as Class
 import {isJSON, LooseObject, safeUniqueId} from '@stratusjs/core/misc'
 import {cookie} from '@stratusjs/core/environment'
 
-// Component Preload
-import '@stratusjs/idx/member/details.component'
+// Stratus Preload
+// tslint:disable-next-line:no-duplicate-imports
+import '@stratusjs/idx/idx'
 import '@stratusjs/idx/disclaimer/disclaimer.component'
+import '@stratusjs/idx/member/details.component'
 
 // Environment
 const min = !cookie('env') ? '.min' : ''

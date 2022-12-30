@@ -14,8 +14,6 @@ import {
     IQService,
     IWindowService
 } from 'angular'
-import '@stratusjs/idx/idx'
-// tslint:disable-next-line:no-duplicate-imports
 import {
     IdxEmitter,
     IdxSearchScope,
@@ -23,14 +21,14 @@ import {
     Office,
     SelectionGroup
 } from '@stratusjs/idx/idx'
-
-// Stratus Dependencies
 import {Collection} from '@stratusjs/angularjs/services/collection' // Needed as Class
 import {isJSON, safeUniqueId} from '@stratusjs/core/misc'
 import {cookie} from '@stratusjs/core/environment'
 import {IdxOfficeListScope} from '@stratusjs/idx/office/list.component'
 
-// Component Preload
+// Stratus Preload
+// tslint:disable-next-line:no-duplicate-imports
+import '@stratusjs/idx/idx'
 // tslint:disable-next-line:no-duplicate-imports
 import '@stratusjs/idx/office/list.component'
 import '@stratusjs/idx/disclaimer/disclaimer.component'

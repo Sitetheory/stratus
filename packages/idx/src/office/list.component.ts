@@ -17,12 +17,8 @@ import {
     IQService,
     IWindowService
 } from 'angular'
-
-// Angular 1 Modules
 import 'angular-material'
 import 'angular-sanitize'
-import '@stratusjs/idx/idx'
-// tslint:disable-next-line:no-duplicate-imports
 import {
     CompileFilterOptions,
     IdxEmitter,
@@ -30,14 +26,13 @@ import {
     IdxService,
     Office
 } from '@stratusjs/idx/idx'
-
-// Stratus Dependencies
-import {Collection} from '@stratusjs/angularjs/services/collection' // Needed as Class
+import {Collection} from '@stratusjs/angularjs/services/collection'
 import {isJSON, LooseObject, safeUniqueId} from '@stratusjs/core/misc'
 import {cookie} from '@stratusjs/core/environment'
 
-// Component Preload
-// import '@stratusjs/idx/office/details.component'
+// Stratus Preload
+// tslint:disable-next-line:no-duplicate-imports
+import '@stratusjs/idx/idx'
 import '@stratusjs/idx/disclaimer/disclaimer.component'
 
 // Environment

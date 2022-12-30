@@ -5,7 +5,8 @@
  */
 
 // Runtime
-import _, {
+import * as lodashRaw from 'lodash'
+import {
     clone,
     cloneDeep,
     extend,
@@ -20,10 +21,6 @@ import _, {
 import {Stratus} from '@stratusjs/runtime/stratus'
 import {element, material, IAttributes, ITimeoutService, IQService, IWindowService} from 'angular'
 import 'angular-material'
-
-// Services
-import '@stratusjs/idx/idx'
-// tslint:disable-next-line:no-duplicate-imports
 import {
     CompileFilterOptions,
     IdxComponentScope,
@@ -35,18 +32,19 @@ import {
     WhereOptions
 } from '@stratusjs/idx/idx'
 import {IdxPropertyListScope} from '@stratusjs/idx/property/list.component'
-
-// Stratus Dependencies
 import {isJSON, LooseObject, safeUniqueId} from '@stratusjs/core/misc'
 import {cookie} from '@stratusjs/core/environment'
-// FIXME should we be renaming the old 'stratus.directives' variables to something else now that we're @stratusjs?
-import 'stratus.directives.stringToNumber'
-import 'stratus.filters.numeral'
 
-// Component Preload
+// Stratus Preload
+import '@stratusjs/angularjs-extras/directives/stringToNumber'
+import '@stratusjs/angularjs-extras/filters/numeral'
+// tslint:disable-next-line:no-duplicate-imports
+import '@stratusjs/idx/idx'
+import '@stratusjs/idx/office/list.component'
 // tslint:disable-next-line:no-duplicate-imports
 import '@stratusjs/idx/office/search.component'
-import '@stratusjs/idx/office/list.component'
+
+
 
 // Environment
 const min = !cookie('env') ? '.min' : ''
@@ -81,6 +79,7 @@ export type IdxPropertySearchScope = IdxSearchScope & {
     displayFilterFullHeight: boolean
     variableSyncing: object | any
     filterMenu?: material.IPanelRef & any // material.IPanelRef // disabled because we need to set reposition()
+    _: typeof lodashRaw
 
     // Functions
     arrayIntersect(itemArray: any[], array: any[]): boolean
@@ -201,10 +200,9 @@ Stratus.Components.IdxPropertySearch = {
         Idx: IdxService,
     ) {
         // Initialize
-        const $ctrl = this
         $scope.uid = safeUniqueId(packageName, moduleName, componentName)
         $scope.elementId = $attrs.elementId || $scope.uid
-        $scope._ = _
+        $scope._ = lodashRaw
         Stratus.Instances[$scope.elementId] = $scope
         $scope.localDir = localDir
         if ($attrs.tokenUrl) {

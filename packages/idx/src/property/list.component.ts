@@ -10,13 +10,7 @@ import {Stratus} from '@stratusjs/runtime/stratus'
 import {element, material, IAnchorScrollService, IAttributes, ISCEService, ITimeoutService, IQService, IWindowService} from 'angular'
 import 'angular-material'
 import 'angular-sanitize'
-
-// Angular+ Modules
 import {MarkerSettings} from '@stratusjs/map/map.component'
-
-// Services
-import '@stratusjs/idx/idx'
-// tslint:disable-next-line:no-duplicate-imports
 import {
     CompileFilterOptions,
     IdxEmitter,
@@ -28,20 +22,17 @@ import {
     UrlWhereOptions,
     UrlsOptionsObject
 } from '@stratusjs/idx/idx'
-
-// Stratus Dependencies
 import {Collection} from '@stratusjs/angularjs/services/collection' // Needed as Class
-
 import {isJSON, safeUniqueId} from '@stratusjs/core/misc'
 import {cookie} from '@stratusjs/core/environment'
 
-// Stratus Directives
-import 'stratus.directives.src'
-
-// Component Preload
+// Stratus Preload
+import '@stratusjs/angularjs-extras/directives/src'
 import '@stratusjs/idx/disclaimer/disclaimer.component'
-import '@stratusjs/idx/property/details.component'
+// tslint:disable-next-line:no-duplicate-imports
+import '@stratusjs/idx/idx'
 import '@stratusjs/idx/map/map.component'
+import '@stratusjs/idx/property/details.component'
 
 // Environment
 const min = !cookie('env') ? '.min' : ''

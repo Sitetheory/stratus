@@ -1,20 +1,20 @@
-// IdxDisclaimer Component
-// @stratusjs/idx/disclaimer/disclaimer.component
-// <stratus-idx-disclaimer>
-// --------------
+/**
+ * @file IdxDisclaimer Component @stratusjs/idx/disclaimer/disclaimer.component
+ * @example <stratus-idx-disclaimer>
+ */
 
 // Runtime
 import {isArray, isEmpty, isNumber, isString, isUndefined} from 'lodash'
 import {Stratus} from '@stratusjs/runtime/stratus'
 import {IAttributes, ISCEService} from 'angular'
-
-// Stratus Dependencies
 import {isJSON, safeUniqueId} from '@stratusjs/core/misc'
 import {cookie} from '@stratusjs/core/environment'
-import '@stratusjs/idx/idx'
-// tslint:disable-next-line:no-duplicate-imports
 import {IdxComponentScope, IdxEmitter, IdxService, MLSService} from '@stratusjs/idx/idx'
 import moment from 'moment'
+
+// Stratus Preload
+// tslint:disable-next-line:no-duplicate-imports
+import '@stratusjs/idx/idx'
 
 // Environment
 const min = !cookie('env') ? '.min' : ''
@@ -56,14 +56,12 @@ Stratus.Components.IdxDisclaimer = {
         modificationTimestamp: '=',
     },
     controller(
-        // $anchorScroll: IAnchorScrollService,
         $attrs: IAttributes,
         $sce: ISCEService,
         $scope: IdxDisclaimerScope,
         Idx: IdxService,
     ) {
         // Initialize
-        const $ctrl = this
         $scope.uid = safeUniqueId(packageName, moduleName, componentName)
         Stratus.Instances[$scope.uid] = $scope
         $scope.elementId = $attrs.elementId || $scope.uid
@@ -76,6 +74,8 @@ Stratus.Components.IdxDisclaimer = {
         // FIXME can later use this for last time checks
         $scope.alwaysShow = typeof $attrs.hideOnDuplicate === 'undefined'
         Stratus.Internals.CssLoader(`${localDir}${$attrs.template || componentName}.component${min}.css`).then()
+
+        let mlsVariables: MLSService[]
 
         /**
          * All actions that happen first when the component loads
@@ -152,7 +152,7 @@ Stratus.Components.IdxDisclaimer = {
             Idx.emit('init', $scope)
         }
 
-        $ctrl.$onInit = () => {
+        this.$onInit = () => {
             $scope.Idx = Idx
 
             let initNow = true
@@ -166,7 +166,7 @@ Stratus.Components.IdxDisclaimer = {
                 return
             }
 
-            $ctrl.stopWatchingInitNow = $scope.$watch('$ctrl.initNow', (initNowCtrl: boolean) => {
+            const stopWatchingInitNow = $scope.$watch('$ctrl.initNow', (initNowCtrl: boolean) => {
                 // console.log('CAROUSEL initNow called later')
                 if (initNowCtrl !== true) {
                     return
@@ -174,7 +174,7 @@ Stratus.Components.IdxDisclaimer = {
                 if (!$scope.initialized) {
                     init().then()
                 }
-                $ctrl.stopWatchingInitNow()
+                stopWatchingInitNow()
             })
         }
 
@@ -182,8 +182,8 @@ Stratus.Components.IdxDisclaimer = {
          * @param reset - set true to force reset
          */
         $scope.getMLSVariables = (reset?: boolean): MLSService[] => {
-            if (!$ctrl.mlsVariables || reset) {
-                $ctrl.mlsVariables = []
+            if (!mlsVariables || reset) {
+                mlsVariables = []
                 let mlsServicesRequested: number[] = null
                 // Ensure we are only requesting the services we are using
                 if (
@@ -199,10 +199,10 @@ Stratus.Components.IdxDisclaimer = {
                     mlsServicesRequested = $scope.service
                 }
                 Idx.getMLSVariables(mlsServicesRequested).forEach((service: MLSService) => {
-                    $ctrl.mlsVariables[service.id] = service
+                    mlsVariables[service.id] = service
                 })
             }
-            return $ctrl.mlsVariables
+            return mlsVariables
         }
 
         /**
@@ -222,8 +222,8 @@ Stratus.Components.IdxDisclaimer = {
                 } else if (Idx.getLastSessionTime()) {
                     singleDisclaimer += `Last checked ${moment(Idx.getLastSessionTime()).format('M/D/YY')}. `
                 }
-                if ($ctrl.modificationTimestamp) {
-                    singleDisclaimer += `Listing last updated ${moment($ctrl.modificationTimestamp).format('M/D/YY h:mm a')}. `
+                if ($scope.modificationTimestamp) {
+                    singleDisclaimer += `Listing last updated ${moment($scope.modificationTimestamp).format('M/D/YY h:mm a')}. `
                 } /*else {
                     console.log('no mod time!')
                 }*/
