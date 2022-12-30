@@ -243,9 +243,9 @@ Stratus.Components.IdxPropertySearch = {
             $scope.displayFilterFullHeight = $attrs.displayFilterFullHeight && isJSON($attrs.displayFilterFullHeight) ?
                 JSON.parse($attrs.displayFilterFullHeight) : false
             $scope.filterMenu = null
-            $scope.options.forRent = $scope.options.forRent || false
-            $scope.options.agentGroups = $scope.options.agentGroups || []
-            // $scope.options.officeGroups = $scope.options.officeGroups || []
+            $scope.options.forRent ||= false
+            $scope.options.agentGroups ??= []
+            // $scope.options.officeGroups ??= []
 
             $scope.options.officeGroups =
                 ($scope.options.officeGroups && isString($scope.options.officeGroups) && isJSON($scope.options.officeGroups)
@@ -256,9 +256,9 @@ Stratus.Components.IdxPropertySearch = {
                     ) || []
 
             // Set default queries
-            $scope.options.query = $scope.options.query || {}
-            $scope.options.query.where = $scope.options.query.where || {}
-            $scope.options.query.service = $scope.options.query.service || []
+            $scope.options.query ??= {}
+            $scope.options.query.where ??= {}
+            $scope.options.query.service ??= []
 
             // $scope.setQuery($scope.options.query)
             $scope.setWhere($scope.options.query.where)
@@ -280,48 +280,48 @@ Stratus.Components.IdxPropertySearch = {
             }, 1000)
 
             // Set default selections TODO may need some more universally set options to be able to use
-            $scope.options.selection = $scope.options.selection || {}
-            $scope.options.selection.Bedrooms = $scope.options.selection.Bedrooms || [
+            $scope.options.selection ??= {}
+            $scope.options.selection.Bedrooms ??= [
                 {name: '1+', value: 1},
                 {name: '2+', value: 2},
                 {name: '3+', value: 3},
                 {name: '4+', value: 4},
                 {name: '5+', value: 5}
             ]
-            $scope.options.selection.Bathrooms = $scope.options.selection.Bathrooms || [
+            $scope.options.selection.Bathrooms ??= [
                 {name: '1+', value: 1},
                 {name: '2+', value: 2},
                 {name: '3+', value: 3},
                 {name: '4+', value: 4},
                 {name: '5+', value: 5}
             ]
-            $scope.options.selection.order = $scope.options.selection.order || [
+            $scope.options.selection.order ??= [
                 {name: 'Highest Price', value: '-BestPrice'},
                 {name: 'Lowest Price', value: 'BestPrice'},
                 {name: 'Recently Updated', value: '-ModificationTimestamp'},
                 {name: 'Recently Sold', value: '-CloseDate'},
                 {name: 'Status', value: ['Status', '-BestPrice']}
             ]
-            $scope.options.selection.Status = $scope.options.selection.Status || {}
-            $scope.options.selection.Status.default = $scope.options.selection.Status.default || {
+            $scope.options.selection.Status ??= {}
+            $scope.options.selection.Status.default ??= {
                 Sale: ['Active', 'Contract'],
                 Lease: ['Active']
             }
-            $scope.options.selection.ListingType = $scope.options.selection.ListingType || {}
+            $scope.options.selection.ListingType ??= {}
             // These determine what ListingTypes options that should currently be 'shown' based on selections.
             // Automatically updated with a watcher
-            $scope.options.selection.ListingType.group = $scope.options.selection.ListingType.group || {
+            $scope.options.selection.ListingType.group ??= {
                 Residential: true,
                 Commercial: false
             }
             // TODO These values need to be supplied by the MLS' to ensure we dont show ones that don't exist
-            $scope.options.selection.ListingType.list = $scope.options.selection.ListingType.list || {
+            $scope.options.selection.ListingType.list ??= {
                 Residential: ['House', 'Condo', 'Townhouse', 'MultiFamily', 'Manufactured', 'Land', 'LeaseHouse', 'LeaseCondo', 'LeaseTownhouse', 'LeaseOther'],
                 Commercial: ['Commercial', 'CommercialBusinessOp', 'CommercialResidential', 'CommercialLand', 'LeaseCommercial'],
                 Lease: ['LeaseHouse', 'LeaseCondo', 'LeaseTownhouse', 'LeaseOther', 'LeaseCommercial']
             }
             // These are the default selections and should be updated by the page on load(if needed)
-            $scope.options.selection.ListingType.default = $scope.options.selection.ListingType.default || {
+            $scope.options.selection.ListingType.default ??= {
                 Sale: {
                     Residential: ['House', 'Condo', 'Townhouse'],
                     Commercial: ['Commercial', 'CommercialBusinessOp']
@@ -332,7 +332,7 @@ Stratus.Components.IdxPropertySearch = {
                 }
             }
             // These are static and never change. merely map correct values
-            $scope.options.selection.ListingType.All = $scope.options.selection.ListingType.All || [
+            $scope.options.selection.ListingType.All ??= [
                 {name: 'House', value: 'House', group: 'Residential', lease: false},
                 {name: 'Condo', value: 'Condo', group: 'Residential', lease: false},
                 {name: 'Townhouse', value: 'Townhouse', group: 'Residential', lease: false},
@@ -506,7 +506,7 @@ Stratus.Components.IdxPropertySearch = {
          * TODO move to global reference
          */
         $scope.toggleArrayElement = (item: any, array: any[]): void => {
-            array = array || []
+            array ??= []
             const arrayIndex = array.indexOf(item)
             if (arrayIndex >= 0) {
                 array.splice(arrayIndex, 1)
@@ -573,8 +573,8 @@ Stratus.Components.IdxPropertySearch = {
          * Update the entirety options.query in a safe manner to ensure undefined references are not produced
          */
         $scope.setQuery = (newQuery?: CompileFilterOptions): void => {
-            newQuery = newQuery || {}
-            newQuery.where = newQuery.where || {}
+            newQuery ??= {}
+            newQuery.where ??= {}
             // getDefaultWhereOptions returns the set a required WhereOptions with initialized arrays
             // $scope.options.query = extend(Idx.getDefaultWhereOptions(), newQuery)
             $scope.options.query = cloneDeep(newQuery)
@@ -587,7 +587,7 @@ Stratus.Components.IdxPropertySearch = {
          */
         $scope.setWhere = (newWhere?: WhereOptions): void => {
             // console.log('setWhere', clone(newWhere))
-            newWhere = newWhere || {}
+            newWhere ??= {}
             // getDefaultWhereOptions returns the set a required WhereOptions with initialized arrays
             $scope.options.query.where = extend(Idx.getDefaultWhereOptions(), newWhere)
             // find the objects that aren't arrays and convert to arrays as require to prevent future and current errors

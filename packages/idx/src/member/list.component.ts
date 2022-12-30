@@ -105,21 +105,21 @@ Stratus.Components.IdxMemberList = {
 
             $scope.options = $attrs.options && isJSON($attrs.options) ? JSON.parse($attrs.options) : {}
 
-            $scope.options.order = $scope.options.order || null// will be set by Service
-            $scope.options.page = $scope.options.page || null// will be set by Service
-            $scope.options.perPage = $scope.options.perPage || 25
-            $scope.options.images = $scope.options.images || {limit: 1}
+            $scope.options.order ??= null// will be set by Service
+            $scope.options.page ??= null// will be set by Service
+            $scope.options.perPage ??= 25
+            $scope.options.images ??= {limit: 1}
 
-            $scope.options.where = $scope.options.where || {}
+            $scope.options.where ??= {}
             // Fixme, sometimes it's just MemberMlsAccessYN ....
-            // $scope.options.where.MemberStatus = $scope.options.where.MemberStatus || {inq: ['Active', 'Yes', 'TRUE']}
+            // $scope.options.where.MemberStatus ??= {inq: ['Active', 'Yes', 'TRUE']}
 
-            // $scope.options.where.MemberKey = $scope.options.where.MemberKey || '91045'
-            // $scope.options.where.AgentLicense = $scope.options.where.AgentLicense || []*/
+            // $scope.options.where.MemberKey ??= '91045'
+            // $scope.options.where.AgentLicense ??= []*/
 
             defaultOptions = JSON.parse(JSON.stringify($scope.options.where))// Extend/clone doesn't work for arrays
 
-            /* $scope.orderOptions = $scope.orderOptions || {
+            /* $scope.orderOptions ??= {
               'Price (high to low)': '-ListPrice',
               'Price (low to high)': 'ListPrice'
             } */
@@ -183,7 +183,7 @@ Stratus.Components.IdxMemberList = {
             updateUrl?: boolean
         ): Promise<Collection<Member>> =>
             $q(async (resolve: any) => {
-                options = options || {}
+                options ??= {}
                 updateUrl = updateUrl === false ? updateUrl : true
 
                 // If refreshing, reset to page 1
@@ -322,8 +322,8 @@ Stratus.Components.IdxMemberList = {
         }
 
         $scope.highlightModel = (model: Member, timeout?: number): void => {
-            timeout = timeout || 0
-            model._unmapped = model._unmapped || {}
+            timeout ??= 0
+            model._unmapped ??= {}
             $scope.$applyAsync(() => {
                 model._unmapped._highlight = true
             })
@@ -336,7 +336,7 @@ Stratus.Components.IdxMemberList = {
 
         $scope.unhighlightModel = (model: Member): void => {
             if (model) {
-                model._unmapped = model._unmapped || {}
+                model._unmapped ??= {}
                 $scope.$applyAsync(() => {
                     model._unmapped._highlight = false
                 })

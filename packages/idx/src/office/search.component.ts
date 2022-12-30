@@ -142,8 +142,8 @@ Stratus.Components.IdxOfficeSearch = {
             $scope.options = $attrs.options && isJSON($attrs.options) ? JSON.parse($attrs.options) : {}
 
             // Set default queries
-            $scope.options.query = $scope.options.query || {}
-            $scope.options.query.where = $scope.options.query.where || {}
+            $scope.options.query ??= {}
+            $scope.options.query.where ??= {}
 
             if ($scope.options.tokenUrl) {
                 /// ajax/request?class=property.token_auth&method=getToken

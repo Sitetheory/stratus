@@ -121,8 +121,8 @@ Stratus.Components.IdxOfficeList = {
             $scope.query.order =
                 $scope.query.order && isString($scope.query.order) && isJSON($scope.query.order) ? JSON.parse($scope.query.order) :
                     $attrs.queryOrder && isJSON($attrs.queryOrder) ? JSON.parse($attrs.queryOrder) : $scope.query.order || null
-            $scope.query.page = $scope.query.page || null// will be set by Service
-            $scope.query.perPage = $scope.query.perPage ||
+            $scope.query.page ??= null// will be set by Service
+            $scope.query.perPage ??=
                 ($attrs.queryPerPage && isString($attrs.queryPerPage) ? parseInt($attrs.queryPerPage, 10) : null) ||
                 ($attrs.queryPerPage && isNumber($attrs.queryPerPage) ? $attrs.queryPerPage : null) ||
                 25
@@ -138,7 +138,7 @@ Stratus.Components.IdxOfficeList = {
             $ctrl.defaultQuery = JSON.parse(JSON.stringify($scope.query.where)) // Extend/clone doesn't work for arrays
             // $ctrl.lastQuery = {}
 
-            /* $scope.orderOptions = $scope.orderOptions || {
+            /* $scope.orderOptions ??= {
               'Price (high to low)': '-ListPrice',
               'Price (low to high)': 'ListPrice'
             } */
@@ -240,7 +240,7 @@ Stratus.Components.IdxOfficeList = {
             updateUrl?: boolean
         ): Promise<Collection<Office>> =>
             $q(async (resolve: any) => {
-                query = query || {}
+                query ??= {}
                 updateUrl = updateUrl === false ? updateUrl : true
                 // console.log('searching for', clone(query))
 
@@ -430,8 +430,8 @@ Stratus.Components.IdxOfficeList = {
         }
 
         $scope.highlightModel = (model: Office, timeout?: number): void => {
-            timeout = timeout || 0
-            model._unmapped = model._unmapped || {}
+            timeout ??= 0
+            model._unmapped ??= {}
             $scope.$applyAsync(() => {
                 model._unmapped._highlight = true
             })
@@ -444,7 +444,7 @@ Stratus.Components.IdxOfficeList = {
 
         $scope.unhighlightModel = (model: Office): void => {
             if (model) {
-                model._unmapped = model._unmapped || {}
+                model._unmapped ??= {}
                 $scope.$applyAsync(() => {
                     model._unmapped._highlight = false
                 })

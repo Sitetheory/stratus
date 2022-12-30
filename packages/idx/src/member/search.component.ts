@@ -85,7 +85,7 @@ Stratus.Components.IdxMemberSearch = {
             $scope.options = hydrate($attrs.options) || {}
 
             // Set default queries
-            $scope.options.query = $scope.options.query || {}
+            $scope.options.query ??= {}
 
             if ($scope.options.tokenUrl) {
                 /// ajax/request?class=property.token_auth&method=getToken

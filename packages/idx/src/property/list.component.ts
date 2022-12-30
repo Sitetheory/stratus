@@ -335,13 +335,13 @@ Stratus.Components.IdxPropertyList = {
             $scope.query.order =
                 $scope.query.order && isString($scope.query.order) && isJSON($scope.query.order) ? JSON.parse($scope.query.order) :
                     $attrs.queryOrder && isJSON($attrs.queryOrder) ? JSON.parse($attrs.queryOrder) : $scope.query.order || null
-            $scope.query.page = $scope.query.page || null // will be set by Service
+            $scope.query.page ||= null // will be set by Service
             $scope.query.perPage = $scope.query.perPage ||
                 ($attrs.queryPerPage && isString($attrs.queryPerPage) ? parseInt($attrs.queryPerPage, 10) : null) ||
                 ($attrs.queryPerPage && isNumber($attrs.queryPerPage) ? $attrs.queryPerPage : null) ||
                 25
             $scope.query.where = $attrs.queryWhere && isJSON($attrs.queryWhere) ? JSON.parse($attrs.queryWhere) : $scope.query.where || []
-            $scope.query.images = $scope.query.images || {limit: 1}
+            $scope.query.images ||= {limit: 1}
 
             // Handle row displays
             $scope.displayPerRow = 2
@@ -370,8 +370,8 @@ Stratus.Components.IdxPropertyList = {
             /* List of default or blank values */
             const startingQuery: WhereOptions = $scope.query.where || {}
             // If these are blank, set some defaults
-            startingQuery.Status = startingQuery.Status || ['Active', 'Contract']
-            startingQuery.ListingType = startingQuery.ListingType || ['House', 'Condo']
+            startingQuery.Status ??= ['Active', 'Contract']
+            startingQuery.ListingType ??= ['House', 'Condo']
             $scope.query.where = extend(Idx.getDefaultWhereOptions(), startingQuery || {})
 
             $ctrl.defaultQuery = JSON.parse(JSON.stringify($scope.query.where)) // Extend/clone doesn't work for arrays
@@ -381,7 +381,7 @@ Stratus.Components.IdxPropertyList = {
                 $ctrl.defaultQuery.Order = $scope.query.order
             }
 
-            $scope.orderOptions = $scope.orderOptions || [
+            $scope.orderOptions ??= [
                 {name: 'Highest Price', value: ['-BestPrice']},
                 {name: 'Lowest Price', value: ['BestPrice']},
                 {name: 'Recently Updated', value: ['-ModificationTimestamp']},
@@ -510,8 +510,8 @@ Stratus.Components.IdxPropertyList = {
                     resolve([])
                     return
                 }
-                query = query || clone($scope.query) || {}
-                query.where = query.where || {}
+                query ??= clone($scope.query) || {}
+                query.where ??= {}
                 // console.log('searchProperties has query', clone(query))
 
                 let urlWhere: UrlWhereOptions = clone(query.where) || {}
@@ -825,8 +825,8 @@ Stratus.Components.IdxPropertyList = {
         }
 
         $scope.highlightModel = (model: Property, timeout?: number): void => {
-            timeout = timeout || 0
-            model._unmapped = model._unmapped || {}
+            timeout ??= 0
+            model._unmapped ??= {}
             $scope.$applyAsync(() => {
                 model._unmapped._highlight = true
             })
@@ -839,7 +839,7 @@ Stratus.Components.IdxPropertyList = {
 
         $scope.unhighlightModel = (model: Property): void => {
             if (model) {
-                model._unmapped = model._unmapped || {}
+                model._unmapped ??= {}
                 $scope.$applyAsync(() => {
                     model._unmapped._highlight = false
                 })
