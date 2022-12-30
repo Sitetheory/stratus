@@ -11,6 +11,7 @@ import {
     cloneDeep,
     extend,
     includes,
+    intersection,
     isArray,
     isEmpty,
     isEqual,
@@ -83,12 +84,12 @@ export type IdxPropertySearchScope = IdxSearchScope & {
     _: typeof lodashRaw
 
     // Functions
-    arrayIntersect(itemArray: any[], array: any[]): boolean
     displayOfficeGroupSelector(searchTerm?: string, editIndex?: number, ev?: any): void
     getMLSVariables(reset?: boolean): MLSService[]
     hasQueryChanged(): boolean
     /** @deprecated use _.includes */
     inArray(item: any, array: any[]): boolean
+    isIntersecting(itemArray: any[], array: any[]): boolean
     selectDefaultListingType(listingGroup?: string): void
     setQuery(newQuery?: CompileFilterOptions): void
     setWhere(newWhere?: WhereOptions): void
@@ -415,12 +416,12 @@ Stratus.Components.IdxPropertySearch = {
                     $scope.options.query.where.ListingType = [$scope.options.query.where.ListingType]
                 }
                 $scope.options.selection.ListingType.group.Residential =
-                    $scope.arrayIntersect($scope.options.selection.ListingType.list.Residential, $scope.options.query.where.ListingType)
+                    $scope.isIntersecting($scope.options.selection.ListingType.list.Residential, $scope.options.query.where.ListingType)
                 $scope.options.selection.ListingType.group.Commercial =
-                    $scope.arrayIntersect($scope.options.selection.ListingType.list.Commercial, $scope.options.query.where.ListingType)
+                    $scope.isIntersecting($scope.options.selection.ListingType.list.Commercial, $scope.options.query.where.ListingType)
 
                 $scope.options.forRent =
-                    $scope.arrayIntersect($scope.options.selection.ListingType.list.Lease, $scope.options.query.where.ListingType)
+                    $scope.isIntersecting($scope.options.selection.ListingType.list.Lease, $scope.options.query.where.ListingType)
                 // console.log('watched ListingType', $scope.options.query.ListingType, $scope.options.selection.ListingType.group)
             }
         })
@@ -491,19 +492,13 @@ Stratus.Components.IdxPropertySearch = {
         /** @deprecated use _.includes */
         $scope.inArray = (item: any, array: any[]) => includes(array, item)
 
-        /**
-         * TODO move to global reference
-         */
-        $scope.arrayIntersect = (itemArray: any[], array: any[]): boolean => {
-            if (
-                !isArray(array) ||
-                !isArray(itemArray)
-            ) {
+        $scope.isIntersecting = (itemArray: any[], array: any[]): boolean => {
+            if (!isArray(array) || !isArray(itemArray)) {
                 console.warn('Array undefined, cannot search for', itemArray, 'in', array)
                 // return []
                 return false
             }
-            return itemArray.filter(value => array.indexOf(value) !== -1).length > 0
+            return intersection(itemArray, array).length > 0
         }
 
         /**
