@@ -24,7 +24,8 @@ import {
     IdxEmitter,
     IdxListScope,
     IdxService,
-    Office
+    Office,
+    WhereOptions
 } from '@stratusjs/idx/idx'
 import {Collection} from '@stratusjs/angularjs/services/collection'
 import {isJSON, LooseObject, safeUniqueId} from '@stratusjs/core/misc'
@@ -90,7 +91,6 @@ Stratus.Components.IdxOfficeList = {
         Idx: IdxService,
     ) {
         // Initialize
-        const $ctrl = this
         $scope.uid = safeUniqueId(packageName, moduleName, componentName)
         $scope.elementId = $attrs.elementId || $scope.uid
         Stratus.Instances[$scope.elementId] = $scope
@@ -98,6 +98,10 @@ Stratus.Components.IdxOfficeList = {
             Idx.setTokenURL($attrs.tokenUrl)
         }
         // Stratus.Internals.CssLoader(`${localDir}${$attrs.template || componentName}.component${min}.css`)
+
+        let defaultOptions: WhereOptions
+        let defaultQuery: WhereOptions
+        let lastQuery: CompileFilterOptions
 
         /**
          * All actions that happen first when the component loads
@@ -134,9 +138,9 @@ Stratus.Components.IdxOfficeList = {
             // $scope.query.where.MemberKey = $scope.query.where.MemberKey || '91045'
             // $scope.query.where.AgentLicense = $scope.query.where.AgentLicense || []*/
 
-            $ctrl.defaultOptions = JSON.parse(JSON.stringify($scope.query.where))// Extend/clone doesn't work for arrays
-            $ctrl.defaultQuery = JSON.parse(JSON.stringify($scope.query.where)) // Extend/clone doesn't work for arrays
-            // $ctrl.lastQuery = {}
+            defaultOptions = JSON.parse(JSON.stringify($scope.query.where))// Extend/clone doesn't work for arrays
+            defaultQuery = JSON.parse(JSON.stringify($scope.query.where)) // Extend/clone doesn't work for arrays
+            // lastQuery = {}
 
             /* $scope.orderOptions ??= {
               'Price (high to low)': '-ListPrice',
@@ -152,7 +156,7 @@ Stratus.Components.IdxOfficeList = {
             // const urlQuery: { Search?: any } = {}
             /* if ($scope.urlLoad) {
               // first set the UrlOptions via defaults (cloning so it can't be altered)
-              Idx.setUrlOptions('Search', JSON.parse(JSON.stringify($ctrl.defaultQuery)))
+              Idx.setUrlOptions('Search', JSON.parse(JSON.stringify(defaultQuery)))
               // Load Options from the provided URL settings
               urlOptions = Idx.getOptionsFromUrl()
               // If a specific listing is provided, be sure to pop it up as well
@@ -194,7 +198,7 @@ Stratus.Components.IdxOfficeList = {
                 return
             }
 
-            const stopWatchingInitNow = $scope.$watch('$ctrl.initNow', (initNowCtrl: boolean) => {
+            const stopWatchingInitNow = $scope.$watch('initNow', (initNowCtrl: boolean) => {
                 if (initNowCtrl !== true) {
                     return
                 }
@@ -321,7 +325,7 @@ Stratus.Components.IdxOfficeList = {
 
                 // Display the URL options in the address bar
                 /* if (updateUrl) {
-                  Idx.refreshUrlOptions($ctrl.defaultQuery)
+                  Idx.refreshUrlOptions(defaultQuery)
                 } */
 
                 if (
@@ -339,7 +343,7 @@ Stratus.Components.IdxOfficeList = {
                     // resolve(Idx.fetchProperties($scope, 'collection', $scope.query, refresh))
                     // Grab the new property listings
                     const results = await Idx.fetchOffices($scope, 'collection', $scope.query, refresh)
-                    $ctrl.lastQuery = cloneDeep($scope.query)
+                    lastQuery = cloneDeep($scope.query)
                     Idx.emit('searched', $scope, clone($scope.query))
                     resolve(results)
                 } catch (e) {
@@ -499,7 +503,7 @@ Stratus.Components.IdxOfficeList = {
                     .then(() => {
                     }, () => {
                         // Idx.setUrlOptions('Listing', {})
-                        // Idx.refreshUrlOptions($ctrl.defaultQuery)
+                        // Idx.refreshUrlOptions(defaultQuery)
                         // Revery page title back to what it was
                         Idx.setPageTitle()
                         // Let's destroy it to save memory

@@ -345,7 +345,7 @@ Stratus.Components.IdxOfficeSearch = {
                 }, () => {
                     // TODO check officeGroups and agentGroups for changes
                     // IDX.setUrlOptions('Listing', {})
-                    // IDX.refreshUrlOptions($ctrl.defaultOptions)
+                    // IDX.refreshUrlOptions(defaultOptions)
                     // Revery page title back to what it was
                     // IDX.setPageTitle()
                     // Let's destroy it to save memory
