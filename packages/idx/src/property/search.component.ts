@@ -5,8 +5,7 @@
  */
 
 // Runtime
-import * as lodashRaw from 'lodash'
-import {
+import _, {
     clone,
     cloneDeep,
     extend,
@@ -46,7 +45,10 @@ import '@stratusjs/idx/office/list.component'
 // tslint:disable-next-line:no-duplicate-imports
 import '@stratusjs/idx/office/search.component'
 
-
+type NameValuePair = {
+    name: string
+    value: string | number | string[]
+}
 
 // Environment
 const min = !cookie('env') ? '.min' : ''
@@ -56,8 +58,16 @@ const componentName = 'search'
 // There is not a very consistent way of pathing in Stratus at the moment
 const localDir = `${Stratus.BaseUrl}${Stratus.DeploymentPath}@stratusjs/${packageName}/src/${moduleName}/`
 
+type ListingTypeSelectionSetting = {
+    name: string
+    value: string
+    group: string
+    lease: boolean
+}
+
 export type IdxPropertySearchScope = IdxSearchScope & {
     widgetName: string
+    initialized: boolean
     listId: string
     listInitialized: boolean
     listLinkUrl: string
@@ -73,7 +83,31 @@ export type IdxPropertySearchScope = IdxSearchScope & {
     options: {
         // [key: string]: object | any
         query: CompileFilterOptions
-        selection: object | any // TODO need to specify
+        selection: { // object | any // TODO need to specify
+            Bedrooms?: NameValuePair[]
+            Bathrooms?: NameValuePair[]
+            order?: NameValuePair[]
+            Status?: LooseObject<LooseObject<string[]>>
+            ListingType?: {
+                group?: {
+                    [propertyCategory: string]: boolean
+                }
+                list?: {
+                    Residential: string[]
+                    Commercial: string[]
+                    Lease: string[]
+                }
+                default?: {
+                    Sale: {
+                        [propertyCategory: string]: string[]
+                    }
+                    Lease: {
+                        [propertyCategory: string]: string[]
+                    }
+                }
+                All?: ListingTypeSelectionSetting[]
+            }
+        }
         forRent: boolean
         agentGroups: SelectionGroup[]
         officeGroups: SelectionGroup[]
@@ -81,9 +115,10 @@ export type IdxPropertySearchScope = IdxSearchScope & {
     displayFilterFullHeight: boolean
     variableSyncing: object | any
     filterMenu?: material.IPanelRef & any // material.IPanelRef // disabled because we need to set reposition()
-    _: typeof lodashRaw
+    _: typeof _
 
     // Functions
+    canDisplayListingTypeButton(listType: ListingTypeSelectionSetting): boolean
     displayOfficeGroupSelector(searchTerm?: string, editIndex?: number, ev?: any): void
     getMLSVariables(reset?: boolean): MLSService[]
     hasQueryChanged(): boolean
@@ -205,9 +240,10 @@ Stratus.Components.IdxPropertySearch = {
         // Initialize
         $scope.uid = safeUniqueId(packageName, moduleName, componentName)
         $scope.elementId = $attrs.elementId || $scope.uid
-        $scope._ = lodashRaw
+        $scope._ = _
         Stratus.Instances[$scope.elementId] = $scope
         $scope.localDir = localDir
+        $scope.initialized = false
         if ($attrs.tokenUrl) {
             Idx.setTokenURL($attrs.tokenUrl)
         }
@@ -375,6 +411,9 @@ Stratus.Components.IdxPropertySearch = {
                 }
             }
 
+            $scope.$applyAsync(() => {
+                $scope.initialized = true
+            })
             // await $scope.variableSync() sync is moved to teh timeout above so it can still work with List widgets
             Idx.emit('init', $scope)
         }
@@ -427,20 +466,6 @@ Stratus.Components.IdxPropertySearch = {
         })
 
         /**
-         * Create filter function for a query string
-         * TODO whats this used for?
-         */
-        /* *
-        const createFilterFor = (query: string) => {
-            const lowercaseQuery = query.toLowerCase()
-
-            return (hay: any) => {
-                return (hay.value.indexOf(lowercaseQuery) === 0)
-            }
-
-        }
-
-        /**
          * Sync Gutensite form variables to a Stratus scope
          * TODO move this to it's own directive/service
          */
@@ -487,6 +512,10 @@ Stratus.Components.IdxPropertySearch = {
                 )
             })
             await $q.all(promises)
+        }
+
+        $scope.canDisplayListingTypeButton = (listType: ListingTypeSelectionSetting): boolean => {
+            return $scope.options.forRent === listType.lease && $scope.options.selection.ListingType.group[listType.group]
         }
 
         /** @deprecated use _.includes */
