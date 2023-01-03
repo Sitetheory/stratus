@@ -1,7 +1,8 @@
-// IdxPropertyDetails Component
-// @stratusjs/idx/property/details.component
-// <stratus-idx-property-details>
-// --------------
+/**
+ * @file IdxPropertyDetails Component @stratusjs/idx/property/details.component
+ * @example <stratus-idx-property-details>
+ * @see https://github.com/Sitetheory/stratus/wiki/Idx-Property-Details-Widget
+ */
 
 // Runtime
 import {extend, isArray} from 'lodash'
@@ -9,13 +10,7 @@ import {Stratus} from '@stratusjs/runtime/stratus'
 import {IAttributes, ILocationService, ISCEService} from 'angular'
 import 'angular-material'
 import 'angular-sanitize'
-
-// Angular+ Modules
 import {MarkerSettings} from '@stratusjs/map/map.component'
-
-// Services
-import '@stratusjs/idx/idx'
-// tslint:disable-next-line:no-duplicate-imports
 import {
     IdxDetailsScope,
     IdxEmitter,
@@ -24,26 +19,22 @@ import {
     Property,
     WidgetIntegrations
 } from '@stratusjs/idx/idx'
-import '@stratusjs/idx/listTrac'
-
-// Stratus Dependencies
+import {SubSectionOptions} from '@stratusjs/idx/property/details-sub-section.component'
 import {Model} from '@stratusjs/angularjs/services/model'
 import {isJSON, safeUniqueId} from '@stratusjs/core/misc'
 import {cookie} from '@stratusjs/core/environment'
 import {SlideImage} from '@stratusjs/swiper/carousel.component'
 
-// Stratus Directives
-import 'stratus.directives.src'
-
-// Stratus Filters
-import 'stratus.filters.math'
-import 'stratus.filters.moment'
-
-// Component Preload
-import '@stratusjs/idx/property/details-sub-section.component'
-import '@stratusjs/idx/disclaimer/disclaimer.component'
+// Stratus Preload
+import '@stratusjs/angularjs-extras/directives/src'
+import '@stratusjs/angularjs-extras/filters/math'
+import '@stratusjs/angularjs-extras/filters/moment'
 // tslint:disable-next-line:no-duplicate-imports
-import {SubSectionOptions} from '@stratusjs/idx/property/details-sub-section.component'
+import '@stratusjs/idx/idx'
+import '@stratusjs/idx/disclaimer/disclaimer.component'
+import '@stratusjs/idx/listTrac'
+// tslint:disable-next-line:no-duplicate-imports
+import '@stratusjs/idx/property/details-sub-section.component'
 // tslint:disable-next-line:no-duplicate-imports
 import '@stratusjs/swiper/carousel.component'
 
@@ -74,9 +65,19 @@ export type IdxPropertyDetailsScope = IdxDetailsScope<Property> & {
 
     fetchProperty(): Promise<void>
     getFullAddress(encode?: boolean): string
+    getGoogleMapEmbed(): string | null
+    getGoogleMapsKey(): string | null
+    getMLSName(): string
+    getMLSVariables(): MLSService
     getPublicRemarksHTML(): any
     getSlideshowImages(): SlideImage[]
     getStreetAddress(): string
+
+    getListAgentName(): string
+    getListAgentPhone(): string
+    getCoListAgentName(): string
+    getBuyerAgentName(): string
+    getCoBuyerAgentName(): string
 
 }
 
@@ -114,9 +115,8 @@ Stratus.Components.IdxPropertyDetails = {
         Idx: IdxService,
     ) {
         // Initialize
-        const $ctrl = this
         $scope.uid = safeUniqueId(packageName, moduleName, componentName)
-        $scope.elementId = $attrs.elementId || $ctrl.uid
+        $scope.elementId = $attrs.elementId || $scope.uid
         Stratus.Instances[$scope.elementId] = $scope
         $scope.instancePath = `Stratus.Instances.${$scope.elementId}`
         $scope.localDir = localDir
@@ -124,6 +124,9 @@ Stratus.Components.IdxPropertyDetails = {
             Idx.setTokenURL($attrs.tokenUrl)
         }
         Stratus.Internals.CssLoader(`${localDir}${$attrs.template || componentName}.component${min}.css`).then()
+
+        let mlsVariables: MLSService
+        let googleMapEmbed: string
 
         /**
          * All actions that happen first when the component loads
@@ -1209,7 +1212,7 @@ Stratus.Components.IdxPropertyDetails = {
             /**
              * An optional pre-compiled set data for the sub-section component to display fields
              */
-            $ctrl.hideDetailVariables(minorDetails, $scope.hideVariables)
+            hideDetailVariables(minorDetails, $scope.hideVariables)
             $scope.minorDetails = minorDetails
             $scope.alternateMinorDetails = alternateMinorDetails
 
@@ -1264,7 +1267,7 @@ Stratus.Components.IdxPropertyDetails = {
                     ListTrac.track('view', $scope.model.data.ListingId, $scope.model.data.PostalCode, $scope.model.data.ListAgentKey)
                 }
 
-                $ctrl.prepareMapMarkers()
+                prepareMapMarkers()
             }
         })
 
@@ -1273,7 +1276,7 @@ Stratus.Components.IdxPropertyDetails = {
          * @param detailOptions - SubSectionOptions[] to alter
          * @param variablesToHide - List of variable names to hide
          */
-        $ctrl.hideDetailVariables = (detailOptions: SubSectionOptions[], variablesToHide: string[]): void => {
+        const hideDetailVariables = (detailOptions: SubSectionOptions[], variablesToHide: string[]): void => {
             if (variablesToHide.length > 0) {
                 detailOptions.forEach((section) => {
                     Object.keys(section.items).forEach((variableName) => {
@@ -1285,7 +1288,7 @@ Stratus.Components.IdxPropertyDetails = {
             }
         }
 
-        $ctrl.prepareMapMarkers = (): void => {
+        const prepareMapMarkers = (): void => {
             if (
                 Object.prototype.hasOwnProperty.call($scope.model.data, 'Latitude') &&
                 Object.prototype.hasOwnProperty.call($scope.model.data, 'Longitude')
@@ -1413,33 +1416,33 @@ Stratus.Components.IdxPropertyDetails = {
         }
 
         $scope.getGoogleMapEmbed = (): string | null => {
-            if (!$ctrl.googleMapEmbed) {
+            if (!googleMapEmbed) {
                 const googleApiKey = $scope.getGoogleMapsKey()
 
-                $ctrl.googleMapEmbed = googleApiKey ? $sce.trustAsResourceUrl(
+                googleMapEmbed = googleApiKey ? $sce.trustAsResourceUrl(
                     `https://www.google.com/maps/embed/v1/place?key=${googleApiKey}&q=${$scope.getFullAddress(true)}`
                 ) : null
             }
-            return $ctrl.googleMapEmbed
+            return googleMapEmbed
         }
 
         $scope.getMLSVariables = (): MLSService => {
-            if (!$ctrl.mlsVariables) {
+            if (!mlsVariables) {
                 Idx.getMLSVariables([$scope.model.data._ServiceId])
                     .forEach((service: MLSService) => {
                         if (service.id === parseInt($scope.model.data._ServiceId as unknown as string, 10)) {
-                            $ctrl.mlsVariables = service
+                            mlsVariables = service
                         }
                     })
-                // console.log('$ctrl.mlsVariables', $ctrl.mlsVariables)
+                // console.log('mlsVariables', mlsVariables)
             }
-            return $ctrl.mlsVariables
+            return mlsVariables
         }
 
         /**
          * Display an MLS' Name
          */
-        $scope.getMLSName = (): string => $ctrl.mlsVariables.name
+        $scope.getMLSName = (): string => mlsVariables ? mlsVariables.name : ''
 
         $scope.on = (emitterName: string, callback: IdxEmitter) => Idx.on($scope.elementId, emitterName, callback)
 

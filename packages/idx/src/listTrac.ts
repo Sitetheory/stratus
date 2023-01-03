@@ -1,24 +1,25 @@
-// ListTrac Service
-// @stratusjs/idx/listTrac
+/**
+ * @file ListTrac Service @stratusjs/idx/listTrac
+ * @example import '@stratusjs/idx/listTrac'
+ */
 
 // Runtime
-// import _ from 'lodash'
 import {Stratus} from '@stratusjs/runtime/stratus'
-import * as angular from 'angular'
+import {auto, IHttpService, IQService, IWindowService} from 'angular'
 import {DOMComplete} from '@stratusjs/core/dom'
 
-// Services
+// Stratus Preload
 import '@stratusjs/angularjs/services/model' // Needed as $provider
-import '@stratusjs/angularjs/services/collection'
+import '@stratusjs/angularjs/services/collection' // Needed as $provider
 
 Stratus.Services.ListTrac = [
     '$provide',
-    ($provide: any) => {
+    ($provide: auto.IProvideService) => {
         $provide.factory('ListTrac', (
-            $injector: angular.auto.IInjectorService,
-            $http: angular.IHttpService,
-            $q: angular.IQService,
-            $window: angular.IWindowService,
+            $injector: auto.IInjectorService,
+            $http: IHttpService,
+            $q: IQService,
+            $window: IWindowService,
             ) => {
                 const eventQueue: Array<() => void> = []
                 let listTracLoaded = false
@@ -41,7 +42,7 @@ Stratus.Services.ListTrac = [
                             await DOMComplete()
                             // console.log('importing ListTrac')
                             // Inject the javascript file into the HEAD to load
-                            const jsFile: HTMLScriptElement = document.createElement('script')
+                            const jsFile: HTMLScriptElement = $window.document.createElement('script')
                             jsFile.type = 'application/javascript'
                             jsFile.async = true
                             jsFile.src = `https://code.listtrac.com/monitor.ashx?nonjq=1&acct=${listTracAccountId}`

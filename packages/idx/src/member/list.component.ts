@@ -12,8 +12,6 @@ import {
 } from 'angular'
 import 'angular-material'
 import 'angular-sanitize'
-import '@stratusjs/idx/idx'
-// tslint:disable-next-line:no-duplicate-imports
 import {
     CompileFilterOptions,
     IdxEmitter,
@@ -21,15 +19,15 @@ import {
     IdxService,
     Member
 } from '@stratusjs/idx/idx'
-
-// Stratus Dependencies
 import {Collection} from '@stratusjs/angularjs/services/collection' // Needed as Class
 import {isJSON, LooseObject, safeUniqueId} from '@stratusjs/core/misc'
 import {cookie} from '@stratusjs/core/environment'
 
-// Component Preload
-import '@stratusjs/idx/member/details.component'
+// Stratus Preload
+// tslint:disable-next-line:no-duplicate-imports
+import '@stratusjs/idx/idx'
 import '@stratusjs/idx/disclaimer/disclaimer.component'
+import '@stratusjs/idx/member/details.component'
 
 // Environment
 const min = !cookie('env') ? '.min' : ''
@@ -107,21 +105,21 @@ Stratus.Components.IdxMemberList = {
 
             $scope.options = $attrs.options && isJSON($attrs.options) ? JSON.parse($attrs.options) : {}
 
-            $scope.options.order = $scope.options.order || null// will be set by Service
-            $scope.options.page = $scope.options.page || null// will be set by Service
-            $scope.options.perPage = $scope.options.perPage || 25
-            $scope.options.images = $scope.options.images || {limit: 1}
+            $scope.options.order ??= null// will be set by Service
+            $scope.options.page ??= null// will be set by Service
+            $scope.options.perPage ??= 25
+            $scope.options.images ??= {limit: 1}
 
-            $scope.options.where = $scope.options.where || {}
+            $scope.options.where ??= {}
             // Fixme, sometimes it's just MemberMlsAccessYN ....
-            // $scope.options.where.MemberStatus = $scope.options.where.MemberStatus || {inq: ['Active', 'Yes', 'TRUE']}
+            // $scope.options.where.MemberStatus ??= {inq: ['Active', 'Yes', 'TRUE']}
 
-            // $scope.options.where.MemberKey = $scope.options.where.MemberKey || '91045'
-            // $scope.options.where.AgentLicense = $scope.options.where.AgentLicense || []*/
+            // $scope.options.where.MemberKey ??= '91045'
+            // $scope.options.where.AgentLicense ??= []*/
 
             defaultOptions = JSON.parse(JSON.stringify($scope.options.where))// Extend/clone doesn't work for arrays
 
-            /* $scope.orderOptions = $scope.orderOptions || {
+            /* $scope.orderOptions ??= {
               'Price (high to low)': '-ListPrice',
               'Price (low to high)': 'ListPrice'
             } */
@@ -134,7 +132,7 @@ Stratus.Components.IdxMemberList = {
             const urlOptions: { Search?: any } = {}
             /* if ($scope.urlLoad) {
               // first set the UrlOptions via defaults (cloning so it can't be altered)
-              Idx.setUrlOptions('Search', JSON.parse(JSON.stringify($ctrl.defaultOptions)))
+              Idx.setUrlOptions('Search', JSON.parse(JSON.stringify(defaultOptions)))
               // Load Options from the provided URL settings
               urlOptions = Idx.getOptionsFromUrl()
               // If a specific listing is provided, be sure to pop it up as well
@@ -185,7 +183,7 @@ Stratus.Components.IdxMemberList = {
             updateUrl?: boolean
         ): Promise<Collection<Member>> =>
             $q(async (resolve: any) => {
-                options = options || {}
+                options ??= {}
                 updateUrl = updateUrl === false ? updateUrl : true
 
                 // If refreshing, reset to page 1
@@ -224,7 +222,7 @@ Stratus.Components.IdxMemberList = {
 
                 // Display the URL options in the address bar
                 /* if (updateUrl) {
-                  Idx.refreshUrlOptions($ctrl.defaultOptions)
+                  Idx.refreshUrlOptions(defaultOptions)
                 } */
                 Idx.emit('searching', $scope, clone($scope.query))
 
@@ -324,8 +322,8 @@ Stratus.Components.IdxMemberList = {
         }
 
         $scope.highlightModel = (model: Member, timeout?: number): void => {
-            timeout = timeout || 0
-            model._unmapped = model._unmapped || {}
+            timeout ??= 0
+            model._unmapped ??= {}
             $scope.$applyAsync(() => {
                 model._unmapped._highlight = true
             })
@@ -338,7 +336,7 @@ Stratus.Components.IdxMemberList = {
 
         $scope.unhighlightModel = (model: Member): void => {
             if (model) {
-                model._unmapped = model._unmapped || {}
+                model._unmapped ??= {}
                 $scope.$applyAsync(() => {
                     model._unmapped._highlight = false
                 })
@@ -393,7 +391,7 @@ Stratus.Components.IdxMemberList = {
                     .then(() => {
                     }, () => {
                         // Idx.setUrlOptions('Listing', {})
-                        // Idx.refreshUrlOptions($ctrl.defaultOptions)
+                        // Idx.refreshUrlOptions(defaultOptions)
                         // Revery page title back to what it was
                         Idx.setPageTitle()
                         // Let's destroy it to save memory

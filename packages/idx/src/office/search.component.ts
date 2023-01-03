@@ -14,8 +14,6 @@ import {
     IQService,
     IWindowService
 } from 'angular'
-import '@stratusjs/idx/idx'
-// tslint:disable-next-line:no-duplicate-imports
 import {
     IdxEmitter,
     IdxSearchScope,
@@ -23,14 +21,14 @@ import {
     Office,
     SelectionGroup
 } from '@stratusjs/idx/idx'
-
-// Stratus Dependencies
 import {Collection} from '@stratusjs/angularjs/services/collection' // Needed as Class
 import {isJSON, safeUniqueId} from '@stratusjs/core/misc'
 import {cookie} from '@stratusjs/core/environment'
 import {IdxOfficeListScope} from '@stratusjs/idx/office/list.component'
 
-// Component Preload
+// Stratus Preload
+// tslint:disable-next-line:no-duplicate-imports
+import '@stratusjs/idx/idx'
 // tslint:disable-next-line:no-duplicate-imports
 import '@stratusjs/idx/office/list.component'
 import '@stratusjs/idx/disclaimer/disclaimer.component'
@@ -144,8 +142,8 @@ Stratus.Components.IdxOfficeSearch = {
             $scope.options = $attrs.options && isJSON($attrs.options) ? JSON.parse($attrs.options) : {}
 
             // Set default queries
-            $scope.options.query = $scope.options.query || {}
-            $scope.options.query.where = $scope.options.query.where || {}
+            $scope.options.query ??= {}
+            $scope.options.query.where ??= {}
 
             if ($scope.options.tokenUrl) {
                 /// ajax/request?class=property.token_auth&method=getToken
@@ -347,7 +345,7 @@ Stratus.Components.IdxOfficeSearch = {
                 }, () => {
                     // TODO check officeGroups and agentGroups for changes
                     // IDX.setUrlOptions('Listing', {})
-                    // IDX.refreshUrlOptions($ctrl.defaultOptions)
+                    // IDX.refreshUrlOptions(defaultOptions)
                     // Revery page title back to what it was
                     // IDX.setPageTitle()
                     // Let's destroy it to save memory

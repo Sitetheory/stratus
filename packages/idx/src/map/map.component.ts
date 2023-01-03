@@ -1,21 +1,21 @@
 /**
  * @file IdxMap Component @stratusjs/idx/map/map.component
  * @example <stratus-idx-map>
- * @see https://github.com/Sitetheory/stratus/wiki/Idx-Package-Usage#Map
+ * @see https://github.com/Sitetheory/stratus/wiki/Idx-Map-Widget
  */
 
 // Runtime
 import {Stratus} from '@stratusjs/runtime/stratus'
 import {IAttributes} from 'angular'
-
-// Stratus Dependencies
 import {cookie} from '@stratusjs/core/environment'
 import {isJSON, safeUniqueId} from '@stratusjs/core/misc'
-import '@stratusjs/idx/idx'
-// tslint:disable-next-line:no-duplicate-imports
 import {IdxComponentScope, IdxEmitter, IdxListScope, IdxService, Member, Property} from '@stratusjs/idx/idx'
 import {MapComponent, MarkerSettings} from '@stratusjs/map/map.component'
 import {numeralFormat} from '@stratusjs/angularjs-extras/filters/numeral'
+
+// Stratus Preload
+// tslint:disable-next-line:no-duplicate-imports
+import '@stratusjs/idx/idx'
 
 // Environment
 const min = !cookie('env') ? '.min' : ''
@@ -24,7 +24,6 @@ const moduleName = 'map'
 const componentName = 'map'
 // There is not a very consistent way of pathing in Stratus at the moment
 const localDir = `${Stratus.BaseUrl}${Stratus.DeploymentPath}@stratusjs/${packageName}/src/${moduleName}/`
-// const localDir = `${Stratus.BaseUrl}${Stratus.DeploymentPath}@stratusjs/${packageName}/src/`
 
 export type IdxMapScope = IdxComponentScope & {
     listId: string
@@ -184,13 +183,12 @@ Stratus.Components.IdxMap = {
         Idx: IdxService,
     ) {
         // Initialize
-        const $ctrl = this
         $scope.uid = safeUniqueId(packageName, moduleName, componentName)
         Stratus.Instances[$scope.uid] = $scope
         $scope.elementId = $attrs.elementId || $scope.uid
         $scope.instancePath = `Stratus.Instances.${$scope.elementId}`
 
-        $ctrl.$onInit = () => {
+        this.$onInit = () => {
             $scope.Idx = Idx
             $scope.listId = $attrs.listId || null
             $scope.initialized = false
@@ -227,12 +225,12 @@ Stratus.Components.IdxMap = {
                     $scope.list = source
                     $scope.listInitialized = true
                     // $scope.initialized = true
-                    $ctrl.prepareMapMarkers(source)
+                    prepareMapMarkers(source)
                     $scope.mapUpdate().then()
                 })
                 Idx.on($scope.listId, 'searched', (source: IdxListScope<Member | Property>) => {
                     // page changing and searched triggers 'searched'
-                    $ctrl.prepareMapMarkers(source)
+                    prepareMapMarkers(source)
                     $scope.mapUpdate().then()
                 })
             }
@@ -248,7 +246,7 @@ Stratus.Components.IdxMap = {
             Idx.emit('init', $scope)
         }
 
-        $ctrl.prepareMapMarkers = (source: IdxListScope<Member | Property>): void => {
+        const prepareMapMarkers = (source: IdxListScope<Member | Property>): void => {
             // console.log('checking $scope.collection.models', $scope.collection.models)
             const markers: MarkerSettings[] = []
             let zIndexCounter = 100
@@ -321,7 +319,7 @@ Stratus.Components.IdxMap = {
             $scope.mapMarkers = markers
         }
 
-        /*$scope.stopWatchingModel = $scope.$watch('$ctrl.ngModel', (data: any) => {
+        /*$scope.stopWatchingModel = $scope.$watch('ngModel', (data: any) => {
             // TODO might wanna check something else just to not import Model
             if (data instanceof Model && data !== $scope.model) {
                 $scope.model = data

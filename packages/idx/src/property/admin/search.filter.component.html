@@ -177,7 +177,7 @@
                  data-layout-align="left"
                  aria-label="Listing Status">
                 <md-button class="md-raised font-primary"
-                           data-ng-class="{'md-primary': inArray('Active', options.query.where.Status)}"
+                           data-ng-class="{'md-primary': _.includes(options.query.where.Status, 'Active')}"
                            data-ng-click="toggleArrayElement('Active', options.query.where.Status)"
                            aria-label="For Sale"
                            data-md-prevent-menu-close
@@ -185,19 +185,19 @@
                     For Sale
                 </md-button>
                 <md-button class="md-raised font-primary"
-                           data-ng-class="{'md-primary': inArray('Closed', options.query.where.Status)}"
+                           data-ng-class="{'md-primary': _.includes(options.query.where.Status, 'Closed')}"
                            data-ng-click="toggleArrayElement('Closed', options.query.where.Status)"
                            aria-label="Sold"
                            data-md-prevent-menu-close
                 >
                     Sold
                 </md-button>
-                <div data-ng-show="!options.forRent && (inArray('Active', options.query.where.Status) || inArray('Contract', options.query.where.Status))"
+                <div data-ng-show="!options.forRent && (_.includes(options.query.where.Status, 'Active') || _.includes(options.query.where.Status, 'Contract'))"
                      data-layout="row"
                      data-layout-align="left">
                     <md-checkbox
                             class="show-under-contract font-secondary"
-                            data-ng-checked="inArray('Contract', options.query.where.Status)"
+                            data-ng-checked="_.includes(options.query.where.Status, 'Contract')"
                             data-ng-click="toggleArrayElement('Contract', options.query.where.Status)"
                             aria-label="Under Contract"
                             data-md-prevent-menu-close
@@ -216,9 +216,7 @@
                 </md-checkbox>
             </div>
 
-            <div class="property-zoning"
-                 data-layout="row"
-                 data-layout-align="left" aria-label="Listing Zoning">
+            <div class="property-zoning" aria-label="Listing Zoning" data-layout="row" data-layout-align="left" >
                 <md-button
                         class="font-primary"
                         data-ng-class="{'md-primary': options.selection.ListingType.group.Residential}"
@@ -242,12 +240,13 @@
             <div data-layout="row"
                  data-layout-align="left"
                  aria-label="Listing Types"
-                 data-layout-wrap>
+                 data-layout-wrap
+                 data-ng-if="initialized">
                 <md-button
                         data-ng-repeat="listType in ::options.selection.ListingType.All"
                         class="md-raised font-primary"
-                        data-ng-show="options.forRent === listType.lease && options.selection.ListingType.group[listType.group]"
-                        data-ng-class="{'md-primary': inArray(listType.value, options.query.where.ListingType)}"
+                        data-ng-show="canDisplayListingTypeButton(listType)"
+                        data-ng-class="{'md-primary': _.includes(options.query.where.ListingType, listType.value)}"
                         data-ng-click="toggleArrayElement(listType.value, options.query.where.ListingType)"
                         aria-label="{{::listType.name}}"
                         data-md-prevent-menu-close

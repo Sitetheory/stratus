@@ -10,13 +10,7 @@ import {Stratus} from '@stratusjs/runtime/stratus'
 import {element, material, IAnchorScrollService, IAttributes, ISCEService, ITimeoutService, IQService, IWindowService} from 'angular'
 import 'angular-material'
 import 'angular-sanitize'
-
-// Angular+ Modules
 import {MarkerSettings} from '@stratusjs/map/map.component'
-
-// Services
-import '@stratusjs/idx/idx'
-// tslint:disable-next-line:no-duplicate-imports
 import {
     CompileFilterOptions,
     IdxEmitter,
@@ -28,20 +22,17 @@ import {
     UrlWhereOptions,
     UrlsOptionsObject
 } from '@stratusjs/idx/idx'
-
-// Stratus Dependencies
 import {Collection} from '@stratusjs/angularjs/services/collection' // Needed as Class
-
 import {isJSON, safeUniqueId} from '@stratusjs/core/misc'
 import {cookie} from '@stratusjs/core/environment'
 
-// Stratus Directives
-import 'stratus.directives.src'
-
-// Component Preload
+// Stratus Preload
+import '@stratusjs/angularjs-extras/directives/src'
 import '@stratusjs/idx/disclaimer/disclaimer.component'
-import '@stratusjs/idx/property/details.component'
+// tslint:disable-next-line:no-duplicate-imports
+import '@stratusjs/idx/idx'
 import '@stratusjs/idx/map/map.component'
+import '@stratusjs/idx/property/details.component'
 
 // Environment
 const min = !cookie('env') ? '.min' : ''
@@ -292,16 +283,16 @@ Stratus.Components.IdxPropertyList = {
         Idx: IdxService,
     ) {
         // Initialize
-        const $ctrl = this
-        /*$ctrl.uid = $attrs.uid && !isEmpty($attrs.uid) ? $attrs.uid :
-            uniqueId(camelCase(packageName) + '_' + camelCase(moduleName) + '_' + camelCase(componentName) + '_')
-         */
         $scope.localDir = localDir
         $scope.initialized = false
         if ($attrs.tokenUrl) {
             Idx.setTokenURL($attrs.tokenUrl)
             $scope.tokenLoaded = true
         }
+
+        let mlsVariables: MLSService[]
+        let defaultQuery: CompileFilterOptions
+        let lastQuery: CompileFilterOptions
 
         /**
          * All actions that happen first when the component loads
@@ -344,13 +335,13 @@ Stratus.Components.IdxPropertyList = {
             $scope.query.order =
                 $scope.query.order && isString($scope.query.order) && isJSON($scope.query.order) ? JSON.parse($scope.query.order) :
                     $attrs.queryOrder && isJSON($attrs.queryOrder) ? JSON.parse($attrs.queryOrder) : $scope.query.order || null
-            $scope.query.page = $scope.query.page || null // will be set by Service
+            $scope.query.page ||= null // will be set by Service
             $scope.query.perPage = $scope.query.perPage ||
                 ($attrs.queryPerPage && isString($attrs.queryPerPage) ? parseInt($attrs.queryPerPage, 10) : null) ||
                 ($attrs.queryPerPage && isNumber($attrs.queryPerPage) ? $attrs.queryPerPage : null) ||
                 25
             $scope.query.where = $attrs.queryWhere && isJSON($attrs.queryWhere) ? JSON.parse($attrs.queryWhere) : $scope.query.where || []
-            $scope.query.images = $scope.query.images || {limit: 1}
+            $scope.query.images ||= {limit: 1}
 
             // Handle row displays
             $scope.displayPerRow = 2
@@ -379,18 +370,18 @@ Stratus.Components.IdxPropertyList = {
             /* List of default or blank values */
             const startingQuery: WhereOptions = $scope.query.where || {}
             // If these are blank, set some defaults
-            startingQuery.Status = startingQuery.Status || ['Active', 'Contract']
-            startingQuery.ListingType = startingQuery.ListingType || ['House', 'Condo']
+            startingQuery.Status ??= ['Active', 'Contract']
+            startingQuery.ListingType ??= ['House', 'Condo']
             $scope.query.where = extend(Idx.getDefaultWhereOptions(), startingQuery || {})
 
-            $ctrl.defaultQuery = JSON.parse(JSON.stringify($scope.query.where)) // Extend/clone doesn't work for arrays
-            $ctrl.lastQuery = {}
+            defaultQuery = JSON.parse(JSON.stringify($scope.query.where)) // Extend/clone doesn't work for arrays
+            lastQuery = {}
             // Need to include Order
             if ($scope.query.order) {
-                $ctrl.defaultQuery.Order = $scope.query.order
+                defaultQuery.Order = $scope.query.order
             }
 
-            $scope.orderOptions = $scope.orderOptions || [
+            $scope.orderOptions ??= [
                 {name: 'Highest Price', value: ['-BestPrice']},
                 {name: 'Lowest Price', value: ['BestPrice']},
                 {name: 'Recently Updated', value: ['-ModificationTimestamp']},
@@ -415,7 +406,7 @@ Stratus.Components.IdxPropertyList = {
 
             if ($scope.urlLoad) {
                 // first set the UrlQuery via defaults (cloning so it can't be altered)
-                Idx.setUrlOptions('Search', JSON.parse(JSON.stringify($ctrl.defaultQuery)))
+                Idx.setUrlOptions('Search', JSON.parse(JSON.stringify(defaultQuery)))
                 // Load Query from the provided URL settings
                 urlQuery = Idx.getOptionsFromUrl()
                 // If a specific listing is provided, be sure to pop it up as well
@@ -498,7 +489,7 @@ Stratus.Components.IdxPropertyList = {
             $anchorScroll(`${$scope.elementId}_${model._id}`)
         }
 
-        $scope.hasQueryChanged = (): boolean => !isEqual(clone($ctrl.lastQuery), clone($scope.query))
+        $scope.hasQueryChanged = (): boolean => !isEqual(clone(lastQuery), clone($scope.query))
 
         /**
          * Functionality called when a search widget runs a query after the page has loaded
@@ -515,12 +506,12 @@ Stratus.Components.IdxPropertyList = {
                 if ($scope.collection.pending) {
                     // Do do anything if the collection isn't ready yet
                     // revert to last query as this never fired
-                    $scope.query = cloneDeep($ctrl.lastQuery)
+                    $scope.query = cloneDeep(lastQuery)
                     resolve([])
                     return
                 }
-                query = query || clone($scope.query) || {}
-                query.where = query.where || {}
+                query ??= clone($scope.query) || {}
+                query.where ??= {}
                 // console.log('searchProperties has query', clone(query))
 
                 let urlWhere: UrlWhereOptions = clone(query.where) || {}
@@ -626,9 +617,9 @@ Stratus.Components.IdxPropertyList = {
                     // TODO need to avoid adding default variables to URL (Status/order/etc)
 
                     if (updateUrl) {
-                        // console.log('$ctrl.defaultQuery being set', $ctrl.defaultQuery)
+                        // console.log('defaultQuery being set', defaultQuery)
                         // Display the URL query in the address bar
-                        Idx.refreshUrlOptions($ctrl.defaultQuery)
+                        Idx.refreshUrlOptions(defaultQuery)
                     }
 
                     Idx.emit('searching', $scope, clone($scope.query))
@@ -637,7 +628,7 @@ Stratus.Components.IdxPropertyList = {
                         // resolve(Idx.fetchProperties($scope, 'collection', $scope.query, refresh))
                         // Grab the new property listings
                         const results = await Idx.fetchProperties($scope, 'collection', $scope.query, refresh)
-                        $ctrl.lastQuery = cloneDeep($scope.query)
+                        lastQuery = cloneDeep($scope.query)
                         // $applyAsync will automatically be applied
                         Idx.emit('searched', $scope, clone($scope.query))
                         resolve(results)
@@ -798,8 +789,8 @@ Stratus.Components.IdxPropertyList = {
          * @param reset - set true to force reset
          */
         $scope.getMLSVariables = (reset?: boolean): MLSService[] => {
-            if (!$ctrl.mlsVariables || reset) {
-                $ctrl.mlsVariables = []
+            if (!mlsVariables || reset) {
+                mlsVariables = []
                 let mlsServicesRequested = null
                 // Ensure we are only requesting the services we are using
                 if (
@@ -815,10 +806,10 @@ Stratus.Components.IdxPropertyList = {
                     mlsServicesRequested = $scope.query.service
                 }
                 Idx.getMLSVariables(mlsServicesRequested).forEach((service: MLSService) => {
-                    $ctrl.mlsVariables[service.id] = service
+                    mlsVariables[service.id] = service
                 })
             }
-            return $ctrl.mlsVariables
+            return mlsVariables
         }
 
         /**
@@ -834,8 +825,8 @@ Stratus.Components.IdxPropertyList = {
         }
 
         $scope.highlightModel = (model: Property, timeout?: number): void => {
-            timeout = timeout || 0
-            model._unmapped = model._unmapped || {}
+            timeout ??= 0
+            model._unmapped ??= {}
             $scope.$applyAsync(() => {
                 model._unmapped._highlight = true
             })
@@ -848,7 +839,7 @@ Stratus.Components.IdxPropertyList = {
 
         $scope.unhighlightModel = (model: Property): void => {
             if (model) {
-                model._unmapped = model._unmapped || {}
+                model._unmapped ??= {}
                 $scope.$applyAsync(() => {
                     model._unmapped._highlight = false
                 })
@@ -885,7 +876,7 @@ Stratus.Components.IdxPropertyList = {
                     'element-id': 'property_detail_popup_' + model.ListingKey,
                     service: model._ServiceId,
                     'listing-key': model.ListingKey,
-                    'default-list-options': JSON.stringify($ctrl.defaultQuery),
+                    'default-list-options': JSON.stringify(defaultQuery),
                     'page-title': true, // update the page title
                     'url-load': $scope.urlLoad
                 }
@@ -939,7 +930,7 @@ Stratus.Components.IdxPropertyList = {
                                 $mdDialog.hide()
                                 Idx.setUrlOptions('Listing', {})
                                 if ($scope.urlLoad) {
-                                    Idx.refreshUrlOptions($ctrl.defaultQuery)
+                                    Idx.refreshUrlOptions(defaultQuery)
                                 }
                                 // Revert page title back to what it was
                                 Idx.setPageTitle()
@@ -953,7 +944,7 @@ Stratus.Components.IdxPropertyList = {
                     }, () => {
                         Idx.setUrlOptions('Listing', {})
                         if ($scope.urlLoad) {
-                            Idx.refreshUrlOptions($ctrl.defaultQuery)
+                            Idx.refreshUrlOptions(defaultQuery)
                         }
                         // Revert page title back to what it was
                         Idx.setPageTitle()

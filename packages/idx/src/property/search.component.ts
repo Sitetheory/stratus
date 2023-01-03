@@ -9,6 +9,8 @@ import _, {
     clone,
     cloneDeep,
     extend,
+    includes,
+    intersection,
     isArray,
     isEmpty,
     isEqual,
@@ -20,10 +22,6 @@ import _, {
 import {Stratus} from '@stratusjs/runtime/stratus'
 import {element, material, IAttributes, ITimeoutService, IQService, IWindowService} from 'angular'
 import 'angular-material'
-
-// Services
-import '@stratusjs/idx/idx'
-// tslint:disable-next-line:no-duplicate-imports
 import {
     CompileFilterOptions,
     IdxComponentScope,
@@ -35,18 +33,22 @@ import {
     WhereOptions
 } from '@stratusjs/idx/idx'
 import {IdxPropertyListScope} from '@stratusjs/idx/property/list.component'
-
-// Stratus Dependencies
 import {isJSON, LooseObject, safeUniqueId} from '@stratusjs/core/misc'
 import {cookie} from '@stratusjs/core/environment'
-// FIXME should we be renaming the old 'stratus.directives' variables to something else now that we're @stratusjs?
-import 'stratus.directives.stringToNumber'
-import 'stratus.filters.numeral'
 
-// Component Preload
+// Stratus Preload
+import '@stratusjs/angularjs-extras/directives/stringToNumber'
+import '@stratusjs/angularjs-extras/filters/numeral'
+// tslint:disable-next-line:no-duplicate-imports
+import '@stratusjs/idx/idx'
+import '@stratusjs/idx/office/list.component'
 // tslint:disable-next-line:no-duplicate-imports
 import '@stratusjs/idx/office/search.component'
-import '@stratusjs/idx/office/list.component'
+
+type NameValuePair = {
+    name: string
+    value: string | number | string[]
+}
 
 // Environment
 const min = !cookie('env') ? '.min' : ''
@@ -56,8 +58,16 @@ const componentName = 'search'
 // There is not a very consistent way of pathing in Stratus at the moment
 const localDir = `${Stratus.BaseUrl}${Stratus.DeploymentPath}@stratusjs/${packageName}/src/${moduleName}/`
 
+type ListingTypeSelectionSetting = {
+    name: string
+    value: string
+    group: string
+    lease: boolean
+}
+
 export type IdxPropertySearchScope = IdxSearchScope & {
     widgetName: string
+    initialized: boolean
     listId: string
     listInitialized: boolean
     listLinkUrl: string
@@ -73,7 +83,31 @@ export type IdxPropertySearchScope = IdxSearchScope & {
     options: {
         // [key: string]: object | any
         query: CompileFilterOptions
-        selection: object | any // TODO need to specify
+        selection: { // object | any // TODO need to specify
+            Bedrooms?: NameValuePair[]
+            Bathrooms?: NameValuePair[]
+            order?: NameValuePair[]
+            Status?: LooseObject<LooseObject<string[]>>
+            ListingType?: {
+                group?: {
+                    [propertyCategory: string]: boolean
+                }
+                list?: {
+                    Residential: string[]
+                    Commercial: string[]
+                    Lease: string[]
+                }
+                default?: {
+                    Sale: {
+                        [propertyCategory: string]: string[]
+                    }
+                    Lease: {
+                        [propertyCategory: string]: string[]
+                    }
+                }
+                All?: ListingTypeSelectionSetting[]
+            }
+        }
         forRent: boolean
         agentGroups: SelectionGroup[]
         officeGroups: SelectionGroup[]
@@ -81,13 +115,16 @@ export type IdxPropertySearchScope = IdxSearchScope & {
     displayFilterFullHeight: boolean
     variableSyncing: object | any
     filterMenu?: material.IPanelRef & any // material.IPanelRef // disabled because we need to set reposition()
+    _: typeof _
 
     // Functions
-    arrayIntersect(itemArray: any[], array: any[]): boolean
+    canDisplayListingTypeButton(listType: ListingTypeSelectionSetting): boolean
     displayOfficeGroupSelector(searchTerm?: string, editIndex?: number, ev?: any): void
     getMLSVariables(reset?: boolean): MLSService[]
     hasQueryChanged(): boolean
+    /** @deprecated use _.includes */
     inArray(item: any, array: any[]): boolean
+    isIntersecting(itemArray: any[], array: any[]): boolean
     selectDefaultListingType(listingGroup?: string): void
     setQuery(newQuery?: CompileFilterOptions): void
     setWhere(newWhere?: WhereOptions): void
@@ -201,12 +238,12 @@ Stratus.Components.IdxPropertySearch = {
         Idx: IdxService,
     ) {
         // Initialize
-        const $ctrl = this
         $scope.uid = safeUniqueId(packageName, moduleName, componentName)
         $scope.elementId = $attrs.elementId || $scope.uid
         $scope._ = _
         Stratus.Instances[$scope.elementId] = $scope
         $scope.localDir = localDir
+        $scope.initialized = false
         if ($attrs.tokenUrl) {
             Idx.setTokenURL($attrs.tokenUrl)
         }
@@ -242,9 +279,9 @@ Stratus.Components.IdxPropertySearch = {
             $scope.displayFilterFullHeight = $attrs.displayFilterFullHeight && isJSON($attrs.displayFilterFullHeight) ?
                 JSON.parse($attrs.displayFilterFullHeight) : false
             $scope.filterMenu = null
-            $scope.options.forRent = $scope.options.forRent || false
-            $scope.options.agentGroups = $scope.options.agentGroups || []
-            // $scope.options.officeGroups = $scope.options.officeGroups || []
+            $scope.options.forRent ||= false
+            $scope.options.agentGroups ??= []
+            // $scope.options.officeGroups ??= []
 
             $scope.options.officeGroups =
                 ($scope.options.officeGroups && isString($scope.options.officeGroups) && isJSON($scope.options.officeGroups)
@@ -255,9 +292,9 @@ Stratus.Components.IdxPropertySearch = {
                     ) || []
 
             // Set default queries
-            $scope.options.query = $scope.options.query || {}
-            $scope.options.query.where = $scope.options.query.where || {}
-            $scope.options.query.service = $scope.options.query.service || []
+            $scope.options.query ??= {}
+            $scope.options.query.where ??= {}
+            $scope.options.query.service ??= []
 
             // $scope.setQuery($scope.options.query)
             $scope.setWhere($scope.options.query.where)
@@ -279,48 +316,48 @@ Stratus.Components.IdxPropertySearch = {
             }, 1000)
 
             // Set default selections TODO may need some more universally set options to be able to use
-            $scope.options.selection = $scope.options.selection || {}
-            $scope.options.selection.Bedrooms = $scope.options.selection.Bedrooms || [
+            $scope.options.selection ??= {}
+            $scope.options.selection.Bedrooms ??= [
                 {name: '1+', value: 1},
                 {name: '2+', value: 2},
                 {name: '3+', value: 3},
                 {name: '4+', value: 4},
                 {name: '5+', value: 5}
             ]
-            $scope.options.selection.Bathrooms = $scope.options.selection.Bathrooms || [
+            $scope.options.selection.Bathrooms ??= [
                 {name: '1+', value: 1},
                 {name: '2+', value: 2},
                 {name: '3+', value: 3},
                 {name: '4+', value: 4},
                 {name: '5+', value: 5}
             ]
-            $scope.options.selection.order = $scope.options.selection.order || [
+            $scope.options.selection.order ??= [
                 {name: 'Highest Price', value: '-BestPrice'},
                 {name: 'Lowest Price', value: 'BestPrice'},
                 {name: 'Recently Updated', value: '-ModificationTimestamp'},
                 {name: 'Recently Sold', value: '-CloseDate'},
                 {name: 'Status', value: ['Status', '-BestPrice']}
             ]
-            $scope.options.selection.Status = $scope.options.selection.Status || {}
-            $scope.options.selection.Status.default = $scope.options.selection.Status.default || {
+            $scope.options.selection.Status ??= {}
+            $scope.options.selection.Status.default ??= {
                 Sale: ['Active', 'Contract'],
                 Lease: ['Active']
             }
-            $scope.options.selection.ListingType = $scope.options.selection.ListingType || {}
+            $scope.options.selection.ListingType ??= {}
             // These determine what ListingTypes options that should currently be 'shown' based on selections.
             // Automatically updated with a watcher
-            $scope.options.selection.ListingType.group = $scope.options.selection.ListingType.group || {
+            $scope.options.selection.ListingType.group ??= {
                 Residential: true,
                 Commercial: false
             }
             // TODO These values need to be supplied by the MLS' to ensure we dont show ones that don't exist
-            $scope.options.selection.ListingType.list = $scope.options.selection.ListingType.list || {
+            $scope.options.selection.ListingType.list ??= {
                 Residential: ['House', 'Condo', 'Townhouse', 'MultiFamily', 'Manufactured', 'Land', 'LeaseHouse', 'LeaseCondo', 'LeaseTownhouse', 'LeaseOther'],
                 Commercial: ['Commercial', 'CommercialBusinessOp', 'CommercialResidential', 'CommercialLand', 'LeaseCommercial'],
                 Lease: ['LeaseHouse', 'LeaseCondo', 'LeaseTownhouse', 'LeaseOther', 'LeaseCommercial']
             }
             // These are the default selections and should be updated by the page on load(if needed)
-            $scope.options.selection.ListingType.default = $scope.options.selection.ListingType.default || {
+            $scope.options.selection.ListingType.default ??= {
                 Sale: {
                     Residential: ['House', 'Condo', 'Townhouse'],
                     Commercial: ['Commercial', 'CommercialBusinessOp']
@@ -331,7 +368,7 @@ Stratus.Components.IdxPropertySearch = {
                 }
             }
             // These are static and never change. merely map correct values
-            $scope.options.selection.ListingType.All = $scope.options.selection.ListingType.All || [
+            $scope.options.selection.ListingType.All ??= [
                 {name: 'House', value: 'House', group: 'Residential', lease: false},
                 {name: 'Condo', value: 'Condo', group: 'Residential', lease: false},
                 {name: 'Townhouse', value: 'Townhouse', group: 'Residential', lease: false},
@@ -374,6 +411,9 @@ Stratus.Components.IdxPropertySearch = {
                 }
             }
 
+            $scope.$applyAsync(() => {
+                $scope.initialized = true
+            })
             // await $scope.variableSync() sync is moved to teh timeout above so it can still work with List widgets
             Idx.emit('init', $scope)
         }
@@ -393,7 +433,7 @@ Stratus.Components.IdxPropertySearch = {
                 return
             }
 
-            const stopWatchingInitNow = $scope.$watch('$ctrl.initNow', (initNowCtrl: boolean) => {
+            const stopWatchingInitNow = $scope.$watch('initNow', (initNowCtrl: boolean) => {
                 // console.log('CAROUSEL initNow called later')
                 if (initNowCtrl !== true) {
                     return
@@ -406,16 +446,8 @@ Stratus.Components.IdxPropertySearch = {
         }
 
         $scope.$watch('options.query.where.ListingType', () => {
-            // on load this isn't defined yet
-            if (typeof $scope.options === 'undefined' || typeof $scope.options.query === 'undefined' ) {
-                return
-            }
-            // TODO: Consider Better solution? I just added the check to see if $scope.options.query is set
-            // because there are cases where $scope.options.query is not defined (null). This happens on admin
-            // edit page load  for a new record where nothing has been set on a page yet.
-            // Davis: removed check for $scope.options.query.ListingType as if it's not an Array will create it
-            if ($scope.options.query && $scope.options.query.where && $scope.options.selection.ListingType.list) {
-                if (!Object.prototype.hasOwnProperty.call($scope.options.query.where, 'ListingType')) {
+            if ($scope.options?.query?.where && $scope.options?.selection?.ListingType?.list) {
+                if (!$scope.options?.query?.where?.ListingType) {
                     $scope.options.query.where.ListingType = []
                 }
 
@@ -423,29 +455,15 @@ Stratus.Components.IdxPropertySearch = {
                     $scope.options.query.where.ListingType = [$scope.options.query.where.ListingType]
                 }
                 $scope.options.selection.ListingType.group.Residential =
-                    $scope.arrayIntersect($scope.options.selection.ListingType.list.Residential, $scope.options.query.where.ListingType)
+                    $scope.isIntersecting($scope.options.selection.ListingType.list.Residential, $scope.options.query.where.ListingType)
                 $scope.options.selection.ListingType.group.Commercial =
-                    $scope.arrayIntersect($scope.options.selection.ListingType.list.Commercial, $scope.options.query.where.ListingType)
+                    $scope.isIntersecting($scope.options.selection.ListingType.list.Commercial, $scope.options.query.where.ListingType)
 
                 $scope.options.forRent =
-                    $scope.arrayIntersect($scope.options.selection.ListingType.list.Lease, $scope.options.query.where.ListingType)
+                    $scope.isIntersecting($scope.options.selection.ListingType.list.Lease, $scope.options.query.where.ListingType)
                 // console.log('watched ListingType', $scope.options.query.ListingType, $scope.options.selection.ListingType.group)
             }
         })
-
-        /**
-         * Create filter function for a query string
-         * TODO whats this used for?
-         */
-        /* *
-        const createFilterFor = (query: string) => {
-            const lowercaseQuery = query.toLowerCase()
-
-            return (hay: any) => {
-                return (hay.value.indexOf(lowercaseQuery) === 0)
-            }
-
-        }
 
         /**
          * Sync Gutensite form variables to a Stratus scope
@@ -496,31 +514,20 @@ Stratus.Components.IdxPropertySearch = {
             await $q.all(promises)
         }
 
-        /**
-         * If element exists in Array shortcut helper
-         * TODO move to global reference
-         */
-        $scope.inArray = (item: any, array: any[]): boolean => {
-            if (!isArray(array)) {
-                // console.warn('Array undefined, cannot search for', item)
-                return false
-            }
-            return (array.indexOf(item) !== -1)
+        $scope.canDisplayListingTypeButton = (listType: ListingTypeSelectionSetting): boolean => {
+            return $scope.options.forRent === listType.lease && $scope.options.selection.ListingType.group[listType.group]
         }
 
-        /**
-         * TODO move to global reference
-         */
-        $scope.arrayIntersect = (itemArray: any[], array: any[]): boolean => {
-            if (
-                !isArray(array) ||
-                !isArray(itemArray)
-            ) {
+        /** @deprecated use _.includes */
+        $scope.inArray = (item: any, array: any[]) => includes(array, item)
+
+        $scope.isIntersecting = (itemArray: any[], array: any[]): boolean => {
+            if (!isArray(array) || !isArray(itemArray)) {
                 console.warn('Array undefined, cannot search for', itemArray, 'in', array)
                 // return []
                 return false
             }
-            return itemArray.filter(value => array.indexOf(value) !== -1).length > 0
+            return intersection(itemArray, array).length > 0
         }
 
         /**
@@ -528,7 +535,7 @@ Stratus.Components.IdxPropertySearch = {
          * TODO move to global reference
          */
         $scope.toggleArrayElement = (item: any, array: any[]): void => {
-            array = array || []
+            array ??= []
             const arrayIndex = array.indexOf(item)
             if (arrayIndex >= 0) {
                 array.splice(arrayIndex, 1)
@@ -595,8 +602,8 @@ Stratus.Components.IdxPropertySearch = {
          * Update the entirety options.query in a safe manner to ensure undefined references are not produced
          */
         $scope.setQuery = (newQuery?: CompileFilterOptions): void => {
-            newQuery = newQuery || {}
-            newQuery.where = newQuery.where || {}
+            newQuery ??= {}
+            newQuery.where ??= {}
             // getDefaultWhereOptions returns the set a required WhereOptions with initialized arrays
             // $scope.options.query = extend(Idx.getDefaultWhereOptions(), newQuery)
             $scope.options.query = cloneDeep(newQuery)
@@ -609,7 +616,7 @@ Stratus.Components.IdxPropertySearch = {
          */
         $scope.setWhere = (newWhere?: WhereOptions): void => {
             // console.log('setWhere', clone(newWhere))
-            newWhere = newWhere || {}
+            newWhere ??= {}
             // getDefaultWhereOptions returns the set a required WhereOptions with initialized arrays
             $scope.options.query.where = extend(Idx.getDefaultWhereOptions(), newWhere)
             // find the objects that aren't arrays and convert to arrays as require to prevent future and current errors
@@ -686,7 +693,7 @@ Stratus.Components.IdxPropertySearch = {
                 }
                 $scope.throttledSearch()
             } else {
-                // console.log('comparing last', cloneDeep($ctrl.lastQuery))
+                // console.log('comparing last', cloneDeep(lastQuery))
                 // console.log('comparing current', cloneDeep($scope.options.query))
                 if ($scope.hasQueryChanged()) {
                     lastQuery = cloneDeep($scope.options.query)
@@ -774,7 +781,7 @@ Stratus.Components.IdxPropertySearch = {
                 }, () => {
                     $scope.validateOfficeGroups()
                     // IDX.setUrlOptions('Listing', {})
-                    // IDX.refreshUrlOptions($ctrl.defaultOptions)
+                    // IDX.refreshUrlOptions(defaultOptions)
                     // Revery page title back to what it was
                     // IDX.setPageTitle()
                     // Let's destroy it to save memory

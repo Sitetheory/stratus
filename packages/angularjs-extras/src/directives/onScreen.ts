@@ -11,10 +11,9 @@ import {
     IScope,
     IWindowService
 } from 'angular'
-
-// Stratus Core
 import {hydrate, safeUniqueId} from '@stratusjs/core/misc'
 import {StratusDirective} from './baseNew'
+import {Select} from '@stratusjs/core/dom'
 
 // Environment
 const packageName = 'angularjs-extras'
@@ -59,13 +58,13 @@ Stratus.Directives.OnScreen = (
         $scope.elementId = $attrs.elementId || $scope.uid
         $scope.initialized = false
 
-        const setViewPort = () => $scope.viewPortElement = element(Stratus.Environment.get('viewPort') || $window)[0]
+        const setViewPort = () => $scope.viewPortElement = element(Select(Stratus.Environment.get('viewPort') || $window).selection)[0]
         setViewPort()
 
         // event can be multiple listeners: reset
         const event: string[] = $attrs.event ? $attrs.event.split(' ') : []
-        const target: IAugmentedJQuery = $attrs.target ? element($window.document.querySelector($attrs.target)) : $element
-        let spy: IAugmentedJQuery = $attrs.spy ? element($window.document.querySelector($attrs.spy)) : $element
+        const target: IAugmentedJQuery = $attrs.target ? element(Select($attrs.target).selection) : $element
+        let spy: IAugmentedJQuery = $attrs.spy ? element(Select($attrs.spy).selection) : $element
         if (!spy.length) {
             spy = $element
         }

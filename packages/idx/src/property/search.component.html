@@ -276,7 +276,7 @@
                     data-ng-repeat="listType in ::options.selection.ListingType.All"
                     data-ng-click="toggleArrayElement(listType.value, options.query.where.ListingType); search()"
                     data-ng-show="options.forRent === listType.lease && options.selection.ListingType.group[listType.group]"
-                    data-ng-checked="inArray(listType.value, options.query.where.ListingType)"
+                    data-ng-checked="_.includes(options.query.where.ListingType, listType.value)"
                     data-md-prevent-menu-close
                     aria-label="{{::listType.name}}">
                     <span data-ng-bind="::listType.name"></span>
@@ -289,14 +289,14 @@
                 <h4>Status</h4>
 
                 <md-checkbox
-                        data-ng-checked="inArray('Active', options.query.where.Status)"
+                        data-ng-checked="_.includes(options.query.where.Status, 'Active')"
                         data-ng-click="toggleArrayElement('Active', options.query.where.Status); search()"
                         data-md-prevent-menu-close
                         aria-label="For Sale">
                         For Sale
                 </md-checkbox>
                 <md-checkbox
-                        data-ng-checked="inArray('Closed', options.query.where.Status)"
+                        data-ng-checked="_.includes(options.query.where.Status, 'Closed')"
                         data-ng-click="toggleArrayElement('Closed', options.query.where.Status); search()"
                         data-md-prevent-menu-close
                         aria-label="Sold">
@@ -304,8 +304,8 @@
                 </md-checkbox>
                 <md-checkbox
                         class="show-under-contract"
-                        data-ng-show="!options.forRent && (inArray('Active', options.query.where.Status) || inArray('Contract', options.query.where.Status))"
-                        data-ng-checked="inArray('Contract', options.query.where.Status)"
+                        data-ng-show="!options.forRent && (_.includes(options.query.where.Status, 'Active') || _.includes(options.query.where.Status, 'Contract'))"
+                        data-ng-checked="_.includes(options.query.where.Status, 'Contract')"
                         data-ng-click="toggleArrayElement('Contract', options.query.where.Status); search()"
                         aria-label="Under Contract"
                         data-md-prevent-menu-close

@@ -9,14 +9,14 @@ import {forEach} from 'lodash'
 import {Stratus} from '@stratusjs/runtime/stratus'
 import {element, material, IAttributes, ITimeoutService, IScope, IQService, IWindowService} from 'angular'
 import 'angular-material'
-import '@stratusjs/idx/idx'
-// tslint:disable-next-line:no-duplicate-imports
 import {CompileFilterOptions, IdxEmitter, IdxSearchScope, IdxService} from '@stratusjs/idx/idx'
 import {hydrate, isJSON, LooseObject, safeUniqueId} from '@stratusjs/core/misc'
 import {cookie} from '@stratusjs/core/environment'
 import {IdxMemberListScope} from '@stratusjs/idx/member/list.component'
 
-// Component Preload
+// Stratus Preload
+// tslint:disable-next-line:no-duplicate-imports
+import '@stratusjs/idx/idx'
 // tslint:disable-next-line:no-duplicate-imports
 import '@stratusjs/idx/member/list.component'
 
@@ -59,7 +59,6 @@ Stratus.Components.IdxMemberSearch = {
         Idx: IdxService,
     ) {
         // Initialize
-        const $ctrl = this
         $scope.uid = safeUniqueId(packageName, moduleName, componentName)
         $scope.elementId = $attrs.elementId || $scope.uid
         Stratus.Instances[$scope.elementId] = $scope
@@ -68,7 +67,7 @@ Stratus.Components.IdxMemberSearch = {
         }
         Stratus.Internals.CssLoader(`${localDir}${$attrs.template || componentName}.component${min}.css`).then()
 
-        $ctrl.$onInit = () => {
+        this.$onInit = () => {
             $scope.listId = $attrs.listId || null
             $scope.listInitialized = false
             $scope.listLinkUrl = $attrs.listLinkUrl || '/property/member/list'
@@ -83,10 +82,10 @@ Stratus.Components.IdxMemberSearch = {
             }, 2000) */
 
             // $scope.options = $attrs.options && isJSON($attrs.options) ? JSON.parse($attrs.options) : {}
-            $scope.options = $ctrl.options || hydrate($attrs.options) || {}
+            $scope.options = hydrate($attrs.options) || {}
 
             // Set default queries
-            $scope.options.query = $scope.options.query || {}
+            $scope.options.query ??= {}
 
             if ($scope.options.tokenUrl) {
                 /// ajax/request?class=property.token_auth&method=getToken
@@ -259,7 +258,7 @@ Stratus.Components.IdxMemberSearch = {
                 .then(() => {
                 }, () => {
                     // IDX.setUrlOptions('Listing', {})
-                    // IDX.refreshUrlOptions($ctrl.defaultOptions)
+                    // IDX.refreshUrlOptions(defaultOptions)
                     // Revery page title back to what it was
                     // IDX.setPageTitle()
                     // Let's destroy it to save memory

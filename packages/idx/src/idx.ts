@@ -1,5 +1,7 @@
-// Idx Service
-// @stratusjs/idx/idx
+/**
+ * @file Idx Service @stratusjs/idx/idx
+ * @example import '@stratusjs/idx/idx'
+ */
 
 // Runtime
 import {clone, extend, get, isArray, isDate, isEmpty, isEqual, isNumber, isObject, isPlainObject, isString, uniqueId} from 'lodash'
@@ -17,17 +19,8 @@ import {
     IQService,
     IWindowService
 } from 'angular'
-
-// Services
-import '@stratusjs/angularjs/services/model' // Needed as $provider
-// tslint:disable-next-line:no-duplicate-imports
 import {Model, ModelOptions, ModelSyncOptions} from '@stratusjs/angularjs/services/model' // Needed as Class
-import '@stratusjs/angularjs/services/collection' // Needed as $provider
-// tslint:disable-next-line:no-duplicate-imports
 import {Collection, CollectionSyncOptions} from '@stratusjs/angularjs/services/collection' // Needed as Class
-import '@stratusjs/idx/listTrac'
-
-// Stratus Dependencies
 import {
     isJSON,
     LooseFunction,
@@ -39,14 +32,13 @@ import {IdxMapScope} from '@stratusjs/idx/map/map.component'
 import {IdxPropertyListScope} from '@stratusjs/idx/property/list.component'
 import {IdxPropertySearchScope} from '@stratusjs/idx/property/search.component'
 import {IdxMemberListScope} from '@stratusjs/idx/member/list.component'
-// import {IdxPropertyDetailsScope} from '@stratusjs/idx/property/details.component'
-// import {IdxMapScope} from '@stratusjs/idx/map.component'
 
-
-// Environment
-// const min = !cookie('env') ? '.min' : ''
-// There is not a very consistent way of pathing in Stratus at the moment
-// const localDir = `/${boot.bundle}node_modules/@stratusjs/${packageName}/src/${moduleName}/`
+// Stratus Preload
+// tslint:disable-next-line:no-duplicate-imports
+import '@stratusjs/angularjs/services/model' // Needed as $provider
+// tslint:disable-next-line:no-duplicate-imports
+import '@stratusjs/angularjs/services/collection' // Needed as $provider
+import '@stratusjs/idx/listTrac'
 
 export interface IdxService {
     // Variables
@@ -348,6 +340,7 @@ export interface MLSService {
     }
 }
 
+/** Sitetheory contact information */
 export interface WidgetContact {
     name: string,
     emails: {
@@ -367,6 +360,7 @@ export interface WidgetContact {
     }
 }
 
+/** Sitetheory provided integrations */
 export interface WidgetIntegrations {
     analytics?: {
         googleAnalytics?: {
@@ -383,6 +377,7 @@ export interface WidgetIntegrations {
     }
 }
 
+/** Sitetheory provided preferences */
 interface IdxSharedValue {
     contactUrl: string | null,
     contactCommentVariable: string | null,
@@ -399,6 +394,7 @@ interface Session {
     contacts: WidgetContact[]
 }
 
+/** Sitetheory authentication token format */
 interface TokenResponse {
     data: {
         contact?: {
@@ -826,8 +822,8 @@ const angularJsService = (
 
         if (emitterName === 'init') {
             // Let's prep the requests for 'init' so they immediate call if this scope has already init
-            instanceOnEmitters[uid] = instanceOnEmitters[uid] || {}
-            instanceOnEmitters[uid][emitterName] = instanceOnEmitters[uid][emitterName] || {}
+            instanceOnEmitters[uid] ??= {}
+            instanceOnEmitters[uid][emitterName] ??= {}
         }
     }
 
@@ -2385,7 +2381,7 @@ const angularJsService = (
      * TODO define defaultOptions
      */
     function getUrlOptionsPath(defaultOptions?: object | any) {
-        defaultOptions = defaultOptions || {}
+        defaultOptions ??= {}
         // console.log('getUrlOptionsPath defaultOptions', clone(defaultOptions))
         let path = ''
 
@@ -2547,13 +2543,13 @@ const angularJsService = (
         apiModel: string,
         compileFilterFunction: (options: CompileFilterOptions) => MongoFilterQuery
     ): Promise<Collection<T>> {
-        options.service = options.service ?? []
-        options.where = options.where || {}
-        options.order = options.order || []
-        options.page = options.page || 1
-        options.perPage = options.perPage || 10
-        options.images = options.images || false
-        options.fields = options.fields || [
+        options.service ??= []
+        options.where ??= {}
+        options.order ??= []
+        options.page ??= 1
+        options.perPage ??= 10
+        options.images ||= false
+        options.fields ??= [
             '_id'
         ]
 
@@ -2725,10 +2721,10 @@ const angularJsService = (
     ): Promise<Model<T>> {
         await tokenKeepAuth()
 
-        options.service = options.service ?? 0
-        options.where = options.where || {}
-        options.images = options.images || false
-        options.fields = options.fields || []
+        options.service ??= 0
+        options.where ??= {}
+        options.images ||= false
+        options.fields ??= []
         options.perPage = 1
 
         if (isArray(options.service)) {
@@ -2817,7 +2813,7 @@ const angularJsService = (
         refresh = false,
         // listName = 'PropertyList'
     ): Promise<Collection<Property>> {
-        options.service = options.service ?? []
+        options.service ??= []
         // options.where = options.where || urlOptions.Search || {} // TODO may want to sanitize the urlOptions
         if (
             !options.where &&
@@ -2830,12 +2826,12 @@ const angularJsService = (
 
             options.where = whereReAssign
         }
-        options.where = options.where || {}
-        options.order = options.order || urlOptions.Search.Order || []
-        options.page = options.page || urlOptions.Search.Page || 1
-        options.perPage = options.perPage || 10
-        options.images = options.images || false
-        options.fields = options.fields || [
+        options.where ??= {}
+        options.order ??= urlOptions.Search.Order || []
+        options.page ??= urlOptions.Search.Page || 1
+        options.perPage ??= 10
+        options.images ||= false
+        options.fields ??= [
             '_id',
             '_Class',
             'MlsStatus',
@@ -2924,11 +2920,11 @@ const angularJsService = (
         modelVarName: string,
         options = {} as Pick<CompileFilterOptions, 'service' | 'where' | 'fields' | 'images' | 'openhouses'>,
     ): Promise<Model<Property>> {
-        options.service = options.service ?? null
-        options.where = options.where || {}
-        options.images = options.images || false
-        options.openhouses = options.openhouses || false
-        options.fields = options.fields || []
+        options.service ??= null
+        options.where ??= {}
+        options.images ||= false
+        options.openhouses ||= false
+        options.fields ??= []
 
         return genericSearchModel<Property>($scope, modelVarName, options,
             'Properties',
@@ -2959,15 +2955,15 @@ const angularJsService = (
         options = {} as Pick<CompileFilterOptions, 'service' | 'where' | 'order' | 'page' | 'perPage' | 'fields' | 'images' | 'office'>,
         refresh = false
     ): Promise<Collection> {
-        options.service = options.service ?? []
-        // options.listName = options.listName || 'MemberList'
-        options.where = options.where || {}
-        options.order = options.order || []
-        options.page = options.page || 1
-        options.perPage = options.perPage || 10
-        options.images = options.images || false
-        options.office = options.office || false
-        options.fields = options.fields || [
+        options.service ??= []
+        // options.listName ??= 'MemberList'
+        options.where ??= {}
+        options.order ??= []
+        options.page ??= 1
+        options.perPage ??= 10
+        options.images ||= false
+        options.office ||= false
+        options.fields ??= [
             '_id',
             'MemberKey',
             'MemberStateLicense',
@@ -3018,15 +3014,15 @@ const angularJsService = (
         options = {} as Pick<CompileFilterOptions, 'service' | 'where' | 'order' | 'page' | 'perPage' | 'fields' | 'images' | 'office' | 'managingBroker' | 'members'>,
         refresh = false
     ): Promise<Collection> {
-        options.service = options.service ?? []
-        options.where = options.where || {}
-        options.order = options.order || []
-        options.page = options.page || 1
-        options.perPage = options.perPage || 10
-        options.images = options.images || false
-        options.managingBroker = options.managingBroker || false
-        options.members = options.members || false
-        options.fields = options.fields || [
+        options.service ??= []
+        options.where ??= {}
+        options.order ??= []
+        options.page ??= 1
+        options.perPage ??= 10
+        options.images ||= false
+        options.managingBroker ||= false
+        options.members ||= false
+        options.fields ??= [
             '_id',
             'OfficeKey',
             'OfficeMlsId',
@@ -3040,7 +3036,7 @@ const angularJsService = (
             'OfficeBrokerKey'
         ]
         // options.where['ListType'] = ['House','Townhouse'];
-        refresh = refresh || false
+        refresh ||= false
 
         return genericSearchCollection<Office>($scope, collectionVarName, options, refresh,
             'office',

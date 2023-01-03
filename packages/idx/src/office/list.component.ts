@@ -17,27 +17,23 @@ import {
     IQService,
     IWindowService
 } from 'angular'
-
-// Angular 1 Modules
 import 'angular-material'
 import 'angular-sanitize'
-import '@stratusjs/idx/idx'
-// tslint:disable-next-line:no-duplicate-imports
 import {
     CompileFilterOptions,
     IdxEmitter,
     IdxListScope,
     IdxService,
-    Office
+    Office,
+    WhereOptions
 } from '@stratusjs/idx/idx'
-
-// Stratus Dependencies
-import {Collection} from '@stratusjs/angularjs/services/collection' // Needed as Class
+import {Collection} from '@stratusjs/angularjs/services/collection'
 import {isJSON, LooseObject, safeUniqueId} from '@stratusjs/core/misc'
 import {cookie} from '@stratusjs/core/environment'
 
-// Component Preload
-// import '@stratusjs/idx/office/details.component'
+// Stratus Preload
+// tslint:disable-next-line:no-duplicate-imports
+import '@stratusjs/idx/idx'
 import '@stratusjs/idx/disclaimer/disclaimer.component'
 
 // Environment
@@ -95,7 +91,6 @@ Stratus.Components.IdxOfficeList = {
         Idx: IdxService,
     ) {
         // Initialize
-        const $ctrl = this
         $scope.uid = safeUniqueId(packageName, moduleName, componentName)
         $scope.elementId = $attrs.elementId || $scope.uid
         Stratus.Instances[$scope.elementId] = $scope
@@ -103,6 +98,10 @@ Stratus.Components.IdxOfficeList = {
             Idx.setTokenURL($attrs.tokenUrl)
         }
         // Stratus.Internals.CssLoader(`${localDir}${$attrs.template || componentName}.component${min}.css`)
+
+        let defaultOptions: WhereOptions
+        let defaultQuery: WhereOptions
+        let lastQuery: CompileFilterOptions
 
         /**
          * All actions that happen first when the component loads
@@ -126,8 +125,8 @@ Stratus.Components.IdxOfficeList = {
             $scope.query.order =
                 $scope.query.order && isString($scope.query.order) && isJSON($scope.query.order) ? JSON.parse($scope.query.order) :
                     $attrs.queryOrder && isJSON($attrs.queryOrder) ? JSON.parse($attrs.queryOrder) : $scope.query.order || null
-            $scope.query.page = $scope.query.page || null// will be set by Service
-            $scope.query.perPage = $scope.query.perPage ||
+            $scope.query.page ??= null// will be set by Service
+            $scope.query.perPage ??=
                 ($attrs.queryPerPage && isString($attrs.queryPerPage) ? parseInt($attrs.queryPerPage, 10) : null) ||
                 ($attrs.queryPerPage && isNumber($attrs.queryPerPage) ? $attrs.queryPerPage : null) ||
                 25
@@ -139,11 +138,11 @@ Stratus.Components.IdxOfficeList = {
             // $scope.query.where.MemberKey = $scope.query.where.MemberKey || '91045'
             // $scope.query.where.AgentLicense = $scope.query.where.AgentLicense || []*/
 
-            $ctrl.defaultOptions = JSON.parse(JSON.stringify($scope.query.where))// Extend/clone doesn't work for arrays
-            $ctrl.defaultQuery = JSON.parse(JSON.stringify($scope.query.where)) // Extend/clone doesn't work for arrays
-            // $ctrl.lastQuery = {}
+            defaultOptions = JSON.parse(JSON.stringify($scope.query.where))// Extend/clone doesn't work for arrays
+            defaultQuery = JSON.parse(JSON.stringify($scope.query.where)) // Extend/clone doesn't work for arrays
+            // lastQuery = {}
 
-            /* $scope.orderOptions = $scope.orderOptions || {
+            /* $scope.orderOptions ??= {
               'Price (high to low)': '-ListPrice',
               'Price (low to high)': 'ListPrice'
             } */
@@ -157,7 +156,7 @@ Stratus.Components.IdxOfficeList = {
             // const urlQuery: { Search?: any } = {}
             /* if ($scope.urlLoad) {
               // first set the UrlOptions via defaults (cloning so it can't be altered)
-              Idx.setUrlOptions('Search', JSON.parse(JSON.stringify($ctrl.defaultQuery)))
+              Idx.setUrlOptions('Search', JSON.parse(JSON.stringify(defaultQuery)))
               // Load Options from the provided URL settings
               urlOptions = Idx.getOptionsFromUrl()
               // If a specific listing is provided, be sure to pop it up as well
@@ -245,7 +244,7 @@ Stratus.Components.IdxOfficeList = {
             updateUrl?: boolean
         ): Promise<Collection<Office>> =>
             $q(async (resolve: any) => {
-                query = query || {}
+                query ??= {}
                 updateUrl = updateUrl === false ? updateUrl : true
                 // console.log('searching for', clone(query))
 
@@ -326,7 +325,7 @@ Stratus.Components.IdxOfficeList = {
 
                 // Display the URL options in the address bar
                 /* if (updateUrl) {
-                  Idx.refreshUrlOptions($ctrl.defaultQuery)
+                  Idx.refreshUrlOptions(defaultQuery)
                 } */
 
                 if (
@@ -344,7 +343,7 @@ Stratus.Components.IdxOfficeList = {
                     // resolve(Idx.fetchProperties($scope, 'collection', $scope.query, refresh))
                     // Grab the new property listings
                     const results = await Idx.fetchOffices($scope, 'collection', $scope.query, refresh)
-                    $ctrl.lastQuery = cloneDeep($scope.query)
+                    lastQuery = cloneDeep($scope.query)
                     Idx.emit('searched', $scope, clone($scope.query))
                     resolve(results)
                 } catch (e) {
@@ -435,8 +434,8 @@ Stratus.Components.IdxOfficeList = {
         }
 
         $scope.highlightModel = (model: Office, timeout?: number): void => {
-            timeout = timeout || 0
-            model._unmapped = model._unmapped || {}
+            timeout ??= 0
+            model._unmapped ??= {}
             $scope.$applyAsync(() => {
                 model._unmapped._highlight = true
             })
@@ -449,7 +448,7 @@ Stratus.Components.IdxOfficeList = {
 
         $scope.unhighlightModel = (model: Office): void => {
             if (model) {
-                model._unmapped = model._unmapped || {}
+                model._unmapped ??= {}
                 $scope.$applyAsync(() => {
                     model._unmapped._highlight = false
                 })
@@ -504,7 +503,7 @@ Stratus.Components.IdxOfficeList = {
                     .then(() => {
                     }, () => {
                         // Idx.setUrlOptions('Listing', {})
-                        // Idx.refreshUrlOptions($ctrl.defaultQuery)
+                        // Idx.refreshUrlOptions(defaultQuery)
                         // Revery page title back to what it was
                         Idx.setPageTitle()
                         // Let's destroy it to save memory
