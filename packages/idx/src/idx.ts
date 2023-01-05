@@ -2491,9 +2491,17 @@ const angularJsService = (
      * @param propertyNames - value(s) to reorder/sort by. {String || [String]}
      * @param reverse - If it should reverse sort by the value. {Boolean=}
      */
-    function orderBy(collection: Collection, propertyNames: string | string[], reverse = false): void {
-        const orderPropertyNames = clone(propertyNames)
-        if (orderPropertyNames) {
+    function orderBy(collection: Collection, propertyNames: string[] | string, reverse = false): void {
+        if (propertyNames) {
+            const orderPropertyNames = isArray(propertyNames) ? clone(propertyNames) : [clone(propertyNames)]
+            // BestPrice hotfix, as the variable is actually _BestPrice. Should actaully be requesting _BestPrice
+            orderPropertyNames.forEach((item: string, index: number) => {
+                if (item === 'BestPrice') {
+                    orderPropertyNames[index] = '_BestPrice'
+                } else if (item === '-BestPrice') {
+                    orderPropertyNames[index] = '-_BestPrice'
+                }
+            })
             collection.models = orderByFilter(collection.models, orderPropertyNames, reverse)
         }
     }
