@@ -630,11 +630,7 @@ const angularJsService = (
     $q: IQService,
     $rootScope: IRootScopeService,
     $window: IWindowService,
-    // tslint:disable-next-line:no-shadowed-variable
-    Collection: any, // FIXME type 'Collection' is invalid, need to fix
     ListTrac: any,
-    // tslint:disable-next-line:no-shadowed-variable
-    Model: any, // FIXME type 'Model' is invalid, need to fix
     orderByFilter: IFilterOrderBy
 ): IdxService => {
     const sharedValues: IdxSharedValue = {
@@ -1495,36 +1491,25 @@ const angularJsService = (
                 }
             }
             fetchPromises.push(
-                $q((resolve: any[] | any) => {
-                    collection.fetch('POST', null, options)
-                        .then((models: any) => {
-                            resolve(models)
-                        })
-                        // Inject the local server's Service Id loaded from
-                        .then(() => {
-                            resolve(modelInjectProperty<T>(collection.models as T[], {
-                                _ServiceId: collection.serviceId
-                            }))
-                        })
-                        .then(() => {
-                            // TODO save collection.header.get('x-fetch-time') to MLSVariables
-                            /*const fetchTime = collection.header.get('x-fetch-time')
-                            if (fetchTime) {
-                                session.services[collection.serviceId].fetchTime[modelName] = new Date(fetchTime)
-                            }*/
-                            updateFetchTime(collection, modelName, collection.serviceId)
-                            const maxRecords = collection.header.get('x-max-count')
-                            const countRecords = collection.header.get('x-total-count')
-                            if (maxRecords) {
-                                maxCount += parseInt(maxRecords, 10)
-                            }
-                            if (countRecords) {
-                                totalCount += parseInt(countRecords, 10)
-                                if (!maxRecords) {
-                                    maxCount += parseInt(countRecords, 10)
-                                }
-                            }
-                        })
+                $q(async (resolve: any[] | any) => {
+                    await collection.fetch('POST', null, options)
+                    await modelInjectProperty<T>(collection.models as T[], {
+                        _ServiceId: collection.serviceId
+                    })
+                    // TODO save collection.header.get('x-fetch-time') to MLSVariables
+                    updateFetchTime(collection, modelName, collection.serviceId)
+                    const maxRecords = collection.header.get('x-max-count')
+                    const countRecords = collection.header.get('x-total-count')
+                    if (maxRecords) {
+                        maxCount += parseInt(maxRecords, 10)
+                    }
+                    if (countRecords) {
+                        totalCount += parseInt(countRecords, 10)
+                        if (!maxRecords) {
+                            maxCount += parseInt(countRecords, 10)
+                        }
+                    }
+                    resolve(collection.models)
                 })
             )
         })
@@ -1533,17 +1518,13 @@ const angularJsService = (
         }
         return $q.all(fetchPromises)
             .then(
-                /**
-                 * @param fetchedData - Array of models from other Collections {Array<Array<Object>>}
-                 * returns {Collection}
-                 */
-                (fetchedData: any[]): any => {
+                async (fetchedData: T[][]): Promise<Collection<T>> => {
                     // Once all the Results are returned, starting merging them into the original Collection
-                    fetchedData.forEach(models => {
+                    await $q.all(fetchedData.map((models) => {
                         if (isArray(models)) {
-                            originalCollection.models.push(...models)
+                            (originalCollection.models as T[]).push(...models)
                         }
-                    })
+                    }))
                     return originalCollection
                 }
             )
@@ -1587,36 +1568,23 @@ const angularJsService = (
             }
         }
         fetchPromises.push(
-            $q((resolve: any[] | any) => {
-                // console.log('sending fetchReplaceModel', newModel, options)
-                newModel.fetch('POST', null, options)
-                    .then((data: any) => {
-                        resolve(data)
-                    })
-                    // Inject the local server's Service Id loaded from
-                    .then(() => {
-                        resolve(modelInjectProperty<T>([newModel.data], {
-                                _ServiceId: newModel.serviceId
-                            }))
-                        /*const fetchTime = newModel.header.get('x-fetch-time')
-                        if (fetchTime) {
-                            session.services[newModel.serviceId].fetchTime[modelName] = new Date(fetchTime)
-                        }*/
-                        updateFetchTime(newModel, modelName, newModel.serviceId)
-                    })
+            $q(async (resolve: any[] | any) => {
+                await newModel.fetch('POST', null, options)
+                // Inject the local server's Service Id loaded from
+                await modelInjectProperty<T>([newModel.data], {
+                    _ServiceId: newModel.serviceId
+                })
+                updateFetchTime(newModel, modelName, newModel.serviceId)
+                resolve(newModel.data)
             })
         )
         return $q.all(fetchPromises)
             .then(
-                /**
-                 * @param fetchedData - Array of data from other Models {Array<Array<Object>>}
-                 * returns {Model}
-                 */
-                (fetchedData: any[]): object | any => {
+                async (fetchedData: T[]): Promise<Model<T>> => {
                     // Once all the Results are returned, shove them into the original Model
-                    fetchedData.forEach(data => {
+                    await $q.all(fetchedData.map((data) => {
                         originalModel.data = data
-                    })
+                    }))
                     return originalModel
                 }
             )
@@ -1635,13 +1603,11 @@ const angularJsService = (
      * Inject Data into an array of models
      * @param modelDatas (either collection.models || model.data) {Array<Object>}
      * @param properties - {Object<String, *>}
-     * TODO define Model?
      */
-    function modelInjectProperty<T>(modelDatas: (Model<T>['data'])[], properties: { [key: string]: any }): boolean {
-        modelDatas.forEach(modelData => {
+    function modelInjectProperty<T>(modelDatas: (Model<T>['data'])[], properties: { [key: string]: any }): IPromise<void[]> {
+        return $q.all(modelDatas.map((modelData) => {
             extend(modelData, properties)
-        })
-        return true
+        }))
     }
 
     /**
@@ -2642,33 +2608,35 @@ const angularJsService = (
                 options.service = Object.keys(session.services) as unknown as number[] // keys are numbers
             }
 
-            options.service.forEach(
-                serviceId => {
-                    // Only load from a specific MLS Service
-                    if (Object.prototype.hasOwnProperty.call(session.services, serviceId)) {
-                        const request = {
-                            serviceId,
-                            urlRoot: session.services[serviceId].host,
-                            target: apiModel + '/search',
-                            api: {
-                                filter: filterQuery,
-                                // route and controller needed and only used by Sitetheory
-                                meta: {
-                                    method: 'get',
-                                    action: 'search'
-                                },
-                                route: {
-                                    controller: apiModelSingular // There might be a better way to do this
-                                }
+            options.service.forEach((serviceId) => {
+                // Only load from a specific MLS Service
+                if (Object.prototype.hasOwnProperty.call(session.services, serviceId)) {
+                    const filterQueryCustom = clone(filterQuery)
+                    if (!refresh) {
+                        filterQueryCustom.skip = (get(collection.meta, `data.recordCounts[${serviceId}]`) ?? 0) as number
+                    }
+                    const request = {
+                        serviceId,
+                        urlRoot: session.services[serviceId].host,
+                        target: apiModel + '/search',
+                        api: {
+                            filter: filterQueryCustom,
+                            // route and controller needed and only used by Sitetheory
+                            meta: {
+                                method: 'get',
+                                action: 'search'
+                            },
+                            route: {
+                                controller: apiModelSingular // There might be a better way to do this
                             }
                         }
-
-                        collections.push(
-                            createCollection<T>(request)
-                        )
                     }
+
+                    collections.push(
+                        createCollection<T>(request)
+                    )
                 }
-            )
+            })
 
             // When using the same WHERE and only changing the page, results should pool together (append)
             // Fetch and Merge all results together into single list
@@ -2684,7 +2652,20 @@ const angularJsService = (
             }
 
             // Sort once more on the front end to ensure it's ordered correctly
-            orderBy(collection, options.order)
+            orderBy(collection, options.order) // FIXME await?
+
+            // Cut out any model counts beyond how many we should currently have
+            if (collection.models.length > (options.page * options.perPage)) {
+                collection.models.splice(options.page * options.perPage, collection.models.length)
+            }
+
+            // count how many of each service's properties are in our collection
+            const recordCounts: {[key: number]: number} = {}
+            await $q.all((collection.models as T[]).map((model: T & {_ServiceId: number}) => {
+                recordCounts[model._ServiceId] ??= 0
+                recordCounts[model._ServiceId]++
+            }))
+            collection.meta.set('recordCounts', recordCounts)
 
             // Ensure the changes update on the DOM
             Object.keys(instance[moduleName].list).forEach(listName => {
