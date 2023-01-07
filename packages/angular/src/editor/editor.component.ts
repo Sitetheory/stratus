@@ -217,10 +217,10 @@ const has = (object: object, path: string) => _.has(object, path) && !_.isEmpty(
 export class EditorComponent extends RootComponent implements OnInit, TriggerInterface { // implements OnInit, OnChanges
 
     // Basic Component Settings
-    title = moduleName + '_component'
+    title = `${moduleName}_component`
     uid: string
     dev = !!cookie('env')
-    debug: true
+    debug = !!cookie(`debug_${moduleName}`)
     editor: 'froala'|'angular-editor'|'quill' = 'froala'
 
     // Registry Attributes
@@ -274,14 +274,15 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
         dataString: new FormControl(),
     })
     dataChangeLog: string[] = []
-    dataString = ''
+    incomingData = ''
+    outgoingData = ''
 
     // Debounce Saving Controls
     debounceSave = true
     debounceTime = 5000
 
     // Model Saving Controls
-    forceSave = true
+    forceSave = false
 
     // Child Components
     froalaEditorDirective: FroalaEditorDirective
@@ -393,15 +394,6 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
     }
     /* */
 
-    // Froala 2 Buttons (For Reference)
-    // 'insertOrderedList', 'insertUnorderedList', 'createLink', 'table'
-    froalaButtons: string[] = [
-        'bold', 'italic', 'underline', 'strikeThrough', 'subscript', 'superscript', '|', 'formatBlock',
-        'blockStyle', 'inlineStyle', 'paragraphStyle', 'paragraphFormat', 'align', 'formatOL',
-        'formatUL', 'outdent', 'indent', '|', 'insertLink', 'insertImage', 'insertVideo', 'insertFile',
-        'insertTable', '|', 'undo', 'redo', 'removeFormat', 'wordPaste', 'help', 'html', 'fullscreen'
-    ]
-
     froalaStandardButtons = {
         moreText: [
             'bold',
@@ -481,6 +473,10 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
                 // console.log('initialized:', editor.html.get(), editor, froalaEditorDirective)
                 this.froalaEditorDirective = froalaEditorDirective
             },
+            // blur: this.onBlur,
+            blur: (event: FocusEvent) => this.onBlur(event),
+            // FIXME: Froala doesn't support focus events, so this never fires...
+            focus: (event: FocusEvent) => this.onFocus(event),
             // bound to Froala Editor
             // contentChanged () {
             //     const editor = this
@@ -1089,7 +1085,7 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
         this.hydrate(elementRef, sanitizer, keys<EditorComponent>())
 
         // Data Connections
-        // TODO: Spelunk through this code to determine why I keep getting an empty component...
+        // TODO: Spelunk through this code to determine why I am getting an empty component on occasion...
         this.fetchData()
             .then(data => {
                 if (!data || !(data instanceof EventManager)) {
@@ -1181,11 +1177,16 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
                 this.model.changedExternal = true
                 this.model.trigger('change')
             })
+            // Pipe for outgoingData
+            dataControl.valueChanges.forEach(
+                (value: string) => this.outgoingData = value
+            )
         } else {
             dataControl.valueChanges.forEach(
                 (value: string) => this.modelSave(value)
             )
         }
+        // Detect and list duplicates
         if (this.dev) {
             this.listDuplicates(this.froalaConfig)
         }
@@ -1227,7 +1228,13 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             this.property,
             this.normalizeOut(innerHTML || value)
         )
-        this.model.changedExternal = false
+
+        // Remove the changedExternal flag if using debounceSave
+        if (this.debounceSave) {
+            this.model.changedExternal = false
+        }
+
+        // If enabled, Force Save on Persisted Models
         if (this.forceSave && !_.isEmpty(this.model.getIdentifier())) {
             this.model.save()
         }
@@ -1395,7 +1402,7 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             }, 250)
             return
         }
-        const prevString = _.clone(this.dataString)
+        const prevString = _.clone(this.incomingData)
         const dataString = this.dataRef()
         // ensure changes have occurred
         if (prevString === dataString) {
@@ -1429,7 +1436,7 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
         if (!this.model) {
             return ''
         }
-        return this.dataString = this.normalizeIn(
+        return this.incomingData = this.normalizeIn(
             this.model.get(this.property)
         )
     }
@@ -1465,24 +1472,33 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
     }
 
     // changedEditor(event: EditorChangeContent | EditorChangeSelection) {
-    changedEditor(event: any) {
+    changedEditor(event: Event) {
         console.log('editor-change:', event)
     }
 
-    onChangeEvent($event: any) {
-        console.log('change:', $event)
+    onChangeEvent(event: Event) {
+        console.log('change:', event)
     }
 
-    onFocus($event: any) {
-        // console.log('focus:', $event)
+    onFocus(event: FocusEvent) {
+        if (this.dev && this.debug) {
+            console.warn(`[onFocus] triggered on ${this.uid}`)
+        }
         this.focused = true
         this.blurred = false
     }
 
-    onBlur($event: any) {
-        // console.log('blur:', $event)
+    onBlur(event: FocusEvent) {
+        if (this.dev && this.debug) {
+            console.warn(`[onBlur] triggered on ${this.uid}`)
+        }
         this.focused = false
         this.blurred = true
+        // Handle debounce triggers
+        if (!this.debounceSave) {
+            return
+        }
+        this.modelSave(this.outgoingData)
     }
 
     bypassHTML(html: string) {
