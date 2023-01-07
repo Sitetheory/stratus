@@ -433,7 +433,7 @@ Stratus.Components.IdxPropertySearch = {
                 return
             }
 
-            const stopWatchingInitNow = $scope.$watch('initNow', (initNowCtrl: boolean) => {
+            const stopWatchingInitNow = $scope.$watch('$ctrl.initNow', (initNowCtrl: boolean) => {
                 // console.log('CAROUSEL initNow called later')
                 if (initNowCtrl !== true) {
                     return
