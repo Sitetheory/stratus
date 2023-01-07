@@ -502,13 +502,13 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             wrap_line_length: 0
         },
         // fromTextArea
-        codeMirror: !cookie('codemirror') ? null : {
+        codeMirror: {
             fromTextArea: (el: HTMLTextAreaElement, opts: LooseObject) => {
                 // Note: We're instantiating a Bridge Class to act as an intermediate for Froala's legacy implementation.
                 return new CodeMirrorBridge({
                     extensions: [
-                        // basicSetup,
-                        minimalSetup,
+                        basicSetup,
+                        // minimalSetup,
                         html({
                             // extraTags: [
                             //     'sa-editor'
@@ -518,6 +518,7 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
                             // ],
                         }),
                         // TODO: Make this an optional extension, based on options
+                        // This is included in basicSetup
                         // EditorView.lineWrapping
                     ]
                 }).fromTextArea(el, opts)
