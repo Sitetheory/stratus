@@ -73,6 +73,7 @@
     "@babel/parser": "^7.9.4",
     "@babel/types": "^7.9.5",
     "@codemirror/lang-html": "^6.4.0",
+    "@codemirror/theme-one-dark": "^6.1.0",
     "@fullcalendar/common": "^5.11.3",
     "@fullcalendar/core": "^5.11.3",
     "@fullcalendar/daygrid": "^5.11.3",
