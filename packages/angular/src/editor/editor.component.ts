@@ -121,8 +121,6 @@ import {
 } from 'ts-transformer-keys'
 
 // Froala External Requirements (Before Plugins are Loaded)
-import {EditorView, basicSetup, minimalSetup} from 'codemirror'
-import {html} from '@codemirror/lang-html'
 import 'html2pdf'
 import 'font-awesome'
 
@@ -176,8 +174,16 @@ import 'froala-image-tui'
 import '../froala/plugins/citationManager'
 import '../froala/plugins/linkManager'
 import '../froala/plugins/mediaManager'
-import {FroalaEditorDirective} from 'angular-froala-wysiwyg'
 // import '../froala/plugins/menuButton'
+
+// Froala Directive
+import {FroalaEditorDirective} from 'angular-froala-wysiwyg'
+
+// CodeMirror Requirements
+import {basicSetup} from 'codemirror'
+import {Extension} from '@codemirror/state'
+import {html} from '@codemirror/lang-html'
+import {oneDarkTheme} from '@codemirror/theme-one-dark'
 
 // Local Setup
 const systemPackage = '@stratusjs/angular'
@@ -504,24 +510,22 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
         // fromTextArea
         codeMirror: {
             fromTextArea: (el: HTMLTextAreaElement, opts: LooseObject) => {
+                const extensions: Array<Extension> = [
+                    basicSetup,
+                    html({
+                        // extraTags: [
+                        //     'sa-editor'
+                        // ],
+                        // extraGlobalAttributes: [
+                        //     'stratus-src'
+                        // ],
+                    }),
+                ]
+                if (cookie('dark')) {
+                    extensions.push(oneDarkTheme)
+                }
                 // Note: We're instantiating a Bridge Class to act as an intermediate for Froala's legacy implementation.
-                return new CodeMirrorBridge({
-                    extensions: [
-                        basicSetup,
-                        // minimalSetup,
-                        html({
-                            // extraTags: [
-                            //     'sa-editor'
-                            // ],
-                            // extraGlobalAttributes: [
-                            //     'stratus-src'
-                            // ],
-                        }),
-                        // TODO: Make this an optional extension, based on options
-                        // This is included in basicSetup
-                        // EditorView.lineWrapping
-                    ]
-                }).fromTextArea(el, opts)
+                return new CodeMirrorBridge({extensions}).fromTextArea(el, opts)
             }
         },
         codeMirrorOptions: {
@@ -951,6 +955,7 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
         ],
         scrollableContainer: Stratus.Environment.get('viewPort') || 'body',
         spellcheck: true,
+        theme: cookie('dark') ? 'dark' : null,
         toolbarSticky: true,
         toolbarButtons: {
             moreText: {
@@ -1056,6 +1061,7 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             // `${codeMirrorDir}lib/codemirror.css`,
             `${froalaDir}css/froala_editor.pkgd${min}.css`,
             // `${froalaDir}css/froala_style${min}.css`,
+            `${froalaDir}css/themes/dark${min}.css`,
             `${froalaDir}css/third_party/embedly${min}.css`,
             `${froalaDir}css/third_party/font_awesome${min}.css`,
             `${froalaDir}css/third_party/image_tui${min}.css`,

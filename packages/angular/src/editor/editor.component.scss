@@ -59,3 +59,20 @@ div.fr-quick-insert.fr-visible {
 .fr-box.fr-code-view .ͼ1.cm-editor {
   display: flex !important;
 }
+
+// These are the selectors you'd want to overwrite to make the editor completely dark.
+/* *
+.dark-theme {
+  &.fr-box.fr-basic {
+    .fr-wrapper {
+      background-color: #454545;
+    }
+    .fr-element {
+      color: #BFB9B1;
+    }
+  }
+  .fr-second-toolbar {
+    background-color: #353535;
+  }
+}
+/* */
