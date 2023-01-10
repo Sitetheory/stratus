@@ -50,3 +50,29 @@ md-tabs {
 div.fr-quick-insert.fr-visible {
 
 }
+
+// CodeMirror 6 CSS for Froala
+// Note: This needs !important to override the built-in !important
+.fr-box .ͼ1.cm-editor {
+  display: none !important;
+}
+.fr-box.fr-code-view .ͼ1.cm-editor {
+  display: flex !important;
+}
+
+// These are the selectors you'd want to overwrite to make the editor completely dark.
+/* *
+.dark-theme {
+  &.fr-box.fr-basic {
+    .fr-wrapper {
+      background-color: #454545;
+    }
+    .fr-element {
+      color: #BFB9B1;
+    }
+  }
+  .fr-second-toolbar {
+    background-color: #353535;
+  }
+}
+/* */

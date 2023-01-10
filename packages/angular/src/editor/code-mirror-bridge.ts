@@ -27,6 +27,7 @@ export class CodeMirrorBridge {
     uid: string
     editorView: EditorView
     extensions?: Extension
+    dom: HTMLTextAreaElement
     constructor(opts?: CodeMirrorBridgeOptions) {
         // Initialization
         this.uid = uniqueId(`code_mirror_bridge_`)
@@ -39,6 +40,7 @@ export class CodeMirrorBridge {
         this.extensions = opts.extensions
     }
     fromTextArea(el: HTMLTextAreaElement, opts: LooseObject) {
+        this.dom = el
         this.editorView = new EditorView({
             doc: el.value,
             extensions: this.extensions || [],
