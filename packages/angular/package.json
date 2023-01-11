@@ -1,6 +1,6 @@
 {
   "name": "@stratusjs/angular",
-  "version": "0.5.8",
+  "version": "0.5.9",
   "description": "This is the angular package for StratusJS.",
   "scripts": {},
   "repository": {
@@ -45,7 +45,6 @@
     "@angular/animations": "^12.2.16",
     "@angular/cdk": "^12.2.13",
     "@angular/common": "^12.2.16",
-    "@angular/compiler": "^12.2.16",
     "@angular/core": "^12.2.16",
     "@angular/flex-layout": "^12.0.0-beta.35",
     "@angular/forms": "^12.2.16",
