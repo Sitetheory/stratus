@@ -493,6 +493,8 @@ export class MapComponent extends RootComponent implements OnInit, AfterViewInit
         if (isArray(fullHeightMinusElementNames)) {
             this.fullHeight = true
             this.fullHeightMinusElementNames = fullHeightMinusElementNames
+        } else if (this.fullHeightMinusElements && !isJSON(this.fullHeightMinusElements)) {
+            console.warn(this.uid, '- fullHeightMinusElements contains invalid JSON', this.fullHeightMinusElements)
         }
     }
 
