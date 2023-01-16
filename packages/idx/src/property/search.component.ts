@@ -41,9 +41,9 @@ import '@stratusjs/angularjs-extras/directives/stringToNumber'
 import '@stratusjs/angularjs-extras/filters/numeral'
 // tslint:disable-next-line:no-duplicate-imports
 import '@stratusjs/idx/idx'
-import '@stratusjs/idx/office/list.component'
+import '@stratusjs/idx/office/list.component' // Office needs to load for the office selector
 // tslint:disable-next-line:no-duplicate-imports
-import '@stratusjs/idx/office/search.component'
+import '@stratusjs/idx/office/search.component' // Office needs to load for the office selector
 
 type NameValuePair = {
     name: string

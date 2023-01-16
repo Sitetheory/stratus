@@ -158,6 +158,7 @@
                             <span data-ng-bind="::model.data._Class"></span>
                         </li>
                         <li class="mls-service" data-ng-if="::model.data.ListingId || model.data.ListingKey" role="text">
+                            <span data-ng-if="::getMLSLogo('tiny')"><img data-ng-src="{{::getMLSLogo('tiny')}}" alt="MLS Logo"/></span>
                             <span data-ng-bind="getMLSName()" property="maintainer"></span>#
                             <span data-ng-bind="::model.data.ListingId || model.data.ListingKey" property="identifier"></span>
                         </li>

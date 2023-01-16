@@ -5,7 +5,7 @@
  */
 
 // Runtime
-import {extend, isArray} from 'lodash'
+import {extend, get, isArray} from 'lodash'
 import {Stratus} from '@stratusjs/runtime/stratus'
 import {IAttributes, ILocationService, ISCEService} from 'angular'
 import 'angular-material'
@@ -68,6 +68,7 @@ export type IdxPropertyDetailsScope = IdxDetailsScope<Property> & {
     getGoogleMapEmbed(): string | null
     getGoogleMapsKey(): string | null
     getMLSName(): string
+    getMLSLogo(size: 'default' | 'tiny' | 'small' | 'medium' | 'large'): string | null
     getMLSVariables(): MLSService
     getPublicRemarksHTML(): any
     getSlideshowImages(): SlideImage[]
@@ -1443,6 +1444,10 @@ Stratus.Components.IdxPropertyDetails = {
          * Display an MLS' Name
          */
         $scope.getMLSName = (): string => mlsVariables ? mlsVariables.name : ''
+
+        $scope.getMLSLogo = (size: 'default' | 'tiny' | 'small' | 'medium' | 'large' = 'default'): string | null => {
+            return mlsVariables ? get(mlsVariables.logo, size) || get(mlsVariables.logo, 'default') : null
+        }
 
         $scope.on = (emitterName: string, callback: IdxEmitter) => Idx.on($scope.elementId, emitterName, callback)
 
