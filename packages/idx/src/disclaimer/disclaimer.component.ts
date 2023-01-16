@@ -166,8 +166,7 @@ Stratus.Components.IdxDisclaimer = {
                 return
             }
 
-            const stopWatchingInitNow = $scope.$watch('initNow', (initNowCtrl: boolean) => {
-                // console.log('CAROUSEL initNow called later')
+            const stopWatchingInitNow = $scope.$watch('$ctrl.initNow', (initNowCtrl: boolean) => {
                 if (initNowCtrl !== true) {
                     return
                 }
