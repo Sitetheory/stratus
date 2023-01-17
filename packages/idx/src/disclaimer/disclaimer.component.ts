@@ -161,13 +161,19 @@ Stratus.Components.IdxDisclaimer = {
                 initNow = isJSON($attrs.initNow) ? JSON.parse($attrs.initNow) : false
             }
 
+            const stopWatchingService = $scope.$watch('$ctrl.service', (service: unknown) => {
+                $scope.service = isString(service) && isJSON(service) ? JSON.parse(service) : []
+                $scope.processMLSDisclaimer(true)
+                $scope.$applyAsync()
+                stopWatchingService()
+            })
+
             if (initNow) {
                 init().then()
                 return
             }
 
-            const stopWatchingInitNow = $scope.$watch('initNow', (initNowCtrl: boolean) => {
-                // console.log('CAROUSEL initNow called later')
+            const stopWatchingInitNow = $scope.$watch('$ctrl.initNow', (initNowCtrl: boolean) => {
                 if (initNowCtrl !== true) {
                     return
                 }

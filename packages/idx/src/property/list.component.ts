@@ -5,7 +5,7 @@
  */
 
 // Runtime
-import {clone, cloneDeep, extend, forEach, isArray, isEmpty, isEqual, isNil, isNumber, isString} from 'lodash'
+import {clone, cloneDeep, extend, forEach, get, isArray, isEmpty, isEqual, isNil, isNumber, isString} from 'lodash'
 import {Stratus} from '@stratusjs/runtime/stratus'
 import {element, material, IAnchorScrollService, IAttributes, ISCEService, ITimeoutService, IQService, IWindowService} from 'angular'
 import 'angular-material'
@@ -77,6 +77,7 @@ export type IdxPropertyListScope = IdxListScope<Property> & {
     getDetailsURL(property: Property): string
     getGoogleMapsKey(): string | null
     getMLSName(serviceId: number): string
+    getMLSLogo(serviceId: number, size?: 'default' | 'tiny' | 'small' | 'medium' | 'large'): string | null
     getMLSVariables(reset?: boolean): MLSService[]
     getOrderName(): string
     getOrderOptions(): { [key: string]: string[] }
@@ -822,6 +823,18 @@ Stratus.Components.IdxPropertyList = {
                 name = services[serviceId].name
             }
             return name
+        }
+
+        /**
+         * Display an MLS' Logo
+         */
+        $scope.getMLSLogo = (serviceId: number, size: 'default' | 'tiny' | 'small' | 'medium' | 'large' = 'default'): string | null => {
+            const services = $scope.getMLSVariables()
+            let logo
+            if (services[serviceId]) {
+                logo = get(services[serviceId].logo, size) || get(services[serviceId].logo, 'default')
+            }
+            return logo
         }
 
         $scope.highlightModel = (model: Property, timeout?: number): void => {

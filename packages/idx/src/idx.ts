@@ -334,6 +334,7 @@ export interface MLSService {
     analyticsEnabled: string[]
     logo: {
         default?: string
+        tiny?: string // height 15px
         small?: string
         medium?: string
         large?: string
