@@ -161,6 +161,13 @@ Stratus.Components.IdxDisclaimer = {
                 initNow = isJSON($attrs.initNow) ? JSON.parse($attrs.initNow) : false
             }
 
+            const stopWatchingService = $scope.$watch('$ctrl.service', (service: unknown) => {
+                $scope.service = isString(service) && isJSON(service) ? JSON.parse(service) : []
+                $scope.processMLSDisclaimer(true)
+                $scope.$applyAsync()
+                stopWatchingService()
+            })
+
             if (initNow) {
                 init().then()
                 return
