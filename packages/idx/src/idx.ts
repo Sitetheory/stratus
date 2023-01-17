@@ -2623,11 +2623,11 @@ const angularJsService = (
                             filter: filterQueryCustom,
                             // route and controller needed and only used by Sitetheory
                             meta: {
-                                method: 'get',
-                                action: 'search'
+                                action: 'search',
+                                format: 'reso'
                             },
                             route: {
-                                controller: apiModelSingular // There might be a better way to do this
+                                controller: apiModelSingular // There might be a better way to do this // FIXME test removal
                             }
                         }
                     }
@@ -2754,8 +2754,8 @@ const angularJsService = (
                     filter: compileFilterFunction(options),
                     // route and controller needed and only used by Sitetheory
                     meta: {
-                        method: 'get',
-                        action: 'search'
+                        action: 'search',
+                        format: 'reso'
                     },
                     route: {
                         controller: apiModelSingular // There might be a better way to do this

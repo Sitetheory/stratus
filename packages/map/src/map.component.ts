@@ -9,7 +9,9 @@ import {
     ElementRef,
     HostListener,
     Input,
-    KeyValueDiffers, KeyValueDiffer, KeyValueChanges,
+    KeyValueDiffers,
+    KeyValueDiffer,
+    KeyValueChanges,
     OnInit,
     ViewChild,
 } from '@angular/core'
@@ -201,7 +203,7 @@ export class MapComponent extends RootComponent implements OnInit, AfterViewInit
     // Map/Size Variables
     @Input() height?: string = null // '500px'
     @Input() width?: string = null // '100%'
-    @Input() referenceParent = 'document' // 'document' | 'window' |  '#elementName'
+    @Input() referenceParent: 'document' | 'window' | string = 'document' // 'document' | 'window' |  '#elementName'
     @Input() fullHeight = false
     @Input() fullHeightMinusElements?: string = null // '["header","foo"]'
     fullHeightMinusElementNames: string[] = [] // ['header','foo']
@@ -217,7 +219,7 @@ export class MapComponent extends RootComponent implements OnInit, AfterViewInit
     @Input() callback: string | ((self: this) => {})
     // @Input() markers: string | google.maps.LatLngLiteral[] | MarkerSettings[] // Later allow just coords
     @Input() zoom = 18
-    @Input() mapType = 'roadmap'  // 'roadmap' | 'hybrid' | 'satellite' | 'terrain'
+    @Input() mapType: 'roadmap' | 'hybrid' | 'satellite' | 'terrain' = 'roadmap'
     @Input() zoomControl = true // Display Zoom Controls
     @Input() scrollwheel = false
     @Input() disableDoubleClickZoom = false
@@ -493,6 +495,8 @@ export class MapComponent extends RootComponent implements OnInit, AfterViewInit
         if (isArray(fullHeightMinusElementNames)) {
             this.fullHeight = true
             this.fullHeightMinusElementNames = fullHeightMinusElementNames
+        } else if (this.fullHeightMinusElements && !isJSON(this.fullHeightMinusElements)) {
+            console.warn(this.uid, '- fullHeightMinusElements contains invalid JSON', this.fullHeightMinusElements)
         }
     }
 
@@ -573,7 +577,7 @@ export class MapComponent extends RootComponent implements OnInit, AfterViewInit
         try {
             // TODO check if google is already loaded first
             await Stratus.Internals.JsLoader(`https://maps.googleapis.com/maps/api/js?key=${this.googleMapsKey}`)
-            console.log('Google Maps Api Loaded')
+            // console.log('Google Maps Api Loaded')
         } catch (e) {
             console.error('Google Maps Api could not be fetched, cannot continue')
             throw new Error('Google Maps Api could not be fetched, cannot continue')
