@@ -337,6 +337,11 @@ export class LinkDialogComponent extends ResponsiveComponent implements OnInit, 
     }
 
     onCancelClick(): void {
+        if (!this.eventManager) {
+            console.warn(`${moduleName}: event manager is not set.`)
+            return
+        }
+        this.eventManager.trigger('restore', null, this.editor)
         this.dialogRef.close()
         this.refresh()
     }
