@@ -96,7 +96,8 @@ export class InputButtonPlugin<EventData = string|LooseObject> implements Trigge
             console.warn(`${this.name}.trigger(): unable to inject html without a set editor.`)
             return
         }
-        if (name !== 'insert') {
+        // Ensure we only continue for 'insert' or 'restore' events
+        if (['insert', 'restore'].includes(name)) {
             console.warn(`${this.name}.trigger():`, name, 'event is not supported.')
             return
         }
@@ -107,6 +108,11 @@ export class InputButtonPlugin<EventData = string|LooseObject> implements Trigge
         // Attempt to Restore Selection
         if (this.autoRestoreSelection) {
             this.restoreSelection()
+        }
+        // Ensure we only continue for 'insert' events
+        if (name !== 'insert') {
+            console.warn(`${this.name}.trigger():`, name, 'event is not supported.')
+            return
         }
         // Insert our data into Froala on the caret
         this.insert ? this.insert(data): this.editor.html.insert(data)
@@ -127,7 +133,9 @@ export class InputButtonPlugin<EventData = string|LooseObject> implements Trigge
             return false
         }
         // Get focus back to the editor
-        this.editor.events.focus()
+        // Note: This is disabled because it makes the cursor jolt to the top
+        // console.log('[restoreSnapshot]is focused:', this.editor.core.hasFocus())
+        //this.editor.events.focus()
         // Restore last snapshot
         this.editor.snapshot.restore(this.snapshot)
         return true
@@ -147,7 +155,9 @@ export class InputButtonPlugin<EventData = string|LooseObject> implements Trigge
             return false
         }
         // Get focus back to the editor
-        this.editor.events.focus()
+        // Note: This is disabled because it makes the cursor jolt to the top
+        // console.log('[restoreSelection]is focused:', this.editor.core.hasFocus())
+        // this.editor.events.focus()
         // Restore last selection
         this.editor.selection.restore()
         return true
