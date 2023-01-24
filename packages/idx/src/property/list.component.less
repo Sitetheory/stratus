@@ -364,15 +364,12 @@ stratus-idx-property-list {
 
           /* MLS service + number */
           .mls-service-name {
-            position: absolute;
-            left: 0;
-            bottom: 0;
-            width: 100%;
             font-size: 11px;
-            line-height: 1.8;
             text-align: center;
-            color: #888;
+            color: #666;
             img {
+              width: unset;
+              margin: 10px auto;
               max-height: 15px;
             }
           }
@@ -400,11 +397,11 @@ stratus-idx-property-list {
   /* List Pager */
   .pager-container {
     margin: 20px 0;
+    font-size: 13px;
     .pager-section {
       float: right;
       .pager-count {
         float: left;
-        font-size: 11px;
         font-weight: bold;
         color: #222;
         padding-top: 10px;
@@ -425,13 +422,20 @@ stratus-idx-property-list {
         outline: none;
         line-height: 8px;
         > .arrow {
-          border-color: #555;
+          border-color: #222;
+        }
+        svg g {
+          fill: #222;
         }
         &:hover {
-          background-color: #666;
-          border-color: #666;
+          color: #fff;
+          background-color: #222;
+          border-color: #222;
           > .arrow {
             border-color: #fff;
+          }
+          svg g {
+            fill: #fff;
           }
         }
         &.disabled {
