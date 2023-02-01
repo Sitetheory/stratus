@@ -3,7 +3,8 @@ import {
     // ChangeDetectionStrategy,
     ChangeDetectorRef,
     Component,
-    Inject, OnDestroy,
+    Inject,
+    OnDestroy,
     OnInit
 } from '@angular/core'
 import {

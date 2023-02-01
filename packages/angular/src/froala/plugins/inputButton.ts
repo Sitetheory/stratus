@@ -14,7 +14,7 @@ import {
 import _ from 'lodash'
 
 // Universal Button
-// TODO: Move this elsewhere, since it isn't specific to Froala
+// TODO: Some of this can move elsewhere, since it isn't completely specific to Froala
 export class InputButtonPlugin<EventData = string|LooseObject> implements TriggerInterface {
     // Local
     uid: string
@@ -79,6 +79,9 @@ export class InputButtonPlugin<EventData = string|LooseObject> implements Trigge
         }
         // Get snapshot before passing off event
         this.updateSnapshot()
+        if (this.debug) {
+            console.log(`[${this.eventName}]:`, {instance, data})
+        }
         instance.trigger(this.eventName, data, this)
     }
 
@@ -97,7 +100,7 @@ export class InputButtonPlugin<EventData = string|LooseObject> implements Trigge
             return
         }
         // Ensure we only continue for 'insert' or 'restore' events
-        if (['insert', 'restore'].includes(name)) {
+        if (!['insert', 'restore'].includes(name)) {
             console.warn(`${this.name}.trigger():`, name, 'event is not supported.')
             return
         }
@@ -133,11 +136,17 @@ export class InputButtonPlugin<EventData = string|LooseObject> implements Trigge
             return false
         }
         // Get focus back to the editor
-        // Note: This is disabled because it makes the cursor jolt to the top
-        // console.log('[restoreSnapshot]is focused:', this.editor.core.hasFocus())
-        //this.editor.events.focus()
+        if (this.debug) {
+            console.log('[restoreSnapshot]is focused:', this.editor.core.hasFocus())
+        }
+        // Always disable blur before changing focus
+        this.editor.events.disableBlur()
+        // Get focus back to the editor
+        this.editor.events.focus()
         // Restore last snapshot
         this.editor.snapshot.restore(this.snapshot)
+        // Enable Blur after snapshot
+        this.editor.events.enableBlur()
         return true
     }
 
@@ -154,12 +163,18 @@ export class InputButtonPlugin<EventData = string|LooseObject> implements Trigge
             console.warn(`${this.name}.restoreSelection(): unable to restore editor selection.`)
             return false
         }
+        // Note Focus
+        if (this.debug) {
+            console.log('[restoreSelection]is focused:', this.editor.core.hasFocus())
+        }
+        // Always disable blur before changing focus
+        this.editor.events.disableBlur()
         // Get focus back to the editor
-        // Note: This is disabled because it makes the cursor jolt to the top
-        // console.log('[restoreSelection]is focused:', this.editor.core.hasFocus())
-        // this.editor.events.focus()
+        this.editor.events.focus()
         // Restore last selection
         this.editor.selection.restore()
+        // Enable Blur
+        this.editor.events.enableBlur()
         return true
     }
 
@@ -168,7 +183,12 @@ export class InputButtonPlugin<EventData = string|LooseObject> implements Trigge
             console.warn(`${this.name}.saveSelection(): unable to save editor selection.`)
             return false
         }
+        // Disable blur before save
+        this.editor.events.disableBlur()
+        // Save selection inside Content-Editable HTML on DOM
         this.editor.selection.save()
+        // Enable Blur after save
+        this.editor.events.enableBlur()
         return true
     }
 
