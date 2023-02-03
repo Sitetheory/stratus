@@ -180,7 +180,10 @@ import '../froala/plugins/mediaManager'
 import {FroalaEditorDirective} from 'angular-froala-wysiwyg'
 
 // CodeMirror Requirements
-import {basicSetup} from 'codemirror'
+import {
+    basicSetup,
+    EditorView
+} from 'codemirror'
 import {Extension} from '@codemirror/state'
 import {html} from '@codemirror/lang-html'
 import {oneDarkTheme} from '@codemirror/theme-one-dark'
@@ -512,6 +515,7 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             fromTextArea: (el: HTMLTextAreaElement, opts: LooseObject) => {
                 const extensions: Array<Extension> = [
                     basicSetup,
+                    EditorView.lineWrapping,
                     html({
                         // extraTags: [
                         //     'sa-editor'
