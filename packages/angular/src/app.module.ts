@@ -42,11 +42,6 @@ import {ConfirmDialogComponent} from './confirm-dialog/confirm-dialog.component'
 import {EditorComponent} from './editor/editor.component'
 import {MediaSelectorComponent} from './media-selector/media-selector.component'
 import {SelectorComponent} from './selector/selector.component'
-import {StripePaymentMethodComponent} from '../../stripe/src/payment-method.component'
-import {StripePaymentMethodItemComponent} from '../../stripe/src/payment-method-item.component'
-import {StripePaymentMethodListComponent} from '../../stripe/src/payment-method-list.component'
-import {StripePaymentMethodSelectorComponent} from '../../stripe/src/payment-method-selector.component'
-import {StripeSetupIntentComponent} from '../../stripe/src/setup-intent.component'
 import {TreeComponent} from './tree/tree.component'
 import {TreeDialogComponent} from './tree/tree-dialog.component'
 import {TreeNodeComponent} from './tree/tree-node.component'
@@ -54,6 +49,7 @@ import {TreeNodeComponent} from './tree/tree-node.component'
 // Custom Angular StratusPackages
 // import {FormPackage} from '../../form/src/form.module'
 import {MapPackage} from '../../map/src/map.module'
+import {StripePackage} from '../../stripe/src/stripe.module'
 
 // Froala Modules (Required by Editor)
 import {
@@ -130,11 +126,6 @@ const ngDeclarations: any[] = [
     MediaDialogComponent,
     MediaSelectorComponent,
     SelectorComponent,
-    StripePaymentMethodComponent, // FIXME move to @stratusjs/stripe StratusPackage
-    StripePaymentMethodItemComponent, // FIXME move to @stratusjs/stripe StratusPackage
-    StripePaymentMethodListComponent, // FIXME move to @stratusjs/stripe StratusPackage
-    StripePaymentMethodSelectorComponent, // FIXME move to @stratusjs/stripe StratusPackage
-    StripeSetupIntentComponent, // FIXME move to @stratusjs/stripe StratusPackage
     TreeComponent,
     TreeDialogComponent,
     TreeNodeComponent,
@@ -151,11 +142,6 @@ const ngEntryComponents: any[] = [
     MediaDialogComponent,
     MediaSelectorComponent,
     SelectorComponent,
-    StripePaymentMethodComponent, // FIXME move to @stratusjs/stripe StratusPackage
-    StripePaymentMethodItemComponent, // FIXME move to @stratusjs/stripe StratusPackage
-    StripePaymentMethodListComponent, // FIXME move to @stratusjs/stripe StratusPackage
-    StripePaymentMethodSelectorComponent, // FIXME move to @stratusjs/stripe StratusPackage
-    StripeSetupIntentComponent, // FIXME move to @stratusjs/stripe StratusPackage
     TreeComponent,
     TreeDialogComponent,
     TreeNodeComponent,
@@ -166,14 +152,13 @@ const appModuleComponents = {
     'sa-editor': EditorComponent,
     'sa-media-selector': MediaSelectorComponent,
     'sa-selector': SelectorComponent,
-    'sa-stripe-payment-method-list': StripePaymentMethodListComponent, // FIXME move to @stratusjs/stripe StratusPackage
-    'sa-stripe-payment-method-selector': StripePaymentMethodSelectorComponent, // FIXME move to @stratusjs/stripe StratusPackage
     'sa-tree': TreeComponent
 }
 
 // This determines what custom Stratus Packages we want loaded in and will handle it's own declarations
 const stratusPackages: StratusPackage[] = [
-    MapPackage
+    MapPackage, // @stratusjs/map
+    StripePackage // @stratusjs/stripe
 ]
 stratusPackages.forEach((stratusPackage) => {
     ngModuleImports.push(stratusPackage.stratusModule)
