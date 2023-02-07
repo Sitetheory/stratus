@@ -50,7 +50,7 @@ import {TreeDialogComponent} from './tree/tree-dialog.component'
 import {TreeNodeComponent} from './tree/tree-node.component'
 
 // External Dependencies
-import _ from 'lodash'
+import {forEach, extend, isNumber, uniqueId} from 'lodash'
 import {Stratus} from '@stratusjs/runtime/stratus'
 
 // Google Modules (required by @stratusjs/map)
@@ -74,6 +74,13 @@ import {
     LinkDialogComponent
 } from './editor/link-dialog.component'
 
+// import {FormPackage} from '../../form/src/form.module'
+
+export type StratusPackage = {
+    stratusModule: any
+    stratusComponents?: {[key:string]: any}
+}
+
 // Dynamic Loader Prototype
 // import {
 //     AngularModules
@@ -86,7 +93,7 @@ import {
 //     'sa-tree': TreeComponent
 // };
 //
-// const bootstrap = _.keys(roster)
+// const bootstrap = keys(roster)
 //     .map(component => {
 //         const elements = document.getElementsByTagName(component);
 //         if (!elements || !elements.length) {
@@ -95,69 +102,100 @@ import {
 //         return component;
 //     })
 //     .filter((item) => !!item)
-//     .map((element) => _.get(roster, element) || null)
+//     .map((element) => get(roster, element) || null)
 //     .filter((item) => !!item);
+
+// These are for external libraries (or Angular)
+const ngModuleImports: any[] = [
+    // AngularModules,
+    BrowserModule,
+    BrowserAnimationsModule,
+    // CodeEditorModule.forRoot(),
+    FlexLayoutModule,
+    FormsModule,
+    FroalaEditorModule.forRoot(),
+    FroalaViewModule.forRoot(),
+    GoogleMapsModule, // FIXME move to @stratusjs/map StratusPackage
+    HttpClientModule,
+    MaterialModules,
+    MatNativeDateModule,
+    ReactiveFormsModule,
+    // SelectorComponent.forRoot()
+]
+
+// These determine what exists as a component within Angular system.
+const ngDeclarations: any[] = [
+    BaseComponent,
+    CitationDialogComponent,
+    CodeViewDialogComponent,
+    ConfirmDialogComponent,
+    EditorComponent,
+    LinkDialogComponent,
+    MapComponent, // FIXME move to @stratusjs/map StratusPackage
+    MediaDialogComponent,
+    MediaSelectorComponent,
+    SelectorComponent,
+    StripePaymentMethodComponent, // FIXME move to @stratusjs/stripe StratusPackage
+    StripePaymentMethodItemComponent, // FIXME move to @stratusjs/stripe StratusPackage
+    StripePaymentMethodListComponent, // FIXME move to @stratusjs/stripe StratusPackage
+    StripePaymentMethodSelectorComponent, // FIXME move to @stratusjs/stripe StratusPackage
+    StripeSetupIntentComponent, // FIXME move to @stratusjs/stripe StratusPackage
+    TreeComponent,
+    TreeDialogComponent,
+    TreeNodeComponent,
+]
+
+// This determines what is accessible via DOM as a component. These must be listed in `ngDeclarations`.
+const ngEntryComponents: any[] = [
+    BaseComponent, // FIXME shouldn't be needed as doesn't load on DOM
+    CitationDialogComponent,
+    CodeViewDialogComponent,
+    ConfirmDialogComponent,
+    EditorComponent,
+    LinkDialogComponent,
+    MapComponent, // FIXME move to @stratusjs/map StratusPackage
+    MediaDialogComponent,
+    MediaSelectorComponent,
+    SelectorComponent,
+    StripePaymentMethodComponent, // FIXME move to @stratusjs/stripe StratusPackage
+    StripePaymentMethodItemComponent, // FIXME move to @stratusjs/stripe StratusPackage
+    StripePaymentMethodListComponent, // FIXME move to @stratusjs/stripe StratusPackage
+    StripePaymentMethodSelectorComponent, // FIXME move to @stratusjs/stripe StratusPackage
+    StripeSetupIntentComponent, // FIXME move to @stratusjs/stripe StratusPackage
+    TreeComponent,
+    TreeDialogComponent,
+    TreeNodeComponent,
+]
+
+const appModuleComponents = {
+    'sa-base': BaseComponent,
+    'sa-editor': EditorComponent,
+    'sa-map': MapComponent, // FIXME move to @stratusjs/map StratusPackage
+    'sa-media-selector': MediaSelectorComponent,
+    'sa-selector': SelectorComponent,
+    'sa-stripe-payment-method-list': StripePaymentMethodListComponent, // FIXME move to @stratusjs/stripe StratusPackage
+    'sa-stripe-payment-method-selector': StripePaymentMethodSelectorComponent, // FIXME move to @stratusjs/stripe StratusPackage
+    'sa-tree': TreeComponent
+}
+
+// This detrimines what custom Stratus Packages we want loaded in and will handle it's own declarations
+const stratusPackages: StratusPackage[] = [
+    // FormPackage
+]
+stratusPackages.forEach((stratusPackage) => {
+    ngModuleImports.push(stratusPackage.stratusModule)
+    if (stratusPackage.hasOwnProperty('stratusComponents')) {
+        extend(appModuleComponents, stratusPackage.stratusComponents)
+    }
+})
 
 @NgModule({
     // These are for external libraries (or Angular)
-    imports: [
-        // AngularModules,
-        BrowserModule,
-        BrowserAnimationsModule,
-        // CodeEditorModule.forRoot(),
-        FlexLayoutModule,
-        FormsModule,
-        FroalaEditorModule.forRoot(),
-        FroalaViewModule.forRoot(),
-        GoogleMapsModule, // Required by @stratusjs/map
-        HttpClientModule,
-        MaterialModules,
-        MatNativeDateModule,
-        ReactiveFormsModule,
-        // SelectorComponent.forRoot()
-    ],
-    // This determines what is accessible as a component. These must be listed in `declarations`.
-    entryComponents: [
-        BaseComponent,
-        CitationDialogComponent,
-        CodeViewDialogComponent,
-        ConfirmDialogComponent,
-        EditorComponent,
-        LinkDialogComponent,
-        MapComponent,
-        MediaDialogComponent,
-        MediaSelectorComponent,
-        SelectorComponent,
-        StripePaymentMethodComponent,
-        StripePaymentMethodItemComponent,
-        StripePaymentMethodListComponent,
-        StripePaymentMethodSelectorComponent,
-        StripeSetupIntentComponent,
-        TreeComponent,
-        TreeDialogComponent,
-        TreeNodeComponent,
-    ],
-    // These determine what exists as a component. These must be listed in `entryComponents`.
-    declarations: [
-        BaseComponent,
-        CitationDialogComponent,
-        CodeViewDialogComponent,
-        ConfirmDialogComponent,
-        EditorComponent,
-        LinkDialogComponent,
-        MapComponent,
-        MediaDialogComponent,
-        MediaSelectorComponent,
-        SelectorComponent,
-        StripePaymentMethodComponent,
-        StripePaymentMethodItemComponent,
-        StripePaymentMethodListComponent,
-        StripePaymentMethodSelectorComponent,
-        StripeSetupIntentComponent,
-        TreeComponent,
-        TreeDialogComponent,
-        TreeNodeComponent,
-    ],
+    imports: ngModuleImports,
+    // This determines what is accessible via DOM as a component. These must be listed in `declarations`.
+    entryComponents: ngEntryComponents,
+    // These determine what exists as a component within Angular system.
+    declarations: ngDeclarations,
     // bootstrap,
     providers: [
         {provide: Window, useValue: window}
@@ -168,20 +206,10 @@ export class AppModule {
     initialTimeout = 1000
     instances = {}
     // These modules will be hydrated directly in the HTML, and *cannot* load in a component template/dialog
-    modules = {
-        'sa-base': BaseComponent,
-        'sa-editor': EditorComponent,
-        'sa-map': MapComponent,
-        'sa-media-selector': MediaSelectorComponent,
-        'sa-selector': SelectorComponent,
-        'sa-stripe-payment-method-list': StripePaymentMethodListComponent,
-        'sa-stripe-payment-method-selector': StripePaymentMethodSelectorComponent,
-        'sa-tree': TreeComponent
-    }
+    modules = appModuleComponents
 
     constructor() {
-        Stratus.Instances[_.uniqueId('sa_app_module_')] = this
-        // TODO: Fill out the Arrays above dynamically... :D
+        Stratus.Instances[uniqueId('sa_app_module_')] = this
     }
 
     ngDoBootstrap(appRef: ApplicationRef) {
@@ -190,7 +218,7 @@ export class AppModule {
 
     // Fade out detection cycles
     exponentialTimeout(limit?: number) {
-        if (_.isNumber(limit) && limit < this.initialTimeout) {
+        if (isNumber(limit) && limit < this.initialTimeout) {
             return limit
         }
         // store current
@@ -202,7 +230,7 @@ export class AppModule {
     }
 
     detectBoot(appRef: ApplicationRef) {
-        _.forEach(this.modules, (module, selector) => {
+        forEach(this.modules, (module, selector) => {
             // if (!(module instanceof ComponentFactory)) {
             //     return;
             // }
@@ -210,7 +238,7 @@ export class AppModule {
             if (!elements || !elements.length) {
                 return
             }
-            _.forEach(elements, (node) => {
+            forEach(elements, (node) => {
                 if (node.hasAttribute('ng-version')) {
                     return
                 }
@@ -222,7 +250,7 @@ export class AppModule {
         })
         // FIXME this logic is broken
         /*
-        _.forEach(this.directives, (directive, selector) => {
+        forEach(this.directives, (directive, selector) => {
             // if (!(module instanceof ComponentFactory)) {
             //     return;
             // }
@@ -231,7 +259,7 @@ export class AppModule {
             if (!elements || !elements.length) {
                 return
             }
-            _.forEach(elements, (node) => {
+            forEach(elements, (node) => {
                 if (node.hasAttribute('ng-version')) {
                     return
                 }
