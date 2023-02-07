@@ -3,6 +3,9 @@
 // - add an import to define where it is located, e.g. import { BaseComponent } from './base/base.component'
 // - add to declarations and entryComponents
 
+import {forEach, extend, isNumber, uniqueId} from 'lodash'
+import {Stratus} from '@stratusjs/runtime/stratus'
+
 // Angular Core
 import {HttpClientModule} from '@angular/common/http'
 import {
@@ -37,7 +40,6 @@ import {BaseComponent} from './base/base.component'
 // Stratus Custom Directives/Components
 import {ConfirmDialogComponent} from './confirm-dialog/confirm-dialog.component'
 import {EditorComponent} from './editor/editor.component'
-import {MapComponent} from '../../map/src/map.component'
 import {MediaSelectorComponent} from './media-selector/media-selector.component'
 import {SelectorComponent} from './selector/selector.component'
 import {StripePaymentMethodComponent} from '../../stripe/src/payment-method.component'
@@ -49,12 +51,9 @@ import {TreeComponent} from './tree/tree.component'
 import {TreeDialogComponent} from './tree/tree-dialog.component'
 import {TreeNodeComponent} from './tree/tree-node.component'
 
-// External Dependencies
-import {forEach, extend, isNumber, uniqueId} from 'lodash'
-import {Stratus} from '@stratusjs/runtime/stratus'
-
-// Google Modules (required by @stratusjs/map)
-import {GoogleMapsModule} from '@angular/google-maps'
+// Custom Angular StratusPackages
+// import {FormPackage} from '../../form/src/form.module'
+import {MapPackage} from '../../map/src/map.module'
 
 // Froala Modules (Required by Editor)
 import {
@@ -73,8 +72,6 @@ import {
 import {
     LinkDialogComponent
 } from './editor/link-dialog.component'
-
-// import {FormPackage} from '../../form/src/form.module'
 
 export type StratusPackage = {
     stratusModule: any
@@ -115,7 +112,6 @@ const ngModuleImports: any[] = [
     FormsModule,
     FroalaEditorModule.forRoot(),
     FroalaViewModule.forRoot(),
-    GoogleMapsModule, // FIXME move to @stratusjs/map StratusPackage
     HttpClientModule,
     MaterialModules,
     MatNativeDateModule,
@@ -131,7 +127,6 @@ const ngDeclarations: any[] = [
     ConfirmDialogComponent,
     EditorComponent,
     LinkDialogComponent,
-    MapComponent, // FIXME move to @stratusjs/map StratusPackage
     MediaDialogComponent,
     MediaSelectorComponent,
     SelectorComponent,
@@ -153,7 +148,6 @@ const ngEntryComponents: any[] = [
     ConfirmDialogComponent,
     EditorComponent,
     LinkDialogComponent,
-    MapComponent, // FIXME move to @stratusjs/map StratusPackage
     MediaDialogComponent,
     MediaSelectorComponent,
     SelectorComponent,
@@ -170,7 +164,6 @@ const ngEntryComponents: any[] = [
 const appModuleComponents = {
     'sa-base': BaseComponent,
     'sa-editor': EditorComponent,
-    'sa-map': MapComponent, // FIXME move to @stratusjs/map StratusPackage
     'sa-media-selector': MediaSelectorComponent,
     'sa-selector': SelectorComponent,
     'sa-stripe-payment-method-list': StripePaymentMethodListComponent, // FIXME move to @stratusjs/stripe StratusPackage
@@ -178,9 +171,9 @@ const appModuleComponents = {
     'sa-tree': TreeComponent
 }
 
-// This detrimines what custom Stratus Packages we want loaded in and will handle it's own declarations
+// This determines what custom Stratus Packages we want loaded in and will handle it's own declarations
 const stratusPackages: StratusPackage[] = [
-    // FormPackage
+    MapPackage
 ]
 stratusPackages.forEach((stratusPackage) => {
     ngModuleImports.push(stratusPackage.stratusModule)
