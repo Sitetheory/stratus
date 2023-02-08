@@ -19,7 +19,7 @@ import {DomSanitizer} from '@angular/platform-browser'
 import {keys} from 'ts-transformer-keys'
 import {Stratus} from '@stratusjs/runtime/stratus'
 // import {GoogleMap, MapInfoWindow, MapMarker} from '@angular/google-maps'
-import {debounce, isArray, isBoolean, isEmpty, isFunction, isNumber, isString} from 'lodash'
+import {debounce, isArray, isBoolean, isEmpty, isFunction, isNumber, isString, set} from 'lodash'
 import {isJSON, safeUniqueId} from '@stratusjs/core/misc'
 import {RootComponent} from '../../angular/src/core/root.component'
 
@@ -533,7 +533,12 @@ export class MapComponent extends RootComponent implements OnInit, AfterViewInit
     private processProvidedCallback() {
         if (isString(this.callback)) {
             // This callback is probably reference a path to a function. let's grab it
-            this.callback = this.watcher.getFromPath(window, this.callback)
+            let callbackFunc = this.watcher.getFromPath(window, this.callback)
+            if (!isFunction(callbackFunc)) {
+                // We didn't find a function, let's attempt searching in the Instances
+                callbackFunc = this.watcher.getFromPath(Stratus.Instances, this.callback)
+            }
+            this.callback = callbackFunc
             // We'll use this below
         }
 
@@ -575,8 +580,11 @@ export class MapComponent extends RootComponent implements OnInit, AfterViewInit
         }
 
         try {
-            // TODO check if google is already loaded first
-            await Stratus.Internals.JsLoader(`https://maps.googleapis.com/maps/api/js?key=${this.googleMapsKey}`)
+            // Add a dummy function to window so Google stops complaining
+            set(window, 'googleMapDummyFunc', () => {})
+            await Stratus.Internals.JsLoader(
+                `https://maps.googleapis.com/maps/api/js?key=${this.googleMapsKey}&callback=googleMapDummyFunc`
+            )
             // console.log('Google Maps Api Loaded')
         } catch (e) {
             console.error('Google Maps Api could not be fetched, cannot continue')

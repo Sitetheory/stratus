@@ -204,6 +204,39 @@ export default [
         config: false
       })
     ]
+  },
+  // ------------------------
+  // Idx Config
+  // ------------------------
+  {
+    input: {
+      include: [
+        './packages/idx/src/**/*.js'
+      ],
+      exclude: []
+    },
+    external: [
+      'angular',
+      'angular-material',
+      'angular-sanitize',
+      'lodash',
+      'moment',
+      '@stratusjs'
+    ],
+    output: {
+      // file: 'packages/idx/dist/idx.bundle.js',
+      dir: 'packages/idx/dist/',
+      format: 'system'
+    },
+    plugins: [
+      multi({
+        exports: true,
+        entryFileName: 'idx.bundle.js'
+      }),
+      nodeResolve({
+        // browser: true
+      })
+    ]
   }
   // ------------------------
   // Map Config
