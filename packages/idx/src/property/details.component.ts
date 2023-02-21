@@ -354,13 +354,13 @@ Stratus.Components.IdxPropertyDetails = {
                          */
                         CrossStreet: 'Cross Street',
                         UnitNumber: 'Unit',
-                        PostalCode: 'Postal Code',
+                        MLSAreaMajor: 'Area',
+                        Township: 'Township',
+                        SubdivisionName: 'Subdivision',
                         City: 'City',
                         CityRegion: 'City Region',
-                        Township: 'Township',
+                        PostalCode: 'Postal Code',
                         CountyOrParish: 'County',
-                        MLSAreaMajor: 'Area',
-                        SubdivisionName: 'Subdivision',
                         StateRegion: 'Region',
                         StateOrProvince: 'State'
                     }
