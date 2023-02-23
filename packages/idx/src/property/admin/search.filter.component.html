@@ -63,11 +63,28 @@
                     </div>
                 </div>
                 <div data-layout="row">
+                    <div
+                            class="search-input" data-flex="50"
+                            data-ng-if="options.query.where.MLSAreaMajor && options.query.where.MLSAreaMajor.length"
+                    >
+                        <md-chips
+                                class="neighborhood font-secondary"
+                                aria-label="Areas to Limit (deprecated)"
+                                data-ng-model="options.query.where.MLSAreaMajor"
+                                data-md-enable-chip-edit="true"
+                                data-md-add-on-blur="true"
+                                data-md-separator-keys="[$mdConstant.KEY_CODE.ENTER, $mdConstant.KEY_CODE.COMMA]"
+                                data-placeholder="Area (deprecated)"
+                                data-secondary-placeholder="+Area (deprecated)"
+                                data-delete-button-label="Remove Area (deprecated)"
+                                data-delete-hint="Press delete to remove Area (deprecated)"
+                        ></md-chips>
+                    </div>
                     <div class="search-input" data-flex="50">
                         <md-chips
                                 class="neighborhood font-secondary"
                                 aria-label="Neighborhoods to Limit"
-                                data-ng-model="options.query.where.MLSAreaMajor"
+                                data-ng-model="options.query.where.Neighborhood"
                                 data-md-enable-chip-edit="true"
                                 data-md-add-on-blur="true"
                                 data-md-separator-keys="[$mdConstant.KEY_CODE.ENTER, $mdConstant.KEY_CODE.COMMA]"
