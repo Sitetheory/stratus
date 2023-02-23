@@ -249,8 +249,22 @@
                             <div class="search-input" data-ng-if="options.query.where.MLSAreaMajor.length">
                                 <md-chips
                                         class="area-id font-secondary"
-                                        aria-label="Neighborhoods to Limit"
+                                        aria-label="Areas to Limit"
                                         data-ng-model="options.query.where.MLSAreaMajor"
+                                        data-md-enable-chip-edit="true"
+                                        data-md-add-on-blur="true"
+                                        data-md-separator-keys="[$mdConstant.KEY_CODE.ENTER, $mdConstant.KEY_CODE.COMMA]"
+                                        data-placeholder="Area Major"
+                                        data-secondary-placeholder="+Area"
+                                        data-delete-button-label="Remove Area"
+                                        data-delete-hint="Press delete to remove Area"
+                                ></md-chips>
+                            </div>
+                            <div class="search-input" data-ng-if="options.query.where.Neighborhood.length">
+                                <md-chips
+                                        class="area-id font-secondary"
+                                        aria-label="Neighborhoods to Limit"
+                                        data-ng-model="options.query.where.Neighborhood"
                                         data-md-enable-chip-edit="true"
                                         data-md-add-on-blur="true"
                                         data-md-separator-keys="[$mdConstant.KEY_CODE.ENTER, $mdConstant.KEY_CODE.COMMA]"
