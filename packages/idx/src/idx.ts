@@ -263,6 +263,7 @@ export interface WhereOptions extends LooseObject {
     CityRegion?: string[] | string,
     CountyOrParish?: string[] | string,
     MLSAreaMajor?: string[] | string,
+    Subdivision?: string[] | string,
     ListPriceMin?: number | any,
     ListPriceMax?: number | any,
     Bathrooms?: number | any, // Previously BathroomsFullMin
@@ -653,6 +654,7 @@ const angularJsService = (
         ListingType: [],
         CountyOrParish: [],
         MLSAreaMajor: [],
+        Subdivision: [],
         Neighborhood: [],
         PostalCode: [],
         // NOTE: at this point we don't know if CityRegion is used (or how it differs from MLSAreaMajor)
