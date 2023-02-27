@@ -27,7 +27,7 @@
     shim: {},
 
     // Package Directories
-    packages: [],
+    packages: {},
 
     // Relative Paths
     paths: {
