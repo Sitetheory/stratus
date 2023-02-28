@@ -1922,7 +1922,6 @@ const angularJsService = (
                     type: 'andOr',
                     andOr: [
                         {apiField: 'CityRegion', type: 'stringLikeArray'},
-                        {apiField: 'CountyOrParish', type: 'stringLikeArray'},
                         {apiField: 'SubdivisionName', type: 'stringLikeArray'},
                         {apiField: 'MLSAreaMajor', type: 'stringLikeArray'}
                     ]
