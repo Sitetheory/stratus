@@ -312,18 +312,31 @@ export class MapComponent extends RootComponent implements OnInit, AfterViewInit
                 maxWidth: 250
             })
 
+            const initialize = () => {
+                if (!this.initialized) {
+                    this.updateWidgetSize()
+                    this.processProvidedMarkersPath()
+                    this.processProvidedCallback()
+
+                    this.initialized = true
+                    this.initializing = false
+                }
+            }
+
             const stopListeningForIdle = this.map.addListener('idle', () => {
                 // do something only the first time the map is loaded
                 // console.info('Map is now idle (almost inited)')
                 stopListeningForIdle.remove()
 
-                this.updateWidgetSize()
-                this.processProvidedMarkersPath()
-                this.processProvidedCallback()
-
-                this.initialized = true
-                this.initializing = false
+                initialize()
             })
+            setTimeout(() => {
+                if (stopListeningForIdle) {
+                    stopListeningForIdle.remove()
+                    console.warn(this.uid, 'Google maps may be getting blocked. Forcing initialization anyways.')
+                    initialize()
+                }
+            }, 6000) // wait for 6 seconds
 
             // this.initialized = true
             // console.info('Map was thought to be inited')
@@ -532,9 +545,12 @@ export class MapComponent extends RootComponent implements OnInit, AfterViewInit
 
     private processProvidedCallback() {
         if (isString(this.callback)) {
+            // console.log('MAP: map looking for callback instance on window')
             // This callback is probably reference a path to a function. let's grab it
             let callbackFunc = this.watcher.getFromPath(window, this.callback)
             if (!isFunction(callbackFunc)) {
+                // console.log('MAP: nothing on window found.')
+                // console.log('MAP: map looking for callback instance on Stratus', clone(this.callback), Stratus.Instances)
                 // We didn't find a function, let's attempt searching in the Instances
                 callbackFunc = this.watcher.getFromPath(Stratus.Instances, this.callback)
             }
