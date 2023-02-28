@@ -241,7 +241,7 @@ Stratus.Components.IdxMap = {
                 $scope.initialized = true
             } else {
                 Idx.on('Idx', 'sessionInit', () => {
-                    console.log('session init')
+                    Idx.devLog('map received session init')
                     $scope.initialized = true
                 })
             }
@@ -334,6 +334,7 @@ Stratus.Components.IdxMap = {
             // console.log('idx map is running the map!!!!', map)
             $scope.map = map
             $scope.$applyAsync(() => {
+                Idx.devLog('Map initialized', $scope.map)
                 $scope.mapInitialized = true
             })
             await $scope.mapUpdate()
