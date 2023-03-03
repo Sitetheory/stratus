@@ -119,6 +119,7 @@
                 </md-button>
                 <md-button class="pager-button search-more-filters advanced-search-link" data-ng-if="::advancedSearchUrl"
                            data-ng-href="{{ ::advancedSearchUrl }}"
+                           aria-label="{{ ::advancedSearchLinkName }}"
                 >
                     <md-icon md-svg-src="{{ localDir + 'images/icons/actionButtons/filters.svg' }}"></md-icon>
                     <span class="btn-text"><span data-ng-bind="advancedSearchLinkName"></span></span>
