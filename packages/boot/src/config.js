@@ -8,6 +8,10 @@
 
   Note: some components or services may require dependencies, that must be defined. If these are Stratus "extras" they should be enabled here in the config.js file only if you need them.
    */
+  const stratusjsAngularJsBundlePath =  `${boot.deployment}@stratusjs/angularjs/dist/angularjs.bundle${boot.suffix}`
+  const stratusjsAngularJsExtrasBundlePath =  `${boot.deployment}@stratusjs/angularjs-extras/dist/angularjs-extras.bundle${boot.suffix}`
+  const stratusjsCalendarBundlePath =  `${boot.deployment}@stratusjs/calendar/dist/calendar.bundle${boot.suffix}`
+  const stratusjsIdxBundlePath =  `${boot.deployment}@stratusjs/idx/dist/idx.bundle${boot.suffix}`
 
   boot.config({
 
@@ -32,182 +36,289 @@
     // Relative Paths
     paths: {
 
-      /* Stratus Core Library */
+      /*
+       Stratus Core Library
+       @stratusjs/runtime Package Paths
+      */
       stratus: `${boot.deployment}@stratusjs/runtime/src/stratus.amd${boot.suffix}`,
+      '@stratusjs/runtime/*': `${boot.deployment}@stratusjs/runtime/src/*${boot.suffix}`,
+      '@stratusjs/runtime/stratus': `${boot.deployment}@stratusjs/runtime/src/stratus${boot.suffix}`,
+      '@stratusjs/runtime/stratus.amd': `${boot.deployment}@stratusjs/runtime/src/stratus.amd${boot.suffix}`,
 
-      // CONTROLLERS:
-      // ------------
-      // 'stratus.controllers.*': boot.deployment + '@stratusjs/controllers/*' + boot.suffix,
-      // 'stratus.controllers.generic': boot.deployment + '@stratusjs/angularjs/src/controllers/generic' + boot.suffix,
+      /* @stratusjs/angular Package Paths */
+      '@stratusjs/angular/boot': `${boot.deployment}@stratusjs/angular/src/boot${boot.suffix}`,
+      '@stratusjs/angular/*': `${boot.deployment}@stratusjs/angular/dist/angular.bundle${boot.suffix}`,
 
-      // SERVICES:
-      // ---------
-      // 'stratus.services.*': boot.deployment + '@stratusjs/angularjs/src/services/*' + boot.suffix,
-      // 'stratus.services.model': boot.deployment + '@stratusjs/angularjs/src/services/model' + boot.suffix,
-      // 'stratus.services.collection': boot.deployment + '@stratusjs/angularjs/src/services/collection' + boot.suffix,
-      // 'stratus.services.registry': boot.deployment + '@stratusjs/angularjs/src/services/registry' + boot.suffix,
-      // 'stratus.services.details': boot.deployment + '@stratusjs/angularjs-extras/src/services/details' + boot.suffix,
+      /* @stratusjs/angularjs Package Paths */
+      '@stratusjs/angularjs/*': stratusjsAngularJsBundlePath,
+      // TODO: This doesn't appear to be relevant anymore, so it may be removable.
+      '@stratusjs/angularjs/services/registry': stratusjsAngularJsBundlePath, // TODO remove?
+      '@stratusjs/angularjs/services/collection': stratusjsAngularJsBundlePath, // TODO remove?
+      '@stratusjs/angularjs/services/model': stratusjsAngularJsBundlePath, // TODO remove?
+      'stratus.controllers.generic': stratusjsAngularJsBundlePath,
 
-      // COMPONENTS:
-      // -----------
-      // 'stratus.components.*': boot.deployment + '@stratusjs/angularjs/src/components/*' + boot.suffix,
-      // 'stratus.components.base': boot.deployment + '@stratusjs/angularjs/src/components/base' + boot.suffix,
+      /* @stratusjs/angularjs-extras Package Paths */
+      angular: `${boot.deployment}@stratusjs/angularjs-extras/src/normalizers/angular.exports${boot.suffix}`, // TODO: Not bundled
+      // NOTE: this sandboxes jquery into require so it's not in the window
+      jquery: `${boot.deployment}@stratusjs/angularjs-extras/src/normalizers/jquery.sandbox${boot.suffix}`,
+      masonry: stratusjsAngularJsExtrasBundlePath,
+      'rxjs/operators': `${boot.deployment}@stratusjs/angularjs-extras/src/normalizers/rxjs.operators${boot.suffix}`,
+      skrollr: `${boot.deployment}@stratusjs/angularjs-extras/src/normalizers/skrollr.init${boot.suffix}`,
+      '@stratusjs/angularjs-extras/*': stratusjsAngularJsExtrasBundlePath,
+      'stratus.components.citation': stratusjsAngularJsExtrasBundlePath,
+      'stratus.components.jsonEditor': stratusjsAngularJsExtrasBundlePath,
+      'stratus.components.twitterFeed': stratusjsAngularJsExtrasBundlePath,
+      'stratus.controllers.dialog': `${boot.deployment}@stratusjs/angularjs-extras/src/controllers/dialog${boot.suffix}`, // TODO: Not bundled
+      'stratus.controllers.panel': `${boot.deployment}@stratusjs/angularjs-extras/src/controllers/panel${boot.suffix}`, // TODO: Not bundled
+      'stratus.directives.bindHtml': stratusjsAngularJsExtrasBundlePath,
+      'stratus.directives.compileTemplate': stratusjsAngularJsExtrasBundlePath,
+      'stratus.directives.domEvents': stratusjsAngularJsExtrasBundlePath,
+      'stratus.directives.drag': stratusjsAngularJsExtrasBundlePath,
+      'stratus.directives.drop': stratusjsAngularJsExtrasBundlePath,
+      'stratus.directives.froala': stratusjsAngularJsExtrasBundlePath,
+      'stratus.directives.fullHeight': stratusjsAngularJsExtrasBundlePath,
+      'stratus.directives.href': stratusjsAngularJsExtrasBundlePath,
+      'stratus.directives.jsonToObject': stratusjsAngularJsExtrasBundlePath,
+      'stratus.directives.maxLength': stratusjsAngularJsExtrasBundlePath,
+      'stratus.directives.parentClass': stratusjsAngularJsExtrasBundlePath,
+      'stratus.directives.onScreen': stratusjsAngularJsExtrasBundlePath,
+      'stratus.directives.singleClick': stratusjsAngularJsExtrasBundlePath,
+      'stratus.directives.src': stratusjsAngularJsExtrasBundlePath,
+      'stratus.directives.stringToNumber': stratusjsAngularJsExtrasBundlePath,
+      'stratus.directives.timestampToDate': stratusjsAngularJsExtrasBundlePath,
+      'stratus.directives.trigger': stratusjsAngularJsExtrasBundlePath,
+      'stratus.directives.validate': stratusjsAngularJsExtrasBundlePath,
+      'stratus.filters.age': stratusjsAngularJsExtrasBundlePath,
+      'stratus.filters.avatar': stratusjsAngularJsExtrasBundlePath,
+      'stratus.filters.gravatar': stratusjsAngularJsExtrasBundlePath,
+      'stratus.filters.isArray': stratusjsAngularJsExtrasBundlePath,
+      'stratus.filters.map': stratusjsAngularJsExtrasBundlePath,
+      'stratus.filters.math': stratusjsAngularJsExtrasBundlePath,
+      'stratus.filters.moment': stratusjsAngularJsExtrasBundlePath,
+      'stratus.filters.numeral': stratusjsAngularJsExtrasBundlePath,
+      'stratus.filters.reduce': stratusjsAngularJsExtrasBundlePath,
+      'stratus.filters.truncate': stratusjsAngularJsExtrasBundlePath,
+      'stratus.filters.toArray': stratusjsAngularJsExtrasBundlePath,
 
-      // DIRECTIVES:
-      // -----------
-      // 'stratus.directives.*': boot.deployment + '@stratusjs/angularjs/src/directives/*' + boot.suffix,
-      // 'stratus.directives.base': boot.deployment + '@stratusjs/angularjs/src/directives/base' + boot.suffix,
+      /* @stratusjs/backend Package Paths */
+      '@stratusjs/backend/*': `${boot.deployment}@stratusjs/backend/src/*${boot.suffix}`, // TODO unused?
 
-      // THIRD PARTY: NODE MODULES
+      /* @stratusjs/boot Package Paths */
+      '@stratusjs/boot/*': `${boot.deployment}@stratusjs/boot/src/*${boot.suffix}`,
 
-      /* Lodash is used in place of Underscore in most modern components */
+      /* @stratusjs/calendar Package Paths */
+      '@stratusjs/calendar/*': stratusjsCalendarBundlePath,
+      '@fullcalendar/*': stratusjsCalendarBundlePath,
+      'stratus.components.calendar': stratusjsCalendarBundlePath,
+
+      /* @stratus/idx Package Paths */
+      '@stratusjs/idx/*': stratusjsIdxBundlePath,
+      'stratus.components.idx*': stratusjsIdxBundlePath,
+      'stratus.components.idxDisclaimer': stratusjsIdxBundlePath,
+      'stratus.components.idxMap': stratusjsIdxBundlePath,
+      'stratus.components.idxMemberDetails': stratusjsIdxBundlePath,
+      'stratus.components.idxMemberList': stratusjsIdxBundlePath,
+      'stratus.components.idxMemberSearch': stratusjsIdxBundlePath,
+      'stratus.components.idxOfficeList': stratusjsIdxBundlePath,
+      'stratus.components.idxOfficeSearch': stratusjsIdxBundlePath,
+      'stratus.components.idxPropertyDetails': stratusjsIdxBundlePath,
+      'stratus.components.idxPropertyDetailsSubSection': stratusjsIdxBundlePath,
+      'stratus.components.idxPropertyList': stratusjsIdxBundlePath,
+      'stratus.components.idxPropertySearch': stratusjsIdxBundlePath,
+
+      /* @stratusjs/core Package Paths */
+      '@stratusjs/core/*': `${boot.deployment}@stratusjs/core/dist/core.bundle${boot.suffix}`,
+
+      /* @stratusjs/form Package Paths */
+      '@stratusjs/form/*': `${boot.deployment}@stratusjs/angular/dist/angular.bundle${boot.suffix}`,
+
+      /* @stratusjs/map Package Paths */
+      '@stratusjs/map/*': `${boot.deployment}@stratusjs/angular/dist/angular.bundle${boot.suffix}`,
+
+      /* @stratusjs/react Package Paths */
+      '@stratusjs/react/*': `${boot.deployment}@stratusjs/react/src/*${boot.suffix}`,
+
+      /* @stratusjs/stripe Package Paths */
+      '@stratusjs/stripe/*': `${boot.deployment}@stratusjs/angular/dist/angular.bundle${boot.suffix}`,
+
+      /* @stratusjs/swiper Package Paths */
+      '@stratusjs/swiper/*': `${boot.deployment}@stratusjs/swiper/src/*${boot.suffix}`, // TODO bundle
+      'stratus.components.swiperCarousel': `${boot.deployment}@stratusjs/swiper/src/carousel.component${boot.suffix}`, // TODO bundle
+
+      /* Third Party Libraries */
+
+      // AngularJs: required for almost all extras and lots of others
+      'angular-native': `${boot.deployment}angular/angular${boot.suffix}`,
+      'angular-animate': `${boot.deployment}angular-animate/angular-animate${boot.suffix}`,
+      'angular-aria': `${boot.deployment}angular-aria/angular-aria${boot.suffix}`,
+      'angular-material': `${boot.deployment}angular-material/angular-material${boot.suffix}`,
+      'angular-material-css': `${boot.deployment}angular-material/angular-material${boot.suffix}.css`,
+      'angular-messages': `${boot.deployment}angular-messages/angular-messages${boot.suffix}`,
+      'angular-resource': `${boot.deployment}angular-resource/angular-resource${boot.suffix}`,
+      'angular-sanitize': `${boot.deployment}angular-sanitize/angular-sanitize${boot.suffix}`,
+
+      /* AngularJs Modules */
+      'angular-drag-and-drop-lists': `${boot.deployment}angular-drag-and-drop-lists/angular-drag-and-drop-lists${boot.suffix}`,
+      'angular-icons': `${boot.deployment}angular-material-icons/angular-material-icons${boot.suffix}`,
+      'angular-file-upload': `${boot.deployment}ng-file-upload/dist/ng-file-upload${boot.suffix}`,
+      'angular-paging': `${boot.deployment}angular-paging/dist/paging${boot.suffix}`,
+      'angular-scrollSpy': `${boot.deployment}angular-scroll-spy/angular-scroll-spy`,
+      'angular-ui-tree': `${boot.deployment}angular-ui-tree/dist/angular-ui-tree${boot.suffix}`,
+
+      // Angular+ Dependencies
+      'core-js/*': `${boot.deployment}core-js/*`,
+      'core-js/es7/reflect': `${boot.deployment}core-js/proposals/reflect-metadata`,
+      hammerjs: `${boot.deployment}hammerjs/hammer${boot.suffix}`,
+      'reflect-metadata': `${boot.deployment}reflect-metadata/Reflect`,
+      rxjs: `${boot.deployment}rxjs/bundles/rxjs.umd${boot.suffix}`,
+      'rxjs-compat': `${boot.deployment}rxjs-compat/index`,
+      'web-animations-js': `${boot.deployment}web-animations-js/web-animations.min`,
+      'zone.js/dist/zone': `${boot.deployment}zone.js/dist/zone${boot.suffix}`,
+      numeral: `${boot.deployment}numeral/min/numeral.min`,
+
+      // Angular Decorators
+      '@agentepsilon/decko': `${boot.deployment}@agentepsilon/decko/dist/decko`,
+
+      // Angular-Editor
+      '@kolkov/angular-editor': `${boot.deployment}@kolkov/angular-editor/bundles/kolkov-angular-editor.umd${boot.suffix}`,
+
+      // Quill Editor Support
+      quill: `${boot.deployment}quill/dist/quill`,
+      'ngx-quill': `${boot.deployment}ngx-quill/bundles/ngx-quill.umd`,
+      'highlight.js/*': `${boot.deployment}highlight.js/*`,
+
+      // Quill Modules
+      // 'styles.css': `${coreBundle}js/empty${boot.suffix}`,
+      // 'quill-html-edit-button': `${boot.deployment}quill-html-edit-button/dist/quill.htmlEditButton.min`,
+      'quill-html-edit-button': `${boot.deployment}quill-html-edit-button/src/quill.htmlEditButton`,
+      // 'quill-image-drop-and-paste': `${boot.deployment}quill-image-drop-and-paste/quill-image-drop-and-paste.min`,
+      'quill-image-drop-and-paste': `${boot.deployment}quill-image-drop-and-paste/src/QuillImageDropAndPaste`,
+
+      // Ace Support
+      'ace-builds': `${boot.deployment}ace-builds/src/ace`,
+      'ace-builds/*': `${boot.deployment}ace-builds/*`,
+
+      // Monaco Support
+      'ngx-monaco-editor': `${boot.deployment}ngx-monaco-editor/bundles/ngx-monaco-editor.umd`,
+      'vs/*': `${boot.deployment}ngx-monaco-editor/assets/monaco/vs/*`,
+
+      // DropZone Support
+      dropzone: `${boot.deployment}dropzone/dist/' + boot.directory + 'dropzone-amd-module${boot.suffix}`,
+
+      // NgStack
+      '@ngstack/code-editor': `${boot.deployment}@ngstack/code-editor/bundles/ngstack-code-editor.umd${boot.suffix}`,
+
+      // Native Toast Messages
+      'toastify-js': `${boot.deployment}toastify-js/src/toastify`,
+      'toastify-js/*': `${boot.deployment}toastify-js/src/*`,
+
+      // Twitter pathing
+      twitter: 'https://platform.twitter.com/widgets',
+
+      // Lodash is used in place of Underscore in most modern components
       lodash: `${boot.deployment}lodash/lodash${boot.suffix}`,
 
-      /* THIRD PARTY: Bowser */
+      // Bowser
       bowser: `${boot.deployment}bowser/bundled`,
       'bowser-legacy': `${boot.deployment}bowser-legacy/bowser${boot.suffix}`,
 
-      /* THIRD PARTY: Interpreters */
-      // coffee: boot.deployment + 'coffeescript/docs/v2/browser-compiler/coffeescript',
-      // less: boot.deployment + 'less/dist/less' + boot.suffix,
-
-      /* THIRD PARTY: jQuery */
       // TODO: convert all instances of jQuery to use Stratus selector if possible.
       // jQuery is currently used in a lot of components and directives that probably don't need it, since they are just
       // using the selector so they could just the Stratus Selector: Stratus('div')
       'jquery-native': `${boot.deployment}jquery/dist/jquery${boot.suffix}`,
 
-      /* STRATUS ELEMENTS: enabled in your project as you need them  */
+      'js-md5': `${boot.deployment}js-md5/build/md5.min`,
+      md5: `${boot.deployment}js-md5/build/md5.min`,
 
-      /* STRATUS CONTROLLERS */
+      // Moment and libraries
+      moment: `${boot.deployment}moment/${boot.directory}moment${boot.suffix}`,
+      'moment-timezone': `${boot.deployment}moment-timezone/builds/moment-timezone-with-data${boot.suffix}`,
+      'moment-timezone/builds/moment-timezone-with-data': `${boot.deployment}moment-timezone/builds/moment-timezone-with-data${boot.suffix}`, // Needed and called directly via fullcalendar
+      'moment-range': `${boot.deployment}moment-range/dist/moment-range`,
 
-      /* STRATUS CONTROLLERS: Angular */
-      // 'stratus.controllers.dialog': boot.deployment + '@stratusjs/angularjs-extras/src/controllers/dialog' + boot.suffix,
-      // 'stratus.controllers.panel': boot.deployment + '@stratusjs/angularjs-extras/src/controllers/panel' + boot.suffix,
+      // JS Core Libraries
+      tslib: `${boot.deployment}tslib/tslib`,
+      preact: stratusjsCalendarBundlePath, // Since when was this bundled in calendar? (its what works)
+      'preact/compat': stratusjsCalendarBundlePath, // Since when was this bundled in calendar? (its what works)
+      'preact/hooks': stratusjsCalendarBundlePath, // Since when was this bundled in calendar? (its what works)
+      'skrollr-native': `${boot.deployment}skrollr-typed/${boot.dev ? 'src' : 'dist'}/skrollr${boot.suffix}`,
 
-      /* STRATUS DIRECTIVES: */
-      // 'stratus.directives.href': boot.deployment + '@stratusjs/angularjs-extras/src/directives/href' + boot.suffix,
-      // 'stratus.directives.singleClick': boot.deployment + '@stratusjs/angularjs-extras/src/directives/singleClick' + boot.suffix,
-      // 'stratus.directives.onScreen': boot.deployment + '@stratusjs/angularjs-extras/src/directives/onScreen' + boot.suffix,
-      // 'stratus.directives.src': boot.deployment + '@stratusjs/angularjs-extras/src/directives/src' + boot.suffix,
-      // 'stratus.directives.trigger': boot.deployment + '@stratusjs/angularjs-extras/src/directives/trigger' + boot.suffix,
-      // 'stratus.directives.validate': boot.deployment + '@stratusjs/angularjs-extras/src/directives/validate' + boot.suffix,
-      // 'stratus.directives.compileTemplate': boot.deployment + '@stratusjs/angularjs-extras/src/directives/compileTemplate' + boot.suffix,
-      // 'stratus.directives.stringToNumber': boot.deployment + '@stratusjs/angularjs-extras/src/directives/stringToNumber' + boot.suffix,
-      // 'stratus.directives.timestampToDate': boot.deployment + '@stratusjs/angularjs-extras/src/directives/timestampToDate' + boot.suffix,
-      // 'stratus.directives.drag': boot.bundle + '/stratus/extras/directives/drag' + boot.suffix,
-      // 'stratus.directives.drop': boot.bundle + '/stratus/extras/directives/drop' + boot.suffix,
+      // Calendar
+      ical: `${boot.deployment}ical.js/build/ical${boot.suffix}`,
 
-      /* STRATUS NORMALIZERS: */
-      // NOTE: this sandboxes jquery into require so it's not in the window
-      jquery: `${boot.deployment}@stratusjs/angularjs-extras/src/normalizers/jquery.sandbox${boot.suffix}`,
+      // Masonry TODO: Remove this...  Should not be in use anymore...
+      'masonry-native': `${boot.deployment}masonry-layout/dist/masonry.pkgd${boot.suffix}`,
 
-      /* STRATUS FILTERS */
-      // 'stratus.filters.age': boot.deployment + '@stratusjs/angularjs-extras/src/filters/age' + boot.suffix,
-      // 'stratus.filters.map': boot.deployment + '@stratusjs/angularjs-extras/src/filters/map' + boot.suffix,
-      // 'stratus.filters.reduce': boot.deployment + '@stratusjs/angularjs-extras/src/filters/reduce' + boot.suffix,
-      // 'stratus.filters.truncate': boot.deployment + '@stratusjs/angularjs-extras/src/filters/truncate' + boot.suffix,
+      // Swiper Carousel
+      swiper: `${boot.deployment}swiper/swiper-bundle${boot.suffix}`,
 
-      /* STRATUS FILTERS: Gravatar and Libraries */
-      // 'stratus.filters.gravatar': boot.deployment + '@stratusjs/angularjs-extras/src/filters/gravatar' + boot.suffix,
-      // md5: boot.deployment + 'js-md5/build/md5.min',
+      // Froala Directive and Libraries
+      froala: `${boot.deployment}froala-editor/js/froala_editor.min`,
+      'froala-editor': `${boot.deployment}froala-editor/js/froala_editor.min`,
 
-      /* STRATUS FILTERS: Moment and libraries */
-      // 'stratus.filters.moment': boot.deployment + '@stratusjs/angularjs-extras/src/filters/moment' + boot.suffix,
-      // moment: boot.deployment + 'moment/' + boot.directory + 'moment' + boot.suffix,
-      // 'moment-timezone': boot.deployment + 'moment-timezone/builds/moment-timezone-with-data' + boot.suffix,
-      // 'moment-range': boot.deployment + 'moment-range/dist/moment-range' + boot.suffix,
+      // Froala Packages
+      'froala-pkgd': `${boot.deployment}froala-editor/js/froala_editor.pkgd.min`,
+      'froala-plugins': `${boot.deployment}froala-editor/js/plugins.pkgd.min`,
 
-      /*
-      // STRATUS EXTRAS: Extra features that are used from the Stratus core "extras" library
-      //  */
+      // Froala Plugins
+      'froala-align': `${boot.deployment}froala-editor/js/plugins/align.min`,
+      'froala-char-counter': `${boot.deployment}froala-editor/js/plugins/char_counter.min`,
+      'froala-code-beautifier': `${boot.deployment}froala-editor/js/plugins/code_beautifier.min`,
+      'froala-code-view': `${boot.deployment}froala-editor/js/plugins/code_view.min`,
+      'froala-colors': `${boot.deployment}froala-editor/js/plugins/colors.min`,
+      'froala-cryptojs': `${boot.deployment}froala-editor/js/plugins/cryptojs.min`,
+      'froala-draggable': `${boot.deployment}froala-editor/js/plugins/draggable.min`,
+      'froala-edit-in-popup': `${boot.deployment}froala-editor/js/plugins/edit_in_popup.min`,
+      'froala-emoticons': `${boot.deployment}froala-editor/js/plugins/emoticons.min`,
+      'froala-entities': `${boot.deployment}froala-editor/js/plugins/entities.min`,
+      'froala-file': `${boot.deployment}froala-editor/js/plugins/file.min`,
+      'froala-files-manager': `${boot.deployment}froala-editor/js/plugins/files_manager.min`,
+      'froala-font-family': `${boot.deployment}froala-editor/js/plugins/font_family.min`,
+      'froala-font-size': `${boot.deployment}froala-editor/js/plugins/font_size.min`,
+      'froala-forms': `${boot.deployment}froala-editor/js/plugins/forms.min`,
+      'froala-fullscreen': `${boot.deployment}froala-editor/js/plugins/fullscreen.min`,
+      'froala-help': `${boot.deployment}froala-editor/js/plugins/help.min`,
+      'froala-image': `${boot.deployment}froala-editor/js/plugins/image.min`,
+      'froala-image-manager': `${boot.deployment}froala-editor/js/plugins/image_manager.min`,
+      'froala-inline-class': `${boot.deployment}froala-editor/js/plugins/inline_class.min`,
+      'froala-inline-style': `${boot.deployment}froala-editor/js/plugins/inline_style.min`,
+      'froala-line-breaker': `${boot.deployment}froala-editor/js/plugins/line_breaker.min`,
+      'froala-line-height': `${boot.deployment}froala-editor/js/plugins/line_height.min`,
+      'froala-link': `${boot.deployment}froala-editor/js/plugins/link.min`,
+      'froala-lists': `${boot.deployment}froala-editor/js/plugins/lists.min`,
+      'froala-paragraph-format': `${boot.deployment}froala-editor/js/plugins/paragraph_format.min`,
+      'froala-paragraph-style': `${boot.deployment}froala-editor/js/plugins/paragraph_style.min`,
+      'froala-print': `${boot.deployment}froala-editor/js/plugins/print.min`,
+      'froala-quick-insert': `${boot.deployment}froala-editor/js/plugins/quick_insert.min`,
+      'froala-quote': `${boot.deployment}froala-editor/js/plugins/quote.min`,
+      'froala-save': `${boot.deployment}froala-editor/js/plugins/save.min`,
+      'froala-special-characters': `${boot.deployment}froala-editor/js/plugins/special_characters.min`,
+      'froala-table': `${boot.deployment}froala-editor/js/plugins/table.min`,
+      'froala-trim-video': `${boot.deployment}froala-editor/js/plugins/trim_video.min`,
+      'froala-url': `${boot.deployment}froala-editor/js/plugins/url.min`,
+      'froala-video': `${boot.deployment}froala-editor/js/plugins/video.min`,
+      'froala-word-paste': `${boot.deployment}froala-editor/js/plugins/word_paste.min`,
 
-      /* STRATUS EXTRAS - COMPONENTS: Calendar and Libraries */
-      // 'stratus.components.calendar': boot.deployment + '@stratusjs/angularjs-extras/src/components/calendar/calendar' + boot.suffix,
-      // '@fullcalendar/core': boot.deployment + '@fullcalendar/core/main' + boot.suffix,
-      // '@fullcalendar/daygrid': boot.deployment + '@fullcalendar/daygrid/main' + boot.suffix,
-      // '@fullcalendar/timegrid': boot.deployment + '@fullcalendar/timegrid/main' + boot.suffix,
-      // '@fullcalendar/list': boot.deployment + '@fullcalendar/list/main' + boot.suffix,
-      // 'fullcalendar/customView': boot.deployment + '@stratusjs/angularjs-extras/src/components/calendar/customView' + boot.suffix,
-      // ical: boot.deployment + 'ical.js/build/ical' + boot.suffix,
-      // 'stratus.services.iCal': boot.deployment + '@stratusjs/angularjs-extras/src/services/iCal' + boot.suffix,
+      // Froala Third Party Plugins
+      'froala-embedly': `${boot.deployment}froala-editor/js/third_party/embedly.min`,
+      'froala-font-awesome': `${boot.deployment}froala-editor/js/third_party/font_awesome.min`,
+      'froala-image-tui': `${boot.deployment}froala-editor/js/third_party/image_tui.min`,
+      'froala-spell-checker': `${boot.deployment}froala-editor/js/third_party/spell_checker.min`,
 
-      /* STRATUS EXTRAS - COMPONENTS: Carousel and libraries */
-      // 'stratus.components.carousel': boot.deployment + '@stratusjs/angularjs-extras/src/components/carousel' + boot.suffix,
-      // swiper: boot.deployment + 'swiper/dist/js/swiper' + boot.suffix,
+      // Froala Plugin Dependencies
+      html2pdf: `${boot.deployment}html2pdf.js/dist/html2pdf`,
+      html2canvas: `${boot.deployment}jspdf/dist/jspdf.min`,
+      jspdf: `${boot.deployment}html2canvas/dist/html2canvas${boot.suffix}`,
+      'font-awesome': `${boot.deployment}@fortawesome/fontawesome-free/js/all${boot.suffix}`,
 
-      /* STRATUS COMPONENTS: Social Media */
-      // Not Currently Used: this is a way to enable facebook components for a specific facebook page (component not 100% finished for general use)
-      // 'stratus.components.facebook': boot.deployment + '@stratusjs/angularjs-extras/src/components/facebook' + boot.suffix,
-      // 'stratus.components.jsonEditor': boot.deployment + '@stratusjs/angularjs-extras/src/components/jsonEditor' + boot.suffix,
+      // Angular+ Froala Directive
+      'angular-froala-wysiwyg': `${boot.deployment}angular-froala-wysiwyg/bundles/angular-froala-wysiwyg.umd`,
 
-      /* STRATUS LIBRARY: Angular */
-      // '@angular/*': boot.deployment + '@angular/*/bundles/*.umd' + boot.suffix,
-      // '@angular/animations': boot.deployment + '@angular/animations/bundles/animations.umd' + boot.suffix,
-      // '@angular/animations/*': boot.deployment + '@angular/animations/bundles/animations-*.umd' + boot.suffix,
-      // '@angular/cdk': boot.deployment + '@angular/cdk/bundles/cdk.umd' + boot.suffix,
-      // '@angular/cdk/*': boot.deployment + '@angular/cdk/bundles/cdk-*.umd' + boot.suffix,
-      // '@angular/common': boot.deployment + '@angular/common/bundles/common.umd' + boot.suffix,
-      // '@angular/common/*': boot.deployment + '@angular/common/bundles/common-*.umd' + boot.suffix,
-      // '@angular/compiler': boot.deployment + '@angular/compiler/bundles/compiler.umd' + boot.suffix,
-      // '@angular/core': boot.deployment + '@angular/core/bundles/core.umd' + boot.suffix,
-      // '@angular/flex-layout': boot.deployment + '@angular/flex-layout/bundles/flex-layout.umd' + boot.suffix,
-      // '@angular/forms': boot.deployment + '@angular/forms/bundles/forms.umd' + boot.suffix,
-      // '@angular/material': boot.deployment + '@angular/material/bundles/material.umd' + boot.suffix,
-      // '@angular/material/*': boot.deployment + '@angular/material/bundles/material-*.umd' + boot.suffix,
-      // '@angular/material-moment-adapter': boot.deployment + '@angular/material-moment-adapter/bundles/material-moment-adapter.umd' + boot.suffix,
-      // '@angular/platform-browser': boot.deployment + '@angular/platform-browser/bundles/platform-browser.umd' + boot.suffix,
-      // '@angular/platform-browser/*': boot.deployment + '@angular/platform-browser/bundles/platform-browser-*.umd' + boot.suffix,
-      // '@angular/platform-browser-dynamic': boot.deployment + '@angular/platform-browser-dynamic/bundles/platform-browser-dynamic.umd' + boot.suffix,
+      // AngularJS Froala Directive
+      'angular-froala': `${boot.deployment}angular-froala/src/angular-froala`,
 
-      // STRATUS SRC: All
-      // '@stratusjs/angular/*': 'node_modules/@stratusjs/angular/src/*' + boot.suffix,
-      // '@stratusjs/boot/*': 'node_modules/@stratusjs/boot/src/*' + boot.suffix,
-      // '@stratusjs/core/*': 'node_modules/@stratusjs/core/src/*' + boot.suffix,
-      // '@stratusjs/idx/*': 'node_modules/@stratusjs/idx/src/*' + boot.suffix,
-      // '@stratusjs/react/*': 'node_modules/@stratusjs/react/src/*' + boot.suffix,
-
-      // Angular Dependencies
-      // 'core-js/*': 'node_modules/core-js/*',
-      // 'core-js/es7/reflect': 'node_modules/core-js/proposals/reflect-metadata',
-      // hammerjs: 'node_modules/hammerjs/hammer' + boot.suffix,
-      // rxjs: 'node_modules/rxjs/bundles/rxjs.umd' + boot.suffix,
-      // 'rxjs/operators': 'extras/normalizers/rxjs.operators' + boot.suffix,
-      // 'rxjs-compat': 'node_modules/rxjs-compat/index',
-      // 'web-animations-js': 'node_modules/web-animations-js/web-animations.min',
-      // 'zone.js/dist/zone': 'node_modules/zone.js/dist/zone' + boot.suffix,
-
-      // Quill Editor Support
-      // quill: 'node_modules/quill/dist/quill',
-      // 'ngx-quill': 'node_modules/ngx-quill/bundles/ngx-quill.umd'
-
-      // Angular
-
-      /* STRATUS EXTRAS: Angular.js: required for almost all extras and lots of others */
-      // angular: boot.deployment + 'angular/angular' + boot.suffix,
-      // 'angular-animate': boot.deployment + 'angular-animate/angular-animate' + boot.suffix,
-      // 'angular-aria': boot.deployment + 'angular-aria/angular-aria' + boot.suffix,
-      // 'angular-material': boot.deployment + 'angular-material/angular-material' + boot.suffix,
-      // 'angular-messages': boot.deployment + 'angular-messages/angular-messages' + boot.suffix,
-      // 'angular-resource': boot.deployment + 'angular-resource/angular-resource' + boot.suffix,
-      // 'angular-sanitize': boot.deployment + 'angular-sanitize/angular-sanitize' + boot.suffix,
-
-      /* STRATUS EXTRAS: Angular.js Modules */
-
-      // 'angular-chart': boot.deployment + 'angular-chart.js/dist/angular-chart' + boot.suffix,
-      // 'angular-drag-and-drop-lists': boot.deployment + 'angular-drag-and-drop-lists/angular-drag-and-drop-lists' + boot.suffix,
-      // 'angular-icons': boot.deployment + 'angular-material-icons/angular-material-icons' + boot.suffix,
-      // 'angular-file-upload': boot.deployment + 'ng-file-upload/dist/ng-file-upload' + boot.suffix,
-      // 'angular-paging': boot.deployment + 'angular-paging/dist/paging' + boot.suffix,
-      // 'angular-scrollSpy': boot.deployment + 'angular-scroll-spy/angular-scroll-spy',
-      // 'angular-ui-tree': boot.deployment + 'angular-ui-tree/dist/angular-ui-tree' + boot.suffix,
-
-      /* STRATUS EXTRAS: Chart */
-      // chart: boot.deployment + 'chart.js/dist/Chart',
-
-      /* STRATUS EXTRAS: Masonry */
-      // 'masonry-native': boot.deployment + 'masonry-layout/dist/masonry.pkgd' + boot.suffix,
-      // masonry: boot.deployment + '@stratusjs/angularjs-extras/src/directives/masonry' + boot.suffix,
+      // formio dependencies (WIP)
+      formiojs: `${boot.deployment}formiojs/dist/formio.full${boot.suffix}`,
 
     }
   })
