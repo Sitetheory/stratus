@@ -33,7 +33,7 @@
     paths: {
 
       /* Stratus Core Library */
-      stratus: boot.deployment + '@stratusjs/runtime/src/stratus.amd' + boot.suffix,
+      stratus: `${boot.deployment}@stratusjs/runtime/src/stratus.amd${boot.suffix}`,
 
       // CONTROLLERS:
       // ------------
@@ -61,11 +61,11 @@
       // THIRD PARTY: NODE MODULES
 
       /* Lodash is used in place of Underscore in most modern components */
-      lodash: boot.deployment + 'lodash/lodash' + boot.suffix,
+      lodash: `${boot.deployment}lodash/lodash${boot.suffix}`,
 
       /* THIRD PARTY: Bowser */
-      bowser: boot.deployment + 'bowser/bundled',
-      'bowser-legacy': boot.deployment + 'bowser-legacy/bowser' + boot.suffix,
+      bowser: `${boot.deployment}bowser/bundled`,
+      'bowser-legacy': `${boot.deployment}bowser-legacy/bowser${boot.suffix}`,
 
       /* THIRD PARTY: Interpreters */
       // coffee: boot.deployment + 'coffeescript/docs/v2/browser-compiler/coffeescript',
@@ -75,11 +75,10 @@
       // TODO: convert all instances of jQuery to use Stratus selector if possible.
       // jQuery is currently used in a lot of components and directives that probably don't need it, since they are just
       // using the selector so they could just the Stratus Selector: Stratus('div')
-      'jquery-native': boot.deployment + 'jquery/dist/jquery' + boot.suffix,
+      'jquery-native': `${boot.deployment}jquery/dist/jquery${boot.suffix}`,
 
       /* STRATUS ELEMENTS: enabled in your project as you need them  */
 
-      /* STRATUS CONTROLLERS */
       /* STRATUS CONTROLLERS */
 
       /* STRATUS CONTROLLERS: Angular */
@@ -101,7 +100,7 @@
 
       /* STRATUS NORMALIZERS: */
       // NOTE: this sandboxes jquery into require so it's not in the window
-      jquery: boot.deployment + '@stratusjs/angularjs-extras/src/normalizers/jquery.sandbox' + boot.suffix
+      jquery: `${boot.deployment}@stratusjs/angularjs-extras/src/normalizers/jquery.sandbox${boot.suffix}`,
 
       /* STRATUS FILTERS */
       // 'stratus.filters.age': boot.deployment + '@stratusjs/angularjs-extras/src/filters/age' + boot.suffix,
