@@ -550,7 +550,7 @@ Stratus.Components.IdxPropertyList = {
                     query.where.CityRegion = []
                     query.where.PostalCode = []
                     query.where.MLSAreaMajor = []
-                    query.where.Subdivision = []
+                    query.where.SubdivisionName = []
                 }
 
                 // Page checks

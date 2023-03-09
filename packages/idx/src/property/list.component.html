@@ -49,7 +49,7 @@
                             <a data-ng-click="displayModelDetails(property, $event)" data-ng-href="{{::getDetailsURL(property)}}" target="popup">
                                 <div class="image-wrapper"
                                      data-stratus-src-version="{{::(property.Images[0].Lazy == 'stratus-src' ? 'best' : 'false')}}"
-                                     data-stratus-src="{{::property.Images[0].MediaURL}}"
+                                     data-stratus-src="{{::property.Images[0].MediaURL || 'false'}}"
                                      aria-label="Main Image of Listing"
                                 >
                                     <meta data-ng-if="::property.Images.length > 0" property="image" content="{{::property.Images[0].MediaURL}}">
@@ -119,6 +119,7 @@
                 </md-button>
                 <md-button class="pager-button search-more-filters advanced-search-link" data-ng-if="::advancedSearchUrl"
                            data-ng-href="{{ ::advancedSearchUrl }}"
+                           aria-label="{{ ::advancedSearchLinkName }}"
                 >
                     <md-icon md-svg-src="{{ localDir + 'images/icons/actionButtons/filters.svg' }}"></md-icon>
                     <span class="btn-text"><span data-ng-bind="advancedSearchLinkName"></span></span>
