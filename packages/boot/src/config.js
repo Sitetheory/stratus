@@ -9,10 +9,10 @@
   Note: some components or services may require dependencies, that must be defined. If these are Stratus "extras" they should be enabled here in the config.js file only if you need them.
    */
   boot.deployment = boot.deployment || ''
-  const stratusjsAngularJsBundlePath =  `${boot.deployment}@stratusjs/angularjs/dist/angularjs.bundle${boot.suffix}`
-  const stratusjsAngularJsExtrasBundlePath =  `${boot.deployment}@stratusjs/angularjs-extras/dist/angularjs-extras.bundle${boot.suffix}`
-  const stratusjsCalendarBundlePath =  `${boot.deployment}@stratusjs/calendar/dist/calendar.bundle${boot.suffix}`
-  const stratusjsIdxBundlePath =  `${boot.deployment}@stratusjs/idx/dist/idx.bundle${boot.suffix}`
+  const stratusjsAngularJsBundlePath = `${boot.deployment}@stratusjs/angularjs/dist/angularjs.bundle${boot.suffix}`
+  const stratusjsAngularJsExtrasBundlePath = `${boot.deployment}@stratusjs/angularjs-extras/dist/angularjs-extras.bundle${boot.suffix}`
+  const stratusjsCalendarBundlePath = `${boot.deployment}@stratusjs/calendar/dist/calendar.bundle${boot.suffix}`
+  const stratusjsIdxBundlePath = `${boot.deployment}@stratusjs/idx/dist/idx.bundle${boot.suffix}`
 
   boot.config({
 
@@ -319,8 +319,7 @@
       'angular-froala': `${boot.deployment}angular-froala/src/angular-froala`,
 
       // formio dependencies (WIP)
-      formiojs: `${boot.deployment}formiojs/dist/formio.full${boot.suffix}`,
-
+      formiojs: `${boot.deployment}formiojs/dist/formio.full${boot.suffix}`
     }
   })
 })(this); // eslint-disable-line semi
