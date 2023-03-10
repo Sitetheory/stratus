@@ -29,7 +29,186 @@
 
     /* Dependencies */
     // NOTE: most of these dependencies are for "extras" that may be enabled in a project config.js. THESE SHOULD BE ENABLED IN YOUR PROJECT'S config.js
-    shim: {},
+    // Note: Use `shim` for RequireJS and StealJS, `meta` for SystemJS
+    meta: {
+      /* *
+      angular: {
+        format: 'global',
+        exports: 'angular'
+      },
+      /* */
+      'angular-aria': {
+        deps: ['angular']
+      },
+      'angular-animate': {
+        deps: ['angular']
+      },
+      'angular-messages': {
+        deps: ['angular']
+      },
+      'angular-material': {
+        deps: [
+          'angular-aria',
+          'angular-animate',
+          'angular-messages'
+        ]
+      },
+      'angular-resource': {
+        deps: ['angular']
+      },
+      'angular-sanitize': {
+        deps: ['angular']
+      },
+
+      /* Angular Modules */
+      'angular-file-upload': {
+        deps: ['angular']
+      },
+      'angular-icons': {
+        deps: ['angular']
+      },
+      'angular-scrollSpy': {
+        deps: ['angular']
+      },
+      'angular-ui-tree': {
+        deps: ['angular']
+      },
+
+      // Charts - I don't know if this is necessary
+      // 'Chart.js': {
+      //   deps: ['chart']
+      // },
+
+      /* Froala */
+      'froala-align': {
+        deps: ['froala']
+      },
+      'froala-char-counter': {
+        deps: ['froala']
+      },
+      'froala-code-beautifier': {
+        deps: ['froala']
+      },
+      'froala-code-view': {
+        deps: ['froala']
+      },
+      'froala-colors': {
+        deps: ['froala']
+      },
+      'froala-draggable': {
+        deps: ['froala']
+      },
+      'froala-emoticons': {
+        deps: ['froala']
+      },
+      'froala-entities': {
+        deps: ['froala']
+      },
+      'froala-file': {
+        deps: ['froala']
+      },
+      'froala-font-family': {
+        deps: ['froala']
+      },
+      'froala-font-size': {
+        deps: ['froala']
+      },
+      'froala-forms': {
+        deps: ['froala']
+      },
+      'froala-fullscreen': {
+        deps: ['froala']
+      },
+      'froala-help': {
+        deps: ['froala']
+      },
+      'froala-image': {
+        deps: ['froala']
+      },
+      'froala-image-manager': {
+        deps: ['froala', 'froala-image']
+      },
+      'froala-inline-style': {
+        deps: ['froala']
+      },
+      'froala-line-breaker': {
+        deps: ['froala']
+      },
+      'froala-link': {
+        deps: ['froala']
+      },
+      'froala-lists': {
+        deps: ['froala']
+      },
+      'froala-paragraph-format': {
+        deps: ['froala']
+      },
+      'froala-paragraph-style': {
+        deps: ['froala']
+      },
+      'froala-quick-insert': {
+        deps: ['froala']
+      },
+      'froala-quote': {
+        deps: ['froala']
+      },
+      'froala-save': {
+        deps: ['froala']
+      },
+      'froala-special-characters': {
+        deps: ['froala']
+      },
+      'froala-table': {
+        deps: ['froala']
+      },
+      'froala-url': {
+        deps: ['froala']
+      },
+      'froala-video': {
+        deps: ['froala']
+      },
+      'froala-word-paste': {
+        deps: ['froala']
+      },
+      'angular-froala': {
+        deps: ['angular', 'froala']
+      },
+      'angular-drag-and-drop-lists': {
+        deps: ['angular']
+      },
+
+      /* Calendar */
+      '@fullcalendar/daygrid': {
+        deps: [
+          '@fullcalendar/core'
+        ]
+      },
+      '@fullcalendar/timegrid': {
+        deps: [
+          '@fullcalendar/core'
+        ]
+      },
+      '@fullcalendar/list': {
+        deps: [
+          '@fullcalendar/core'
+        ]
+      },
+      '@fullcalendar/moment': {
+        deps: [
+          '@fullcalendar/core'
+        ]
+      },
+      '@fullcalendar/moment-timezone': {
+        deps: [
+          '@fullcalendar/moment'
+        ]
+      },
+      '@stratusjs/calendar/customView': {
+        deps: [
+          '@fullcalendar/core'
+        ]
+      }
+    },
 
     // Package Directories
     packages: {},
