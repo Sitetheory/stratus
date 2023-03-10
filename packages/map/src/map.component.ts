@@ -228,6 +228,7 @@ export class MapComponent extends RootComponent implements OnInit, AfterViewInit
     @Input() defaultIconHover: string | google.maps.Icon | google.maps.Symbol
     @Input() defaultIconLabelOriginX: number
     @Input() defaultIconLabelOriginY: number
+    disableMarkerAnimations = false
     options: google.maps.MapOptions = {
         mapTypeId: this.mapType,
         center: this.center,
@@ -269,6 +270,11 @@ export class MapComponent extends RootComponent implements OnInit, AfterViewInit
 
         // Hydrate Root App Inputs
         this.hydrate(this.elementRef, this.sanitizer, keys<MapComponent>())
+
+        if ('Safari' === Stratus.Client.name) {
+            // console.log('Safari is detected, disabling marker animations')
+            this.disableMarkerAnimations = true
+        }
 
         this.processOptions()
 
@@ -708,6 +714,11 @@ export class MapComponent extends RootComponent implements OnInit, AfterViewInit
             realMarker.addListener('click', () => {
                 this.mapClick(realMarker, marker as MarkerSettings)
             })
+        }
+
+        // Animations can break for certain clients. Lets disable them if that's the case
+        if (this.disableMarkerAnimations) {
+            realMarker.setAnimation(null)
         }
 
         // Add Checks to keep hover over on top
