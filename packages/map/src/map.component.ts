@@ -312,6 +312,8 @@ export class MapComponent extends RootComponent implements OnInit, AfterViewInit
                 maxWidth: 250
             })
 
+            // No longer wait for tilesloaded or idle (they never kick off).
+            // Nothing else we can check for, assume the map is ready at start
             const initialize = () => {
                 if (!this.initialized) {
                     this.updateWidgetSize()
@@ -322,25 +324,7 @@ export class MapComponent extends RootComponent implements OnInit, AfterViewInit
                     this.initializing = false
                 }
             }
-
-            const stopListeningForIdle = this.map.addListener('idle', () => {
-                // do something only the first time the map is loaded
-                // console.info('Map is now idle (almost inited)')
-                stopListeningForIdle.remove()
-
-                initialize()
-            })
-            setTimeout(() => {
-                if (stopListeningForIdle) {
-                    stopListeningForIdle.remove()
-                    console.warn(this.uid, 'Google maps may be getting blocked. Forcing initialization anyways.')
-                    initialize()
-                }
-            }, 6000) // wait for 6 seconds
-
-            // this.initialized = true
-            // console.info('Map was thought to be inited')
-            // console.info(this.uid, 'Inited')
+            initialize()
         } catch (e) {
             console.error(this.uid, 'could not Init', e)
             this.initializing = false
