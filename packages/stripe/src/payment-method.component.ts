@@ -27,7 +27,7 @@ import {
     Stratus
 } from '@stratusjs/runtime/stratus'
 import {RootComponent} from '../../angular/src/core/root.component'
-import {Model} from '@stratusjs/angularjs/services/model'
+import {Model, ModelOptions} from '@stratusjs/angularjs/services/model'
 import {cookie} from '@stratusjs/core/environment'
 
 
@@ -59,6 +59,9 @@ export class StripePaymentMethodComponent extends RootComponent implements OnDes
     // Dependencies
     _: any
 
+    // Registry Attributes
+    @Input() urlRoot = '/Api'
+
     // States
     styled = false
     initialized = false
@@ -72,7 +75,7 @@ export class StripePaymentMethodComponent extends RootComponent implements OnDes
     @Input() formMessage = ''
     @Input() detailedBillingInfo?: boolean
     @Input() defaultBillingInfo?: stripe.BillingDetails
-    paymentMethodApiPath = 'PaymentMethod'
+    @Input() paymentMethodApiPath = 'PaymentMethod'
     billingInfo: stripe.BillingDetails = { // fixme should copy stripe.BillingDetails // PaymentBillingInfo
         address: {}
     }
@@ -239,10 +242,16 @@ export class StripePaymentMethodComponent extends RootComponent implements OnDes
             && isString(setupIntent.payment_method)
         ) {
             // The setup has succeeded.
-            // Send setupIntent.payment_method to your server to save the card to a Customer as default
-            const model = new Model({
+
+            const apiOptions: ModelOptions = {
                 target: this.paymentMethodApiPath
-            })
+            }
+            if (this.urlRoot) {
+                apiOptions.urlRoot = this.urlRoot
+            }
+
+            // Send setupIntent.payment_method to your server to save the card to a Customer as default
+            const model = new Model(apiOptions)
             model.data = {
                 payment_method: setupIntent.payment_method
             }

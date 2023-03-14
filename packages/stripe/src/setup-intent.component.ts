@@ -1,3 +1,4 @@
+/* tslint:disable:no-inferrable-types */
 // Angular Core
 import {
     // ChangeDetectionStrategy,
@@ -21,7 +22,7 @@ import {
     Stratus
 } from '@stratusjs/runtime/stratus'
 import {RootComponent} from '../../angular/src/core/root.component'
-import {Model} from '@stratusjs/angularjs/services/model'
+import {Model, ModelOptions} from '@stratusjs/angularjs/services/model'
 // import {cookie} from '@stratusjs/core/environment'
 import {
     StripePaymentMethodComponent,
@@ -37,7 +38,7 @@ const componentName = 'setup-intent'
 @Component({
     selector: `sa-${packageName}-${componentName}`,
     // templateUrl: `${localDir}/${parentModuleName}/${moduleName}.component.html`,
-    template: '<button mat-raised-button (click)="addPaymentMethod($event)" [disabled]="newPaymentMethodPending || newPaymentMethodPrompt">Add Payment Method</button>',
+    template: '<button mat-raised-button (click)="addPaymentMethod($event)" [disabled]="newPaymentMethodPending || newPaymentMethodPrompt" [textContent]="addCardButtonText"></button>',
 })
 export class StripeSetupIntentComponent extends RootComponent implements OnInit {
 
@@ -52,9 +53,14 @@ export class StripeSetupIntentComponent extends RootComponent implements OnInit 
     newPaymentMethodPrompt = false
     newPaymentMethodPending = false
 
+    // Registry Attributes
+    @Input() urlRoot: string = '/Api'
+    @Input() paymentMethodApiPath: string = 'PaymentMethod'
+
+    // Component Attributes
+    @Input() addCardButtonText: string = 'Add Payment Method'
     @Input() detailedBillingInfo?: boolean
     @Input() defaultBillingInfo?: stripe.BillingDetails
-    paymentMethodApiPath = 'PaymentMethod'
 
     constructor(
         private elementRef: ElementRef,
@@ -96,9 +102,14 @@ export class StripeSetupIntentComponent extends RootComponent implements OnInit 
             let formMessage = ''
             this.newPaymentMethodPending = true
 
-            const model = new Model({
+            const apiOptions: ModelOptions = {
                 target: this.paymentMethodApiPath
-            })
+            }
+            if (this.urlRoot) {
+                apiOptions.urlRoot = this.urlRoot
+            }
+
+            const model = new Model(apiOptions)
             model.data.setupIntent = true
             await model.save()
             // console.log('model', model)

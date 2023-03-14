@@ -228,6 +228,7 @@ export class MapComponent extends RootComponent implements OnInit, AfterViewInit
     @Input() defaultIconHover: string | google.maps.Icon | google.maps.Symbol
     @Input() defaultIconLabelOriginX: number
     @Input() defaultIconLabelOriginY: number
+    disableMarkerAnimations = false
     options: google.maps.MapOptions = {
         mapTypeId: this.mapType,
         center: this.center,
@@ -269,6 +270,11 @@ export class MapComponent extends RootComponent implements OnInit, AfterViewInit
 
         // Hydrate Root App Inputs
         this.hydrate(this.elementRef, this.sanitizer, keys<MapComponent>())
+
+        if ('Safari' === Stratus.Client.name) {
+            // console.log('Safari is detected, disabling marker animations')
+            this.disableMarkerAnimations = true
+        }
 
         this.processOptions()
 
@@ -312,6 +318,8 @@ export class MapComponent extends RootComponent implements OnInit, AfterViewInit
                 maxWidth: 250
             })
 
+            // No longer wait for tilesloaded or idle (they never kick off).
+            // Nothing else we can check for, assume the map is ready at start
             const initialize = () => {
                 if (!this.initialized) {
                     this.updateWidgetSize()
@@ -322,25 +330,7 @@ export class MapComponent extends RootComponent implements OnInit, AfterViewInit
                     this.initializing = false
                 }
             }
-
-            const stopListeningForIdle = this.map.addListener('idle', () => {
-                // do something only the first time the map is loaded
-                // console.info('Map is now idle (almost inited)')
-                stopListeningForIdle.remove()
-
-                initialize()
-            })
-            setTimeout(() => {
-                if (stopListeningForIdle) {
-                    stopListeningForIdle.remove()
-                    console.warn(this.uid, 'Google maps may be getting blocked. Forcing initialization anyways.')
-                    initialize()
-                }
-            }, 6000) // wait for 6 seconds
-
-            // this.initialized = true
-            // console.info('Map was thought to be inited')
-            // console.info(this.uid, 'Inited')
+            initialize()
         } catch (e) {
             console.error(this.uid, 'could not Init', e)
             this.initializing = false
@@ -724,6 +714,11 @@ export class MapComponent extends RootComponent implements OnInit, AfterViewInit
             realMarker.addListener('click', () => {
                 this.mapClick(realMarker, marker as MarkerSettings)
             })
+        }
+
+        // Animations can break for certain clients. Lets disable them if that's the case
+        if (this.disableMarkerAnimations) {
+            realMarker.setAnimation(null)
         }
 
         // Add Checks to keep hover over on top

@@ -50,6 +50,6 @@ export const StripePackage: StratusPackage = {
     stratusModule: StripeModule,
     stratusComponents: {
         'sa-stripe-payment-method-list': StripePaymentMethodListComponent,
-        'sa-stripe-payment-method-selector': StripePaymentMethodSelectorComponent,
+        'sa-stripe-payment-method-selector': StripePaymentMethodSelectorComponent
     }
 }
