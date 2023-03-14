@@ -1,16 +1,20 @@
 <div [attr.id]="elementId">
-    <mat-progress-bar *ngIf="collection.pending" mode="indeterminate"></mat-progress-bar>
-    <div *ngIf="collection.completed && !collection.pending && collection.models.length === 0" class="no-results">
-        No Payment Methods on file.
+    <mat-progress-bar *ngIf="paymentCollection.pending" mode="indeterminate"></mat-progress-bar>
+    <div *ngIf="paymentCollection.completed && !paymentCollection.pending && paymentCollection.models.length === 0" class="no-results">
+        No Payment Method on file.
     </div>
     <sa-stripe-payment-method-item
-            *ngFor="let paymentMethod of collection.models"
+            *ngFor="let paymentMethod of paymentCollection.models"
             [attr.tabindex]="paymentMethod.data.id"
             [(model)]="paymentMethod"
     ></sa-stripe-payment-method-item>
     <sa-stripe-setup-intent
-            [hidden]="!collection.completed || collection.pending"
+            [hidden]="!paymentCollection.completed || paymentCollection.pending"
             data-detailed-billing-info="true"
+            [defaultBillingInfo]="defaultBillingInfo"
+            [urlRoot]="urlRoot"
+            [paymentMethodApiPath]="paymentMethodApiPath"
+            [addCardButtonText]="addCardButtonText"
     ></sa-stripe-setup-intent>
 
     <!--delete dialog popup -->
