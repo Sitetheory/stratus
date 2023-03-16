@@ -96,7 +96,8 @@ export class StripeSetupIntentComponent extends RootComponent implements OnInit 
 
     async addPaymentMethod(ev?: any) {
         if (!this.newPaymentMethodPending && !this.newPaymentMethodPrompt) {
-            // console.log('running addPaymentMethod')
+            // console.log('Stratus', Stratus)
+            // console.log('running addPaymentMethod', this)
             let clientSecret = ''
             let publishKey = ''
             let formMessage = ''
@@ -134,6 +135,7 @@ export class StripeSetupIntentComponent extends RootComponent implements OnInit 
                 }
             }
             // TODO check status
+            // console.log('did returned checks')
 
             if (
                 !isEmpty(clientSecret) &&
@@ -163,6 +165,8 @@ export class StripeSetupIntentComponent extends RootComponent implements OnInit 
                 clientSecret,
                 publishKey,
                 formMessage,
+                urlRoot: this.urlRoot,
+                paymentMethodApiPath: this.paymentMethodApiPath,
                 detailedBillingInfo: this.detailedBillingInfo,
                 defaultBillingInfo: this.defaultBillingInfo
             } as StripePaymentMethodDialogData

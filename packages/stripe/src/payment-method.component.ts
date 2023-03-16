@@ -1,3 +1,4 @@
+/* tslint:disable:no-inferrable-types */
 // Angular Core
 import {
     Component,
@@ -60,7 +61,8 @@ export class StripePaymentMethodComponent extends RootComponent implements OnDes
     _: any
 
     // Registry Attributes
-    @Input() urlRoot = '/Api'
+    @Input() urlRoot: string = '/Api'
+    @Input() paymentMethodApiPath: string = 'PaymentMethod'
 
     // States
     styled = false
@@ -75,7 +77,6 @@ export class StripePaymentMethodComponent extends RootComponent implements OnDes
     @Input() formMessage = ''
     @Input() detailedBillingInfo?: boolean
     @Input() defaultBillingInfo?: stripe.BillingDetails
-    @Input() paymentMethodApiPath = 'PaymentMethod'
     billingInfo: stripe.BillingDetails = { // fixme should copy stripe.BillingDetails // PaymentBillingInfo
         address: {}
     }
@@ -140,7 +141,7 @@ export class StripePaymentMethodComponent extends RootComponent implements OnDes
             options,
             `#${this.elementId}-mount`
         )
-        // console.log('loading', clone(options))
+        // console.log('PaymentMethod loading', options, this)
         // Render the Card
         // this.card.mount(`#${this.elementId}-mount`)
         // Provide possible Stripe errors
@@ -296,6 +297,8 @@ export interface StripePaymentMethodDialogData {
     clientSecret: string
     publishKey: string
     formMessage: string
+    urlRoot?: string,
+    paymentMethodApiPath?: string,
     detailedBillingInfo?: boolean
     defaultBillingInfo?: stripe.BillingDetails
 }
