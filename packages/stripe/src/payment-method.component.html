@@ -3,31 +3,35 @@
         <div *ngIf="formMessage" class="billing-message" [innerHTML]="formMessage"></div>
         <!-- TODO add a form to collect Billing info for the card as an option -->
         <div *ngIf="detailedBillingInfo" class="billing-info">
-            <mat-form-field class="md-block">
-                <mat-label>Name</mat-label>
-                <input matInput [(ngModel)]="billingInfo.name" [disabled]="!isEditable()">
-            </mat-form-field>
-            <mat-form-field class="md-block">
-                <mat-label>Email</mat-label>
-                <input matInput [(ngModel)]="billingInfo.email" [disabled]="!isEditable()">
-            </mat-form-field>
-            <mat-form-field class="md-block">
-                <mat-label>Phone</mat-label>
-                <input matInput [(ngModel)]="billingInfo.phone" [disabled]="!isEditable()">
-            </mat-form-field>
-            <mat-form-field class="md-block">
-                <mat-label>Address</mat-label>
-                <input matInput [(ngModel)]="billingInfo.address.line1" [disabled]="!isEditable()">
-            </mat-form-field>
-            <mat-form-field class="md-block">
-                <mat-label>Address 2</mat-label>
-                <input matInput [(ngModel)]="billingInfo.address.line2" [disabled]="!isEditable()">
-            </mat-form-field>
-            <mat-form-field class="md-block">
-                <mat-label>City</mat-label>
-                <input matInput [(ngModel)]="billingInfo.address.city" [disabled]="!isEditable()">
-            </mat-form-field>
             <div data-layout-gt-sm="row">
+                <mat-form-field class="md-block" flex-gt-sm>
+                    <mat-label>Name</mat-label>
+                    <input matInput [(ngModel)]="billingInfo.name" [disabled]="!isEditable()">
+                </mat-form-field>
+                <mat-form-field class="md-block" flex-gt-sm>
+                    <mat-label>Email</mat-label>
+                    <input matInput [(ngModel)]="billingInfo.email" [disabled]="!isEditable()">
+                </mat-form-field>
+                <mat-form-field class="md-block" flex-gt-sm>
+                    <mat-label>Phone</mat-label>
+                    <input matInput [(ngModel)]="billingInfo.phone" [disabled]="!isEditable()">
+                </mat-form-field>
+            </div>
+            <div data-layout-gt-sm="row">
+                <mat-form-field class="md-block" flex-gt-sm>
+                    <mat-label>Address</mat-label>
+                    <input matInput [(ngModel)]="billingInfo.address.line1" [disabled]="!isEditable()">
+                </mat-form-field>
+                <mat-form-field class="md-block" flex-gt-sm>
+                    <mat-label>Address 2</mat-label>
+                    <input matInput [(ngModel)]="billingInfo.address.line2" [disabled]="!isEditable()">
+                </mat-form-field>
+            </div>
+            <div data-layout-gt-sm="row">
+                <mat-form-field class="md-block" flex-gt-sm>
+                    <mat-label>City</mat-label>
+                    <input matInput [(ngModel)]="billingInfo.address.city" [disabled]="!isEditable()">
+                </mat-form-field>
                 <mat-form-field class="md-block" flex-gt-sm>
                     <mat-label>State</mat-label>
                     <input matInput [(ngModel)]="billingInfo.address.state" [disabled]="!isEditable()">
