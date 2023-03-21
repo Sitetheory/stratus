@@ -13,6 +13,7 @@
   const stratusjsAngularJsExtrasBundlePath = `${boot.deployment}@stratusjs/angularjs-extras/dist/angularjs-extras.bundle${boot.suffix}`
   const stratusjsCalendarBundlePath = `${boot.deployment}@stratusjs/calendar/dist/calendar.bundle${boot.suffix}`
   const stratusjsIdxBundlePath = `${boot.deployment}@stratusjs/idx/dist/idx.bundle${boot.suffix}`
+  const stratusjsSwiperBundlePath = `${boot.deployment}@stratusjs/swiper/dist/swiper.bundle${boot.suffix}`
 
   boot.config({
 
@@ -322,8 +323,8 @@
       '@stratusjs/stripe/*': `${boot.deployment}@stratusjs/angular/dist/angular.bundle${boot.suffix}`,
 
       /* @stratusjs/swiper Package Paths */
-      '@stratusjs/swiper/*': `${boot.deployment}@stratusjs/swiper/src/*${boot.suffix}`, // TODO bundle
-      'stratus.components.swiperCarousel': `${boot.deployment}@stratusjs/swiper/src/carousel.component${boot.suffix}`, // TODO bundle
+      '@stratusjs/swiper/*': stratusjsSwiperBundlePath,
+      'stratus.components.swiperCarousel': stratusjsSwiperBundlePath,
 
       /* Third Party Libraries */
 
