@@ -1,15 +1,16 @@
 // Configuration
 // -------------
+
 ((root) => {
     /*
     The Stratus config.js has the bare minimum configuration needed to run Stratus, but additional Components, Directives,
-    Filters, Controllers, and Services exist in the "extras" folder, which you can enable for your project if any of them
-    are useful. You will define a custom config.js to point to the desired file in Stratus/extras folder. You should also
-    setup Bowser (bowers.json) file to load any desired third party components, e.g. Froala.
+     Filters, Controllers, and Services exist in the "extras" folder, which you can enable for your project if any of them
+     are useful. You will define a custom config.js to point to the desired file in Stratus/extras folder. You should also
+     setup Bowser (bowers.json) file to load any desired third party components, e.g. Froala.
 
     Note: some components or services may require dependencies, that must be defined. If these are Stratus "extras" they
      should be enabled here in the config.js file only if you need them.
-   */
+    */
     const boot = root.boot
 
     boot.deployment = boot.deployment || ''
@@ -508,4 +509,4 @@
             formiojs: `${boot.deployment}formiojs/dist/formio.full${boot.suffix}`
         }
     })
-})(this) // eslint-disable-line semi
+})(this)
