@@ -157,6 +157,7 @@ const locations: Locations = {
             'packages/*/dist/*.min.js',
             'packages/angularjs/src/**/*.min.js',
             'packages/angularjs-extras/src/**/*.min.js',
+            'packages/boot/src/**/*.min.js',
             'packages/calendar/src/**/*.min.js',
             'packages/idx/src/**/*.min.js',
             'packages/swiper/src/**/*.min.js'
