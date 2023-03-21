@@ -6,7 +6,7 @@
 // Runtime
 import _ from 'lodash'
 import {Stratus} from '@stratusjs/runtime/stratus'
-import * as angular from 'angular'
+import {IAttributes, IAugmentedJQuery, IScope, ITimeoutService, IWindowService} from 'angular'
 import Swiper, {SwiperOptions} from 'swiper'
 import {PaginationOptions} from 'swiper/types/modules/pagination'
 import {AutoplayOptions} from 'swiper/types/modules/autoplay'
@@ -35,7 +35,7 @@ const packageName = 'swiper'
 const componentName = 'carousel'
 const localDir = `${Stratus.BaseUrl}${Stratus.DeploymentPath}@stratusjs/${packageName}/src/`
 
-export type SwiperCarouselScope = angular.IScope & {
+export type SwiperCarouselScope = IScope & {
     elementId: string
     localDir: string
     initialized: boolean
@@ -137,11 +137,11 @@ Stratus.Components.SwiperCarousel = {
         allowZoom: '@'
     },
     controller(
-        $attrs: angular.IAttributes,
-        $element: angular.IRootElementService,
+        $attrs: IAttributes,
+        $element: IAugmentedJQuery,
         $scope: SwiperCarouselScope, // object | any, // angular.IScope breaks references so far
-        $timeout: angular.ITimeoutService,
-        $window: angular.IWindowService,
+        $timeout: ITimeoutService,
+        $window: IWindowService,
         // tslint:disable-next-line:no-shadowed-variable
         Collection: any,
         // tslint:disable-next-line:no-shadowed-variable
