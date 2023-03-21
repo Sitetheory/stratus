@@ -9,6 +9,7 @@
   Note: some components or services may require dependencies, that must be defined. If these are Stratus "extras" they should be enabled here in the config.js file only if you need them.
    */
   boot.deployment = boot.deployment || ''
+  const stratusjsAngularBundlePath = `${boot.deployment}@stratusjs/angular/dist/angular.bundle${boot.suffix}`
   const stratusjsAngularJsBundlePath = `${boot.deployment}@stratusjs/angularjs/dist/angularjs.bundle${boot.suffix}`
   const stratusjsAngularJsExtrasBundlePath = `${boot.deployment}@stratusjs/angularjs-extras/dist/angularjs-extras.bundle${boot.suffix}`
   const stratusjsCalendarBundlePath = `${boot.deployment}@stratusjs/calendar/dist/calendar.bundle${boot.suffix}`
@@ -228,7 +229,7 @@
 
       /* @stratusjs/angular Package Paths */
       '@stratusjs/angular/boot': `${boot.deployment}@stratusjs/angular/src/boot${boot.suffix}`,
-      '@stratusjs/angular/*': `${boot.deployment}@stratusjs/angular/dist/angular.bundle${boot.suffix}`,
+      '@stratusjs/angular/*': stratusjsAngularBundlePath,
 
       /* @stratusjs/angularjs Package Paths */
       '@stratusjs/angularjs/*': stratusjsAngularJsBundlePath,
@@ -311,16 +312,16 @@
       '@stratusjs/core/*': `${boot.deployment}@stratusjs/core/dist/core.bundle${boot.suffix}`,
 
       /* @stratusjs/form Package Paths */
-      '@stratusjs/form/*': `${boot.deployment}@stratusjs/angular/dist/angular.bundle${boot.suffix}`,
+      '@stratusjs/form/*': stratusjsAngularBundlePath,
 
       /* @stratusjs/map Package Paths */
-      '@stratusjs/map/*': `${boot.deployment}@stratusjs/angular/dist/angular.bundle${boot.suffix}`,
+      '@stratusjs/map/*': stratusjsAngularBundlePath,
 
       /* @stratusjs/react Package Paths */
       '@stratusjs/react/*': `${boot.deployment}@stratusjs/react/src/*${boot.suffix}`,
 
       /* @stratusjs/stripe Package Paths */
-      '@stratusjs/stripe/*': `${boot.deployment}@stratusjs/angular/dist/angular.bundle${boot.suffix}`,
+      '@stratusjs/stripe/*': stratusjsAngularBundlePath,
 
       /* @stratusjs/swiper Package Paths */
       '@stratusjs/swiper/*': stratusjsSwiperBundlePath,
