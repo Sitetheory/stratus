@@ -10,7 +10,6 @@ import * as angular from 'angular'
 import Swiper, {SwiperOptions} from 'swiper'
 import {PaginationOptions} from 'swiper/types/modules/pagination'
 import {AutoplayOptions} from 'swiper/types/modules/autoplay'
-import {LazyOptions} from 'swiper/types/modules/lazy'
 // Stratus Dependencies
 import {Model} from '@stratusjs/angularjs/services/model'
 import {Collection} from '@stratusjs/angularjs/services/collection'
@@ -81,12 +80,6 @@ export type SwiperCarouselScope = angular.IScope & {
     pagination: false | boolean | PaginationOptions & {
         render?: 'fraction' | 'customFraction' | 'progressbarOpposite' | 'progressbar' | 'numberBullet' | 'bullet' | 'bullets'
     }
-    /** Enable Lazy Loading to prevent everything from being fetched at once
-     * By default Lazy Loading is enabled only for the next and previous images to give a buffer
-     * FIXME lazyLoad currently has been changed to use stratus-src. Need to have an option is disable Sitetheory
-     * lazyLoading, as it doesn't work for external image urls
-     */
-    lazyLoad: boolean | LazyOptions
     /** Automatically changes the slide at set intervals. Provide object and extra options */
     autoplay: boolean | AutoplayOptions
     scrollbar: false | boolean
@@ -135,7 +128,6 @@ Stratus.Components.SwiperCarousel = {
         autoHeight: '@',
         autoplay: '@',
         autoplayDelay: '@',
-        lazyLoad: '@',
         navigation: '@',
         pagination: '@',
         scrollbar: '@',
@@ -305,7 +297,6 @@ Stratus.Components.SwiperCarousel = {
             $scope.imageLinkTarget = $attrs.imageLinkTarget ? $attrs.imageLinkTarget : null
             $scope.slideLinkTarget = $attrs.slideLinkTarget ? $attrs.slideLinkTarget : $scope.imageLinkTarget
             $scope.direction = $attrs.direction && $attrs.direction === 'vertical' ? 'vertical' : 'horizontal'
-            /** FIXME Some transitions seem to have trouble with lazyLoad that we'll need to work on */
             $scope.transitionEffect = $attrs.transitionEffect ? $attrs.transitionEffect : 'slide'
             $scope.roundLengths = $attrs.roundLengths && isJSON($attrs.roundLengths) ? JSON.parse($attrs.roundLengths) : true
             $scope.loop = $attrs.loop && isJSON($attrs.loop) ? JSON.parse($attrs.loop) : true
@@ -321,7 +312,6 @@ Stratus.Components.SwiperCarousel = {
             $scope.autoplay = $attrs.autoplay && isJSON($attrs.autoplay) ? JSON.parse($attrs.autoplay) : false
             $scope.allowTouchMove = $attrs.allowTouchMove && isJSON($attrs.allowTouchMove) ? JSON.parse($attrs.allowTouchMove) : true
             $scope.transitionDelay = $attrs.transitionDelay && isJSON($attrs.transitionDelay) ? JSON.parse($attrs.transitionDelay) : 3000
-            $scope.lazyLoad = $attrs.lazyLoad && isJSON($attrs.lazyLoad) ? JSON.parse($attrs.lazyLoad) : {}
             $scope.navigation = $attrs.navigation && isJSON($attrs.navigation) ? JSON.parse($attrs.navigation) : true
 
             /** type {Object || boolean} */
@@ -511,31 +501,6 @@ Stratus.Components.SwiperCarousel = {
                 $scope.swiperParameters.autoplay = $scope.autoplay
             }
 
-            /**
-             * Lazy Loading Options
-             * @see {@link http://idangero.us/swiper/api/#lazy|Swiper Doc}
-             */
-            if ($scope.lazyLoad) {
-                if ($scope.lazyLoad === true) {
-                    $scope.lazyLoad = {}
-                }
-                if ($scope.lazyLoad && !Object.prototype.hasOwnProperty.call($scope.lazyLoad, 'loadPrevNext')) {
-                    // preload the current, previous and next slides
-                    $scope.lazyLoad.loadPrevNext = true
-                }
-                if ($scope.lazyLoad && !Object.prototype.hasOwnProperty.call($scope.lazyLoad, 'loadPrevNextAmount')) {
-                    // preload X number of slides ahead/behind
-                    $scope.lazyLoad.loadPrevNextAmount = 1
-                }
-                if ($scope.lazyLoad && !Object.prototype.hasOwnProperty.call($scope.lazyLoad, 'loadOnTransitionStart')) {
-                    // begin to preload before the transition
-                    $scope.lazyLoad.loadOnTransitionStart = true
-                }
-
-                $scope.swiperParameters.lazy = $scope.lazyLoad
-                $scope.swiperParameters.preloadImages = false
-            }
-
             // console.log('swiperParameters', $scope.swiperParameters)
 
             $scope.$applyAsync(() => {
@@ -565,8 +530,6 @@ Stratus.Components.SwiperCarousel = {
                     $scope.gallerySwiper = new Swiper($ctrl.galleryContainer, {
                         direction: 'horizontal',
                         effect: 'slide',
-                        // lazy: $scope.lazyLoad,
-                        preloadImages: false,
                         // preventInteractionOnTransition: true,
                         // allowSlidePrev: false,
                         // allowSlideNext: false,
