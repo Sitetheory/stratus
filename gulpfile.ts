@@ -246,8 +246,7 @@ function lintJS() {
         '!packages/angularjs-extras/src/directives/*.js',
         '!packages/angularjs-extras/src/filters/*.js',
         '!packages/angularjs-extras/src/services/*.js',
-        '!packages/boot/src/config.js',
-        '!packages/boot/src/env.js',
+        '!packages/boot/src/**/*.js',
         '!packages/runtime/src/stratus.js',
     ])
         /* *
