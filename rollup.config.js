@@ -237,7 +237,7 @@ export default [
         // browser: true
       })
     ]
-  }
+  },
   // ------------------------
   // Map Config
   // ------------------------
@@ -280,4 +280,34 @@ export default [
   //     entryFileName: 'map.bundle.js',
   //   })]
   // }
+  // ------------------------
+  // Swiper Config
+  // ------------------------
+  {
+    input: {
+      include: [
+        './packages/swiper/src/**/*.js'
+      ],
+      exclude: []
+    },
+    external: [
+      'angular',
+      'lodash',
+      '@stratusjs'
+    ],
+    output: {
+      // file: 'packages/swiper/dist/swiper.bundle.js',
+      dir: 'packages/swiper/dist/',
+      format: 'system'
+    },
+    plugins: [
+      multi({
+        exports: true,
+        entryFileName: 'swiper.bundle.js'
+      }),
+      nodeResolve({
+        // browser: true
+      })
+    ]
+  }
 ]
