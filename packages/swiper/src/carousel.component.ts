@@ -4,19 +4,25 @@
 // --------------
 
 // Runtime
-import _ from 'lodash'
+import {findKey, get, has, isArray, isBoolean} from 'lodash'
 import {Stratus} from '@stratusjs/runtime/stratus'
 import {IAttributes, IAugmentedJQuery, IScope, ITimeoutService, IWindowService} from 'angular'
-import Swiper, {SwiperOptions} from 'swiper'
+import {
+    Swiper, SwiperOptions,
+    // Modules
+    A11y, Autoplay, Navigation, Pagination, Scrollbar, Zoom, // Thumbs
+    // Effects
+    EffectCoverflow, EffectCube, EffectFade, EffectFlip // EffectCards, EffectCreative
+} from 'swiper'
 import {PaginationOptions} from 'swiper/types/modules/pagination'
 import {AutoplayOptions} from 'swiper/types/modules/autoplay'
 // Stratus Dependencies
 import {Model} from '@stratusjs/angularjs/services/model'
 import {Collection} from '@stratusjs/angularjs/services/collection'
-import {isJSON} from '@stratusjs/core/misc'
+import {isJSON, safeUniqueId} from '@stratusjs/core/misc'
 import {cookie} from '@stratusjs/core/environment'
 // Stratus Directives
-import 'stratus.directives.src'
+import '@stratusjs/angularjs-extras/directives/src'
 
 // Reusable Objects
 export interface SlideImage {
@@ -36,6 +42,7 @@ const componentName = 'carousel'
 const localDir = `${Stratus.BaseUrl}${Stratus.DeploymentPath}@stratusjs/${packageName}/src/`
 
 export type SwiperCarouselScope = IScope & {
+    uid: string
     elementId: string
     localDir: string
     initialized: boolean
@@ -90,6 +97,15 @@ export type SwiperCarouselScope = IScope & {
     remove(): void
 }
 
+type SwiperCarouselCtrl = {
+    swiperPaginationEl?: HTMLElement | string
+    swiperScrollbarEl?: HTMLElement | string
+    swiperNextEl?: HTMLElement | string
+    swiperPrevEl?: HTMLElement | string
+
+    $onInit(): void
+}
+
 Stratus.Components.SwiperCarousel = {
     transclude: {
         slide: '?stratusCarouselSlide'
@@ -139,24 +155,25 @@ Stratus.Components.SwiperCarousel = {
     controller(
         $attrs: IAttributes,
         $element: IAugmentedJQuery,
-        $scope: SwiperCarouselScope, // object | any, // angular.IScope breaks references so far
+        $scope: SwiperCarouselScope,
         $timeout: ITimeoutService,
         $window: IWindowService,
         // tslint:disable-next-line:no-shadowed-variable
-        Collection: any,
+        // Collection: any, // FIXME is this used?
         // tslint:disable-next-line:no-shadowed-variable
-        Model: any,
+        // Model: any, // FIXME is this used?
     ) {
         // Initialize
-        const $ctrl = this
-        $ctrl.uid = _.uniqueId(_.camelCase(packageName) + '_' + _.camelCase(componentName) + '_')
-        Stratus.Instances[$ctrl.uid] = $scope
-        $scope.elementId = $attrs.elementId || $ctrl.uid
+        const $ctrl: SwiperCarouselCtrl = this
+        $scope.uid = safeUniqueId(packageName, componentName)
+        Stratus.Instances[$scope.uid] = $scope
+        $scope.elementId = $attrs.elementId || $scope.uid
         $scope.localDir = localDir
-        Stratus.Internals.CssLoader(`${localDir}${componentName}.component${min}.css`)
+        Stratus.Internals.CssLoader(`${localDir}${componentName}.component${min}.css`).then()
         $scope.initialized = false
 
-        Stratus.Internals.CssLoader(`${Stratus.BaseUrl}${Stratus.DeploymentPath}swiper/swiper-bundle${min}.css`)
+        Stratus.Internals.CssLoader(`${Stratus.BaseUrl}${Stratus.DeploymentPath}swiper/swiper-bundle${min}.css`).then()
+        // FIXME we can import the css here to be bundled
 
         // Hoist Attributes
         $scope.property = $attrs.property || null
@@ -212,7 +229,7 @@ Stratus.Components.SwiperCarousel = {
             const el = Stratus.Select(selector)
             const width = getElementSize(el, columns)
             // console.log('final width', width, el)
-            return _.findKey(Stratus.Settings.image.size, (s: number) => {
+            return findKey(Stratus.Settings.image.size, (s: number) => {
                 return (s >= width)
             })
         }
@@ -243,7 +260,7 @@ Stratus.Components.SwiperCarousel = {
             if (typeof images === 'string') {
                 images = [images]
             }
-            if (_.isArray(images)) {
+            if (isArray(images)) {
                 // The main element doesn't have a size ever, so use the inner container
                 const thisEl = $element[0].querySelector('.swiper')
                 const sizeName = getImageSizeName(thisEl)
@@ -255,14 +272,14 @@ Stratus.Components.SwiperCarousel = {
                             // just urls were provided
                             preppedImage.src = image
                         } else if (typeof image === 'object') {
-                            if (_.has(image, 'src')) {
-                                if (_.get(image, 'lazy') === 'stratus-src') {
+                            if (has(image, 'src')) {
+                                if (get(image, 'lazy') === 'stratus-src') {
                                     image.src = replaceImageSizeSrc(image.src, sizeName)
                                     // console.log('image upgraded to ', image.src)
                                 }
-                                image.title = _.get(image, 'title')
-                                image.description = _.get(image, 'ShortDescription') ||
-                                    _.get(image, 'description') || _.get(image, 'LongDescription') || image.title
+                                image.title = get(image, 'title')
+                                image.description = get(image, 'ShortDescription') ||
+                                    get(image, 'description') || get(image, 'LongDescription') || image.title
                                 preppedImage = image
                             }
                         }
@@ -290,7 +307,7 @@ Stratus.Components.SwiperCarousel = {
         const init = (): void => {
             // NOTE: slides can be an expression, so we need to reference $ctrl, where they've already been parsed
             /** type {Array<SlideImage> || Array<String> || String} */
-            const slides = $ctrl.slides ? $ctrl.slides : [] // References images for temporary backwards compatibility
+            const slides = this.slides ? this.slides : [] // References images for temporary backwards compatibility
             // console.log('CAROUSEL initing with', slides)
 
             /** @deprecated */
@@ -301,9 +318,9 @@ Stratus.Components.SwiperCarousel = {
             $scope.roundLengths = $attrs.roundLengths && isJSON($attrs.roundLengths) ? JSON.parse($attrs.roundLengths) : true
             $scope.loop = $attrs.loop && isJSON($attrs.loop) ? JSON.parse($attrs.loop) : true
             $scope.gallery = $attrs.gallery && isJSON($attrs.gallery) ? JSON.parse($attrs.gallery) : false
-            if ($scope.gallery) {
+            /* if ($scope.gallery) {
                 $scope.loop = false
-            }
+            } */
             $scope.scaleHeight = $attrs.scaleHeight && isJSON($attrs.scaleHeight) ? JSON.parse($attrs.scaleHeight) : true
             $scope.allowZoom = $attrs.allowZoom && isJSON($attrs.allowZoom) ? JSON.parse($attrs.allowZoom) : false
             $scope.scaleHeight = $scope.scaleHeight || $scope.allowZoom
@@ -338,7 +355,7 @@ Stratus.Components.SwiperCarousel = {
                 return
             }
 
-            $ctrl.stopWatchingInitNow = $scope.$watch('$ctrl.initNow', (initNowCtrl: boolean) => {
+            const stopWatchingInitNow = $scope.$watch('$ctrl.initNow', (initNowCtrl: boolean) => {
                 // console.log('CAROUSEL initNow called later')
                 if (initNowCtrl !== true) {
                     return
@@ -346,7 +363,7 @@ Stratus.Components.SwiperCarousel = {
                 if (!$scope.initialized) {
                     init()
                 }
-                $ctrl.stopWatchingInitNow()
+                stopWatchingInitNow()
             })
         }
 
@@ -369,24 +386,29 @@ Stratus.Components.SwiperCarousel = {
             $scope.swiperContainer = $element[0].querySelector('.swiper')
 
             $scope.swiperParameters = {
-                init: false,
+                init: false, // We will manually init
+                modules: [
+                    A11y
+                ],
                 // Optional parameters
                 direction: $scope.direction,
-                zoom: $scope.allowZoom,
                 loop: $scope.loop,
                 // roundLengths: $scope.roundLengths,
-                effect: $scope.transitionEffect,
                 autoHeight: $scope.autoHeight,
                 allowTouchMove: $scope.allowTouchMove
             }
 
+            // , , , , Thumbs modules
+            // $scope.swiperParameters.modules.push(Navigation)
+
             /**
              * Navigation Options
-             * @see {@link http://idangero.us/swiper/api/#navigation|Swiper Doc}
+             * @see {@link https://swiperjs.com/swiper-api#navigation}
              */
             if ($scope.navigation) {
-                $ctrl.swiperNextEl = $scope.swiperContainer.getElementsByClassName('swiper-button-next')[0]
-                $ctrl.swiperPrevEl = $scope.swiperContainer.getElementsByClassName('swiper-button-prev')[0]
+                $scope.swiperParameters.modules.push(Navigation)
+                $ctrl.swiperNextEl = $scope.swiperContainer.getElementsByClassName('swiper-button-next')[0] as HTMLElement
+                $ctrl.swiperPrevEl = $scope.swiperContainer.getElementsByClassName('swiper-button-prev')[0] as HTMLElement
 
                 $scope.swiperParameters.navigation = {
                     nextEl: $ctrl.swiperNextEl,
@@ -395,10 +417,48 @@ Stratus.Components.SwiperCarousel = {
             }
 
             /**
+             * TransitionEffects
+             * @see {@link https://swiperjs.com/swiper-api#coverflow-effect}
+             * @see {@link https://swiperjs.com/swiper-api#cube-effect}
+             * @see {@link https://swiperjs.com/swiper-api#fade-effect}
+             * @see {@link https://swiperjs.com/swiper-api#flip-effect}
+             * @TODO https://swiperjs.com/swiper-api#cards-effect
+             * @TODO https://swiperjs.com/swiper-api#creative-effect
+             */
+            if ($scope.transitionEffect) {
+                switch($scope.transitionEffect) {
+                    case 'coverflow': {
+                        $scope.swiperParameters.modules.push(EffectCoverflow)
+                        // TODO add options
+                        break
+                    }
+                    case 'cube': {
+                        $scope.swiperParameters.modules.push(EffectCube)
+                        // TODO add options
+                        break
+                    }
+                    case 'fade': {
+                        $scope.swiperParameters.modules.push(EffectFade)
+                        $scope.swiperParameters.fadeEffect = {
+                            crossFade: true
+                        }
+                        break
+                    }
+                    case 'flip': {
+                        $scope.swiperParameters.modules.push(EffectFlip)
+                        // TODO add options
+                        break
+                    }
+                }
+                $scope.swiperParameters.effect = $scope.transitionEffect
+            }
+
+            /**
              * Pagination Options
-             * @see {@link http://idangero.us/swiper/api/#pagination|Swiper Doc}
+             * @see {@link https://swiperjs.com/swiper-api#pagination}
              */
             if ($scope.pagination) {
+                $scope.swiperParameters.modules.push(Pagination)
                 $scope.swiperParameters.pagination = {}
 
                 if (typeof $scope.pagination === 'string') {
@@ -454,17 +514,18 @@ Stratus.Components.SwiperCarousel = {
                 }
 
                 if (!$ctrl.swiperPaginationEl) {
-                    $ctrl.swiperPaginationEl = $scope.swiperContainer.getElementsByClassName('swiper-pagination')[0]
+                    $ctrl.swiperPaginationEl = $scope.swiperContainer.getElementsByClassName('swiper-pagination')[0] as HTMLElement
                 }
                 $scope.swiperParameters.pagination.el = $ctrl.swiperPaginationEl
             }
 
             /**
              * Scrollbar Options
-             * @see {@link http://idangero.us/swiper/api/#scrollbar|Swiper Doc}
+             * @see {@link https://swiperjs.com/swiper-api#scrollbar}
              */
             if ($scope.scrollbar) {
-                $ctrl.swiperScrollbarEl = $scope.swiperContainer.getElementsByClassName('swiper-scrollbar')[0]
+                $ctrl.swiperScrollbarEl = $scope.swiperContainer.getElementsByClassName('swiper-scrollbar')[0] as HTMLElement
+                $scope.swiperParameters.modules.push(Scrollbar)
 
                 $scope.swiperParameters.scrollbar = {
                     el: $ctrl.swiperScrollbarEl
@@ -478,10 +539,11 @@ Stratus.Components.SwiperCarousel = {
             }
 
             /**
-             * Auto play Options
-             * @see {@link http://idangero.us/swiper/api/#autoplay|Swiper Doc}
+             * Autoplay Options
+             * @see {@link https://swiperjs.com/swiper-api#autoplay}
              */
             if ($scope.autoplay) {
+                $scope.swiperParameters.modules.push(Autoplay)
                 if ($scope.autoplay === true) {
                     $scope.autoplay = {
                         delay: $scope.transitionDelay,
@@ -490,7 +552,7 @@ Stratus.Components.SwiperCarousel = {
                     }
                 }
                 if (!$scope.loop && $scope.autoplay) {
-                    if (_.isBoolean($scope.autoplay)) {
+                    if (isBoolean($scope.autoplay)) {
                         $scope.autoplay = {}
                     }
                     if (!Object.prototype.hasOwnProperty.call($scope.autoplay, 'stopOnLastSlide')) {
@@ -501,6 +563,14 @@ Stratus.Components.SwiperCarousel = {
                 $scope.swiperParameters.autoplay = $scope.autoplay
             }
 
+            /**
+             * Zoom Options
+             * @see {@link https://swiperjs.com/swiper-api#zoom}
+             */
+            if ($scope.allowZoom) {
+                $scope.swiperParameters.modules.push(Zoom)
+                $scope.swiperParameters.zoom = $scope.allowZoom
+            }
             // console.log('swiperParameters', $scope.swiperParameters)
 
             $scope.$applyAsync(() => {
@@ -523,7 +593,13 @@ Stratus.Components.SwiperCarousel = {
                     }, 100)
                 })
 
-                if ($scope.gallery) {
+                /**
+                 * TODO refactor - remove gallery
+                 * @see {@link https://swiperjs.com/swiper-api#thumbs}
+                 */
+                /* if ($scope.gallery) {
+                    // TODO this all needs a refactor
+                    $scope.swiperParameters.modules.push(Navigation)
                     $ctrl.galleryContainer = $element[0].getElementsByClassName('swiper-gallery')[0].getElementsByClassName('swiper')[0]
                     // Looping does not work correctly with gallery, so it will need to be disabled
                     // FIXME this is controlling the gallery, but its offset by 1 if looping...so it never matches... need to debug
@@ -553,7 +629,7 @@ Stratus.Components.SwiperCarousel = {
                     })
                     $scope.swiper.controller.control = $scope.gallerySwiper
                     $scope.gallerySwiper.controller.control = $scope.swiper
-                }
+                } */
                 // initializing manually to allow on init events
                 $scope.swiper.init()
             })
@@ -565,7 +641,7 @@ Stratus.Components.SwiperCarousel = {
         $scope.remove = (): void => {
             // console.log('destroying swiper widget... after destroying, still doenst work')
             delete $scope.swiper
-            delete $scope.gallerySwiper
+            // delete $scope.gallerySwiper
         }
     },
     templateUrl: (): string => `${localDir}${componentName}.component${min}.html`
