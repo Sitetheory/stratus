@@ -307,6 +307,11 @@ export default [
       }),
       nodeResolve({
         // browser: true
+      }),
+      postcss({
+        config: false,
+        use: ['less'],
+        minimize: true
       })
     ]
   }

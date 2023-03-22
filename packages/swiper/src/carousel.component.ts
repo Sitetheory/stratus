@@ -10,7 +10,7 @@ import {IAttributes, IAugmentedJQuery, IScope, ITimeoutService, IWindowService} 
 import {
     Swiper, SwiperOptions,
     // Modules
-    A11y, Autoplay, Navigation, Pagination, Scrollbar, Zoom, // Thumbs
+    A11y, Autoplay, Navigation, Pagination, Scrollbar, Zoom, // + Thumbs
     // Effects
     EffectCoverflow, EffectCube, EffectFade, EffectFlip // EffectCards, EffectCreative
 } from 'swiper'
@@ -22,7 +22,11 @@ import {Collection} from '@stratusjs/angularjs/services/collection'
 import {isJSON, safeUniqueId} from '@stratusjs/core/misc'
 import {cookie} from '@stratusjs/core/environment'
 // Stratus Directives
-import '@stratusjs/angularjs-extras/directives/src'
+import '@stratusjs/angularjs-extras' // directives/src
+
+// CSS imported directly in
+import 'swiper/css/bundle'
+import './carousel.component.less'
 
 // Reusable Objects
 export interface SlideImage {
@@ -158,10 +162,6 @@ Stratus.Components.SwiperCarousel = {
         $scope: SwiperCarouselScope,
         $timeout: ITimeoutService,
         $window: IWindowService,
-        // tslint:disable-next-line:no-shadowed-variable
-        // Collection: any, // FIXME is this used?
-        // tslint:disable-next-line:no-shadowed-variable
-        // Model: any, // FIXME is this used?
     ) {
         // Initialize
         const $ctrl: SwiperCarouselCtrl = this
@@ -169,11 +169,7 @@ Stratus.Components.SwiperCarousel = {
         Stratus.Instances[$scope.uid] = $scope
         $scope.elementId = $attrs.elementId || $scope.uid
         $scope.localDir = localDir
-        Stratus.Internals.CssLoader(`${localDir}${componentName}.component${min}.css`).then()
         $scope.initialized = false
-
-        Stratus.Internals.CssLoader(`${Stratus.BaseUrl}${Stratus.DeploymentPath}swiper/swiper-bundle${min}.css`).then()
-        // FIXME we can import the css here to be bundled
 
         // Hoist Attributes
         $scope.property = $attrs.property || null
