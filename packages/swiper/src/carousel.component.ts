@@ -112,7 +112,7 @@ type SwiperCarouselCtrl = {
 
 Stratus.Components.SwiperCarousel = {
     transclude: {
-        slide: '?stratusCarouselSlide'
+        slide: '?stratusSwiperCarouselSlide'
     },
     bindings: {
         // Basic Control for Designers
