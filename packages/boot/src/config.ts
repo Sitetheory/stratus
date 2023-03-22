@@ -234,10 +234,12 @@
             '@stratusjs/runtime/stratus.amd': `${boot.deployment}@stratusjs/runtime/src/stratus.amd${boot.suffix}`,
 
             /* @stratusjs/angular Package Paths */
-            '@stratusjs/angular/boot': `${boot.deployment}@stratusjs/angular/src/boot${boot.suffix}`,
+            '@stratusjs/angular': stratusjsAngularBundlePath,
             '@stratusjs/angular/*': stratusjsAngularBundlePath,
+            '@stratusjs/angular/boot': `${boot.deployment}@stratusjs/angular/src/boot${boot.suffix}`,
 
             /* @stratusjs/angularjs Package Paths */
+            '@stratusjs/angularjs': stratusjsAngularJsBundlePath,
             '@stratusjs/angularjs/*': stratusjsAngularJsBundlePath,
             // TODO: This doesn't appear to be relevant anymore, so it may be removable.
             '@stratusjs/angularjs/services/registry': stratusjsAngularJsBundlePath, // TODO remove?
@@ -252,6 +254,7 @@
             masonry: stratusjsAngularJsExtrasBundlePath,
             'rxjs/operators': `${boot.deployment}@stratusjs/angularjs-extras/src/normalizers/rxjs.operators${boot.suffix}`,
             skrollr: `${boot.deployment}@stratusjs/angularjs-extras/src/normalizers/skrollr.init${boot.suffix}`,
+            '@stratusjs/angularjs-extras': stratusjsAngularJsExtrasBundlePath,
             '@stratusjs/angularjs-extras/*': stratusjsAngularJsExtrasBundlePath,
             'stratus.components.citation': stratusjsAngularJsExtrasBundlePath,
             'stratus.components.jsonEditor': stratusjsAngularJsExtrasBundlePath,
@@ -295,11 +298,13 @@
             '@stratusjs/boot/*': `${boot.deployment}@stratusjs/boot/src/*${boot.suffix}`,
 
             /* @stratusjs/calendar Package Paths */
+            '@stratusjs/calendar': stratusjsCalendarBundlePath,
             '@stratusjs/calendar/*': stratusjsCalendarBundlePath,
             '@fullcalendar/*': stratusjsCalendarBundlePath,
             'stratus.components.calendar': stratusjsCalendarBundlePath,
 
             /* @stratus/idx Package Paths */
+            '@stratusjs/idx': stratusjsIdxBundlePath,
             '@stratusjs/idx/*': stratusjsIdxBundlePath,
             'stratus.components.idx*': stratusjsIdxBundlePath,
             'stratus.components.idxDisclaimer': stratusjsIdxBundlePath,
@@ -315,21 +320,26 @@
             'stratus.components.idxPropertySearch': stratusjsIdxBundlePath,
 
             /* @stratusjs/core Package Paths */
+            '@stratusjs/core': `${boot.deployment}@stratusjs/core/dist/core.bundle${boot.suffix}`,
             '@stratusjs/core/*': `${boot.deployment}@stratusjs/core/dist/core.bundle${boot.suffix}`,
 
             /* @stratusjs/form Package Paths */
+            '@stratusjs/form': stratusjsAngularBundlePath,
             '@stratusjs/form/*': stratusjsAngularBundlePath,
 
             /* @stratusjs/map Package Paths */
+            '@stratusjs/map': stratusjsAngularBundlePath,
             '@stratusjs/map/*': stratusjsAngularBundlePath,
 
             /* @stratusjs/react Package Paths */
             '@stratusjs/react/*': `${boot.deployment}@stratusjs/react/src/*${boot.suffix}`,
 
             /* @stratusjs/stripe Package Paths */
+            '@stratusjs/stripe': stratusjsAngularBundlePath,
             '@stratusjs/stripe/*': stratusjsAngularBundlePath,
 
             /* @stratusjs/swiper Package Paths */
+            '@stratusjs/swiper': stratusjsSwiperBundlePath,
             '@stratusjs/swiper/*': stratusjsSwiperBundlePath,
             'stratus.components.swiperCarousel': stratusjsSwiperBundlePath,
 
