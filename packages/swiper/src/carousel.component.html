@@ -6,6 +6,7 @@
                     <img class="swiper-image" data-ng-class="{'stretch-image': stretchWidth}"
                          data-ng-click="imageClick(image, $event)"
                          draggable="false"
+                         loading="lazy"
                          data-ng-src="{{::(image.src||image.url)}}"
                          title="{{::(image.title||image.description||'Carousel Photo')}}"
                          alt="{{::(image.description||image.title||'Carousel Photo')}}"
