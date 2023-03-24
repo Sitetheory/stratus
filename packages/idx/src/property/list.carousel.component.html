@@ -35,7 +35,47 @@
                             <meta property="lastReviewed" content="{{::$parent.slideData.ModificationTimestamp}}" />
                             <meta property="datePosted" content="{{::$parent.slideData.ModificationTimestamp}}" />
                             <meta property="name" content="{{::getStreetAddress($parent.slideData)}}" />
-                            <div class="property-image">
+                            <div class="property-content-container">
+                                <div class="property-content">
+                                    <div class="mls-service-name" role="text">
+                                        <span data-ng-show="::getMLSLogo($parent.slideData._ServiceId, 'tiny')"><img data-ng-src="{{::getMLSLogo($parent.slideData._ServiceId, 'tiny')}}" alt="MLS Logo"/></span>
+                                        <span data-ng-bind="::getMLSName($parent.slideData._ServiceId)" property="maintainer"></span>#
+                                        <span data-ng-bind="::$parent.slideData.ListingId || $parent.slideData.ListingKey" property="identifier"></span>
+                                    </div>
+
+                                    <div class="property-status-price-container">
+                                        <span class="property-status" data-ng-bind="::Idx.getFriendlyStatus($parent.slideData, preferredStatus)"></span>
+                                        <span class="property-price" data-ng-show="::$parent.slideData.ClosePrice || $parent.slideData.ListPrice" role="text" property="price">
+                                            $<span data-ng-bind="::$parent.slideData.ClosePrice || $parent.slideData.ListPrice | number"></span>
+                                        </span>
+                                    </div>
+
+
+                                    <div class="property-details-container">
+                                        <span class="property-address">
+                                            <span data-ng-bind="::getStreetAddress($parent.slideData)"></span>, <span class="city" data-ng-bind="::$parent.slideData.City"></span>
+                                        </span>
+                                        <span class="property-bed" data-ng-show="::$parent.slideData.BedroomsTotal > 0" role="text">
+                                            <span data-ng-bind="::$parent.slideData.BedroomsTotal" property="numberOfBedrooms"></span> Beds
+                                        </span>
+                                        <span class="property-bath" data-ng-show="::$parent.slideData.BathroomsFull > 0 || $parent.slideData.BathroomsTotalInteger > 0" role="text">
+                                            <span data-ng-bind="::$parent.slideData.BathroomsFull || $parent.slideData.BathroomsTotalInteger" property="numberOfFullBathrooms"></span><span data-ng-show="::$parent.slideData.BathroomsHalf || $parent.slideData.BathroomsOneQuarter || $parent.slideData.BathroomsPartial">+</span>
+                                            Baths
+                                        </span>
+                                        <span class="property-sqft" data-ng-show="::$parent.slideData.LivingArea && $parent.slideData.LivingArea > 0" role="text">
+                                            <span data-ng-bind="::$parent.slideData.LivingArea | number"></span>
+                                            <span data-ng-show="::$parent.slideData.LivingAreaUnits">
+                                                <span data-ng-bind="::$parent.slideData.LivingAreaUnits"></span>
+                                            </span>
+                                            <span data-ng-show="::!$parent.slideData.LivingAreaUnits">
+                                                SQ FT.
+                                            </span>
+                                        </span>
+                                    </div>
+
+                                    <!-- FIXME property type might be required, will check regs -->
+                                    <!--span data-ng-bind="::$parent.slideData.PropertySubType || $parent.slideData.PropertyType || $parent.slideData._Class" property="accommodationCategory"></span-->
+                                </div>
                                 <a data-ng-click="displayModelDetails($parent.slideData, $event)" data-ng-href="{{::getDetailsURL($parent.slideData)}}" target="popup">
                                     <div class="image-wrapper"
                                          data-stratus-src-version="{{::($parent.slideData.Images[0].Lazy == 'stratus-src' ? 'best' : 'false')}}"
@@ -47,44 +87,6 @@
                                         <img data-ng-if="::$parent.slideData.Images.length === 0 || !$parent.slideData.Images" data-ng-src="{{::localDir}}images/no-image.jpg" alt="No Main Image Available"/>
                                     </div>
                                 </a>
-                            </div>
-                            <div class="property-content">
-                                <div class="mls-service-name" role="text">
-                                    <span data-ng-show="::getMLSLogo($parent.slideData._ServiceId, 'tiny')"><img data-ng-src="{{::getMLSLogo($parent.slideData._ServiceId, 'tiny')}}" alt="MLS Logo"/></span>
-                                    <span data-ng-bind="::getMLSName($parent.slideData._ServiceId)" property="maintainer"></span>#
-                                    <span data-ng-bind="::$parent.slideData.ListingId || $parent.slideData.ListingKey" property="identifier"></span>
-                                </div>
-
-                                <div class="property-type ">
-                                    <span class="property-address font-body" data-ng-bind="::Idx.getFriendlyStatus($parent.slideData, preferredStatus)"></span>
-                                    <span class="property-price" data-ng-show="::$parent.slideData.ClosePrice || $parent.slideData.ListPrice" role="text" property="price">
-                                        $<span data-ng-bind="::$parent.slideData.ClosePrice || $parent.slideData.ListPrice | number"></span>
-                                    </span>
-                                </div>
-
-
-                                <div class="property-type ">
-                                    <span data-ng-bind="::getStreetAddress($parent.slideData)"></span>, <span class="city" data-ng-bind="::$parent.slideData.City"></span>
-                                    <span data-ng-show="::$parent.slideData.BedroomsTotal > 0" role="text">
-                                        <span data-ng-bind="::$parent.slideData.BedroomsTotal" property="numberOfBedrooms"></span> Beds
-                                    </span>
-                                    <span data-ng-show="::$parent.slideData.BathroomsFull > 0 || $parent.slideData.BathroomsTotalInteger > 0" role="text">
-                                        <span data-ng-bind="::$parent.slideData.BathroomsFull || $parent.slideData.BathroomsTotalInteger" property="numberOfFullBathrooms"></span><span data-ng-show="::$parent.slideData.BathroomsHalf || $parent.slideData.BathroomsOneQuarter || $parent.slideData.BathroomsPartial">+</span>
-                                        Baths
-                                    </span>
-                                    <span data-ng-show="::$parent.slideData.LivingArea && $parent.slideData.LivingArea > 0" role="text">
-                                        <span data-ng-bind="::$parent.slideData.LivingArea | number"></span>
-                                        <span data-ng-show="::$parent.slideData.LivingAreaUnits">
-                                            <span data-ng-bind="::$parent.slideData.LivingAreaUnits"></span>
-                                        </span>
-                                        <span data-ng-show="::!$parent.slideData.LivingAreaUnits">
-                                            SQ FT.
-                                        </span>
-                                    </span>
-                                </div>
-
-                                <!-- FIXME property type might be required, will check regs -->
-                                <!--span data-ng-bind="::$parent.slideData.PropertySubType || $parent.slideData.PropertyType || $parent.slideData._Class" property="accommodationCategory"></span-->
                             </div>
                         </div>
                     </stratus-swiper-carousel-slide>
