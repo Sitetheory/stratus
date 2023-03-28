@@ -58,7 +58,7 @@ packages/angularjs-extras/src/services/*.js
 packages/angularjs-extras/src/**/*.css
 packages/backend/src/**/*.js
 packages/backend/src/**/*.js.map
-packages/boot/src/**/*.js
+!packages/boot/src/**/*.js
 packages/boot/src/**/*.js.map
 packages/calendar/src/**/*.js
 packages/calendar/src/**/*.js.map
