@@ -45,7 +45,7 @@
 
                                     <div class="property-status-price-container">
                                         <span class="property-status" data-ng-bind="::Idx.getFriendlyStatus($parent.slideData, preferredStatus)"></span>
-                                        <span class="property-price" data-ng-show="::$parent.slideData.ClosePrice || $parent.slideData.ListPrice" role="text" property="price">
+                                        <span class="property-price line-separator-left-more" data-ng-show="::$parent.slideData.ClosePrice || $parent.slideData.ListPrice" role="text" property="price">
                                             $<span data-ng-bind="::$parent.slideData.ClosePrice || $parent.slideData.ListPrice | number"></span>
                                         </span>
                                     </div>
@@ -55,14 +55,14 @@
                                         <span class="property-address">
                                             <span data-ng-bind="::getStreetAddress($parent.slideData)"></span>, <span class="city" data-ng-bind="::$parent.slideData.City"></span>
                                         </span>
-                                        <span class="property-bed" data-ng-show="::$parent.slideData.BedroomsTotal > 0" role="text">
+                                        <span class="property-bed line-separator-left" data-ng-show="::$parent.slideData.BedroomsTotal > 0" role="text">
                                             <span data-ng-bind="::$parent.slideData.BedroomsTotal" property="numberOfBedrooms"></span> Beds
                                         </span>
-                                        <span class="property-bath" data-ng-show="::$parent.slideData.BathroomsFull > 0 || $parent.slideData.BathroomsTotalInteger > 0" role="text">
+                                        <span class="property-bath line-separator-left" data-ng-show="::$parent.slideData.BathroomsFull > 0 || $parent.slideData.BathroomsTotalInteger > 0" role="text">
                                             <span data-ng-bind="::$parent.slideData.BathroomsFull || $parent.slideData.BathroomsTotalInteger" property="numberOfFullBathrooms"></span><span data-ng-show="::$parent.slideData.BathroomsHalf || $parent.slideData.BathroomsOneQuarter || $parent.slideData.BathroomsPartial">+</span>
                                             Baths
                                         </span>
-                                        <span class="property-sqft" data-ng-show="::$parent.slideData.LivingArea && $parent.slideData.LivingArea > 0" role="text">
+                                        <span class="property-sqft line-separator-left" data-ng-show="::$parent.slideData.LivingArea && $parent.slideData.LivingArea > 0" role="text">
                                             <span data-ng-bind="::$parent.slideData.LivingArea | number"></span>
                                             <span data-ng-show="::$parent.slideData.LivingAreaUnits">
                                                 <span data-ng-bind="::$parent.slideData.LivingAreaUnits"></span>
@@ -76,17 +76,19 @@
                                     <!-- FIXME property type might be required, will check regs -->
                                     <!--span data-ng-bind="::$parent.slideData.PropertySubType || $parent.slideData.PropertyType || $parent.slideData._Class" property="accommodationCategory"></span-->
                                 </div>
-                                <a data-ng-click="displayModelDetails($parent.slideData, $event)" data-ng-href="{{::getDetailsURL($parent.slideData)}}" target="popup">
-                                    <div class="image-wrapper"
-                                         data-stratus-src-version="{{::($parent.slideData.Images[0].Lazy == 'stratus-src' ? 'best' : 'false')}}"
-                                         data-stratus-src="{{::$parent.slideData.Images[0].MediaURL || 'false'}}"
-                                         aria-label="Main Image of Listing"
-                                    >
-                                        <meta data-ng-if="::$parent.slideData.Images.length > 0" property="image" content="{{::$parent.slideData.Images[0].MediaURL}}">
-                                        <img data-ng-if="::$parent.slideData.Images.length > 0" data-ng-src="{{::localDir}}images/stratus-property-shapeholder.png" alt="Image Shapeholder" aria-hidden="true"/>
-                                        <img data-ng-if="::$parent.slideData.Images.length === 0 || !$parent.slideData.Images" data-ng-src="{{::localDir}}images/no-image.jpg" alt="No Main Image Available"/>
-                                    </div>
-                                </a>
+                                <div class="property-image">
+                                    <a data-ng-click="displayModelDetails($parent.slideData, $event)" data-ng-href="{{::getDetailsURL($parent.slideData)}}" target="popup">
+                                        <div class="image-wrapper"
+                                             data-stratus-src-version="{{::($parent.slideData.Images[0].Lazy == 'stratus-src' ? 'best' : 'false')}}"
+                                             data-stratus-src="{{::$parent.slideData.Images[0].MediaURL || 'false'}}"
+                                             aria-label="Main Image of Listing"
+                                        >
+                                            <meta property="image" content="{{::($parent.slideData.Images.length > 0 ? $parent.slideData.Images[0].MediaURL : '')}}">
+                                            <img data-ng-show="::$parent.slideData.Images.length > 0" data-ng-src="{{::localDir}}images/stratus-property-shapeholder.png" alt="Image Shapeholder" aria-hidden="true"/>
+                                            <img data-ng-show="::$parent.slideData.Images.length === 0 || !$parent.slideData.Images" data-ng-src="{{::localDir}}images/no-image.jpg" alt="No Main Image Available"/>
+                                        </div>
+                                    </a>
+                                </div>
                             </div>
                         </div>
                     </stratus-swiper-carousel-slide>

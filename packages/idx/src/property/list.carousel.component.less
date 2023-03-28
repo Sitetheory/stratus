@@ -9,6 +9,37 @@ FIXME we CANNOT rely of media queries, it needs to know the sizing of the elemen
 @phone: ~"(max-width: 600px)";
 @desktop-only: ~"(min-width: 600px)";
 stratus-idx-property-list .property-list-carousel {
+
+  stratus-swiper-carousel {
+    .swiper-button-prev, .swiper-button-next {
+      color: #fff;
+      background: rgba(0, 0, 0, 0.6);
+      height: 70px;
+      width: 60px;
+      transition: all 0.2s ease-out;
+      -webkit-transition: all 0.2s ease-out;
+      &:hover {
+        background: rgba(0, 0, 0, 0.9);
+      }
+    }
+    .swiper-button-prev, .swiper-rtl .swiper-button-next {
+      left: var(--swiper-navigation-sides-offset,5px);
+    }
+    .swiper-button-next, .swiper-rtl .swiper-button-prev {
+      right: var(--swiper-navigation-sides-offset,5px);
+    }
+    .swiper-pagination-bullet {
+      background-color: #fff;
+      opacity: 0.3;
+      transition: all 0.2s ease-out;
+      -webkit-transition: all 0.2s ease-out;
+      &:hover,
+      &.swiper-pagination-bullet-active {
+        opacity: 1;
+      }
+    }
+  }
+
   .no-results {
     padding: 200px 40px 0;
     font-size: 24px;
@@ -17,53 +48,9 @@ stratus-idx-property-list .property-list-carousel {
     background-size: 80px;
   }
 
-  /* Generic dotted underline */
-  .dotted-spaced-underline {
-    background-image: linear-gradient(to right, #333 25%, rgba(255, 255, 255, 0) 0%);
-    background-position: bottom;
-    background-size: 4px 1px;
-    background-repeat: repeat-x;
-  }
-
-  /* Generic Arrows */
-  i {
-    &.arrow {
-      display: inline-block;
-      border: solid black;
-      border-width: 0 3px 3px 0;
-      padding: 3px;
-      margin: 1px;
-      &.small {
-        border-width: 0 2px 2px 0;
-        padding: 2px;
-      }
-      &.large {
-        border-width: 0 4px 4px 0;
-        padding: 4px;
-      }
-      &.grey {
-        border-color: #aaa;
-      }
-      &.right {
-        transform: rotate(-45deg);
-      }
-      &.left {
-        transform: rotate(135deg);
-      }
-      &.up {
-        transform: rotate(-135deg);
-      }
-      &.down {
-        transform: rotate(45deg);
-      }
-    }
-  }
-
   /* Property */
   .property-container {
     position: relative;
-    padding-bottom: 24px;
-    margin-bottom: 16px;
     text-align: center;
     float: left;
     width: 100%;
@@ -72,126 +59,87 @@ stratus-idx-property-list .property-list-carousel {
     min-height: 10px;
 
     .property-item {
-      box-shadow: 0 0 1px 1px rgba(0, 0, 0, 0.15);
-      transition: background-color linear 1000ms;
+      position: relative;
 
-      /* IDX Image */
-      .property-image {
-        position: relative;
-        background: #000;
-        .btn {
-          transform: translate(-50%, -50%) scale(0.5);
-          -webkit-transform: translate(-50%, -50%) scale(0.5);
-          position: absolute;
-          top: 50%;
-          left: 50%;
-          z-index: 1;
-          opacity: 0;
-          padding: 6px 8px;
-          color: #fff;
-          background: none;
-          border: 1px solid #fff;
-          &:hover {
-            transform: translate(-50%, -50%) scale(1);
-            -webkit-transform: translate(-50%, -50%) scale(1);
-            color: #222;
-            background: #fff;
-          }
-        }
-        .image-wrapper {
-          background-position: center;
-          background-repeat: no-repeat;
-          background-size: cover;
-        }
-        img {
-          width: 100%;
-        }
-        a {
-          &,
-          * {
-            transition: all 0.2s ease-out;
-            -webkit-transition: all 0.2s ease-out;
-          }
-
-          display: block;
-          position: relative;
-        }
-        &:hover a {
-          .image-wrapper {
-            opacity: 0.3;
-          }
-          .btn {
-            transform: translate(-50%, -50%) scale(1);
-            -webkit-transform: translate(-50%, -50%) scale(1);
-            opacity: 1;
-          }
-        }
-        .property-status {
-          z-index: 1;
-          position: absolute;
-          right: 10px;
-          top: 10px;
-          display: table;
-          margin: 0 auto;
-          padding: 2px 4px 2px 5px;
-          font-size: 10px;
-          font-weight: bold;
-          text-transform: uppercase;
-          letter-spacing: 1px;
-          line-height: 1.4;
-          text-shadow: 0 0 3px rgba(0, 0, 0, 0.2);
-          background-color: rgba(0, 0, 0, 0.6);
-          color: #fff;
-        }
-      }
       .property-content-container {
-        z-index: 1;
-        position: absolute;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        margin: 0 auto;
-        text-transform: uppercase;
-        text-shadow: 0 0 3px rgba(0, 0, 0, 0.2);
-        color: #fff;
+        position: relative;
+
+        /* IDX Image */
+        .property-image {
+          position: relative;
+          background: #000;
+          .image-wrapper {
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+          }
+          img {
+            width: 100%;
+          }
+          a {
+            &,
+            * {
+              transition: all 0.2s ease-out;
+              -webkit-transition: all 0.2s ease-out;
+            }
+
+            display: block;
+            position: relative;
+          }
+        }
+
+        /* IDX Text */
         .property-content {
+          pointer-events: none;
+          z-index: 1;
+          position: absolute;
+          left: 0;
+          right: 0;
+          bottom: 40px;
+          margin: 0 auto;
+          text-transform: uppercase;
+          color: #fff;
+          text-shadow: 0 0 3px rgba(0, 0, 0, 0.8);
+          font-size: 15px;
+          font-weight: normal;
+          line-height: 21px;
+
+          span+span.line-separator-left-more {
+            padding-left: 16px;
+            margin-left: 16px;
+            border-left: 1px solid rgba(255,255,255,.5);
+          }
+
+          span+span.line-separator-left {
+            padding-left: 8px;
+            margin-left: 8px;
+            border-left: 1px solid rgba(255,255,255,.5);
+          }
+
           /* MLS service + number */
           .mls-service-name {
-            font-size: 11px;
-            text-align: center;
-            color: #666;
             img {
               width: unset;
-              margin: 10px auto;
               max-height: 15px;
             }
           }
 
           .property-status-price-container {
-            font-size: 14px;
-            font-weight: normal;
-            .property-status {
-              font-weight: normal;
-            }
-            .property-price {
-              font-weight: normal;
-            }
+            margin-top: 12px;
+            font-size: 26px;
+            line-height: 26px;
+
+            .property-status {}
+            .property-price {}
           }
 
           .property-details-container {
-            .property-address {
-              font-size: 14px;
-              font-weight: normal;
-            }
+            margin-top: 12px;
+            font-weight: 700;
+            .property-address {}
             .property-bed,
-            .property-bath {
-              font-size: 14px;
-              font-weight: normal;
-            }
-            .property-sqft {
-              font-size: 14px;
-              font-weight: normal;
-            }
+            .property-bath {}
+            .property-sqft {}
           }
 
 
