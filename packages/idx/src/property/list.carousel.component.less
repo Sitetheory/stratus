@@ -31,6 +31,7 @@ stratus-idx-property-list .property-list-carousel {
     .swiper-pagination-bullet {
       background-color: #fff;
       opacity: 0.3;
+      text-shadow: 0 0 3px rgba(0, 0, 0, 0.8);
       transition: all 0.2s ease-out;
       -webkit-transition: all 0.2s ease-out;
       &:hover,
@@ -103,6 +104,24 @@ stratus-idx-property-list .property-list-carousel {
           font-size: 15px;
           font-weight: normal;
           line-height: 21px;
+
+          md-icon.property-icon {
+            height: unset;
+            width: unset;
+            min-height: unset;
+            min-width: unset;
+            &.icon-bed {
+              width: 16px;
+            }
+            &.icon-bath {
+              width: 22px;
+            }
+            svg {
+              g {
+                fill: #fff;
+              }
+            }
+          }
 
           span+span.line-separator-left-more {
             padding-left: 16px;

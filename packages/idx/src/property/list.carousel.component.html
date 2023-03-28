@@ -56,11 +56,12 @@
                                             <span data-ng-bind="::getStreetAddress($parent.slideData)"></span>, <span class="city" data-ng-bind="::$parent.slideData.City"></span>
                                         </span>
                                         <span class="property-bed line-separator-left" data-ng-show="::$parent.slideData.BedroomsTotal > 0" role="text">
-                                            <span data-ng-bind="::$parent.slideData.BedroomsTotal" property="numberOfBedrooms"></span> Beds
+                                            <span data-ng-bind="::$parent.slideData.BedroomsTotal" property="numberOfBedrooms"></span>
+                                            <md-icon class="property-icon icon-bed" md-svg-src="{{::localDir + 'images/icons/bed.svg'}}"></md-icon>
                                         </span>
                                         <span class="property-bath line-separator-left" data-ng-show="::$parent.slideData.BathroomsFull > 0 || $parent.slideData.BathroomsTotalInteger > 0" role="text">
                                             <span data-ng-bind="::$parent.slideData.BathroomsFull || $parent.slideData.BathroomsTotalInteger" property="numberOfFullBathrooms"></span><span data-ng-show="::$parent.slideData.BathroomsHalf || $parent.slideData.BathroomsOneQuarter || $parent.slideData.BathroomsPartial">+</span>
-                                            Baths
+                                            <md-icon class="property-icon icon-bath" md-svg-src="{{::localDir + 'images/icons/bath.svg'}}"></md-icon>
                                         </span>
                                         <span class="property-sqft line-separator-left" data-ng-show="::$parent.slideData.LivingArea && $parent.slideData.LivingArea > 0" role="text">
                                             <span data-ng-bind="::$parent.slideData.LivingArea | number"></span>
@@ -77,7 +78,7 @@
                                     <!--span data-ng-bind="::$parent.slideData.PropertySubType || $parent.slideData.PropertyType || $parent.slideData._Class" property="accommodationCategory"></span-->
                                 </div>
                                 <div class="property-image">
-                                    <a data-ng-click="displayModelDetails($parent.slideData, $event)" data-ng-href="{{::getDetailsURL($parent.slideData)}}" target="popup">
+                                    <a data-ng-click="::displayModelDetails($parent.slideData, $event)" data-ng-href="{{::getDetailsURL($parent.slideData)}}" target="popup">
                                         <div class="image-wrapper"
                                              data-stratus-src-version="{{::($parent.slideData.Images[0].Lazy == 'stratus-src' ? 'best' : 'false')}}"
                                              data-stratus-src="{{::$parent.slideData.Images[0].MediaURL || 'false'}}"

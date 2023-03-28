@@ -1,0 +1,14 @@
+<svg viewBox="0 0 22 19" xmlns="http://www.w3.org/2000/svg">
+    <g class="bed-icon" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g data-svg-id="bed" fill-rule="nonzero">
+            <polygon fill-rule="nonzero" points="4.61538462 0.269230769 6.61538462 0.269230769 6.61538462 7.11538462 4.61538462 7.11538462"></polygon>
+            <polygon fill-rule="nonzero" points="0.769230769 6.69711538 2.76923077 6.69711538 2.76923077 18.0721154 0.769230769 18.0721154"></polygon>
+            <polygon fill-rule="nonzero" points="19.2307692 6.69711538 21.2307692 6.69711538 21.2307692 18.0721154 19.2307692 18.0721154"></polygon>
+            <polygon fill-rule="nonzero" points="15.3846154 0.269230769 17.3846154 0.269230769 17.3846154 7.11538462 15.3846154 7.11538462"></polygon>
+            <rect x="1" y="10" width="20" height="5"></rect>
+            <rect x="5" y="2" width="12" height="4"></rect>
+            <polygon fill-rule="nonzero" points="5.56032716 4.97147396 7.02852604 6.32955793 2.82428823 10.8746799 1.35608935 9.51659592"></polygon>
+            <polygon fill-rule="nonzero" transform="translate(17.807692, 7.923077) scale(-1, 1) translate(-17.807692, -7.923077) " points="19.1757118 4.97147396 20.6439107 6.32955793 16.4396728 10.8746799 14.971474 9.51659592"></polygon>
+        </g>
+    </g>
+</svg>
