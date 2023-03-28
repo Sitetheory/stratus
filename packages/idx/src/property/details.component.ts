@@ -1208,7 +1208,7 @@ Stratus.Components.IdxPropertyDetails = {
             // Register this List with the Property service
             Idx.registerDetailsInstance($scope.elementId, moduleName, $scope)
 
-            if (!$scope.options.service || // if there is a service
+            if ((!$scope.options.service && $scope.options.service !== 0) || // if there is a service
                 !($scope.options.ListingKey || $scope.options.ListingId)
             ) {
                 // If there is no Service or Listing Id/Key set, force url loading
