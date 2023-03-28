@@ -194,7 +194,7 @@ Stratus.Components.SwiperCarousel = {
                     return
                 }
                 $scope.collection = newVal
-                console.log('swiper unwatching collection')
+                // console.log('swiper unwatching collection')
                 unwatchCollection()
             })
         }
@@ -218,7 +218,7 @@ Stratus.Components.SwiperCarousel = {
                 if (isArray(models)) {
                     $ctrl.slides = clone(models)
                 }
-                console.log('swiper collection.models updated', clone(models))
+                // console.log('swiper collection.models updated', clone(models))
                 $scope.updateSlideData()
             }
         })
@@ -285,11 +285,11 @@ Stratus.Components.SwiperCarousel = {
                 // We are dealing with pure data, so don't do anything
 
                 if (htmlSlides.length > 0) {
-                    console.log('processedData', (htmlSlides))
+                    // console.log('processedData', (htmlSlides))
                     $scope.htmlSlides = htmlSlides
                     // There is no extra slides so remove the looping
                     if ($scope.htmlSlides.length < 2) {
-                        console.log('count is only', $scope.htmlSlides.length, 'disabling loop and move')
+                        // console.log('count is only', $scope.htmlSlides.length, 'disabling loop and move')
                         $scope.loop = false
                         $scope.allowTouchMove = false
                     }
@@ -349,7 +349,7 @@ Stratus.Components.SwiperCarousel = {
          * TODO allow for altering the variables and updating Swiper after init (live editing/inline changes)
          */
         const init = (): void => {
-            console.log('CAROUSEL initing with', clone($ctrl.slides || []))
+            // console.log('CAROUSEL initing with', clone($ctrl.slides || []))
 
             $scope.slidesAsHtml = $attrs.slidesAsHtml && isJSON($attrs.slidesAsHtml) ? JSON.parse($attrs.slidesAsHtml) : false
             $scope.slideLinkTarget = $attrs.slideLinkTarget ? $attrs.slideLinkTarget : null
@@ -385,18 +385,18 @@ Stratus.Components.SwiperCarousel = {
 
         $scope.updateSlideData = () => {
             // NOTE: slides can be an expression, so we need to reference $ctrl, where they've already been parsed
-            console.log('swiper updateSlideData()')
+            // console.log('swiper updateSlideData()')
             const slides = $ctrl.slides ? clone($ctrl.slides) : []
 
             if ($scope.slidesAsHtml) {
-                console.log('slidesAsHtml', clone(slides))
+                // console.log('slidesAsHtml', clone(slides))
                 initHtmlSlides(slides)
             } else {
                 initImages(slides)
             }
 
             if ($scope.swiper) {
-                console.log('swiper already loaded, forcing swiper.update()', clone($scope.swiper))
+                // console.log('swiper already loaded, forcing swiper.update()', clone($scope.swiper))
                 $scope.swiper.update()
             }
         }
@@ -415,7 +415,7 @@ Stratus.Components.SwiperCarousel = {
             }
 
             const stopWatchingInitNow = $scope.$watch('$ctrl.initNow', (initNowCtrl: boolean) => {
-                console.log('CAROUSEL initNow called later')
+                // console.log('CAROUSEL initNow called later')
                 if (initNowCtrl !== true) {
                     return
                 }
@@ -638,7 +638,7 @@ Stratus.Components.SwiperCarousel = {
             // console.log('swiperParameters', $scope.swiperParameters)
 
             $scope.$applyAsync(() => {
-                console.log('creating $scope.swiper')
+                // console.log('creating $scope.swiper')
                 // $applyAsync is causing this function to run twice. Adding check to make sure it doesn't
                 if ($scope.swiper) {
                     console.warn('swiper already exists, canceling', clone($scope.swiper))
@@ -646,7 +646,7 @@ Stratus.Components.SwiperCarousel = {
                 }
                 // console.log('parameters:', $scope.swiperParameters, $ctrl)
                 $scope.swiper = new Swiper($scope.swiperContainer, $scope.swiperParameters)
-                console.log('created $scope.swiper', clone($scope.swiper))
+                // console.log('created $scope.swiper', clone($scope.swiper))
                 /*
                 Issue: When loading a page, the first time a set of Swiper slideshows are called, it will load fine.
                 However, if a set is loaded a second time, the slides seem to fail to initialize and the next/prev buttons do not register.
@@ -655,7 +655,7 @@ Stratus.Components.SwiperCarousel = {
                 */
                 $scope.swiper.on('init', () => {
                     $timeout(() => {
-                        console.log('swiper event: "init". running swiper.update()', clone($scope.swiper))
+                        // console.log('swiper event: "init". running swiper.update()', clone($scope.swiper))
                         $scope.swiper.update()
                     }, 100)
                 })
