@@ -1,31 +1,22 @@
-<div id="{{ ::elementId }}" class="swiper-flex" data-injection="swiper" data-ng-class="{'swiper-main': !gallery, 'swiper-gallery': gallery}">
-    <div class="swiper" data-ng-class="{'gallery-top': gallery}" data-ng-init="initSwiper()">
-        <div class="swiper-wrapper" data-ng-if="!lazyLoad">
-            <div class="swiper-slide" data-ng-repeat="image in images track by $index" data-ng-transclude="slide">
+<div id="{{ ::elementId }}" class="swiper-flex swiper-main" data-injection="swiper">
+    <div class="swiper">
+        <div class="swiper-wrapper">
+            <div class="swiper-slide" data-ng-if="!slidesAsHtml" data-ng-repeat="image in images track by $index" data-ng-transclude="slide">
                 <div data-ng-class="{'swiper-zoom-container': scaleHeight}">
                     <img class="swiper-image" data-ng-class="{'stretch-image': stretchWidth}"
                          data-ng-click="imageClick(image, $event)"
                          draggable="false"
-                         data-ng-src="{{::(image.src||image.url)}}"
-                         title="{{::(image.title||image.description||'Carousel Photo')}}"
-                         alt="{{::(image.description||image.title||'Carousel Photo')}}"
-                    />
-                </div>
-            </div>
-        </div>
-        <div class="swiper-wrapper" data-ng-if="lazyLoad">
-            <div class="swiper-slide" data-ng-repeat="image in images track by $index" data-ng-transclude="slide">
-                <div data-ng-class="{'swiper-zoom-container': scaleHeight}">
-                    <!-- swiper-lazy -->
-                    <img class="swiper-image swiper-lazy" data-ng-class="{'stretch-image': stretchWidth}"
-                         data-ng-click="imageClick(image, $event)"
-                         draggable="false"
+                         loading="lazy"
                          data-ng-src="{{::(image.src||image.url)}}"
                          title="{{::(image.title||image.description||'Carousel Photo')}}"
                          alt="{{::(image.description||image.title||'Carousel Photo')}}"
                     />
                     <div class="swiper-lazy-preloader"></div>
                 </div>
+            </div>
+            <div class="swiper-slide" data-ng-if="slidesAsHtml" data-ng-repeat="slideData in htmlSlides track by $index" data-ng-transclude="slide">
+                <div>Slide not Formatted. Connect with stratus-swiper-carousel-slide and $parent.slideData</div>
+                <div data-ng-bind="slideData | json"></div>
             </div>
         </div>
         <div data-ng-show="::navigation" class="swiper-button-prev"></div>

@@ -16,6 +16,7 @@ import _, {
     isEqual,
     isNumber,
     isString,
+    isUndefined,
     map,
     throttle
 } from 'lodash'
@@ -493,8 +494,13 @@ Stratus.Components.IdxPropertySearch = {
                                     if (
                                         isString(value) ||
                                         isNumber(value) ||
+                                        isUndefined(value) ||
                                         value == null
                                     ) {
+                                        if (isUndefined(value)) {
+                                            // elements can't process undefined... treat as null
+                                            value = null
+                                        }
                                         // console.log('updating', scopeVarPath, 'value to', value, 'was', varElement.val())
                                         varElement.val(value)
                                     } else {

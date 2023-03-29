@@ -1,0 +1,103 @@
+<div id="{{elementId}}" class="property-list property-list-carousel" data-ng-cloak>
+    <md-progress-linear data-ng-if="!initialized" md-mode="indeterminate"></md-progress-linear>
+    <div data-ng-if="initialized">
+
+        <md-progress-linear data-ng-show="collection.pending" md-mode="indeterminate"></md-progress-linear>
+        <div data-ng-show="collection.completed && !collection.pending && collection.models.length === 0" class="no-results">
+            <!-- FIXME make this a slide in carousel? -->
+            We didn't find any properties that fit your criteria.<span> You might want to try a broader search.</span>
+        </div>
+        <section role="region" aria-label="Property Results List">
+            <div data-ng-show="collection.completed && !collection.pending && collection.models.length > 0"
+                 class="list-container clearfix"
+                 data-ng-class="displayPerRowText + '-per-row'"
+                 role="list"
+                 aria-label="Property Results"
+                 aria-live="polite"
+                 vocab="https://schema.org/" typeof="BreadcrumbList"
+            >
+                <stratus-swiper-carousel
+                        data-collection="collection"
+                        data-slides-as-html="true"
+                        data-stretch-width="true"
+                        data-transition-effect="fade"
+                        data-speed="1000"
+                        data-pagination='{"render":"bullets","clickable":true}'
+                        aria-label="Property Results Carousel"
+                >
+                    <stratus-swiper-carousel-slide
+                            class="property-container" aria-labelledby="{{::elementId}}_{{::$parent.slideData._id}}_address"
+                            role="listitem" property="itemListElement" typeof="ListItem RealEstateListing Offer Accommodation"
+                    >
+                        <div class="property-item">
+                            <meta property="position" content="{{::$parent.$index+1}}" />
+                            <meta property="priceCurrency" content="USD" />
+                            <meta property="lastReviewed" content="{{::$parent.slideData.ModificationTimestamp}}" />
+                            <meta property="datePosted" content="{{::$parent.slideData.ModificationTimestamp}}" />
+                            <meta property="name" content="{{::getStreetAddress($parent.slideData)}}" />
+                            <div class="property-content-container">
+                                <div class="property-content">
+                                    <div class="mls-service-name" role="text">
+                                        <span data-ng-show="::getMLSLogo($parent.slideData._ServiceId, 'tiny')"><img data-ng-src="{{::getMLSLogo($parent.slideData._ServiceId, 'tiny')}}" alt="MLS Logo"/></span>
+                                        <span data-ng-bind="::getMLSName($parent.slideData._ServiceId)" property="maintainer"></span>#
+                                        <span data-ng-bind="::$parent.slideData.ListingId || $parent.slideData.ListingKey" property="identifier"></span>
+                                    </div>
+
+                                    <div class="property-status-price-container">
+                                        <span class="property-status" data-ng-bind="::Idx.getFriendlyStatus($parent.slideData, preferredStatus)"></span>
+                                        <span class="property-price line-separator-left-more" data-ng-show="::$parent.slideData.ClosePrice || $parent.slideData.ListPrice" role="text" property="price">
+                                            $<span data-ng-bind="::$parent.slideData.ClosePrice || $parent.slideData.ListPrice | number"></span>
+                                        </span>
+                                    </div>
+
+
+                                    <div class="property-details-container">
+                                        <span class="property-address">
+                                            <span data-ng-bind="::getStreetAddress($parent.slideData)"></span>, <span class="city" data-ng-bind="::$parent.slideData.City"></span>
+                                        </span>
+                                        <span class="property-bed line-separator-left" data-ng-show="::$parent.slideData.BedroomsTotal > 0" role="text">
+                                            <span data-ng-bind="::$parent.slideData.BedroomsTotal" property="numberOfBedrooms"></span>
+                                            <md-icon class="property-icon icon-bed" md-svg-src="{{::localDir + 'images/icons/bed.svg'}}"></md-icon>
+                                        </span>
+                                        <span class="property-bath line-separator-left" data-ng-show="::$parent.slideData.BathroomsFull > 0 || $parent.slideData.BathroomsTotalInteger > 0" role="text">
+                                            <span data-ng-bind="::$parent.slideData.BathroomsFull || $parent.slideData.BathroomsTotalInteger" property="numberOfFullBathrooms"></span><span data-ng-show="::$parent.slideData.BathroomsHalf || $parent.slideData.BathroomsOneQuarter || $parent.slideData.BathroomsPartial">+</span>
+                                            <md-icon class="property-icon icon-bath" md-svg-src="{{::localDir + 'images/icons/bath.svg'}}"></md-icon>
+                                        </span>
+                                        <span class="property-sqft line-separator-left" data-ng-show="::$parent.slideData.LivingArea && $parent.slideData.LivingArea > 0" role="text">
+                                            <span data-ng-bind="::$parent.slideData.LivingArea | number"></span>
+                                            <span data-ng-show="::$parent.slideData.LivingAreaUnits">
+                                                <span data-ng-bind="::$parent.slideData.LivingAreaUnits"></span>
+                                            </span>
+                                            <span data-ng-show="::!$parent.slideData.LivingAreaUnits">
+                                                SQ FT.
+                                            </span>
+                                        </span>
+                                    </div>
+
+                                    <!-- FIXME property type might be required, will check regs -->
+                                    <!--span data-ng-bind="::$parent.slideData.PropertySubType || $parent.slideData.PropertyType || $parent.slideData._Class" property="accommodationCategory"></span-->
+                                </div>
+                                <div class="property-image">
+                                    <a data-ng-click="::displayModelDetails($parent.slideData, $event)" data-ng-href="{{::getDetailsURL($parent.slideData)}}" target="popup">
+                                        <div class="image-wrapper"
+                                             data-stratus-src-version="{{::($parent.slideData.Images[0].Lazy == 'stratus-src' ? 'best' : 'false')}}"
+                                             data-stratus-src="{{::$parent.slideData.Images[0].MediaURL || 'false'}}"
+                                             aria-label="Main Image of Listing"
+                                        >
+                                            <meta property="image" content="{{::($parent.slideData.Images.length > 0 ? $parent.slideData.Images[0].MediaURL : '')}}">
+                                            <img data-ng-show="::$parent.slideData.Images.length > 0" data-ng-src="{{::localDir}}images/stratus-property-shapeholder.png" alt="Image Shapeholder" aria-hidden="true"/>
+                                            <img data-ng-show="::$parent.slideData.Images.length === 0 || !$parent.slideData.Images" data-ng-src="{{::localDir}}images/no-image.jpg" alt="No Main Image Available"/>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </stratus-swiper-carousel-slide>
+                </stratus-swiper-carousel>
+                <!-- Added to bottom to not affect the blocked styling above -->
+                <meta property="itemListOrder" content="{{getOrderName()}}"/>
+            </div>
+        </section>
+        <stratus-idx-disclaimer data-init-now="collection.completed" data-hide-on-duplicate="{{hideDisclaimer}}"></stratus-idx-disclaimer>
+    </div>
+</div>

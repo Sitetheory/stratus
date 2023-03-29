@@ -1,5 +1,6 @@
 /*
 Nothing should be outside 'stratus-idx-property-list' or it will leak into other modules
+Additionally 'stratus-idx-property-list .property-list-default' ensures still CSS only affects the default template and not others
 z-index can cause a bleeding effect on popups (z-index 100 equates to the top most item for angular, use the lowest number possible and work up)
 TODO Need to size this based on column and window
 FIXME we CANNOT rely of media queries, it needs to know the sizing of the element or else widgets may never get properly sized. (if used as modular widgets)
@@ -7,7 +8,7 @@ FIXME we CANNOT rely of media queries, it needs to know the sizing of the elemen
 @tablet: ~"(max-width: 959px)";
 @phone: ~"(max-width: 600px)";
 @desktop-only: ~"(min-width: 600px)";
-stratus-idx-property-list {
+stratus-idx-property-list .property-list-default {
   .no-results {
     padding: 200px 40px 0;
     font-size: 24px;

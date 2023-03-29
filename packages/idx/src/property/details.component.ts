@@ -8,8 +8,6 @@
 import {extend, get, isArray} from 'lodash'
 import {Stratus} from '@stratusjs/runtime/stratus'
 import {IAttributes, ILocationService, ISCEService} from 'angular'
-import 'angular-material'
-import 'angular-sanitize'
 import {MarkerSettings} from '@stratusjs/map/map.component'
 import {
     IdxDetailsScope,
@@ -26,24 +24,14 @@ import {cookie} from '@stratusjs/core/environment'
 import {SlideImage} from '@stratusjs/swiper/carousel.component'
 
 // Stratus Preload
-import '@stratusjs/angularjs-extras/directives/src'
-import '@stratusjs/angularjs-extras/filters/math'
-import '@stratusjs/angularjs-extras/filters/moment'
-// tslint:disable-next-line:no-duplicate-imports
-import '@stratusjs/idx/idx'
-import '@stratusjs/idx/disclaimer/disclaimer.component'
-import '@stratusjs/idx/listTrac'
-// tslint:disable-next-line:no-duplicate-imports
-import '@stratusjs/idx/property/details-sub-section.component'
-// tslint:disable-next-line:no-duplicate-imports
-import '@stratusjs/swiper/carousel.component'
+import '@stratusjs/angularjs-extras' // angular-material + angular-sanitize + directives/src + filters/moment, math
+import '@stratusjs/swiper' // carousel.component
 
 // Environment
 const min = !cookie('env') ? '.min' : ''
 const packageName = 'idx'
 const moduleName = 'property'
 const componentName = 'details'
-// There is not a very consistent way of pathing in Stratus at the moment
 const localDir = `${Stratus.BaseUrl}${Stratus.DeploymentPath}@stratusjs/${packageName}/src/${moduleName}/`
 
 export type IdxPropertyDetailsScope = IdxDetailsScope<Property> & {
@@ -1220,7 +1208,7 @@ Stratus.Components.IdxPropertyDetails = {
             // Register this List with the Property service
             Idx.registerDetailsInstance($scope.elementId, moduleName, $scope)
 
-            if (!$scope.options.service || // if there is a service
+            if ((!$scope.options.service && $scope.options.service !== 0) || // if there is a service
                 !($scope.options.ListingKey || $scope.options.ListingId)
             ) {
                 // If there is no Service or Listing Id/Key set, force url loading
