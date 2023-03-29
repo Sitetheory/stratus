@@ -160,8 +160,6 @@ stratus-idx-property-list .property-list-carousel {
             .property-bath {}
             .property-sqft {}
           }
-
-
           .property-data {
             padding: 0;
             font-size: 13px;
@@ -170,20 +168,18 @@ stratus-idx-property-list .property-list-carousel {
               /* \0a is for '&nbsp', which is need if this the template is minified and spans spaces are removed */
               &::after {
                 display: inline;
-                content: '\0a|\0a';
+                content: "\0a|\0a";
                 padding: 0 2px;
               }
               &:last-child::after {
-                content: '';
+                content: "";
               }
             }
           }
-
-
         }
       }
       &.highlight {
-        background-color: rgba(0, 0, 0, 0.12);
+        background-color: rgba(0, 0, 0, 12%);
       }
     }
   }
