@@ -11,6 +11,10 @@ FIXME we CANNOT rely of media queries, it needs to know the sizing of the elemen
 stratus-idx-property-list .property-list-carousel {
 
   stratus-swiper-carousel {
+    .swiper {
+      /* Images are dynamic and might not have a width at first */
+      width: 100%
+    }
     .swiper-button-prev, .swiper-button-next {
       color: #fff;
       background: rgba(0, 0, 0, 0.6);
@@ -148,7 +152,15 @@ stratus-idx-property-list .property-list-carousel {
             font-size: 26px;
             line-height: 26px;
 
-            .property-status {}
+            .property-status {
+              display: block;
+              font-size: 26px;
+              padding: unset;
+              margin: unset;
+              letter-spacing: unset;
+              font-weight: 400;
+              background: unset;
+            }
             .property-price {}
           }
 
