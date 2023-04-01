@@ -18,11 +18,14 @@
             >
                 <stratus-swiper-carousel
                         data-collection="collection"
+                        data-init-now="collection.completed || collection.pending"
                         data-slides-as-html="true"
                         data-stretch-width="true"
-                        data-transition-effect="fade"
-                        data-speed="1000"
-                        data-pagination='{"render":"bullets","clickable":true}'
+                        data-autoplay="{{::carouselOptions.autoplay}}"
+                        data-autoplay-delay="{{::carouselOptions.autoplayDelay}}"
+                        data-transition-effect="{{::carouselOptions.transitionEffect}}"
+                        data-speed="{{::carouselOptions.speed}}"
+                        data-pagination="{{::carouselOptions.counter | json}}"
                         aria-label="Property Results Carousel"
                 >
                     <stratus-swiper-carousel-slide

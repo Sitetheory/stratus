@@ -49,6 +49,14 @@ type OrderOption = {
     value: string[]
 }
 
+type CarouselOptions = {
+    autoplay?: boolean,
+    autoplayDelay?: number,
+    transitionEffect?: 'slide' | 'fade' | 'cube' | 'coverflow' | 'flip',
+    speed?: number
+    counter?: boolean | string | LooseObject
+}
+
 export type IdxPropertyListScope = IdxListScope<Property> & {
     initialized: boolean
     tokenLoaded: boolean
@@ -73,6 +81,7 @@ export type IdxPropertyListScope = IdxListScope<Property> & {
     mapMarkers: MarkerSettings[]
     displayPerRow: number,
     displayPerRowText: string,
+    carouselOptions: CarouselOptions
 
     getDetailsURL(property: Property): string
     getGoogleMapsKey(): string | null
@@ -327,6 +336,20 @@ Stratus.Components.IdxPropertyList = {
             $scope.advancedSearchUrl = $attrs.advancedSearchUrl || ''
             $scope.advancedSearchLinkName = $attrs.advancedSearchLinkName || 'Advanced Search'
             $scope.preferredStatus = $attrs.preferredStatus || 'Closed' // Closed is most compatible
+
+            $scope.carouselOptions = $attrs.carouselOptions && isJSON($attrs.carouselOptions) ? JSON.parse($attrs.carouselOptions) : {}
+            $scope.carouselOptions.autoplay ||= false
+            $scope.carouselOptions.autoplayDelay ||= 3000
+            $scope.carouselOptions.transitionEffect ||= 'fade'
+            $scope.carouselOptions.speed ||= 1000
+            $scope.carouselOptions.counter ||= false
+            if (isString($scope.carouselOptions.counter)) {
+                if ($scope.carouselOptions.counter === 'bullets') {
+                    $scope.carouselOptions.counter = {render:'bullets',clickable:true}
+                } else if ($scope.carouselOptions.counter === 'numberBullet') {
+                    $scope.carouselOptions.counter = {render:'numberBullet',clickable:true}
+                }
+            }
 
             $scope.query = $attrs.query && isJSON($attrs.query) ? JSON.parse($attrs.query) : {}
 
