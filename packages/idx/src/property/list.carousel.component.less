@@ -9,32 +9,35 @@ FIXME we CANNOT rely of media queries, it needs to know the sizing of the elemen
 @phone: ~"(max-width: 600px)";
 @desktop-only: ~"(min-width: 600px)";
 stratus-idx-property-list .property-list-carousel {
-
   stratus-swiper-carousel {
     .swiper {
+
       /* Images are dynamic and might not have a width at first */
       width: 100%;
     }
-    .swiper-button-prev, .swiper-button-next {
+    .swiper-button-prev,
+    .swiper-button-next {
       color: #fff;
-      background: rgba(0, 0, 0, 0.6);
+      background: rgb(0 0 0 / 0.6);
       height: 70px;
       width: 60px;
       transition: all 0.2s ease-out;
       -webkit-transition: all 0.2s ease-out;
       &:hover {
-        background: rgba(0, 0, 0, 0.9);
+        background: rgba(0 0 0 / 0.9);
       }
     }
-    .swiper-button-prev, .swiper-rtl .swiper-button-next {
+    .swiper-button-prev,
+    .swiper-rtl .swiper-button-next {
       left: var(--swiper-navigation-sides-offset, 0);
     }
-    .swiper-button-next, .swiper-rtl .swiper-button-prev {
+    .swiper-button-next,
+    .swiper-rtl .swiper-button-prev {
       right: var(--swiper-navigation-sides-offset, 0);
     }
     .swiper-pagination {
       color: #fff;
-      text-shadow: 0 0 3px rgba(0, 0, 0, 0.8);
+      text-shadow: 0 0 3px rgb(0 0 0 / 0.8);
       transition: all 0.2s ease-out;
       -webkit-transition: all 0.2s ease-out;
       .swiper-pagination-bullet {
@@ -65,6 +68,7 @@ stratus-idx-property-list .property-list-carousel {
     text-align: center;
     float: left;
     width: 100%;
+
     /* force image to load by being on the screen */
     min-width: 10px;
     min-height: 10px;
