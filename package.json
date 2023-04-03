@@ -45,7 +45,7 @@
     "typescript"
   ],
   "engines": {
-    "yarn": ">= 1.21.1"
+    "npm": ">= 8.19.3"
   },
   "devDependencies": {
     "@agentepsilon/decko": "^2.0.1",
@@ -87,6 +87,7 @@
     "@stratusjs/idx": "file:packages/idx",
     "@stratusjs/map": "file:packages/map",
     "@stratusjs/runtime": "file:packages/runtime",
+    "@stratusjs/stripe": "file:packages/stripe",
     "@stratusjs/swiper": "file:packages/swiper",
     "@testing-library/jest-dom": "^5.16.4",
     "@testing-library/react": "^13.3.0",
