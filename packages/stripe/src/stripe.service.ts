@@ -1,12 +1,8 @@
-// Angular Core
 import { Injectable } from '@angular/core'
-// Runtime
-import {isEmpty, isNil, isString, uniqueId} from 'lodash'
-
-// Stratus Dependencies
+import {isEmpty, isNil, isString} from 'lodash'
 import {Stratus} from '@stratusjs/runtime/stratus'
 import {Collection} from '@stratusjs/angularjs/services/collection'
-
+import {safeUniqueId} from '@stratusjs/core/misc'
 
 interface StripeVariables {
     stripe?: stripe.Stripe
@@ -159,7 +155,7 @@ export class StripeService {
         }
         const element = (await this.elements(publishKey)).create(paymentMethodType, options)
         this.currentElement = {
-            id: uniqueId(id+'_'),
+            id: safeUniqueId(id),
             paymentMethodType,
             element
         }

@@ -1,4 +1,3 @@
-// Angular Core
 import {
     Component,
     ElementRef,
@@ -6,12 +5,8 @@ import {
     OnInit
 } from '@angular/core'
 import {DomSanitizer} from '@angular/platform-browser'
-
-// Runtime
-import {snakeCase, uniqueId} from 'lodash'
+import {snakeCase} from 'lodash'
 import {keys} from 'ts-transformer-keys'
-
-// Stratus Dependencies
 import {
     Stratus
 } from '@stratusjs/runtime/stratus'
@@ -19,12 +14,12 @@ import {RootComponent} from '../../angular/src/core/root.component'
 import {ConfirmDialogComponent} from '../../angular/src/confirm-dialog/confirm-dialog.component'
 import {Model} from '@stratusjs/angularjs/services/model'
 import {cookie} from '@stratusjs/core/environment'
-
-// Material
+import {safeUniqueId} from '@stratusjs/core/misc'
 import {
     MatDialog,
     MatDialogRef
 } from '@angular/material/dialog'
+
 
 // Services
 // import {StripeService} from '@stratusjs/stripe/stripe.service'
@@ -66,7 +61,7 @@ export class StripePaymentMethodItemComponent extends RootComponent implements O
         super()
 
         // Initialization
-        this.uid = uniqueId(`sa_${snakeCase(this.title)}_`)
+        this.uid = safeUniqueId('sa', snakeCase(this.title))
         Stratus.Instances[this.uid] = this
         this.elementId = this.elementId || this.uid
 
