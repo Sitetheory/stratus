@@ -201,7 +201,11 @@ export class StripePaymentMethodComponent extends RootComponent implements OnDes
     /**
      * Check and template fields and submit to Stripe to attempt a Confirm Card Setup
      */
-    async saveCard() {
+    async saveCard(ev?: any) {
+        if (ev) {
+            ev.preventDefault()
+            // ev.stopPropagation()
+        }
         if (!this.isSubmittable()) {
             // prevent trying to submit when not needed
             return

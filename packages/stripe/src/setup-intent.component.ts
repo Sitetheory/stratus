@@ -95,6 +95,10 @@ export class StripeSetupIntentComponent extends RootComponent implements OnInit 
 
 
     async addPaymentMethod(ev?: any) {
+        if (ev) {
+            ev.preventDefault()
+            // ev.stopPropagation()
+        }
         if (!this.newPaymentMethodPending && !this.newPaymentMethodPrompt) {
             // console.log('Stratus', Stratus)
             // console.log('running addPaymentMethod', this)
