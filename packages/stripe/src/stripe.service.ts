@@ -41,9 +41,13 @@ export class StripeService {
             try {
                 await Stratus.Internals.JsLoader('https://js.stripe.com/v3/')
                 if (!Object.prototype.hasOwnProperty.call(window, 'Stripe')) {
-                    console.error('Stripe Api was not initialized, cannot continue')
-                    this.initializing = false
-                    return
+                    console.warn('Stripe Api was not initialized yet, waiting...')
+                    await this.delay(3000)
+                    if (!Object.prototype.hasOwnProperty.call(window, 'Stripe')) {
+                        console.error('Stripe Api was not initialized, cannot continue')
+                        this.initializing = false
+                        return
+                    }
                 }
             } catch (e) {
                 console.error('Stripe Api could not be fetched, cannot continue')
@@ -59,6 +63,12 @@ export class StripeService {
             // wait for completion
             return await this.waitForInitialization()
         }
+    }
+
+    async delay(ms: number): Promise<ReturnType<typeof setTimeout>> {
+        return new Promise((resolve) => {
+            return setTimeout(resolve, ms)
+        })
     }
 
     async waitForInitialization(): Promise<void> {
