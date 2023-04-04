@@ -153,6 +153,7 @@ export class StripeService {
             console.warn('StripeElement for', this.currentElement.id, 'already exists. Destroying existing (consider cleaning up first)')
             this.destroyElement()
         }
+        // This will wait until Stripe API is inited before running
         const element = (await this.elements(publishKey)).create(paymentMethodType, options)
         this.currentElement = {
             id: safeUniqueId(id),
