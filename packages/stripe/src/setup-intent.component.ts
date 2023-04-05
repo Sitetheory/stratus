@@ -1,5 +1,4 @@
 /* tslint:disable:no-inferrable-types */
-// Angular Core
 import {
     // ChangeDetectionStrategy,
     // ChangeDetectorRef,
@@ -12,18 +11,15 @@ import {DomSanitizer} from '@angular/platform-browser'
 import {
     MatDialog
 } from '@angular/material/dialog'
-
-// Runtime
-import {isEmpty, snakeCase, uniqueId} from 'lodash'
+import {isEmpty, snakeCase} from 'lodash'
 import {keys} from 'ts-transformer-keys'
-
-// Stratus Dependencies
 import {
     Stratus
 } from '@stratusjs/runtime/stratus'
 import {RootComponent} from '../../angular/src/core/root.component'
 import {Model, ModelOptions} from '@stratusjs/angularjs/services/model'
 // import {cookie} from '@stratusjs/core/environment'
+import {safeUniqueId} from '@stratusjs/core/misc'
 import {
     StripePaymentMethodComponent,
     StripePaymentMethodDialogData
@@ -71,7 +67,7 @@ export class StripeSetupIntentComponent extends RootComponent implements OnInit 
         super()
 
         // Initialization
-        this.uid = uniqueId(`sa_${snakeCase(this.title)}_`)
+        this.uid = safeUniqueId('sa', snakeCase(this.title))
         Stratus.Instances[this.uid] = this
         this.elementId = this.elementId || this.uid
 
@@ -95,6 +91,10 @@ export class StripeSetupIntentComponent extends RootComponent implements OnInit 
 
 
     async addPaymentMethod(ev?: any) {
+        if (ev) {
+            ev.preventDefault()
+            // ev.stopPropagation()
+        }
         if (!this.newPaymentMethodPending && !this.newPaymentMethodPrompt) {
             // console.log('Stratus', Stratus)
             // console.log('running addPaymentMethod', this)

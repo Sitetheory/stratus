@@ -1,5 +1,4 @@
 /* tslint:disable:no-inferrable-types */
-// Angular Core
 import {
     Component,
     ElementRef,
@@ -14,25 +13,15 @@ import {
     MAT_DIALOG_DATA,
     MatDialogRef
 } from '@angular/material/dialog'
-/*import {
-    FormBuilder,
-    FormGroup
-} from '@angular/forms'*/
-
-// Runtime
-import {assignIn, includes, isEmpty, isObject, isString, set, snakeCase, uniqueId} from 'lodash'
+import {assignIn, includes, isEmpty, isObject, isString, set, snakeCase} from 'lodash'
 import {keys} from 'ts-transformer-keys'
-
-// Stratus Dependencies
 import {
     Stratus
 } from '@stratusjs/runtime/stratus'
 import {RootComponent} from '../../angular/src/core/root.component'
 import {Model, ModelOptions} from '@stratusjs/angularjs/services/model'
 import {cookie} from '@stratusjs/core/environment'
-
-
-// Services
+import {safeUniqueId} from '@stratusjs/core/misc'
 import {StripeService} from './stripe.service'
 
 // Local Setup
@@ -94,7 +83,7 @@ export class StripePaymentMethodComponent extends RootComponent implements OnDes
         super()
 
         // Initialization
-        this.uid = uniqueId(`sa_${snakeCase(this.title)}_`)
+        this.uid = safeUniqueId('sa', snakeCase(this.title))
         Stratus.Instances[this.uid] = this
         this.elementId = this.elementId || this.uid
 
@@ -201,7 +190,11 @@ export class StripePaymentMethodComponent extends RootComponent implements OnDes
     /**
      * Check and template fields and submit to Stripe to attempt a Confirm Card Setup
      */
-    async saveCard() {
+    async saveCard(ev?: any) {
+        if (ev) {
+            ev.preventDefault()
+            // ev.stopPropagation()
+        }
         if (!this.isSubmittable()) {
             // prevent trying to submit when not needed
             return
