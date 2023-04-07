@@ -1,4 +1,4 @@
-// Angular Core
+/* tslint:disable:no-inferrable-types */
 import {
     // ChangeDetectionStrategy,
     // ChangeDetectorRef,
@@ -11,18 +11,15 @@ import {DomSanitizer} from '@angular/platform-browser'
 import {
     MatDialog
 } from '@angular/material/dialog'
-
-// Runtime
-import {isEmpty, snakeCase, uniqueId} from 'lodash'
+import {isEmpty, snakeCase} from 'lodash'
 import {keys} from 'ts-transformer-keys'
-
-// Stratus Dependencies
 import {
     Stratus
 } from '@stratusjs/runtime/stratus'
 import {RootComponent} from '../../angular/src/core/root.component'
-import {Model} from '@stratusjs/angularjs/services/model'
+import {Model, ModelOptions} from '@stratusjs/angularjs/services/model'
 // import {cookie} from '@stratusjs/core/environment'
+import {safeUniqueId} from '@stratusjs/core/misc'
 import {
     StripePaymentMethodComponent,
     StripePaymentMethodDialogData
@@ -37,7 +34,7 @@ const componentName = 'setup-intent'
 @Component({
     selector: `sa-${packageName}-${componentName}`,
     // templateUrl: `${localDir}/${parentModuleName}/${moduleName}.component.html`,
-    template: '<button mat-raised-button (click)="addPaymentMethod($event)" [disabled]="newPaymentMethodPending || newPaymentMethodPrompt">Add Payment Method</button>',
+    template: '<button mat-raised-button (click)="addPaymentMethod($event)" [disabled]="newPaymentMethodPending || newPaymentMethodPrompt" [textContent]="addCardButtonText"></button>',
 })
 export class StripeSetupIntentComponent extends RootComponent implements OnInit {
 
@@ -52,9 +49,14 @@ export class StripeSetupIntentComponent extends RootComponent implements OnInit 
     newPaymentMethodPrompt = false
     newPaymentMethodPending = false
 
+    // Registry Attributes
+    @Input() urlRoot: string = '/Api'
+    @Input() paymentMethodApiPath: string = 'PaymentMethod'
+
+    // Component Attributes
+    @Input() addCardButtonText: string = 'Add Payment Method'
     @Input() detailedBillingInfo?: boolean
     @Input() defaultBillingInfo?: stripe.BillingDetails
-    paymentMethodApiPath = 'PaymentMethod'
 
     constructor(
         private elementRef: ElementRef,
@@ -65,7 +67,7 @@ export class StripeSetupIntentComponent extends RootComponent implements OnInit 
         super()
 
         // Initialization
-        this.uid = uniqueId(`sa_${snakeCase(this.title)}_`)
+        this.uid = safeUniqueId('sa', snakeCase(this.title))
         Stratus.Instances[this.uid] = this
         this.elementId = this.elementId || this.uid
 
@@ -89,16 +91,26 @@ export class StripeSetupIntentComponent extends RootComponent implements OnInit 
 
 
     async addPaymentMethod(ev?: any) {
+        if (ev) {
+            ev.preventDefault()
+            // ev.stopPropagation()
+        }
         if (!this.newPaymentMethodPending && !this.newPaymentMethodPrompt) {
-            // console.log('running addPaymentMethod')
+            // console.log('Stratus', Stratus)
+            // console.log('running addPaymentMethod', this)
             let clientSecret = ''
             let publishKey = ''
             let formMessage = ''
             this.newPaymentMethodPending = true
 
-            const model = new Model({
+            const apiOptions: ModelOptions = {
                 target: this.paymentMethodApiPath
-            })
+            }
+            if (this.urlRoot) {
+                apiOptions.urlRoot = this.urlRoot
+            }
+
+            const model = new Model(apiOptions)
             model.data.setupIntent = true
             await model.save()
             // console.log('model', model)
@@ -123,6 +135,7 @@ export class StripeSetupIntentComponent extends RootComponent implements OnInit 
                 }
             }
             // TODO check status
+            // console.log('did returned checks')
 
             if (
                 !isEmpty(clientSecret) &&
@@ -152,6 +165,8 @@ export class StripeSetupIntentComponent extends RootComponent implements OnInit 
                 clientSecret,
                 publishKey,
                 formMessage,
+                urlRoot: this.urlRoot,
+                paymentMethodApiPath: this.paymentMethodApiPath,
                 detailedBillingInfo: this.detailedBillingInfo,
                 defaultBillingInfo: this.defaultBillingInfo
             } as StripePaymentMethodDialogData

@@ -5,7 +5,8 @@
           *ngIf="isStyled"
           [formGroup]='dialogContentForm'>
 
-        <mat-form-field class="form-field">
+        <mat-form-field class="form-field"
+                        *ngIf="dialogContentForm.get('linkTextInput').value !== ''">
             <mat-label>Link Text</mat-label>
             <input matInput
                    aria-label="Link Text"

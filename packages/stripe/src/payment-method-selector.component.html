@@ -19,7 +19,7 @@
                     *ngIf="paymentCollection.completed && !paymentCollection.pending && paymentCollection.models.length === 0"
                     [disabled]="true"
             >
-                No Payment Methods on file.
+                No Payment Method on file.
             </mat-option>
             <mat-option class="current-selection" *ngIf="form.controls[fieldName].value">
                 <sa-stripe-payment-method-item [(model)]="form.controls[fieldName].value"></sa-stripe-payment-method-item>
@@ -35,7 +35,13 @@
                     [hidden]="!paymentCollection.completed || paymentCollection.pending"
                     [disabled]="true"
             >
-                <sa-stripe-setup-intent data-detailed-billing-info="true" [defaultBillingInfo]="defaultBillingInfo"></sa-stripe-setup-intent>
+                <sa-stripe-setup-intent
+                        data-detailed-billing-info="true"
+                        [defaultBillingInfo]="defaultBillingInfo"
+                        [urlRoot]="urlRoot"
+                        [paymentMethodApiPath]="paymentMethodApiPath"
+                        [addCardButtonText]="addCardButtonText"
+                ></sa-stripe-setup-intent>
             </mat-option>
         </mat-select>
         <input formControlName="{{fieldNameId}}" [attr.id]="elementId+'_'+fieldNameId" type="text" style="display: none;">

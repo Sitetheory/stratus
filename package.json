@@ -9,18 +9,19 @@
   "scripts": {
     "test": "npm run build && npm run lint",
     "build": "npm run compileCSS && npm run compileCoffee && npm run bundle && npm run compileTypeScript && npm run dist && npm run compress",
-    "bundle": "gulp compileES6TypeScript && rollup -c --bundleConfigAsCjs && ./dist-names.sh",
-    "compile": "gulp compile",
-    "compress": "gulp compress",
-    "design": "gulp design",
-    "dist": "gulp dist",
-    "compileCSS": "gulp compileCSS",
-    "compileCoffee": "gulp compileCoffee",
-    "compileTypeScript": "gulp compileTypeScript",
-    "karma": "node_modules/karma/bin/karma start karma.conf.js --single-run",
-    "mocha": "mocha --recursive --reporter mochawesome --reporter-options reportDir=reports",
-    "lint": "gulp lint",
-    "lint-deprecate": "gulp lint && ng lint"
+    "bundle": "node_modules/.bin/gulp compileES6TypeScript && npm run rollup",
+    "rollup": "node_modules/.bin/rollup -c && ./dist-names.sh",
+    "compile": "node_modules/.bin/gulp compile",
+    "compress": "node_modules/.bin/gulp compress",
+    "design": "node_modules/.bin/gulp design",
+    "dist": "node_modules/.bin/gulp dist",
+    "compileCSS": "node_modules/.bin/gulp compileCSS",
+    "compileCoffee": "node_modules/.bin/gulp compileCoffee",
+    "compileTypeScript": "node_modules/.bin/gulp compileTypeScript",
+    "karma": "node_modules/.bin/karma start karma.conf.js --single-run",
+    "mocha": "node_modules/.bin/mocha --recursive --reporter mochawesome --reporter-options reportDir=reports",
+    "lint": "node_modules/.bin/gulp lint",
+    "lint-deprecate": "node_modules/.bin/gulp lint && ng lint"
   },
   "repository": {
     "type": "git",
@@ -44,7 +45,7 @@
     "typescript"
   ],
   "engines": {
-    "yarn": ">= 1.21.1"
+    "npm": ">= 8.19.3"
   },
   "devDependencies": {
     "@agentepsilon/decko": "^2.0.1",
@@ -86,6 +87,7 @@
     "@stratusjs/idx": "file:packages/idx",
     "@stratusjs/map": "file:packages/map",
     "@stratusjs/runtime": "file:packages/runtime",
+    "@stratusjs/stripe": "file:packages/stripe",
     "@stratusjs/swiper": "file:packages/swiper",
     "@testing-library/jest-dom": "^5.16.4",
     "@testing-library/react": "^13.3.0",
@@ -105,8 +107,8 @@
     "@types/react": "^18.0.5",
     "@types/react-dom": "^18.0.0",
     "@types/stripe-v3": "^3.1.17",
-    "@types/swiper": "^5.2.0",
     "@types/systemjs": "^6.1.0",
+    "@types/toastify-js": "^1.11.1",
     "@types/vfile-message": "^2.0.0",
     "@typescript-eslint/eslint-plugin": "5.29.0",
     "@typescript-eslint/parser": "5.29.0",
@@ -115,6 +117,7 @@
     "autoprefixer": "^10.4.13",
     "babel-core": "^6.26.3",
     "babel-preset-env": "^1.7.0",
+    "bowser": "^2.11.0",
     "codelyzer": "^6.0.2",
     "codemirror": "^6.0.1",
     "core-js": "^3.19.0",
@@ -184,6 +187,7 @@
     "style-loader": "^3.3.1",
     "systemjs": "^6.1.4",
     "terser": "^4.8.0",
+    "toastify-js": "^1.12.0",
     "ts-loader": "^9.4.1",
     "ts-node": "^10.8.2",
     "ts-node-dev": "^2.0.0",

@@ -1,0 +1,269 @@
+/*
+Nothing should be outside 'stratus-idx-property-list' or it will leak into other modules
+Additionally 'stratus-idx-property-list .property-list-carousel' ensures still CSS only affects the carousel template and not others
+z-index can cause a bleeding effect on popups (z-index 100 equates to the top most item for angular, use the lowest number possible and work up)
+TODO Need to size this based on column and window
+FIXME we CANNOT rely of media queries, it needs to know the sizing of the element or else widgets may never get properly sized. (if used as modular widgets)
+*/
+@tablet: ~"(max-width: 959px)";
+@phone: ~"(max-width: 600px)";
+@desktop-only: ~"(min-width: 600px)";
+stratus-idx-property-list .property-list-carousel {
+  stratus-swiper-carousel {
+    .swiper {
+      /* Images are dynamic and might not have a width at first */
+      width: 100%;
+    }
+    .swiper-button-prev,
+    .swiper-button-next {
+      color: #fff;
+      background: rgb(0 0 0 / 60%);
+      height: 70px;
+      width: 60px;
+      transition: all 0.2s ease-out;
+      -webkit-transition: all 0.2s ease-out;
+      &:hover {
+        background: rgba(0 0 0 / 90%);
+      }
+    }
+    .swiper-button-prev,
+    .swiper-rtl .swiper-button-next {
+      left: var(--swiper-navigation-sides-offset, 0);
+    }
+    .swiper-button-next,
+    .swiper-rtl .swiper-button-prev {
+      right: var(--swiper-navigation-sides-offset, 0);
+    }
+    .swiper-pagination {
+      color: #fff;
+      text-shadow: 0 0 3px rgb(0 0 0 / 80%);
+      transition: all 0.2s ease-out;
+      -webkit-transition: all 0.2s ease-out;
+      .swiper-pagination-bullet {
+        background-color: #fff;
+        opacity: 0.3;
+        &:hover,
+        &.swiper-pagination-bullet-active {
+          opacity: 1;
+        }
+        &.swiper-pagination-number-bullet.swiper-pagination-bullet-active {
+          color: #000;
+        }
+      }
+    }
+  }
+
+  .no-results {
+    padding: 200px 40px 0;
+    font-size: 24px;
+    text-align: center;
+    background: url('images/no-results.png') no-repeat center 80px;
+    background-size: 80px;
+  }
+
+  /* Property */
+  .property-container {
+    position: relative;
+    text-align: center;
+    float: left;
+    width: 100%;
+
+    /* force image to load by being on the screen */
+    min-width: 10px;
+    min-height: 10px;
+
+    .property-item {
+      position: relative;
+
+      .property-content-container {
+        position: relative;
+
+        /* IDX Image */
+        .property-image {
+          position: relative;
+          background: #000;
+          .image-wrapper {
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+          }
+          img {
+            width: 100%;
+          }
+          a {
+            &,
+            * {
+              transition: all 0.2s ease-out;
+              -webkit-transition: all 0.2s ease-out;
+            }
+
+            display: block;
+            position: relative;
+          }
+        }
+
+        /* IDX Text */
+        .property-content {
+          pointer-events: none;
+          z-index: 1;
+          position: absolute;
+          left: 0;
+          right: 0;
+          bottom: 40px;
+          margin: 0 auto;
+          text-transform: uppercase;
+          color: #fff;
+          text-shadow: 0 0 3px rgba(0, 0, 0, 0.8);
+          font-size: 15px;
+          font-weight: normal;
+          line-height: 21px;
+
+          md-icon.property-icon {
+            height: unset;
+            width: unset;
+            min-height: unset;
+            min-width: unset;
+            &.icon-bed {
+              width: 16px;
+            }
+            &.icon-bath {
+              width: 22px;
+            }
+            svg {
+              g {
+                fill: #fff;
+              }
+            }
+          }
+
+          span+span.line-separator-left-more {
+            padding-left: 16px;
+            margin-left: 16px;
+            border-left: 1px solid rgba(255,255,255,.5);
+          }
+
+          span+span.line-separator-left {
+            padding-left: 8px;
+            margin-left: 8px;
+            border-left: 1px solid rgba(255,255,255,.5);
+          }
+
+          /* MLS service + number */
+          .mls-service-name {
+            img {
+              width: unset;
+              max-height: 15px;
+            }
+          }
+
+          .property-status-price-container {
+            margin-top: 12px;
+            font-size: 26px;
+            line-height: 26px;
+            .property-status {
+              display: inline-block;
+              font-size: 26px;
+              padding: unset;
+              margin: unset;
+              letter-spacing: unset;
+              font-weight: 400;
+              background: unset;
+            }
+            .property-price {}
+          }
+
+          .property-details-container {
+            margin-top: 12px;
+            font-weight: 700;
+            .property-address {}
+            .property-bed,
+            .property-bath {}
+            .property-sqft {}
+          }
+          .property-data {
+            padding: 0;
+            font-size: 13px;
+            line-height: 2;
+            .property-type > span {
+              /* \0a is for '&nbsp', which is need if this the template is minified and spans spaces are removed */
+              &::after {
+                display: inline;
+                content: "\0a|\0a";
+                padding: 0 2px;
+              }
+              &:last-child::after {
+                content: "";
+              }
+            }
+          }
+        }
+      }
+      &.highlight {
+        background-color: rgb(0 0 0 / 12%);
+      }
+    }
+  }
+
+  /* Property List */
+  .list-container {
+    margin: 10px -8px 0;
+
+    /* Details button */
+
+    .property-button-container {
+      .button {
+        margin: 0 auto;
+      }
+    }
+  }
+
+  /* Disclaimer - Only affects this List's disclaimer */
+  stratus-idx-disclaimer .disclaimer-outer-container {
+    margin-top: 20px;
+    padding-top: 20px;
+    text-transform: none;
+    letter-spacing: normal;
+  }
+}
+
+/* Dialog box */
+.stratus-idx-property-list-dialog {
+  transform: none;
+  -webkit-transform: none;
+  max-width: 95%;
+  max-height: 95%;
+
+  /* Keep Close Button floating at top right */
+  .popup-close-button-container {
+    transition: all 0.2s ease-out;
+    -webkit-transition: all 0.2s ease-out;
+    position: fixed;
+    z-index: 2;
+    top: 2%;
+    right: 2%;
+    padding: 6px;
+    background: transparent;
+    border-radius: 50%;
+    &:hover {
+      background: #fff;
+    }
+    .close-button {
+      transition: all 0.2s ease-out;
+      width: 30px;
+      height: 30px;
+      background-image: url("data:image/svg+xml, %3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 18 18'%3E%3Cpath d='M14.53 4.53l-1.06-1.06L9 7.94 4.53 3.47 3.47 4.53 7.94 9l-4.47 4.47 1.06 1.06L9 10.06l4.47 4.47 1.06-1.06L10.06 9z'/%3E%3C/svg%3E ");
+      background-repeat: no-repeat;
+      background-position: center;
+      border: 1px solid #000;
+      border-radius: 25px;
+      &:hover {
+        opacity: 0.8;
+      }
+    }
+  }
+}
+
+/*
+md-dialog-backdrop css removed as this is Sitetheory specific and was already
+moved to SitetheoryPropertyBundle-PropertyFilter
+*/

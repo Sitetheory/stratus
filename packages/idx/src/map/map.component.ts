@@ -16,6 +16,7 @@ import {numeralFormat} from '@stratusjs/angularjs-extras/filters/numeral'
 // Stratus Preload
 // tslint:disable-next-line:no-duplicate-imports
 import '@stratusjs/idx/idx'
+import '@stratusjs/map/map' // We need sa-map
 
 // Environment
 const min = !cookie('env') ? '.min' : ''
@@ -35,6 +36,7 @@ export type IdxMapScope = IdxComponentScope & {
     list: IdxListScope
 
     instancePath: string
+    instanceFullPath: string
     googleMapsKey: string
     mapType: string
     zoom: number
@@ -186,7 +188,8 @@ Stratus.Components.IdxMap = {
         $scope.uid = safeUniqueId(packageName, moduleName, componentName)
         Stratus.Instances[$scope.uid] = $scope
         $scope.elementId = $attrs.elementId || $scope.uid
-        $scope.instancePath = `Stratus.Instances.${$scope.elementId}`
+        $scope.instancePath = $scope.elementId
+        $scope.instanceFullPath = `Stratus.Instances.${$scope.instancePath}`
 
         this.$onInit = () => {
             $scope.Idx = Idx
@@ -238,7 +241,7 @@ Stratus.Components.IdxMap = {
                 $scope.initialized = true
             } else {
                 Idx.on('Idx', 'sessionInit', () => {
-                    console.log('session init')
+                    Idx.devLog('map received session init')
                     $scope.initialized = true
                 })
             }
@@ -331,6 +334,7 @@ Stratus.Components.IdxMap = {
             // console.log('idx map is running the map!!!!', map)
             $scope.map = map
             $scope.$applyAsync(() => {
+                Idx.devLog('Map initialized', $scope.map)
                 $scope.mapInitialized = true
             })
             await $scope.mapUpdate()

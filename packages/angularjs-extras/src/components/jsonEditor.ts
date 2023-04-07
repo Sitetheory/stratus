@@ -74,7 +74,7 @@ Stratus.Components.JsonEditor = {
                     return
                 }
                 // This will prettify the results
-                const jsonString = JSON.stringify(jsonObject)
+                const jsonString = JSON.stringify(jsonObject, null, 2)
                 if ($scope.jsonString === jsonString) {
                     return
                 }

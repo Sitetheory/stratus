@@ -1,0 +1,27 @@
+<div id="{{elementId}}" class="property-list property-list-map" data-ng-cloak>
+    <md-progress-linear data-ng-if="!initialized" md-mode="indeterminate"></md-progress-linear>
+    <div data-ng-if="initialized">
+
+        <md-progress-linear data-ng-show="collection.pending" md-mode="indeterminate"></md-progress-linear>
+        <div data-ng-show="collection.completed && !collection.pending && collection.models.length === 0" class="no-results">
+            <!-- FIXME make this a slide in carousel? -->
+            We didn't find any properties that fit your criteria.<span> You might want to try a broader search.</span>
+        </div>
+        <section role="region" aria-label="Property Results List">
+            <div data-ng-show="collection.completed && !collection.pending && collection.models.length > 0"
+                 class="list-container clearfix"
+                 role="list"
+                 aria-label="Property Results"
+                 aria-live="polite"
+            >
+                <stratus-idx-map
+                    data-list-id="{{elementId}}"
+                    data-marker-price="true"
+                    data-marker-icon=""
+                    data-marker-icon-hover=""
+                ></stratus-idx-map>
+            </div>
+        </section>
+        <stratus-idx-disclaimer data-init-now="collection.completed" data-hide-on-duplicate="{{hideDisclaimer}}"></stratus-idx-disclaimer>
+    </div>
+</div>

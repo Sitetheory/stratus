@@ -63,11 +63,28 @@
                     </div>
                 </div>
                 <div data-layout="row">
+                    <div
+                            class="search-input" data-flex="50"
+                            data-ng-if="options.query.where.MLSAreaMajor && options.query.where.MLSAreaMajor.length"
+                    >
+                        <md-chips
+                                class="neighborhood font-secondary"
+                                aria-label="Areas to Limit (deprecated)"
+                                data-ng-model="options.query.where.MLSAreaMajor"
+                                data-md-enable-chip-edit="true"
+                                data-md-add-on-blur="true"
+                                data-md-separator-keys="[$mdConstant.KEY_CODE.ENTER, $mdConstant.KEY_CODE.COMMA]"
+                                data-placeholder="Area (deprecated)"
+                                data-secondary-placeholder="+Area (deprecated)"
+                                data-delete-button-label="Remove Area (deprecated)"
+                                data-delete-hint="Press delete to remove Area (deprecated)"
+                        ></md-chips>
+                    </div>
                     <div class="search-input" data-flex="50">
                         <md-chips
                                 class="neighborhood font-secondary"
                                 aria-label="Neighborhoods to Limit"
-                                data-ng-model="options.query.where.MLSAreaMajor"
+                                data-ng-model="options.query.where.Neighborhood"
                                 data-md-enable-chip-edit="true"
                                 data-md-add-on-blur="true"
                                 data-md-separator-keys="[$mdConstant.KEY_CODE.ENTER, $mdConstant.KEY_CODE.COMMA]"
@@ -369,7 +386,7 @@
                             </md-option>
                         </md-select>
                     </md-input-container>
-                    <div class="disclaimer" data-ng-if="options.query.service.length > 1">NOTE: Our component can display multiple data sources in the same feed, but we do not fully support this yet because there is a complex logic problem with mixing the data across multiple pages (sometimes the same property appears twice). However there are cases where you may want to show all your own "Exclusive" previously sold properties along side your MLS sold properties, so since this is a limited number of properties, it could be displayed all on one page (go to the advanced tab and increase items per page to the maximum to avoid paging).</div>
+                    <!--<div class="disclaimer" data-ng-if="options.query.service.length > 1">NOTE: Our component can display multiple data sources in the same feed, but we do not fully support this yet because there is a complex logic problem with mixing the data across multiple pages (sometimes the same property appears twice). However there are cases where you may want to show all your own "Exclusive" previously sold properties along side your MLS sold properties, so since this is a limited number of properties, it could be displayed all on one page (go to the advanced tab and increase items per page to the maximum to avoid paging).</div>-->
                 </div>
             </div>
 

@@ -1,4 +1,4 @@
-// Angular Core
+/* tslint:disable:no-inferrable-types */
 import {
     Component,
     ElementRef,
@@ -13,25 +13,15 @@ import {
     MAT_DIALOG_DATA,
     MatDialogRef
 } from '@angular/material/dialog'
-/*import {
-    FormBuilder,
-    FormGroup
-} from '@angular/forms'*/
-
-// Runtime
-import {assignIn, includes, isEmpty, isObject, isString, set, snakeCase, uniqueId} from 'lodash'
+import {assignIn, includes, isEmpty, isObject, isString, set, snakeCase} from 'lodash'
 import {keys} from 'ts-transformer-keys'
-
-// Stratus Dependencies
 import {
     Stratus
 } from '@stratusjs/runtime/stratus'
 import {RootComponent} from '../../angular/src/core/root.component'
-import {Model} from '@stratusjs/angularjs/services/model'
+import {Model, ModelOptions} from '@stratusjs/angularjs/services/model'
 import {cookie} from '@stratusjs/core/environment'
-
-
-// Services
+import {safeUniqueId} from '@stratusjs/core/misc'
 import {StripeService} from './stripe.service'
 
 // Local Setup
@@ -59,6 +49,10 @@ export class StripePaymentMethodComponent extends RootComponent implements OnDes
     // Dependencies
     _: any
 
+    // Registry Attributes
+    @Input() urlRoot: string = '/Api'
+    @Input() paymentMethodApiPath: string = 'PaymentMethod'
+
     // States
     styled = false
     initialized = false
@@ -72,7 +66,6 @@ export class StripePaymentMethodComponent extends RootComponent implements OnDes
     @Input() formMessage = ''
     @Input() detailedBillingInfo?: boolean
     @Input() defaultBillingInfo?: stripe.BillingDetails
-    paymentMethodApiPath = 'PaymentMethod'
     billingInfo: stripe.BillingDetails = { // fixme should copy stripe.BillingDetails // PaymentBillingInfo
         address: {}
     }
@@ -90,7 +83,7 @@ export class StripePaymentMethodComponent extends RootComponent implements OnDes
         super()
 
         // Initialization
-        this.uid = uniqueId(`sa_${snakeCase(this.title)}_`)
+        this.uid = safeUniqueId('sa', snakeCase(this.title))
         Stratus.Instances[this.uid] = this
         this.elementId = this.elementId || this.uid
 
@@ -137,7 +130,7 @@ export class StripePaymentMethodComponent extends RootComponent implements OnDes
             options,
             `#${this.elementId}-mount`
         )
-        // console.log('loading', clone(options))
+        // console.log('PaymentMethod loading', options, this)
         // Render the Card
         // this.card.mount(`#${this.elementId}-mount`)
         // Provide possible Stripe errors
@@ -197,7 +190,11 @@ export class StripePaymentMethodComponent extends RootComponent implements OnDes
     /**
      * Check and template fields and submit to Stripe to attempt a Confirm Card Setup
      */
-    async saveCard() {
+    async saveCard(ev?: any) {
+        if (ev) {
+            ev.preventDefault()
+            // ev.stopPropagation()
+        }
         if (!this.isSubmittable()) {
             // prevent trying to submit when not needed
             return
@@ -239,10 +236,16 @@ export class StripePaymentMethodComponent extends RootComponent implements OnDes
             && isString(setupIntent.payment_method)
         ) {
             // The setup has succeeded.
-            // Send setupIntent.payment_method to your server to save the card to a Customer as default
-            const model = new Model({
+
+            const apiOptions: ModelOptions = {
                 target: this.paymentMethodApiPath
-            })
+            }
+            if (this.urlRoot) {
+                apiOptions.urlRoot = this.urlRoot
+            }
+
+            // Send setupIntent.payment_method to your server to save the card to a Customer as default
+            const model = new Model(apiOptions)
             model.data = {
                 payment_method: setupIntent.payment_method
             }
@@ -287,6 +290,8 @@ export interface StripePaymentMethodDialogData {
     clientSecret: string
     publishKey: string
     formMessage: string
+    urlRoot?: string,
+    paymentMethodApiPath?: string,
     detailedBillingInfo?: boolean
     defaultBillingInfo?: stripe.BillingDetails
 }

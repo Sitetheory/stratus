@@ -1,6 +1,7 @@
-// Angular Core
+/* tslint:disable:no-inferrable-types */
 import {
-    AfterViewInit,
+    // AfterViewInit,
+    ChangeDetectorRef,
     Component,
     ElementRef,
     Input,
@@ -8,21 +9,15 @@ import {
 } from '@angular/core'
 // import {ComponentPortal} from '@angular/cdk/portal'
 import {DomSanitizer} from '@angular/platform-browser'
-
-// Runtime
-import {snakeCase, uniqueId} from 'lodash'
+import {snakeCase} from 'lodash'
 import {keys} from 'ts-transformer-keys'
-
-// Stratus Dependencies
 import {
     Stratus
 } from '@stratusjs/runtime/stratus'
 import {RootComponent} from '../../angular/src/core/root.component'
-import {Collection} from '@stratusjs/angularjs/services/collection'
+import {Collection, CollectionOptions} from '@stratusjs/angularjs/services/collection'
 import {cookie} from '@stratusjs/core/environment'
-// import {StripePaymentMethodItemComponent} from '@stratusjs/stripe/payment-method-item.component'
-
-// Services
+import {safeUniqueId} from '@stratusjs/core/misc'
 import {StripeService} from './stripe.service'
 
 
@@ -40,7 +35,7 @@ const localDir = `${Stratus.BaseUrl}${Stratus.DeploymentPath}@stratusjs/${packag
     selector: `sa-${packageName}-${componentName}`,
     templateUrl: `${localDir}${componentName}.component${min}.html`,
 })
-export class StripePaymentMethodListComponent extends RootComponent implements AfterViewInit, OnInit {
+export class StripePaymentMethodListComponent extends RootComponent implements OnInit { // AfterViewInit
 
     // Basic Component Settings
     title = `${packageName}_${componentName}_component`
@@ -51,13 +46,31 @@ export class StripePaymentMethodListComponent extends RootComponent implements A
     styled = false
     initialized = false
 
-    // paymentItemComponentPortal: ComponentPortal<StripePaymentMethodItemComponent>
-    collection: Collection
+    // Registry Attributes
+    @Input() urlRoot: string = '/Api'
+    @Input() paymentMethodApiPath: string = 'PaymentMethod'
+
+    // Component Attributes
+    @Input() addCardButtonText: string = 'Add Payment Method'
+    @Input() disabled: boolean | string = false // inputs are strings..
+    @Input() property: string
     @Input() detailedBillingInfo?: boolean
-    paymentMethodApiPath = 'PaymentMethod'
+    @Input() defaultBillingName?: string
+    @Input() defaultBillingEmail?: string
+    @Input() defaultBillingPhone?: string
+    @Input() defaultBillingZip?: string
+    @Input() defaultBillingState?: string
+    @Input() defaultBillingCity?: string
+    @Input() defaultBillingAddress1?: string
+    @Input() defaultBillingAddress2?: string
+    defaultBillingInfo: stripe.BillingDetails = {address: {}}
+
+    // Component data
+    paymentCollection: Collection
 
     constructor(
         private elementRef: ElementRef,
+        protected ref: ChangeDetectorRef,
         private sanitizer: DomSanitizer,
         private Stripe: StripeService,
     ) {
@@ -65,7 +78,7 @@ export class StripePaymentMethodListComponent extends RootComponent implements A
         super()
 
         // Initialization
-        this.uid = uniqueId(`sa_${snakeCase(this.title)}_`)
+        this.uid = safeUniqueId('sa', snakeCase(this.title))
         Stratus.Instances[this.uid] = this
         this.elementId = this.elementId || this.uid
 
@@ -80,16 +93,46 @@ export class StripePaymentMethodListComponent extends RootComponent implements A
                 this.styled = false
             })
 
-        // TODO needs to make use of Observables
-        this.collection = new Collection({
+        // Hydrate Root App Inputs
+        this.hydrate(this.elementRef, this.sanitizer, keys<StripePaymentMethodListComponent>())
+
+        const apiOptions: CollectionOptions = {
             autoSave: false,
             target: this.paymentMethodApiPath,
             watch: true
             // TODO remove pagination?
-        })
+        }
+        if (this.urlRoot) {
+            apiOptions.urlRoot = this.urlRoot
+        }
 
-        // Hydrate Root App Inputs
-        this.hydrate(this.elementRef, this.sanitizer, keys<StripePaymentMethodListComponent>())
+        // TODO needs to make use of Observables
+        this.paymentCollection = new Collection(apiOptions)
+
+        if (this.defaultBillingName) {
+            this.defaultBillingInfo.name = this.defaultBillingName
+        }
+        if (this.defaultBillingEmail) {
+            this.defaultBillingInfo.email = this.defaultBillingEmail
+        }
+        if (this.defaultBillingPhone) {
+            this.defaultBillingInfo.phone = this.defaultBillingPhone
+        }
+        if (this.defaultBillingZip) {
+            this.defaultBillingInfo.address.postal_code = this.defaultBillingZip
+        }
+        if (this.defaultBillingState) {
+            this.defaultBillingInfo.address.state = this.defaultBillingState
+        }
+        if (this.defaultBillingCity) {
+            this.defaultBillingInfo.address.city = this.defaultBillingCity
+        }
+        if (this.defaultBillingAddress1) {
+            this.defaultBillingInfo.address.line1 = this.defaultBillingAddress1
+        }
+        if (this.defaultBillingAddress2) {
+            this.defaultBillingInfo.address.line2 = this.defaultBillingAddress2
+        }
     }
 
     /**
@@ -97,17 +140,17 @@ export class StripePaymentMethodListComponent extends RootComponent implements A
      */
     async ngOnInit() {
         await this.fetchPaymentMethods()
-        this.Stripe.registerCollection(this.collection)
+        this.Stripe.registerCollection(this.paymentCollection)
         this.initialized = true
 
     }
 
-    ngAfterViewInit() {
+    /*ngAfterViewInit() {
         // this.paymentItemComponentPortal = new ComponentPortal(StripePaymentMethodItemComponent)
-    }
+    }*/
 
     async fetchPaymentMethods() {
-        await this.collection.fetch()
+        await this.paymentCollection.fetch()
+        await this.refresh()
     }
-
 }

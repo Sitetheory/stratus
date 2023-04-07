@@ -263,6 +263,7 @@ export interface WhereOptions extends LooseObject {
     CityRegion?: string[] | string,
     CountyOrParish?: string[] | string,
     MLSAreaMajor?: string[] | string,
+    SubdivisionName?: string[] | string,
     ListPriceMin?: number | any,
     ListPriceMax?: number | any,
     Bathrooms?: number | any, // Previously BathroomsFullMin
@@ -653,6 +654,7 @@ const angularJsService = (
         ListingType: [],
         CountyOrParish: [],
         MLSAreaMajor: [],
+        SubdivisionName: [],
         Neighborhood: [],
         PostalCode: [],
         // NOTE: at this point we don't know if CityRegion is used (or how it differs from MLSAreaMajor)
@@ -1887,6 +1889,10 @@ const angularJsService = (
                     // Note: only 'in' seems to work as a replacement for inq when nested in another object
                     type: 'stringLikeArray'
                 },
+                SubdivisionName: {
+                    // Note: only 'in' seems to work as a replacement for inq when nested in another object
+                    type: 'stringLikeArray'
+                },
                 MLSAreaMajor: {
                     // Note: only 'in' seems to work as a replacement for inq when nested in another object
                     type: 'stringLikeArray'
@@ -1901,6 +1907,7 @@ const angularJsService = (
                         {apiField: 'City', type: 'stringLikeArray'},
                         {apiField: 'CityRegion', type: 'stringLikeArray'},
                         {apiField: 'CountyOrParish', type: 'stringLikeArray'},
+                        {apiField: 'SubdivisionName', type: 'stringLikeArray'},
                         {apiField: 'MLSAreaMajor', type: 'stringLikeArray'},
                         {apiField: 'PostalCode', type: 'stringLikeArray'},
                         // TODO: in the future we should pass in a new defined field like Address (that will
@@ -1915,7 +1922,7 @@ const angularJsService = (
                     type: 'andOr',
                     andOr: [
                         {apiField: 'CityRegion', type: 'stringLikeArray'},
-                        {apiField: 'CountyOrParish', type: 'stringLikeArray'},
+                        {apiField: 'SubdivisionName', type: 'stringLikeArray'},
                         {apiField: 'MLSAreaMajor', type: 'stringLikeArray'}
                     ]
                 }

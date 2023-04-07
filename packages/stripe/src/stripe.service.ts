@@ -1,12 +1,8 @@
-// Angular Core
 import { Injectable } from '@angular/core'
-// Runtime
-import {isEmpty, isNil, isString, uniqueId} from 'lodash'
-
-// Stratus Dependencies
+import {isEmpty, isNil, isString} from 'lodash'
 import {Stratus} from '@stratusjs/runtime/stratus'
 import {Collection} from '@stratusjs/angularjs/services/collection'
-
+import {safeUniqueId} from '@stratusjs/core/misc'
 
 interface StripeVariables {
     stripe?: stripe.Stripe
@@ -41,9 +37,13 @@ export class StripeService {
             try {
                 await Stratus.Internals.JsLoader('https://js.stripe.com/v3/')
                 if (!Object.prototype.hasOwnProperty.call(window, 'Stripe')) {
-                    console.error('Stripe Api was not initialized, cannot continue')
-                    this.initializing = false
-                    return
+                    console.warn('Stripe Api was not initialized yet, waiting...')
+                    await this.delay(3000)
+                    if (!Object.prototype.hasOwnProperty.call(window, 'Stripe')) {
+                        console.error('Stripe Api was not initialized, cannot continue')
+                        this.initializing = false
+                        return
+                    }
                 }
             } catch (e) {
                 console.error('Stripe Api could not be fetched, cannot continue')
@@ -59,6 +59,12 @@ export class StripeService {
             // wait for completion
             return await this.waitForInitialization()
         }
+    }
+
+    async delay(ms: number): Promise<ReturnType<typeof setTimeout>> {
+        return new Promise((resolve) => {
+            return setTimeout(resolve, ms)
+        })
     }
 
     async waitForInitialization(): Promise<void> {
@@ -147,9 +153,10 @@ export class StripeService {
             console.warn('StripeElement for', this.currentElement.id, 'already exists. Destroying existing (consider cleaning up first)')
             this.destroyElement()
         }
+        // This will wait until Stripe API is inited before running
         const element = (await this.elements(publishKey)).create(paymentMethodType, options)
         this.currentElement = {
-            id: uniqueId(id+'_'),
+            id: safeUniqueId(id),
             paymentMethodType,
             element
         }

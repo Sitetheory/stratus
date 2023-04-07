@@ -180,7 +180,10 @@ import '../froala/plugins/mediaManager'
 import {FroalaEditorDirective} from 'angular-froala-wysiwyg'
 
 // CodeMirror Requirements
-import {basicSetup} from 'codemirror'
+import {
+    basicSetup,
+    EditorView
+} from 'codemirror'
 import {Extension} from '@codemirror/state'
 import {html} from '@codemirror/lang-html'
 import {oneDarkTheme} from '@codemirror/theme-one-dark'
@@ -512,6 +515,7 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             fromTextArea: (el: HTMLTextAreaElement, opts: LooseObject) => {
                 const extensions: Array<Extension> = [
                     basicSetup,
+                    EditorView.lineWrapping,
                     html({
                         // extraTags: [
                         //     'sa-editor'
@@ -675,28 +679,56 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             'md-svg-src',
             // Stratus AngularJS Tags
             'stratus-base',
+            'stratus-calculator-mortgage',
+            'stratus-calendar',
             'stratus-citation',
             'stratus-citation-notitle',
+            'stratus-contact-form',
             'stratus-content-selector',
             'stratus-date-time',
+            'stratus-delete',
             'stratus-error-message',
             'stratus-facebook',
             'stratus-filter',
             'stratus-help',
+            'stratus-idx-disclaimer',
+            'stratus-idx-map',
+            'stratus-idx-member-details',
+            'stratus-idx-member-list',
+            'stratus-idx-member-search',
+            'stratus-idx-office-list',
+            'stratus-idx-office-search',
+            'stratus-idx-property-details',
+            'stratus-idx-property-details-sub-section',
+            'stratus-idx-property-list',
+            'stratus-idx-property-search',
             'stratus-image-carousel',
             'stratus-json-editor',
             'stratus-media-details',
+            'stratus-media-drag-drop',
             'stratus-media-library',
             'stratus-media-selector',
             'stratus-media-short-details',
             'stratus-media-uploader',
+            'stratus-open-houses',
             'stratus-option-value',
             'stratus-pagination',
+            'stratus-password-reset',
             'stratus-permissions',
+            'stratus-proposal-alert',
             'stratus-publish',
+            'stratus-role',
             'stratus-search',
+            'stratus-single-sign-on',
+            'stratus-social-media',
+            'stratus-sort',
+            'stratus-swiper-carousel',
             'stratus-tag',
+            'stratus-theme-selector',
             'stratus-twitter-feed',
+            'stratus-user-authentication',
+            'stratus-user-selector',
+            'stratus-visual-selector',
             // Stratus Angular+ Tags
             'sa-boot',
             'sa-editor',

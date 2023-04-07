@@ -157,6 +157,7 @@ const locations: Locations = {
             'packages/*/dist/*.min.js',
             'packages/angularjs/src/**/*.min.js',
             'packages/angularjs-extras/src/**/*.min.js',
+            'packages/boot/src/**/*.min.js',
             'packages/calendar/src/**/*.min.js',
             'packages/idx/src/**/*.min.js',
             'packages/swiper/src/**/*.min.js'
@@ -245,6 +246,7 @@ function lintJS() {
         '!packages/angularjs-extras/src/directives/*.js',
         '!packages/angularjs-extras/src/filters/*.js',
         '!packages/angularjs-extras/src/services/*.js',
+        '!packages/boot/src/**/*.js',
         '!packages/runtime/src/stratus.js',
     ])
         /* *
@@ -304,9 +306,16 @@ function compressMangle() {
     if (!locations.mangle.core.length) {
         return Promise.resolve('No files selected.')
     }
-    return src(_.union(locations.mangle.core, nullify(locations.mangle.min), nullify(locations.mangle.nonstandard), nullify(locations.preserve.core)), {
-        base: '.'
-    })
+    return src(
+        _.union(
+            locations.mangle.core,
+            nullify(locations.mangle.min),
+            nullify(locations.mangle.nonstandard),
+            nullify(locations.preserve.core)
+        ), {
+            base: '.'
+        }
+    )
         /* *
         .pipe(debug({
             title: 'Compress Mangle:'
@@ -391,7 +400,13 @@ function compressPreserve() {
     if (!locations.preserve.core.length) {
         return Promise.resolve('No files selected.')
     }
-    return src(_.union(locations.preserve.core, nullify(locations.preserve.min), nullify(locations.preserve.external), nullify(locations.mangle.min)), {
+    return src(
+        _.union(
+            locations.preserve.core,
+            nullify(locations.preserve.min),
+            nullify(locations.preserve.external),
+            nullify(locations.mangle.min)
+        ), {
         base: '.'
     })
         /* *
@@ -569,8 +584,8 @@ function compileES6TypeScript() {
         return Promise.resolve('No files selected.')
     }
     const tsProject = ts.createProject('tsconfig.json', {
-        target: "es6",
-        module: "ES2020",
+        target: 'es6',
+        module: 'ES2020',
         getCustomTransformers: (program: any) => ({
             before: [
                 keysTransformer(program)

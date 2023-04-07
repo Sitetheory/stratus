@@ -1,5 +1,6 @@
 /*
 Nothing should be outside 'stratus-idx-property-list' or it will leak into other modules
+Additionally 'stratus-idx-property-list .property-list-default' ensures still CSS only affects the default template and not others
 z-index can cause a bleeding effect on popups (z-index 100 equates to the top most item for angular, use the lowest number possible and work up)
 TODO Need to size this based on column and window
 FIXME we CANNOT rely of media queries, it needs to know the sizing of the element or else widgets may never get properly sized. (if used as modular widgets)
@@ -7,7 +8,7 @@ FIXME we CANNOT rely of media queries, it needs to know the sizing of the elemen
 @tablet: ~"(max-width: 959px)";
 @phone: ~"(max-width: 600px)";
 @desktop-only: ~"(min-width: 600px)";
-stratus-idx-property-list {
+stratus-idx-property-list .property-list-default {
   .no-results {
     padding: 200px 40px 0;
     font-size: 24px;
@@ -18,7 +19,7 @@ stratus-idx-property-list {
 
   /* Generic dotted underline */
   .dotted-spaced-underline {
-    background-image: linear-gradient(to right, #333 25%, rgba(255, 255, 255, 0) 0%);
+    background-image: linear-gradient(to right, #333 25%, rgb(255 255 255 / 0%) 0%);
     background-position: bottom;
     background-size: 4px 1px;
     background-repeat: repeat-x;
@@ -237,7 +238,7 @@ stratus-idx-property-list {
     }
     md-card {
       &.property-item {
-        box-shadow: 0 0 1px 1px rgba(0, 0, 0, 0.15);
+        box-shadow: 0 0 1px 1px rgb(0 0 0 / 15%);
         transition: background-color linear 1000ms;
 
         /* IDX Image */
@@ -304,8 +305,8 @@ stratus-idx-property-list {
             text-transform: uppercase;
             letter-spacing: 1px;
             line-height: 1.4;
-            text-shadow: 0 0 3px rgba(0, 0, 0, 0.2);
-            background-color: rgba(0, 0, 0, 0.6);
+            text-shadow: 0 0 3px rgb(0 0 0 / 20%);
+            background-color: rgb(0 0 0 / 60%);
             color: #fff;
           }
         }
@@ -375,7 +376,7 @@ stratus-idx-property-list {
           }
         }
         &.highlight {
-          background-color: rgba(0, 0, 0, 0.12);
+          background-color: rgb(0 0 0 / 12%);
         }
       }
     }
@@ -417,12 +418,15 @@ stratus-idx-property-list {
         margin: 0 5px 0 0;
         min-width: 0;
         float: left;
-        border: 1px solid rgba(0, 0, 0, 0.2);
+        border: 1px solid rgb(0 0 0 / 20%);
         padding: 14px;
         outline: none;
         line-height: 8px;
         > .arrow {
           border-color: #222;
+        }
+        svg g {
+          fill: #222;
         }
         svg g {
           fill: #222;
@@ -442,7 +446,7 @@ stratus-idx-property-list {
           &,
           &:hover {
             background: none;
-            border: 1px solid rgba(0, 0, 0, 0.1);
+            border: 1px solid rgb(0 0 0 / 10%);
           }
           > .arrow,
           > .arrow:hover {

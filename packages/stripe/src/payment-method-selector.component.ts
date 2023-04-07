@@ -1,3 +1,4 @@
+/* tslint:disable:no-inferrable-types */
 // Angular Core
 import {
     ChangeDetectionStrategy,
@@ -9,24 +10,17 @@ import {
 } from '@angular/core'
 // import {ComponentPortal} from '@angular/cdk/portal'
 import {DomSanitizer} from '@angular/platform-browser'
-
-// Runtime
-import {snakeCase, uniqueId} from 'lodash'
+import {snakeCase} from 'lodash'
 import {keys} from 'ts-transformer-keys'
-
-// Stratus Dependencies
 import {
     Stratus
 } from '@stratusjs/runtime/stratus'
 import {RootComponent} from '../../angular/src/core/root.component'
-
 import {cookie} from '@stratusjs/core/environment'
-// import {StripePaymentMethodItemComponent} from '@stratusjs/stripe/payment-method-item.component'
-
-// Services
+import {safeUniqueId} from '@stratusjs/core/misc'
 import {StripeService} from './stripe.service'
 import {Registry} from '@stratusjs/angularjs/services/registry'
-import {Collection} from '@stratusjs/angularjs/services/collection'
+import {Collection, CollectionOptions} from '@stratusjs/angularjs/services/collection'
 import {Model} from '@stratusjs/angularjs/services/model'
 import {EventManager} from '@stratusjs/core/events/eventManager'
 import {Observable, ObservableInput, Subscriber, timer} from 'rxjs'
@@ -68,10 +62,12 @@ export class StripePaymentMethodSelectorComponent extends RootComponent implemen
     @Input() decouple: boolean
     @Input() direct: boolean
     @Input() api: object
-    @Input() urlRoot: string
+    @Input() urlRoot: string = '/Api'
     @Input() registryModel: boolean | string // inputs are strings.. // false will disable Registry
+    @Input() paymentMethodApiPath: string = 'PaymentMethod'
 
     // Component Attributes
+    @Input() addCardButtonText: string = 'Add Payment Method'
     @Input() disabled: boolean | string = false // inputs are strings..
     @Input() property: string
     @Input() detailedBillingInfo?: boolean
@@ -105,7 +101,6 @@ export class StripePaymentMethodSelectorComponent extends RootComponent implemen
     paymentCollection: Collection
 
     // paymentItemComponentPortal: ComponentPortal<StripePaymentMethodItemComponent>
-    paymentMethodApiPath = 'PaymentMethod'
 
     constructor(
         private elementRef: ElementRef,
@@ -118,7 +113,7 @@ export class StripePaymentMethodSelectorComponent extends RootComponent implemen
         super()
 
         // Initialization
-        this.uid = uniqueId(`sa_${snakeCase(this.title)}_`)
+        this.uid = safeUniqueId('sa', snakeCase(this.title))
         Stratus.Instances[this.uid] = this
         this.elementId = this.elementId || this.uid
 
@@ -127,24 +122,29 @@ export class StripePaymentMethodSelectorComponent extends RootComponent implemen
         Stratus.Internals.CssLoader(`${localDir}${componentName}.component${min}.css`)
             .then(() => {
                 this.styled = true
-                this.refresh()
+                this.refresh().then()
             })
             .catch(() => {
                 console.error('CSS Failed to load for Component:', this)
                 this.styled = false
-                this.refresh()
+                this.refresh().then()
             })
 
-        // TODO needs to make use of Observables
-        this.paymentCollection = new Collection({
+        // Hydrate Root App Inputs
+        this.hydrate(this.elementRef, this.sanitizer, keys<StripePaymentMethodSelectorComponent>())
+
+        const apiOptions: CollectionOptions = {
             autoSave: false,
             target: this.paymentMethodApiPath,
             watch: true
             // TODO remove pagination?
-        })
+        }
+        if (this.urlRoot) {
+            apiOptions.urlRoot = this.urlRoot
+        }
 
-        // Hydrate Root App Inputs
-        this.hydrate(this.elementRef, this.sanitizer, keys<StripePaymentMethodSelectorComponent>())
+        // TODO needs to make use of Observables
+        this.paymentCollection = new Collection(apiOptions)
 
         if (this.defaultBillingName) {
             this.defaultBillingInfo.name = this.defaultBillingName
@@ -218,13 +218,13 @@ export class StripePaymentMethodSelectorComponent extends RootComponent implemen
                     // we need to refresh the UI, as long as it has been initialized.
                     // FIXME: This doesn't work
                     if (this.initialized) {
-                        this.refresh()
+                        this.refresh().then()
                     }
                     return
                 }
                 dataControl.patchValue(evt)
                 // console.log('dataSub env', evt)
-                this.refresh()
+                this.refresh().then()
             })
         }
     }
@@ -268,7 +268,7 @@ export class StripePaymentMethodSelectorComponent extends RootComponent implemen
 
     async fetchPaymentMethods() {
         await this.paymentCollection.fetch()
-        this.refresh()
+        await this.refresh()
     }
 
     valueChanged(value: Model) {

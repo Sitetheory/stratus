@@ -19,7 +19,7 @@ import {DomSanitizer} from '@angular/platform-browser'
 import {keys} from 'ts-transformer-keys'
 import {Stratus} from '@stratusjs/runtime/stratus'
 // import {GoogleMap, MapInfoWindow, MapMarker} from '@angular/google-maps'
-import {debounce, isArray, isBoolean, isEmpty, isFunction, isNumber, isString} from 'lodash'
+import {debounce, isArray, isBoolean, isEmpty, isFunction, isNumber, isString, set} from 'lodash'
 import {isJSON, safeUniqueId} from '@stratusjs/core/misc'
 import {RootComponent} from '../../angular/src/core/root.component'
 
@@ -228,6 +228,7 @@ export class MapComponent extends RootComponent implements OnInit, AfterViewInit
     @Input() defaultIconHover: string | google.maps.Icon | google.maps.Symbol
     @Input() defaultIconLabelOriginX: number
     @Input() defaultIconLabelOriginY: number
+    disableMarkerAnimations = false
     options: google.maps.MapOptions = {
         mapTypeId: this.mapType,
         center: this.center,
@@ -269,6 +270,11 @@ export class MapComponent extends RootComponent implements OnInit, AfterViewInit
 
         // Hydrate Root App Inputs
         this.hydrate(this.elementRef, this.sanitizer, keys<MapComponent>())
+
+        if ('Safari' === Stratus.Client.name) {
+            // console.log('Safari is detected, disabling marker animations')
+            this.disableMarkerAnimations = true
+        }
 
         this.processOptions()
 
@@ -312,22 +318,19 @@ export class MapComponent extends RootComponent implements OnInit, AfterViewInit
                 maxWidth: 250
             })
 
-            const stopListeningForIdle = this.map.addListener('idle', () => {
-                // do something only the first time the map is loaded
-                // console.info('Map is now idle (almost inited)')
-                stopListeningForIdle.remove()
+            // No longer wait for tilesloaded or idle (they never kick off).
+            // Nothing else we can check for, assume the map is ready at start
+            const initialize = () => {
+                if (!this.initialized) {
+                    this.updateWidgetSize()
+                    this.processProvidedMarkersPath()
+                    this.processProvidedCallback()
 
-                this.updateWidgetSize()
-                this.processProvidedMarkersPath()
-                this.processProvidedCallback()
-
-                this.initialized = true
-                this.initializing = false
-            })
-
-            // this.initialized = true
-            // console.info('Map was thought to be inited')
-            // console.info(this.uid, 'Inited')
+                    this.initialized = true
+                    this.initializing = false
+                }
+            }
+            initialize()
         } catch (e) {
             console.error(this.uid, 'could not Init', e)
             this.initializing = false
@@ -532,8 +535,16 @@ export class MapComponent extends RootComponent implements OnInit, AfterViewInit
 
     private processProvidedCallback() {
         if (isString(this.callback)) {
+            // console.log('MAP: map looking for callback instance on window')
             // This callback is probably reference a path to a function. let's grab it
-            this.callback = this.watcher.getFromPath(window, this.callback)
+            let callbackFunc = this.watcher.getFromPath(window, this.callback)
+            if (!isFunction(callbackFunc)) {
+                // console.log('MAP: nothing on window found.')
+                // console.log('MAP: map looking for callback instance on Stratus', clone(this.callback), Stratus.Instances)
+                // We didn't find a function, let's attempt searching in the Instances
+                callbackFunc = this.watcher.getFromPath(Stratus.Instances, this.callback)
+            }
+            this.callback = callbackFunc
             // We'll use this below
         }
 
@@ -575,8 +586,11 @@ export class MapComponent extends RootComponent implements OnInit, AfterViewInit
         }
 
         try {
-            // TODO check if google is already loaded first
-            await Stratus.Internals.JsLoader(`https://maps.googleapis.com/maps/api/js?key=${this.googleMapsKey}`)
+            // Add a dummy function to window so Google stops complaining
+            set(window, 'googleMapDummyFunc', () => {})
+            await Stratus.Internals.JsLoader(
+                `https://maps.googleapis.com/maps/api/js?key=${this.googleMapsKey}&callback=googleMapDummyFunc`
+            )
             // console.log('Google Maps Api Loaded')
         } catch (e) {
             console.error('Google Maps Api could not be fetched, cannot continue')
@@ -700,6 +714,11 @@ export class MapComponent extends RootComponent implements OnInit, AfterViewInit
             realMarker.addListener('click', () => {
                 this.mapClick(realMarker, marker as MarkerSettings)
             })
+        }
+
+        // Animations can break for certain clients. Lets disable them if that's the case
+        if (this.disableMarkerAnimations) {
+            realMarker.setAnimation(null)
         }
 
         // Add Checks to keep hover over on top

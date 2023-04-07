@@ -1,6 +1,9 @@
 // Normalizers
 import './polyfills'
 
+// Compiler is Required for PlatformBrowserDynamic in Angular 13+
+// import '@angular/compiler'
+
 // Angular Core
 import {enableProdMode, NgModuleRef} from '@angular/core'
 import {platformBrowserDynamic} from '@angular/platform-browser-dynamic'

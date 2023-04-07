@@ -2,12 +2,26 @@
 import {
     InputButtonPlugin
 } from './inputButton'
+
+// Link Dialog
 import {
     Link
 } from '../../editor/link-dialog.component'
+
+// Stratus Core
 import {
     LooseObject
 } from '@stratusjs/core/misc'
+
+// Stratus Runtime
+import {
+    Stratus
+} from '@stratusjs/runtime/stratus'
+
+// External Dependencies
+import {
+    uniqueId
+} from 'lodash'
 
 // @ts-ignore
 import FroalaEditor from 'froala-editor'
@@ -21,13 +35,18 @@ FroalaEditor.DEFAULTS = Object.assign(FroalaEditor.DEFAULTS, {
  * @param editor The Froala instance
  */
 FroalaEditor.PLUGINS.linkManager = function linkManager (editor: any) {
+    // Local Variables
     let inputButton: InputButtonPlugin
 
-    const linkPlugin = FroalaEditor.PLUGINS.link(editor)
     const debug = false
 
     // When the plugin is initialized,this will be called.
     function _init() {
+        // Set UID
+        this.uid = uniqueId(`froala_link_manager_`)
+        Stratus.Instances[this.uid] = this
+
+        // Create Input Button
         inputButton = new InputButtonPlugin<Link>({
             name: 'Link Manager',
             eventName: 'link-library',
@@ -40,17 +59,26 @@ FroalaEditor.PLUGINS.linkManager = function linkManager (editor: any) {
                 if (link.target) {
                     attrs.target = '_blank'
                 }
-                linkPlugin.insert(link.url, link.text, attrs)
+                editor.link.insert(link.url, link.text, attrs)
             },
+            // Note: We use Custom Bindings for this via this.insert()
             autoSaveSelection: true,
+            // maintainSnapshot: true,
             autoRestoreSelection: true,
+            // maintainSelection: false,
             debug
         })
 
+        // Hoist Local Variables to Scope (Useful for Debugging)
+        this.inputButton = inputButton
+        this.editor = editor
+
         if (debug) {
+            // Output to Console
             console.log('initialized:', {
                 options: editor.opts.endpoint,
-                instance: this
+                instance: this,
+                inputButton: inputButton.uid,
             })
         }
 
@@ -61,12 +89,16 @@ FroalaEditor.PLUGINS.linkManager = function linkManager (editor: any) {
         // editor.events.add('contentChanged', function (params) {});
     }
 
-    function onClick() {
+    function onClick(el?: HTMLElement, data?: any) {
         if (!editor.el) {
             console.warn('linkManager.onClick(): unable to find element')
             return
         }
-        inputButton.onClick(editor.el, linkPlugin.get())
+        const link = editor.link.get()
+        if (debug) {
+            console.log('[linkManager.onClick()]:', link)
+        }
+        inputButton.onClick(editor.el, link)
     }
 
     // Expose public methods.
@@ -84,10 +116,14 @@ FroalaEditor.PLUGINS.linkManager = function linkManager (editor: any) {
 FroalaEditor.RegisterCommand('linkManager', {
     title: 'Insert from Link Library',
     undo: false,
-    focus: false,
+    focus: true,
     modal: true,
+    //refreshAfterCallback: false,
+    refreshOnCallback: false,
     callback() {
-        this.linkManager.onClick(undefined, FroalaEditor.PLUGINS.link(this).get())
+        // console.log('linkManager callback initiated!', this.link)
+        // console.log('selection:', this.selection.isCollapsed(), this.selection, this.$el)
+        this.linkManager.onClick()
     },
     plugin: 'linkManager',
 }),
@@ -100,7 +136,9 @@ FroalaEditor.RegisterCommand('linkManagerEdit', {
     focus: false,
     modal: true,
     callback() {
-        this.linkManager.onClick(undefined, FroalaEditor.PLUGINS.link(this).get())
+        // TODO: Review the Quick Insert command to determine if this needs the same logic changes as the toolbar button
+        // console.log('linkManagerEdit callback initiated!', this.link)
+        this.linkManager.onClick(undefined, this.link.get())
     },
     plugin: 'linkManager',
 }),
@@ -127,10 +165,12 @@ FroalaEditor.RegisterQuickInsertButton('link', {
             // Contextual `this` is equivalent to the editor instance
             editor: this,
             insert: (link: Link) => {
-                FroalaEditor.PLUGINS.link(this).insert(link.url, '', {'aria-label': link.title})
+                this.link.insert(link.url, '', {'aria-label': link.title})
             },
             autoSaveSelection: true,
+            // maintainSnapshot: false,
             autoRestoreSelection: true,
+            // maintainSelection: true,
             debug
         })
         if (!this.el) {
