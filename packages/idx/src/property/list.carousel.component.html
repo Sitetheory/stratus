@@ -56,7 +56,7 @@
 
                                     <div class="property-details-container">
                                         <span class="property-address">
-                                            <span data-ng-bind="::getStreetAddress($parent.slideData)"></span>, <span class="city" data-ng-bind="::$parent.slideData.City"></span>
+                                            <span data-ng-show="::getStreetAddress($parent.slideData)"><span data-ng-bind="::getStreetAddress($parent.slideData)"></span>, </span><span class="city" data-ng-bind="::$parent.slideData.City"></span>
                                         </span>
                                         <span class="property-bed line-separator-left" data-ng-show="::$parent.slideData.BedroomsTotal > 0" role="text">
                                             <span data-ng-bind="::$parent.slideData.BedroomsTotal" property="numberOfBedrooms"></span>
