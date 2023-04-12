@@ -184,38 +184,6 @@
             'angular-drag-and-drop-lists': {
                 deps: ['angular']
             },
-
-            /* Calendar */
-            '@fullcalendar/daygrid': {
-                deps: [
-                    '@fullcalendar/core'
-                ]
-            },
-            '@fullcalendar/timegrid': {
-                deps: [
-                    '@fullcalendar/core'
-                ]
-            },
-            '@fullcalendar/list': {
-                deps: [
-                    '@fullcalendar/core'
-                ]
-            },
-            '@fullcalendar/moment': {
-                deps: [
-                    '@fullcalendar/core'
-                ]
-            },
-            '@fullcalendar/moment-timezone': {
-                deps: [
-                    '@fullcalendar/moment'
-                ]
-            },
-            '@stratusjs/calendar/customView': {
-                deps: [
-                    '@fullcalendar/core'
-                ]
-            }
         },
 
         // Package Directories
@@ -441,14 +409,8 @@
             'preact/hooks': stratusjsCalendarBundlePath, // Since when was this bundled in calendar? (its what works)
             'skrollr-native': `${boot.deployment}skrollr-typed/${boot.dev ? 'src' : 'dist'}/skrollr${boot.suffix}`,
 
-            // Calendar
-            ical: `${boot.deployment}ical.js/build/ical${boot.suffix}`,
-
             // Masonry TODO: Remove this...  Should not be in use anymore...
             'masonry-native': `${boot.deployment}masonry-layout/dist/masonry.pkgd${boot.suffix}`,
-
-            // Swiper Carousel
-            swiper: `${boot.deployment}swiper/swiper-bundle${boot.suffix}`,
 
             // Froala Directive and Libraries
             froala: `${boot.deployment}froala-editor/js/froala_editor.min`,
