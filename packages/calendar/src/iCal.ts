@@ -5,10 +5,8 @@
 import {Stratus} from '@stratusjs/runtime/stratus'
 
 // Libraries
-import _ from 'lodash'
-import angular from 'angular'
-// tslint:disable-next-line:no-duplicate-imports
-import 'angular'
+import {forEach} from 'lodash'
+import {auto} from 'angular'
 import 'ical.js' // Global ICAL variable.... not able to be sandboxed yet
 import {LooseObject} from '@stratusjs/core/misc'
 
@@ -30,7 +28,7 @@ export class ICalExpander {
         // Hydrate Options
         opts = opts || {}
         // Only populate non-null values
-        _.forEach(opts, (key: string, value: any) => {
+        forEach(opts, (key: string, value: any) => {
             if (value === null) {
                 return
             }
@@ -382,7 +380,7 @@ export function registerTimezones(tzData: LooseObject<string>) {
 
 Stratus.Services.iCal = [
     '$provide',
-    ($provide: angular.auto.IProvideService) => {
+    ($provide: auto.IProvideService) => {
         $provide.factory(
             'iCal',
             [
