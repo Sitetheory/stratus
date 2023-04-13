@@ -323,7 +323,6 @@ Stratus.Components.Calendar = {
             const twoYearsFuture = new Date()
             twoYearsFuture.setDate(twoYearsFuture.getDate() + (365 * 2)) // add 2 years
             const events = iCalExpander.jsonEventsForFullCalendar(twoYearsPast, twoYearsFuture)
-            // console.log('jsonEventsForFullCalendar pulled event count', _.clone(events).length)
             $scope.calendar.addEventSource({
                 events
                 // TODO give Sitetheory options to color each event source

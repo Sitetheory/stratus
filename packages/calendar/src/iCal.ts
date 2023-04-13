@@ -78,12 +78,26 @@ export class ICalExpander {
         }
     }
 
+    /**
+     * This is a fixed version of iCal, where a recurrenceId shouldn't be referencing itself. Will ignore instead
+     */
+    isRecurrenceException(event: ICalEvent) {
+        if (
+            event.isRecurrenceException() &&
+            event.recurrenceId.toUnixTime() === event.startDate.toUnixTime()
+        ) {
+            return false
+        }
+        return event.isRecurrenceException()
+    }
+
     // Returns events between a date range
     between(after?: Date, before?: Date) {
         const exceptions: ICalEvent[] = []
 
         this.events.forEach((event) => {
-            if (event.isRecurrenceException()) {
+            // if (event.isRecurrenceException()) {
+            if (this.isRecurrenceException(event)) {
                 exceptions.push(event)
             }
         })
@@ -96,9 +110,9 @@ export class ICalExpander {
             occurrences: []
         }
 
-        // console.log('exceptions raw', _.clone(exceptions))
         this.events
-            .filter((e) => !e.isRecurrenceException())
+            // .filter((e) => !e.isRecurrenceException())
+            .filter((e) => !this.isRecurrenceException(e))
             .forEach((event) => {
                 const exDates: number[] = []
                 event.component.getAllProperties('exdate').forEach((exDateProp) => {
@@ -142,6 +156,7 @@ export class ICalExpander {
                             } else if (!isOccurrenceExcluded) {
                                 ret.occurrences.push(occurrence)
                             }
+                        } else {
                         }
                     }
                     while (next && (!this.maxIterations || i < this.maxIterations))
@@ -256,22 +271,15 @@ export class ICalExpander {
         let events
         if (startRange && endRange) {
             events = this.between(startRange, endRange)
-            console.log('polling events between', startRange, endRange)
         } else {
             events = this.all()
-            console.log('polling all events')
         }
-        console.log('raw event', this.events)
-        console.log('raw event count', this.events.length)
-        console.log('polled events raw', events)
         const mappedEvents = events.events.map(
             (o) => this.flattenEventForFullCalendar(o)
         )
-        console.log('mappedEvents',_.clone(mappedEvents).length)
         const mappedOccurrences = events.occurrences.map(
             (o) => this.flattenRecurringEventForFullCalendar(o)
         )
-        console.log('mappedOccurrences',_.clone(mappedOccurrences).length)
         return [].concat(mappedEvents, mappedOccurrences)
     }
 }
@@ -356,6 +364,7 @@ interface ICalRecurExpansion {
 interface ICalTime {
     isDate(): boolean
     toJSDate(): Date
+    toUnixTime(): number
 }
 
 // To process timezones and recurrence properly, Dates need to be converted by registering all timezones. This is a quick manual setup
