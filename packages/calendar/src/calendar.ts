@@ -20,13 +20,14 @@ import {
     material,
     element
 } from 'angular'
-// tslint:disable-next-line:no-duplicate-imports
-import 'angular'
 import * as moment from 'moment'
 import 'moment-range'
 
-// Angular 1 Modules
-import 'angular-material'
+import '@stratusjs/angularjs-extras'
+import {cookie} from '@stratusjs/core/environment'
+import {isJSON, safeUniqueId} from '@stratusjs/core/misc'
+import {Calendar, EventApi} from '@fullcalendar/core'
+import {ICalExpander} from '@stratusjs/calendar/iCal'
 
 // FullCalendar
 import '@fullcalendar/core/vdom'
@@ -36,21 +37,11 @@ import * as fullCalendarDayGridPlugin from '@fullcalendar/daygrid'
 import * as fullCalendarTimeGridPlugin from '@fullcalendar/timegrid'
 import * as fullCalendarListPlugin from '@fullcalendar/list'
 
-// Services
-import '@stratusjs/angularjs/services/model'
-import '@stratusjs/angularjs/services/collection'
-import '@stratusjs/angularjs/services/registry'
-import '@stratusjs/calendar/iCal'
-
 // Components
 import { customViewPluginConstructor } from '@stratusjs/calendar/customView'
 
 // Stratus Utilities
-import {cookie} from '@stratusjs/core/environment'
-import {isJSON, safeUniqueId} from '@stratusjs/core/misc'
-import {Calendar, EventApi} from '@fullcalendar/core'
-// tslint:disable-next-line:no-duplicate-imports
-import {ICalExpander} from '@stratusjs/calendar/iCal'
+
 
 // Environment
 const min = !cookie('env') ? '.min' : ''
@@ -316,7 +307,7 @@ Stratus.Components.Calendar = {
                 url = `https://app004.sitetheory.io/${url}`
             }
 
-            const response: any = await $http.get(url)
+            const response = await $http.get(url)
             if (cookie('env')) {
                 console.log('fetched the events from:', url)
             }
@@ -405,9 +396,9 @@ Stratus.Components.Calendar = {
             if ($scope.options.header) {
                 return
             }
-            const headerLeft: any = 'prev,next today'
-            const headerCenter: any = 'title'
-            let headerRight: any = 'month,weekGrid,dayGrid'
+            const headerLeft = 'prev,next today'
+            const headerCenter = 'title'
+            let headerRight = 'month,weekGrid,dayGrid'
             // All this is assuming tha the default Header is not customized
             if (isArray($scope.options.possibleViews)) {
                 // FIXME Other views don't have a proper 'name' yet. (such as lists), need a Naming scheme
@@ -431,7 +422,7 @@ Stratus.Components.Calendar = {
          * 'render' force calendar to redraw - https://fullcalendar.io/docs/render
          */
         $ctrl.render = () => {
-            // return new Promise((resolve: any) => {
+            // return new Promise((resolve) => {
             $scope.calendarEl = document.getElementById($scope.calendarId)
 
             $scope.calendar = new Calendar($scope.calendarEl, {

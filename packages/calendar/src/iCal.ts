@@ -3,8 +3,6 @@
 
 // Runtime
 import {Stratus} from '@stratusjs/runtime/stratus'
-
-// Libraries
 import {forEach} from 'lodash'
 import {auto} from 'angular'
 import 'ical.js' // Global ICAL variable.... not able to be sandboxed yet
