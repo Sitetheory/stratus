@@ -20,7 +20,7 @@ import {
     material,
     element
 } from 'angular'
-import * as moment from 'moment'
+import moment from 'moment'
 import 'moment-range'
 
 import '@stratusjs/angularjs-extras'
@@ -39,9 +39,6 @@ import * as fullCalendarListPlugin from '@fullcalendar/list'
 
 // Components
 import { customViewPluginConstructor } from '@stratusjs/calendar/customView'
-
-// Stratus Utilities
-
 
 // Environment
 const min = !cookie('env') ? '.min' : ''
@@ -219,8 +216,8 @@ Stratus.Components.Calendar = {
 
         $scope.initialized = false
         $scope.fetched = false
-        $scope.startRange = moment.default()
-        $scope.endRange = moment.default()
+        $scope.startRange = moment()
+        $scope.endRange = moment()
         $scope.customViews = {} // Filled by the customPlugin to hold any custom Views currently displayed for storage and reuse
 
         /** This function builds the URL for a CSS Resource based on configuration path. */
