@@ -6,8 +6,6 @@
 // TODO later when implementing new data source types, refer to https://fullcalendar.io/docs/google-calendar as a plugin example
 
 // credit to https://github.com/leonaard/icalendar2fullcalendar for ics conversion
-
-// Runtime
 import {Stratus} from '@stratusjs/runtime/stratus'
 import {extend, isArray} from 'lodash'
 import {
@@ -26,16 +24,16 @@ import 'moment-range'
 import '@stratusjs/angularjs-extras'
 import {cookie} from '@stratusjs/core/environment'
 import {isJSON, safeUniqueId} from '@stratusjs/core/misc'
-import {Calendar, EventApi} from '@fullcalendar/core'
 import {ICalExpander} from '@stratusjs/calendar/iCal'
 
 // FullCalendar
+import {Calendar, EventApi} from '@fullcalendar/core'
 import '@fullcalendar/core/vdom'
-import * as momentPlugin from '@fullcalendar/moment'
-import * as momentTimezonePlugin from '@fullcalendar/moment-timezone'
-import * as fullCalendarDayGridPlugin from '@fullcalendar/daygrid'
-import * as fullCalendarTimeGridPlugin from '@fullcalendar/timegrid'
-import * as fullCalendarListPlugin from '@fullcalendar/list'
+import momentPlugin from '@fullcalendar/moment'
+import momentTimezonePlugin from '@fullcalendar/moment-timezone'
+import fullCalendarDayGridPlugin from '@fullcalendar/daygrid'
+import fullCalendarTimeGridPlugin from '@fullcalendar/timegrid'
+import fullCalendarListPlugin from '@fullcalendar/list'
 
 // Components
 import { customViewPluginConstructor } from '@stratusjs/calendar/customView'
@@ -206,11 +204,11 @@ Stratus.Components.Calendar = {
         $scope.options.eventSources = $scope.options.eventSources || []
 
         $scope.options.plugins = [
-            momentPlugin.default, // Plugins are ES6 imports and return with 'default'
-            momentTimezonePlugin.default, // Plugins are ES6 imports and return with 'default'
-            fullCalendarDayGridPlugin.default, // Plugins are ES6 imports and return with 'default'
-            fullCalendarTimeGridPlugin.default, // Plugins are ES6 imports and return with 'default'
-            fullCalendarListPlugin.default, // Plugins are ES6 imports and return with 'default'
+            momentPlugin, // Plugins are ES6 imports and return with 'default'
+            momentTimezonePlugin, // Plugins are ES6 imports and return with 'default'
+            fullCalendarDayGridPlugin, // Plugins are ES6 imports and return with 'default'
+            fullCalendarTimeGridPlugin, // Plugins are ES6 imports and return with 'default'
+            fullCalendarListPlugin, // Plugins are ES6 imports and return with 'default'
             customViewPluginConstructor($scope, $compile, $sce) // Plugins are ES6 imports and return with 'default'
         ]
 
