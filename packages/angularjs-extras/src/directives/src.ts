@@ -2,7 +2,7 @@
 // -----------------
 
 // Runtime
-import {filter, size} from 'lodash'
+import {filter, isString, size} from 'lodash'
 import {Stratus} from '@stratusjs/runtime/stratus'
 import {
     element,
@@ -73,11 +73,12 @@ Stratus.Directives.Src = (
 
         /** Sets the image src/css background on a tag */
         $scope.setSrc = (tagType: string, src: string) => {
-            // FIXME: This is the problem?
-            if (tagType === 'img') {
-                $element.attr('src', src)
-            } else {
-                $element.css('background-image', `url(${src})`)
+            if (src && isString(src) && src.length > 0) {
+                if (tagType === 'img') {
+                    $element.attr('src', src)
+                } else {
+                    $element.css('background-image', `url(${src})`)
+                }
             }
         }
 

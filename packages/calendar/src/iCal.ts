@@ -3,12 +3,8 @@
 
 // Runtime
 import {Stratus} from '@stratusjs/runtime/stratus'
-
-// Libraries
-import _ from 'lodash'
-import angular from 'angular'
-// tslint:disable-next-line:no-duplicate-imports
-import 'angular'
+import {forEach} from 'lodash'
+import {auto} from 'angular'
 import 'ical.js' // Global ICAL variable.... not able to be sandboxed yet
 import {LooseObject} from '@stratusjs/core/misc'
 
@@ -20,9 +16,9 @@ declare var ICAL: any
 export class ICalExpander {
     maxIterations = 1000
     skipInvalidDates = false
-    jCalData: any
-    component: any
-    events: any[]
+    jCalData: unknown
+    component: ICalComponent
+    events: ICalEvent[]
 
     [key: string]: any
 
@@ -30,7 +26,7 @@ export class ICalExpander {
         // Hydrate Options
         opts = opts || {}
         // Only populate non-null values
-        _.forEach(opts, (key: string, value: any) => {
+        forEach(opts, (key: string, value: any) => {
             if (value === null) {
                 return
             }
@@ -40,11 +36,11 @@ export class ICalExpander {
         this.jCalData = ICAL.parse(icsData)
         this.component = new ICAL.Component(this.jCalData)
         this.events = this.component.getAllSubcomponents('vevent').map(
-            (vevent: any) => new ICAL.Event(vevent)
+            (vevent) => new ICAL.Event(vevent)
         )
 
         if (this.skipInvalidDates) {
-            this.events = this.events.filter((evt: any) => {
+            this.events = this.events.filter((evt) => {
                 try {
                     // Ensure these are proper Dates
                     evt.startDate.toJSDate()
@@ -62,7 +58,7 @@ export class ICalExpander {
         return (!after || endTime >= after.getTime()) && (!before || startTime <= before.getTime())
     }
 
-    getTimes(eventOrOccurrence: any) {
+    getTimes(eventOrOccurrence: ICalOccurrence | ICalEvent) {
         const startTime = eventOrOccurrence.startDate.toJSDate().getTime()
         let endTime = eventOrOccurrence.endDate.toJSDate().getTime()
 
@@ -78,36 +74,54 @@ export class ICalExpander {
         }
     }
 
-    // Returns events between a date range
-    between(after?: any, before?: any) {
-        const exceptions: any = []
+    /**
+     * This is a fixed version of iCal, where a recurrenceId shouldn't be referencing itself. Will ignore instead
+     */
+    isRecurrenceException(event: ICalEvent) {
+        if (
+            event.isRecurrenceException() &&
+            event.recurrenceId.toUnixTime() === event.startDate.toUnixTime()
+        ) {
+            return false
+        }
+        return event.isRecurrenceException()
+    }
 
-        this.events.forEach((event: any) => {
-            if (event.isRecurrenceException()) {
+    // Returns events between a date range
+    between(after?: Date, before?: Date) {
+        const exceptions: ICalEvent[] = []
+
+        this.events.forEach((event) => {
+            // if (event.isRecurrenceException()) {
+            if (this.isRecurrenceException(event)) {
                 exceptions.push(event)
             }
         })
 
-        const ret: any = {
+        const ret: {
+            events: ICalEvent[]
+            occurrences: ICalOccurrence[]
+        } = {
             events: [],
             occurrences: []
         }
 
         this.events
-            .filter((e: any) => !e.isRecurrenceException())
-            .forEach((event: any) => {
-                const exDates: any = []
-                event.component.getAllProperties('exdate').forEach((exDateProp: any) => {
-                    const exDate: any = exDateProp.getFirstValue()
+            // .filter((e) => !e.isRecurrenceException())
+            .filter((e) => !this.isRecurrenceException(e))
+            .forEach((event) => {
+                const exDates: number[] = []
+                event.component.getAllProperties('exdate').forEach((exDateProp) => {
+                    const exDate: ICalTime = exDateProp.getFirstValue()
                     exDates.push(exDate.toJSDate().getTime())
                 })
 
                 // Recurring event is handled differently
                 if (event.isRecurring()) {
-                    const iterator: any = event.iterator()
+                    const iterator = event.iterator()
 
                     let next
-                    let i: any = 0
+                    let i = 0
 
                     do {
                         i += 1
@@ -115,15 +129,15 @@ export class ICalExpander {
                         if (!next) {
                             continue
                         }
-                        const occurrence: any = event.getOccurrenceDetails(next)
+                        const occurrence = event.getOccurrenceDetails(next)
                         const {
                             startTime,
                             endTime
                         } = this.getTimes(occurrence)
-                        const isOccurrenceExcluded: any = exDates.indexOf(startTime) !== -1
+                        const isOccurrenceExcluded = exDates.indexOf(startTime) !== -1
                         // TODO check that within same day?
-                        const exception: any = exceptions.find(
-                            (ex: any) => ex.uid === event.uid &&
+                        const exception = exceptions.find(
+                            (ex) => ex.uid === event.uid &&
                                 ex.recurrenceId.toJSDate().getTime() === occurrence.startDate.toJSDate().getTime()
                         )
 
@@ -138,6 +152,7 @@ export class ICalExpander {
                             } else if (!isOccurrenceExcluded) {
                                 ret.occurrences.push(occurrence)
                             }
+                        } else {
                         }
                     }
                     while (next && (!this.maxIterations || i < this.maxIterations))
@@ -157,12 +172,12 @@ export class ICalExpander {
     }
 
     // Returns events from before a date
-    before(before: any) {
+    before(before: Date) {
         return this.between(undefined, before)
     }
 
     // Returns events after a date
-    after(after: any) {
+    after(after: Date) {
         return this.between(after)
     }
 
@@ -172,8 +187,8 @@ export class ICalExpander {
     }
 
     // Processes a Recurring Event into generic Object format.
-    flattenRecurringEvent(e: any) {
-        const event: any = this.flattenEvent(e.item)
+    flattenRecurringEvent(e: ICalOccurrence) {
+        const event = this.flattenEvent(e.item)
         event.recurrenceId = e.recurrenceId.toJSDate()
         event.startDate = e.startDate.toJSDate()
         event.endDate = e.endDate.toJSDate()
@@ -182,7 +197,7 @@ export class ICalExpander {
 
     // Processes an Event into generic Object format.
     // Events that were reoccurring need to use flattenRecurringEvent to process extra data
-    flattenEvent(e: any) {
+    flattenEvent(e: ICalEvent): ICalEventCleaned {
         return {
             startDate: e.startDate.toJSDate(),
             endDate: e.endDate.toJSDate(),
@@ -202,22 +217,22 @@ export class ICalExpander {
 
     // Return an array of generic Events in a date range. Provide more details than jsonEventsFC.
     // If Dates are not specified, processes all possible dates
-    jsonEvents(startRange: any, endRange: any) {
+    jsonEvents(startRange: Date, endRange: Date): ICalEventCleaned[] {
         let events
         if (startRange && endRange) {
             events = this.between(startRange, endRange)
         } else {
             events = this.all()
         }
-        const mappedEvents: any = events.events.map((o: any) => this.flattenEvent(o))
-        const mappedOccurrences: any = events.occurrences.map((o: any) => this.flattenRecurringEvent(o))
+        const mappedEvents = events.events.map((o) => this.flattenEvent(o))
+        const mappedOccurrences = events.occurrences.map((o) => this.flattenRecurringEvent(o))
         return [].concat(mappedEvents, mappedOccurrences)
     }
 
     // Processes a Recurring Event into Full Calendar usable format.
 
-    flattenRecurringEventForFullCalendar(e: any) {
-        const event: any = this.flattenEventForFullCalendar(e.item)
+    flattenRecurringEventForFullCalendar(e: ICalOccurrence) {
+        const event = this.flattenEventForFullCalendar(e.item)
         event.start = e.startDate.toJSDate()
         event.end = e.endDate.toJSDate()
         return event
@@ -226,7 +241,7 @@ export class ICalExpander {
 
     // Processes an Event into Full Calendar usable format.
     // Events that were reoccurring need to use flattenRecurringEventForFullCalendar to process extra data
-    flattenEventForFullCalendar(e: any) {
+    flattenEventForFullCalendar(e: ICalEvent): FullCalEvent {
         return {
             start: e.startDate.toJSDate(),
             end: e.endDate.toJSDate(),
@@ -245,7 +260,7 @@ export class ICalExpander {
 
     // Return Full Calendar usable array of Events for display in a date range.
     // If Dates are not specified, processes all possible dates
-    jsonEventsForFullCalendar(startRange: any, endRange: any) {
+    jsonEventsForFullCalendar(startRange: Date, endRange: Date): FullCalEvent[] {
         // TODO fields to add
         // className, url, allDay
         // TODO allDay true if no endDate?
@@ -255,24 +270,107 @@ export class ICalExpander {
         } else {
             events = this.all()
         }
-        const mappedEvents: any = events.events.map(
-            (o: any) => this.flattenEventForFullCalendar(o)
+        const mappedEvents = events.events.map(
+            (o) => this.flattenEventForFullCalendar(o)
         )
-        const mappedOccurrences: any = events.occurrences.map(
-            (o: any) => this.flattenRecurringEventForFullCalendar(o)
+        const mappedOccurrences = events.occurrences.map(
+            (o) => this.flattenRecurringEventForFullCalendar(o)
         )
         return [].concat(mappedEvents, mappedOccurrences)
     }
 }
 
+interface FullCalEvent {
+    id: string
+    start: Date
+    end: Date
+    title: string
+    summary: string
+    description: string
+    attendees: unknown[]
+    organizer: string
+    location: string
+    url?: string // Custom item
+    allDay?: boolean // Custom item
+    image?: string // Custom item
+}
+
+interface ICalEventCleaned {
+    uid: string
+    recurrenceId?: Date
+    sequence: number
+    startDate: Date
+    endDate: Date
+    title: string
+    summary: string
+    description: string
+    attendees: unknown[]
+    organizer: string
+    location: string
+    url?: string // Custom item
+    allDay?: boolean // Custom item
+    image?: string // Custom item
+}
+
+/** @see ical.js/lib/ical/component.js */
+interface ICalComponent {
+    getAllProperties(name: string): LooseObject[]
+    getAllSubcomponents(name: string): ICalComponent[]
+    getFirstSubcomponent(name: string): ICalComponent
+}
+
+/** @see ical.js/lib/ical/event.js occurrenceDetails */
+interface ICalOccurrence {
+    recurrenceId: ICalTime
+    item: ICalEvent
+    startDate: ICalTime
+    endDate: ICalTime
+}
+
+/** @see ical.js/lib/ical/event.js */
+interface ICalEvent {
+    component: ICalComponent
+    uid: string
+    recurrenceId?: ICalTime
+    sequence: number
+    startDate: ICalTime
+    endDate: ICalTime
+    summary: string
+    description: string
+    attendees: unknown[]
+    organizer: string
+    location: string
+    url?: string // Custom item
+    allDay?: boolean // Custom item
+    image?: string // Custom item
+    getOccurrenceDetails(occurrence: ICalTime): ICalOccurrence
+    iterator(startTime?: ICalTime): ICalRecurExpansion
+    /** Checks if the event describes a recurrence exception */
+    isRecurrenceException(): boolean
+    /** Checks if the event is recurring */
+    isRecurring(): boolean
+}
+
+/** @see ical.js/lib/ical/recur_expansion.js */
+interface ICalRecurExpansion {
+    next(): ICalTime
+}
+
+/** @see ical.js/lib/ical/time.js */
+interface ICalTime {
+    isDate(): boolean
+    toJSDate(): Date
+    toUnixTime(): number
+}
+
 // To process timezones and recurrence properly, Dates need to be converted by registering all timezones. This is a quick manual setup
 // Data supplied by stratus.components.calendar.timezones has this information already prepared.
-export function registerTimezones(tzData: any) {
+export function registerTimezones(tzData: LooseObject<string>) {
     Object.keys(tzData).forEach((key) => {
-        const icsData: any = tzData[key]
-        const parsed: any = ICAL.parse(`BEGIN:VCALENDAR\nPRODID:-//tzurl.org//NONSGML Olson 2012h//EN\nVERSION:2.0\n${icsData}\nEND:VCALENDAR`)
-        const comp: any = new ICAL.Component(parsed)
-        const vTimezone: any = comp.getFirstSubcomponent('vtimezone')
+        const icsData = tzData[key]
+        const parsed = ICAL.parse(`BEGIN:VCALENDAR\nPRODID:-//tzurl.org//NONSGML Olson 2012h//EN\nVERSION:2.0\n${icsData}\nEND:VCALENDAR`)
+        const comp: ICalComponent = new ICAL.Component(parsed)
+        const vTimezone = comp.getFirstSubcomponent('vtimezone')
 
         ICAL.TimezoneService.register(vTimezone)
     })
@@ -280,7 +378,7 @@ export function registerTimezones(tzData: any) {
 
 Stratus.Services.iCal = [
     '$provide',
-    ($provide: angular.auto.IProvideService) => {
+    ($provide: auto.IProvideService) => {
         $provide.factory(
             'iCal',
             [

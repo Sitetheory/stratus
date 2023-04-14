@@ -6,52 +6,44 @@
 // TODO later when implementing new data source types, refer to https://fullcalendar.io/docs/google-calendar as a plugin example
 
 // credit to https://github.com/leonaard/icalendar2fullcalendar for ics conversion
-
-// Runtime
 import {Stratus} from '@stratusjs/runtime/stratus'
-
-// Libraries
-import _ from 'lodash'
-import angular from 'angular'
-// tslint:disable-next-line:no-duplicate-imports
-import 'angular'
-import * as moment from 'moment'
+import {extend, isArray} from 'lodash'
+import {
+    IAugmentedJQuery,
+    IAttributes,
+    ICompileService,
+    IHttpService,
+    ISCEService,
+    IScope,
+    material,
+    element
+} from 'angular'
+import moment from 'moment'
 import 'moment-range'
 
+import '@stratusjs/angularjs-extras'
+import {cookie} from '@stratusjs/core/environment'
+import {isJSON, safeUniqueId} from '@stratusjs/core/misc'
+import {ICalExpander} from '@stratusjs/calendar/iCal'
+
 // FullCalendar
+import {Calendar, EventApi} from '@fullcalendar/core'
 import '@fullcalendar/core/vdom'
-import * as momentPlugin from '@fullcalendar/moment'
-import * as momentTimezonePlugin from '@fullcalendar/moment-timezone'
-import * as fullCalendarDayGridPlugin from '@fullcalendar/daygrid'
-import * as fullCalendarTimeGridPlugin from '@fullcalendar/timegrid'
-import * as fullCalendarListPlugin from '@fullcalendar/list'
-
-// Angular 1 Modules
-import 'angular-material'
-
-// Services
-import '@stratusjs/angularjs/services/model'
-import '@stratusjs/angularjs/services/collection'
-import '@stratusjs/angularjs/services/registry'
-import '@stratusjs/calendar/iCal'
+import momentPlugin from '@fullcalendar/moment'
+import momentTimezonePlugin from '@fullcalendar/moment-timezone'
+import fullCalendarDayGridPlugin from '@fullcalendar/daygrid'
+import fullCalendarTimeGridPlugin from '@fullcalendar/timegrid'
+import fullCalendarListPlugin from '@fullcalendar/list'
 
 // Components
 import { customViewPluginConstructor } from '@stratusjs/calendar/customView'
-
-// Stratus Utilities
-import {cookie} from '@stratusjs/core/environment'
-import {isJSON} from '@stratusjs/core/misc'
-// tslint:disable-next-line:no-duplicate-imports
-import {Calendar, EventApi} from '@fullcalendar/core'
-// tslint:disable-next-line:no-duplicate-imports
-import {ICalExpander} from '@stratusjs/calendar/iCal'
 
 // Environment
 const min = !cookie('env') ? '.min' : ''
 const packageName = 'calendar'
 const localDir = `${Stratus.BaseUrl}${Stratus.DeploymentPath}@stratusjs/${packageName}/src`
 
-export type CalendarScope = angular.IScope & {
+export type CalendarScope = IScope & {
     elementId: string
     calendarId: string
     initialized: boolean
@@ -131,18 +123,18 @@ Stratus.Components.Calendar = {
         options: '@'
     },
     controller(
-        $scope: CalendarScope, // angular.IScope & any, // CalendarScope
-        $attrs: angular.IAttributes & any,
-        $element: JQLite,
-        $sce: angular.ISCEService,
-        $mdPanel: angular.material.IPanelService,
-        $mdDialog: angular.material.IDialogService,
-        $http: angular.IHttpService,
-        $compile: angular.ICompileService
+        $scope: CalendarScope,
+        $attrs: IAttributes,
+        $element: IAugmentedJQuery,
+        $sce: ISCEService,
+        $mdPanel: material.IPanelService,
+        $mdDialog: material.IDialogService,
+        $http: IHttpService,
+        $compile: ICompileService
     ) {
         // Initialize
         const $ctrl = this
-        $ctrl.uid = _.uniqueId(_.camelCase(packageName) + '_')
+        $ctrl.uid = safeUniqueId(packageName)
         Stratus.Instances[$ctrl.uid] = $scope
         $scope.elementId = $attrs.elementId || $ctrl.uid
 
@@ -185,7 +177,7 @@ Stratus.Components.Calendar = {
             customArticleMonth: 'article',
             customArticleYear: 'article'
         }
-        $scope.options.buttonText = _.extend({}, defaultButtonText, $scope.options.buttonText)
+        $scope.options.buttonText = extend({}, defaultButtonText, $scope.options.buttonText)
         $scope.options.defaultView = $scope.options.defaultView || 'dayGridMonth'
 
         // Not used yet @see https://fullcalendar.io/docs/header
@@ -212,18 +204,18 @@ Stratus.Components.Calendar = {
         $scope.options.eventSources = $scope.options.eventSources || []
 
         $scope.options.plugins = [
-            momentPlugin.default, // Plugins are ES6 imports and return with 'default'
-            momentTimezonePlugin.default, // Plugins are ES6 imports and return with 'default'
-            fullCalendarDayGridPlugin.default, // Plugins are ES6 imports and return with 'default'
-            fullCalendarTimeGridPlugin.default, // Plugins are ES6 imports and return with 'default'
-            fullCalendarListPlugin.default, // Plugins are ES6 imports and return with 'default'
+            momentPlugin, // Plugins are ES6 imports and return with 'default'
+            momentTimezonePlugin, // Plugins are ES6 imports and return with 'default'
+            fullCalendarDayGridPlugin, // Plugins are ES6 imports and return with 'default'
+            fullCalendarTimeGridPlugin, // Plugins are ES6 imports and return with 'default'
+            fullCalendarListPlugin, // Plugins are ES6 imports and return with 'default'
             customViewPluginConstructor($scope, $compile, $sce) // Plugins are ES6 imports and return with 'default'
         ]
 
         $scope.initialized = false
         $scope.fetched = false
-        $scope.startRange = moment.default()
-        $scope.endRange = moment.default()
+        $scope.startRange = moment()
+        $scope.endRange = moment()
         $scope.customViews = {} // Filled by the customPlugin to hold any custom Views currently displayed for storage and reuse
 
         /** This function builds the URL for a CSS Resource based on configuration path. */
@@ -310,7 +302,7 @@ Stratus.Components.Calendar = {
                 url = `https://app004.sitetheory.io/${url}`
             }
 
-            const response: any = await $http.get(url)
+            const response = await $http.get(url)
             if (cookie('env')) {
                 console.log('fetched the events from:', url)
             }
@@ -345,7 +337,7 @@ Stratus.Components.Calendar = {
         $scope.displayEventDialog = (calEvent: EventApi, clickEvent: MouseEvent) => {
             $mdDialog.show({
                 templateUrl: `${localDir}/eventDialog${min}.html`,
-                parent: angular.element(document.body),
+                parent: element(document.body),
                 targetEvent: clickEvent,
                 clickOutsideToClose: true,
                 escapeToClose: false,
@@ -399,11 +391,11 @@ Stratus.Components.Calendar = {
             if ($scope.options.header) {
                 return
             }
-            const headerLeft: any = 'prev,next today'
-            const headerCenter: any = 'title'
-            let headerRight: any = 'month,weekGrid,dayGrid'
+            const headerLeft = 'prev,next today'
+            const headerCenter = 'title'
+            let headerRight = 'month,weekGrid,dayGrid'
             // All this is assuming tha the default Header is not customized
-            if (_.isArray($scope.options.possibleViews)) {
+            if (isArray($scope.options.possibleViews)) {
                 // FIXME Other views don't have a proper 'name' yet. (such as lists), need a Naming scheme
                 headerRight = $scope.options.possibleViews.join(',')
             }
@@ -425,7 +417,7 @@ Stratus.Components.Calendar = {
          * 'render' force calendar to redraw - https://fullcalendar.io/docs/render
          */
         $ctrl.render = () => {
-            // return new Promise((resolve: any) => {
+            // return new Promise((resolve) => {
             $scope.calendarEl = document.getElementById($scope.calendarId)
 
             $scope.calendar = new Calendar($scope.calendarEl, {
