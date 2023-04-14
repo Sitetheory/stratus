@@ -1,8 +1,8 @@
 {
   "name": "@stratusjs/idx",
-  "version": "0.18.2",
+  "version": "0.18.3",
   "description": "AngularJS idx/property Service and Components bundle to be used as an add on to StratusJS",
-  "main": "./src/idx.js",
+  "main": "./dist/idx.bundle.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -25,15 +25,15 @@
   "bugs": {
     "url": "https://github.com/Sitetheory/stratus/issues"
   },
-  "homepage": "https://github.com/Sitetheory/stratus#readme",
+  "homepage": "https://github.com/Sitetheory/stratus/wiki/Idx-Package",
   "engines": {
     "npm": ">= 8.19.3"
   },
   "dependencies": {
-    "@stratusjs/angular": "^0.6.6",
+    "@stratusjs/angular": "^0.6.7",
     "@stratusjs/angularjs": "^0.6.2",
-    "@stratusjs/angularjs-extras": "^0.12.10",
-    "@stratusjs/boot": "^1.0.0",
+    "@stratusjs/angularjs-extras": "^0.12.12",
+    "@stratusjs/boot": "^1.0.1",
     "@stratusjs/map": "^0.6.4",
     "@stratusjs/runtime": "^0.12.1",
     "@stratusjs/swiper": "^1.2.1"
