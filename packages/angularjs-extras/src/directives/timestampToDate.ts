@@ -40,7 +40,7 @@ Stratus.Directives.TimestampToDate = (): StratusDirective => ({
     ) => {
         Stratus.Instances[safeUniqueId(packageName, moduleName, directiveName)] = $scope
         $scope.format = $scope.format || 'yyyy/MM/dd'
-        ngModel.$parsers.push(value => new Date(value).getTime() / 1000)
-        ngModel.$formatters.push(value => new Date(value * 1000))
+        ngModel.$parsers.push(value => value ? (new Date(value).getTime() / 1000) : null)
+        ngModel.$formatters.push(value => value ? new Date(value * 1000) : null)
     },
 })
