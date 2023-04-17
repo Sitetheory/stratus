@@ -342,7 +342,7 @@
 
             </div>
 
-            <div data-ng-if="options.officeGroups.length">
+            <div data-ng-if="options.officeGroups.length || options.query.where.AgentLicense.length || options.query.where.ListingId.length">
                 <h4>Preset Filters</h4>
                 <div class="search-input" data-ng-if="options.officeGroups.length">
                     <!--h5>Office</h5-->
@@ -360,6 +360,42 @@
                         <md-chip-template>
                             <!-- add to enable editing: data-ng-click="displayOfficeGroupSelector(null, $index, $event)" -->
                             <span>{{$chip.name}}</span>
+                        </md-chip-template>
+                    </md-chips>
+                </div>
+                <div class="search-input" data-ng-if="options.query.where.AgentLicense.length">
+                    <h5>Agent License</h5>
+                    <md-chips
+                            class="agent-license-groups font-secondary"
+                            aria-label="Agent Licenses"
+                            data-ng-model="options.query.where.AgentLicense"
+                            data-md-enable-chip-edit="false"
+                            data-md-removable="true"
+                            data-delete-button-label="Remove License"
+                            data-delete-hint="Press delete to remove License"
+                            data-md-on-add="search()"
+                            data-md-on-remove="search()"
+                    >
+                        <md-chip-template>
+                            <span>{{$chip}}</span>
+                        </md-chip-template>
+                    </md-chips>
+                </div>
+                <div class="search-input" data-ng-if="options.query.where.ListingId.length">
+                    <h5>Listing Id</h5>
+                    <md-chips
+                            class="listing-id-groups font-secondary"
+                            aria-label="Listing Ids"
+                            data-ng-model="options.query.where.ListingId"
+                            data-md-enable-chip-edit="false"
+                            data-md-removable="true"
+                            data-delete-button-label="Remove ListingId"
+                            data-delete-hint="Press delete to remove ListingId"
+                            data-md-on-add="search()"
+                            data-md-on-remove="search()"
+                    >
+                        <md-chip-template>
+                            <span>{{$chip}}</span>
                         </md-chip-template>
                     </md-chips>
                 </div>
