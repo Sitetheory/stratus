@@ -59,6 +59,7 @@ Stratus.Components.IdxMemberSearch = {
         Idx: IdxService,
     ) {
         // Initialize
+        const $ctrl = this
         $scope.uid = safeUniqueId(packageName, moduleName, componentName)
         $scope.elementId = $attrs.elementId || $scope.uid
         Stratus.Instances[$scope.elementId] = $scope
@@ -82,7 +83,7 @@ Stratus.Components.IdxMemberSearch = {
             }, 2000) */
 
             // $scope.options = $attrs.options && isJSON($attrs.options) ? JSON.parse($attrs.options) : {}
-            $scope.options = hydrate($attrs.options) || {}
+            $scope.options = hydrate($ctrl.options) || hydrate($attrs.options) || {}
 
             // Set default queries
             $scope.options.query ??= {}
