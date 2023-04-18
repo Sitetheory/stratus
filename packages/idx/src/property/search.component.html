@@ -177,8 +177,7 @@
 
         <div class="search-more-filters" data-ng-if="!listInitialized">
             <!-- If there isn't a list, run the search() function to send to a pre-filled search page -->
-            <a class="open-filters-link"
-               data-ng-click="search()">
+            <a class="open-filters-link" data-ng-click="search(true)">
                 <md-icon md-svg-src="{{ localDir + 'images/icons/actionButtons/filters.svg' }}"></md-icon>
                 <span class="btn-text"><span data-ng-bind="advancedSearchLinkName"></span></span>
             </a>

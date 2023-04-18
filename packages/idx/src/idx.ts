@@ -227,7 +227,7 @@ export type IdxSearchScope = IdxComponentScope & {
     listInitialized: boolean
 
     refreshSearchWidgetOptions(listScope?: IdxListScope): void
-    search(): void
+    search(force?: boolean): void
 }
 
 export type SelectionGroup = {

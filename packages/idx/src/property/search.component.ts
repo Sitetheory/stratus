@@ -675,7 +675,7 @@ Stratus.Components.IdxPropertySearch = {
          * Call a List widget to perform a search
          * TODO await until search is complete?
          */
-        $scope.search = $scope.searchProperties = (): void => {
+        $scope.search = (force?: boolean): void => {
             if (!$scope.initialized) {
                 console.warn($scope.uid, 'has not initialized and may not search yet')
                 return
@@ -705,7 +705,7 @@ Stratus.Components.IdxPropertySearch = {
             } else {
                 // console.log('comparing last', cloneDeep(lastQuery))
                 // console.log('comparing current', cloneDeep($scope.options.query))
-                if ($scope.hasQueryChanged()) {
+                if ($scope.hasQueryChanged() || force) {
                     lastQuery = cloneDeep($scope.options.query)
                     // console.warn('there was a change')
                     Idx.setUrlOptions('Search', $scope.options.query.where)
