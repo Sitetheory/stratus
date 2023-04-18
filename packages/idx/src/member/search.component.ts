@@ -4,7 +4,6 @@
  * @see https://github.com/Sitetheory/stratus/wiki/Idx-Member-Search-Widget
  */
 
-// Runtime
 import {forEach} from 'lodash'
 import {Stratus} from '@stratusjs/runtime/stratus'
 import {element, material, IAttributes, ITimeoutService, IScope, IQService, IWindowService} from 'angular'
@@ -15,10 +14,7 @@ import {cookie} from '@stratusjs/core/environment'
 import {IdxMemberListScope} from '@stratusjs/idx/member/list.component'
 
 // Stratus Preload
-// tslint:disable-next-line:no-duplicate-imports
-import '@stratusjs/idx/idx'
-// tslint:disable-next-line:no-duplicate-imports
-import '@stratusjs/idx/member/list.component'
+import '@stratusjs/angularjs-extras'
 
 // Environment
 const min = !cookie('env') ? '.min' : ''
