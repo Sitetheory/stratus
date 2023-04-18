@@ -57,6 +57,11 @@
                         data-ng-if="options.query.where.CountyOrParish.length > 0 || options.query.where.MLSAreaMajor.length > 0 || options.query.where.Neighborhood.length > 0 || options.query.where.PostalCode > 0"
                         data-ng-bind="((options.query.where.CountyOrParish.length || options.query.where.MLSAreaMajor.length || options.query.where.PostalCode.length) ? ', ' : '') + _.join(_.union(options.query.where.CountyOrParish, options.query.where.MLSAreaMajor, options.query.where.Neighborhood, options.query.where.PostalCode), ', ')"
                 ></span>
+                <span
+                        class="other-preset-filters"
+                        data-ng-if="options.officeGroups.length > 0 || options.query.where.AgentLicense.length > 0 || options.query.where.ListingId.length > 0"
+                        data-ng-bind="'+'+Idx.countArraysNotEmpty([options.officeGroups, options.query.where.AgentLicense, options.query.where.ListingId])+' Other Filters'"
+                ></span>
             </div>
             <!-- TODO: We cannot currently get focus to work because we can't find the element: data-ng-click="angular.element('#filterLocation').focus()". In the future it would be nice to populate. FIX: Element doesn't not exist on load, should possibly be given as a widget option when Element is ready with relying on id. -->
             <!-- NOTE: We shouldn't supply ids unless they are given a unique number at the end as HTML does not allow duplicate ids -->

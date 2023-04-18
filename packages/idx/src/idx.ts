@@ -178,6 +178,8 @@ export interface IdxService {
 
     // Scope helpers
 
+    countArraysNotEmpty(arrayList: any[][]): number
+
     getInput(elementId: string): JQLite
 
     getNestedPathValue(currentNest: object | any, pathPieces: string[]): any
@@ -3402,12 +3404,17 @@ const angularJsService = (
         }
     }
 
+    function countArraysNotEmpty(arrayList: any[][]) {
+        return arrayList.filter((e)=>e.length).length
+    }
+
     return {
         fetchMembers,
         fetchOffices,
         fetchProperties,
         fetchProperty,
         clearFieldInput,
+        countArraysNotEmpty,
         devLog,
         emit,
         emitManual,

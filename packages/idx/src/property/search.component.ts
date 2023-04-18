@@ -835,7 +835,6 @@ Stratus.Components.IdxPropertySearch = {
         $scope.on = (emitterName: string, callback: IdxEmitter) => Idx.on($scope.elementId, emitterName, callback)
 
         $scope.hasQueryChanged = (): boolean => !isEqual(clone(lastQuery), clone($scope.options.query))
-
         /**
          * Destroy this widget
          */
