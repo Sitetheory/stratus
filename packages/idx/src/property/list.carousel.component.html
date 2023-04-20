@@ -72,7 +72,7 @@
                                     </div>
 
                                     <div class="mls-service-name" role="text">
-                                        <span data-ng-show="::getMLSLogo($parent.slideData._ServiceId, 'tiny')"><img data-ng-src="{{::getMLSLogo($parent.slideData._ServiceId, 'tiny')}}" class="mls-logo" alt="MLS Logo"/></span>
+                                        <span data-ng-show="::getMLSLogo($parent.slideData._ServiceId, 'tiny')" class="mls-logo"><img data-ng-src="{{::getMLSLogo($parent.slideData._ServiceId, 'tiny')}}" alt="MLS Logo"/></span>
                                         <span data-ng-bind="::getMLSName($parent.slideData._ServiceId)" data-ng-show="::!getMLSLogo($parent.slideData._ServiceId, 'tiny')" property="maintainer" class="mls-name"></span>#
                                         <span data-ng-bind="::$parent.slideData.ListingId || $parent.slideData.ListingKey" property="identifier" class="mls-number"></span>
                                     </div>
