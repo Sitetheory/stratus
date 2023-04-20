@@ -49,8 +49,8 @@ stratus-citation {
     .citation-title {
       display: block;
       margin-bottom: 7px;
-      &::after {
-        /* Ensuring a ending marker is in the popup */
+      &.auto-counter::after {
+        /* Ensuring a ending marker is in the popup. Only affect auto numerated titles */
         content: ".";
       }
       &.auto-counter::before {
