@@ -158,9 +158,9 @@
                             <span data-ng-bind="::model.data._Class"></span>
                         </li>
                         <li class="mls-service" data-ng-if="::model.data.ListingId || model.data.ListingKey" role="text">
-                            <span data-ng-if="::getMLSLogo('tiny')"><img data-ng-src="{{::getMLSLogo('tiny')}}" alt="MLS Logo"/></span>
-                            <span data-ng-bind="getMLSName()" property="maintainer"></span>#
-                            <span data-ng-bind="::model.data.ListingId || model.data.ListingKey" property="identifier"></span>
+                            <span data-ng-if="::getMLSLogo('tiny')" class="mls-logo"><img data-ng-src="{{::getMLSLogo('tiny')}}" alt="MLS Logo"/></span>
+                            <span data-ng-bind="getMLSName()" data-ng-if="::!getMLSLogo('tiny')" property="maintainer" class="mls-name"></span>#
+                            <span data-ng-bind="::model.data.ListingId || model.data.ListingKey" property="identifier" class="mls-number"></span>
                         </li>
                     </ul>
 
