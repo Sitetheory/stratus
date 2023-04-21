@@ -358,7 +358,8 @@ Stratus.Components.IdxPropertyList = {
             // If string, check if a json and parse first. Otherwise be null or what it is
             $scope.query.order =
                 $scope.query.order && isString($scope.query.order) && isJSON($scope.query.order) ? JSON.parse($scope.query.order) :
-                    $attrs.queryOrder && isJSON($attrs.queryOrder) ? JSON.parse($attrs.queryOrder) : $scope.query.order || null
+                    $attrs.queryOrder && isJSON($attrs.queryOrder) ? JSON.parse($attrs.queryOrder) :
+                        $attrs.queryOrder || $scope.query.order || null
             $scope.query.page ||= null // will be set by Service
             $scope.query.perPage = $scope.query.perPage ||
                 ($attrs.queryPerPage && isString($attrs.queryPerPage) ? parseInt($attrs.queryPerPage, 10) : null) ||

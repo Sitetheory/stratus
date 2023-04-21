@@ -40,12 +40,6 @@
                             <meta property="name" content="{{::getStreetAddress($parent.slideData)}}" />
                             <div class="property-content-container">
                                 <div class="property-content font-body">
-                                    <div class="mls-service-name" role="text">
-                                        <span data-ng-show="::getMLSLogo($parent.slideData._ServiceId, 'tiny')"><img data-ng-src="{{::getMLSLogo($parent.slideData._ServiceId, 'tiny')}}" alt="MLS Logo"/></span>
-                                        <span data-ng-bind="::getMLSName($parent.slideData._ServiceId)" property="maintainer"></span>#
-                                        <span data-ng-bind="::$parent.slideData.ListingId || $parent.slideData.ListingKey" property="identifier"></span>
-                                    </div>
-
                                     <div class="property-status-price-container">
                                         <span class="property-status" data-ng-bind="::Idx.getFriendlyStatus($parent.slideData, preferredStatus)"></span>
                                         <span class="property-price line-separator-left-more" data-ng-show="::$parent.slideData.ClosePrice || $parent.slideData.ListPrice" role="text" property="price">
@@ -77,6 +71,11 @@
                                         </span>
                                     </div>
 
+                                    <div class="mls-service-name" role="text">
+                                        <span data-ng-show="::getMLSLogo($parent.slideData._ServiceId, 'tiny')" class="mls-logo"><img data-ng-src="{{::getMLSLogo($parent.slideData._ServiceId, 'tiny')}}" alt="MLS Logo"/></span>
+                                        <span data-ng-bind="::getMLSName($parent.slideData._ServiceId)" data-ng-show="::!getMLSLogo($parent.slideData._ServiceId, 'tiny')" property="maintainer" class="mls-name"></span>#
+                                        <span data-ng-bind="::$parent.slideData.ListingId || $parent.slideData.ListingKey" property="identifier" class="mls-number"></span>
+                                    </div>
                                     <!-- FIXME property type might be required, will check regs -->
                                     <!--span data-ng-bind="::$parent.slideData.PropertySubType || $parent.slideData.PropertyType || $parent.slideData._Class" property="accommodationCategory"></span-->
                                 </div>

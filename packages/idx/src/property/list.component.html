@@ -19,6 +19,20 @@
         <md-progress-linear data-ng-show="collection.pending" md-mode="indeterminate"></md-progress-linear>
         <div data-ng-show="collection.completed && !collection.pending && collection.models.length === 0" class="no-results">
             We didn't find any properties that fit your criteria.<span> You might want to try a broader search.</span>
+            <div
+                    class="other-preset-filters"
+                    data-ng-if="query.where.OfficeNumber.length > 0 || query.where.AgentLicense.length > 0 || query.where.ListingId.length > 0"
+            >
+                This search includes <span data-ng-bind="Idx.countArraysNotEmpty([query.where.OfficeNumber, query.where.AgentLicense, query.where.ListingId])"></span>
+                other filter(s).
+            </div>
+            <md-button
+                    data-ng-click="query.where.Location = ''; query.where.City = []; query.where.CountyOrParish = []; query.where.MLSAreaMajor = []; query.where.Neighborhood = []; query.where.PostalCode = []; query.where.OfficeNumber = []; query.where.AgentLicense = []; query.where.ListingId = []; search()"
+                    aria-label="Clear Filters"
+            >
+                Clear All Filters
+            </md-button>
+
         </div>
         <section role="region" aria-label="Property Results List">
             <div data-ng-show="collection.completed && !collection.pending && collection.models.length > 0"
@@ -84,9 +98,9 @@
                                 </div>
                             </div>
                             <div class="mls-service-name" role="text">
-                                <span data-ng-if="::getMLSLogo(property._ServiceId, 'tiny')"><img data-ng-src="{{::getMLSLogo(property._ServiceId, 'tiny')}}" alt="MLS Logo"/></span>
-                                <span data-ng-bind="::getMLSName(property._ServiceId)" property="maintainer"></span>#
-                                <span data-ng-bind="::property.ListingId || property.ListingKey" property="identifier"></span>
+                                <span data-ng-if="::getMLSLogo(property._ServiceId, 'tiny')" class="mls-logo"><img data-ng-src="{{::getMLSLogo(property._ServiceId, 'tiny')}}" alt="MLS Logo"/></span>
+                                <span data-ng-bind="::getMLSName(property._ServiceId)" data-ng-show="::!getMLSName(property._ServiceId)" property="maintainer" class="mls-name"></span>#
+                                <span data-ng-bind="::property.ListingId || property.ListingKey" property="identifier" class="mls-number"></span>
                             </div>
                         </div>
                     </md-card>

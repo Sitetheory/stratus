@@ -14,7 +14,7 @@
 
     <div class="search-row search-basic clearfix">
         <div class="search-input search-location"
-             data-ng-class="{'location-input-active': !(options.query.where.City.length > 0 || options.query.where.CountyOrParish.length > 0 || options.query.where.MLSAreaMajor.length > 0 || options.query.where.PostalCode.length > 0)}">
+             data-ng-class="{'location-input-active': !(options.query.where.City.length > 0 || options.query.where.CountyOrParish.length > 0 || options.query.where.MLSAreaMajor.length > 0 || options.query.where.Neighborhood.length > 0 || options.query.where.PostalCode.length > 0)}">
 
             <!-- If there are preset filters like City, MLS Area, Postal Code, which are subsets of Location, then we
             will show that we are filtering by those, and we will not show the Location field. They remain in the filter
@@ -24,12 +24,12 @@
             <!-- NOTE: some of these fields are arrays -->
             <md-icon class="search-icon"
                      data-ng-click="search()"
-                     data-ng-if="!(options.query.where.City.length > 0 || options.query.where.CountyOrParish.length > 0 || options.query.where.MLSAreaMajor.length > 0 || options.query.where.PostalCode.length > 0)"
+                     data-ng-if="!(options.query.where.City.length > 0 || options.query.where.CountyOrParish.length > 0 || options.query.where.MLSAreaMajor.length > 0 || options.query.where.Neighborhood.length > 0 || options.query.where.PostalCode.length > 0)"
                      md-svg-src="{{ localDir + 'images/icons/actionButtons/search.svg' }}"
             ></md-icon>
             <md-input-container
                     class="location-input md-block minimal"
-                    data-ng-if="!(options.query.where.City.length > 0 || options.query.where.CountyOrParish.length > 0 || options.query.where.MLSAreaMajor.length > 0 || options.query.where.PostalCode.length > 0)">
+                    data-ng-if="!(options.query.where.City.length > 0 || options.query.where.CountyOrParish.length > 0 || options.query.where.MLSAreaMajor.length > 0 || options.query.where.Neighborhood.length > 0 || options.query.where.PostalCode.length > 0)">
                 <label>City, Neighborhood, Zip</label>
 
                 <!-- NOTE: the data-ng-keyup should not be setting: && options.query.where.Location (seems useless???) -->
@@ -50,12 +50,17 @@
 
             <!-- TODO: make this gray in the CSS -->
             <div class="preset-location"
-                 data-ng-if="(options.query.where.City.length > 0 || options.query.where.CountyOrParish.length > 0 || options.query.where.MLSAreaMajor.length > 0 || options.query.where.PostalCode.length > 0)">
+                 data-ng-if="(options.query.where.City.length > 0 || options.query.where.CountyOrParish.length > 0 || options.query.where.MLSAreaMajor.length > 0 || options.query.where.Neighborhood.length > 0 || options.query.where.PostalCode.length > 0)">
                 <span data-ng-if="options.query.where.City.length > 0" data-ng-bind="options.query.where.City.join(', ')"></span>
                 <!-- NOTE: these are actually arrays so we union them then join split with a comma -->
                 <span
-                        data-ng-if="options.query.where.CountyOrParish.length > 0 || options.query.where.MLSAreaMajor.length > 0 || options.query.where.PostalCode > 0"
-                        data-ng-bind="((options.query.where.CountyOrParish.length || options.query.where.MLSAreaMajor.length || options.query.where.PostalCode.length) ? ', ' : '') + _.join(_.union(options.query.where.CountyOrParish, options.query.where.MLSAreaMajor, options.query.where.PostalCode), ', ')"
+                        data-ng-if="options.query.where.CountyOrParish.length > 0 || options.query.where.MLSAreaMajor.length > 0 || options.query.where.Neighborhood.length > 0 || options.query.where.PostalCode > 0"
+                        data-ng-bind="((options.query.where.CountyOrParish.length || options.query.where.MLSAreaMajor.length || options.query.where.PostalCode.length) ? ', ' : '') + _.join(_.union(options.query.where.CountyOrParish, options.query.where.MLSAreaMajor, options.query.where.Neighborhood, options.query.where.PostalCode), ', ')"
+                ></span>
+                <span
+                        class="other-preset-filters"
+                        data-ng-if="options.officeGroups.length > 0 || options.query.where.AgentLicense.length > 0 || options.query.where.ListingId.length > 0"
+                        data-ng-bind="'+'+Idx.countArraysNotEmpty([options.officeGroups, options.query.where.AgentLicense, options.query.where.ListingId])+' Filter'+(Idx.countArraysNotEmpty([options.officeGroups, options.query.where.AgentLicense, options.query.where.ListingId]) > 1 ? '(s)' : '')"
                 ></span>
             </div>
             <!-- TODO: We cannot currently get focus to work because we can't find the element: data-ng-click="angular.element('#filterLocation').focus()". In the future it would be nice to populate. FIX: Element doesn't not exist on load, should possibly be given as a widget option when Element is ready with relying on id. -->
@@ -63,8 +68,8 @@
             <!-- NOTE: three of these get cleared as arrays -->
             <a
                     class="custom-clear"
-                    data-ng-if="(options.query.where.Location.length || options.query.where.City.length > 0 || options.query.where.CountyOrParish.length > 0 || options.query.where.MLSAreaMajor.length > 0 || options.query.where.PostalCode.length > 0)"
-                    data-ng-click="options.query.where.Location = ''; options.query.where.City = []; options.query.where.CountyOrParish = []; options.query.where.MLSAreaMajor = []; options.query.where.PostalCode = []; search()"
+                    data-ng-if="(options.query.where.Location.length || options.query.where.City.length > 0 || options.query.where.CountyOrParish.length > 0 || options.query.where.MLSAreaMajor.length > 0 || options.query.where.Neighborhood.length > 0 || options.query.where.PostalCode.length > 0)"
+                    data-ng-click="options.query.where.Location = ''; options.query.where.City = []; options.query.where.CountyOrParish = []; options.query.where.MLSAreaMajor = []; options.query.where.Neighborhood = []; options.query.where.PostalCode = []; search()"
             >
                 <md-icon md-svg-src="{{ localDir + 'images/icons/actionButtons/clear.svg' }}"></md-icon>
             </a>
@@ -172,8 +177,7 @@
 
         <div class="search-more-filters" data-ng-if="!listInitialized">
             <!-- If there isn't a list, run the search() function to send to a pre-filled search page -->
-            <a class="open-filters-link"
-               data-ng-click="search()">
+            <a class="open-filters-link" data-ng-click="search(true)">
                 <md-icon md-svg-src="{{ localDir + 'images/icons/actionButtons/filters.svg' }}"></md-icon>
                 <span class="btn-text"><span data-ng-bind="advancedSearchLinkName"></span></span>
             </a>
@@ -326,7 +330,7 @@
 
             <div
                     class="extras"
-                    data-ng-show="options.query.where.OpenHouseOnly || options.query.where.Neighborhood.length || options.query.where.Location.length || options.query.where.AgentLicense.length || options.query.where.OfficeNumber.length || options.query.where.OfficeName.length || options.query.where.City.length || options.query.where.CountyOrParish.length || options.query.where.MLSAreaMajor.length || options.query.where.PostalCode.length"
+                    data-ng-show="options.query.where.OpenHouseOnly || options.query.where.Neighborhood.length || options.query.where.Location.length || options.query.where.AgentLicense.length || options.query.where.OfficeNumber.length || options.query.where.OfficeName.length || options.query.where.City.length || options.query.where.CountyOrParish.length || options.query.where.MLSAreaMajor.length || options.query.where.Neighborhood.length || options.query.where.PostalCode.length"
             >
                 <h4>Extras</h4>
                 <!-- 'Openhouses Only' is only allowed when more filters are supplied due to speed restrictions -->
@@ -342,7 +346,7 @@
 
             </div>
 
-            <div data-ng-if="options.officeGroups.length">
+            <div data-ng-if="options.officeGroups.length || options.query.where.AgentLicense.length || options.query.where.ListingId.length">
                 <h4>Preset Filters</h4>
                 <div class="search-input" data-ng-if="options.officeGroups.length">
                     <!--h5>Office</h5-->
@@ -360,6 +364,42 @@
                         <md-chip-template>
                             <!-- add to enable editing: data-ng-click="displayOfficeGroupSelector(null, $index, $event)" -->
                             <span>{{$chip.name}}</span>
+                        </md-chip-template>
+                    </md-chips>
+                </div>
+                <div class="search-input" data-ng-if="options.query.where.AgentLicense.length">
+                    <h5>Agent License</h5>
+                    <md-chips
+                            class="agent-license-groups font-secondary"
+                            aria-label="Agent Licenses"
+                            data-ng-model="options.query.where.AgentLicense"
+                            data-md-enable-chip-edit="false"
+                            data-md-removable="true"
+                            data-delete-button-label="Remove License"
+                            data-delete-hint="Press delete to remove License"
+                            data-md-on-add="search()"
+                            data-md-on-remove="search()"
+                    >
+                        <md-chip-template>
+                            <span>{{$chip}}</span>
+                        </md-chip-template>
+                    </md-chips>
+                </div>
+                <div class="search-input" data-ng-if="options.query.where.ListingId.length">
+                    <h5>Listing Id</h5>
+                    <md-chips
+                            class="listing-id-groups font-secondary"
+                            aria-label="Listing Ids"
+                            data-ng-model="options.query.where.ListingId"
+                            data-md-enable-chip-edit="false"
+                            data-md-removable="true"
+                            data-delete-button-label="Remove ListingId"
+                            data-delete-hint="Press delete to remove ListingId"
+                            data-md-on-add="search()"
+                            data-md-on-remove="search()"
+                    >
+                        <md-chip-template>
+                            <span>{{$chip}}</span>
                         </md-chip-template>
                     </md-chips>
                 </div>

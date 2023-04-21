@@ -4,7 +4,6 @@
  * @see https://github.com/Sitetheory/stratus/wiki/Idx-Member-Search-Widget
  */
 
-// Runtime
 import {forEach} from 'lodash'
 import {Stratus} from '@stratusjs/runtime/stratus'
 import {element, material, IAttributes, ITimeoutService, IScope, IQService, IWindowService} from 'angular'
@@ -15,10 +14,7 @@ import {cookie} from '@stratusjs/core/environment'
 import {IdxMemberListScope} from '@stratusjs/idx/member/list.component'
 
 // Stratus Preload
-// tslint:disable-next-line:no-duplicate-imports
-import '@stratusjs/idx/idx'
-// tslint:disable-next-line:no-duplicate-imports
-import '@stratusjs/idx/member/list.component'
+import '@stratusjs/angularjs-extras'
 
 // Environment
 const min = !cookie('env') ? '.min' : ''
@@ -59,6 +55,7 @@ Stratus.Components.IdxMemberSearch = {
         Idx: IdxService,
     ) {
         // Initialize
+        const $ctrl = this
         $scope.uid = safeUniqueId(packageName, moduleName, componentName)
         $scope.elementId = $attrs.elementId || $scope.uid
         Stratus.Instances[$scope.elementId] = $scope
@@ -82,7 +79,7 @@ Stratus.Components.IdxMemberSearch = {
             }, 2000) */
 
             // $scope.options = $attrs.options && isJSON($attrs.options) ? JSON.parse($attrs.options) : {}
-            $scope.options = hydrate($attrs.options) || {}
+            $scope.options = hydrate($ctrl.options) || hydrate($attrs.options) || {}
 
             // Set default queries
             $scope.options.query ??= {}
