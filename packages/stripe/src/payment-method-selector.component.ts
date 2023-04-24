@@ -17,7 +17,7 @@ import {
 } from '@stratusjs/runtime/stratus'
 import {RootComponent} from '../../angular/src/core/root.component'
 import {cookie} from '@stratusjs/core/environment'
-import {safeUniqueId} from '@stratusjs/core/misc'
+import {LooseObject, safeUniqueId} from '@stratusjs/core/misc'
 import {StripeService} from './stripe.service'
 import {Registry} from '@stratusjs/angularjs/services/registry'
 import {Collection, CollectionOptions} from '@stratusjs/angularjs/services/collection'
@@ -26,7 +26,7 @@ import {EventManager} from '@stratusjs/core/events/eventManager'
 import {Observable, ObservableInput, Subscriber, timer} from 'rxjs'
 import {catchError, debounce} from 'rxjs/operators'
 import {FormBuilder, FormControl, FormGroup} from '@angular/forms'
-import {LooseObject} from '@stratusjs/core/misc'
+import Toastify from 'toastify-js'
 // import {EventBase} from '@stratusjs/core/events/eventBase'
 
 // Local Setup
@@ -395,6 +395,15 @@ export class StripePaymentMethodSelectorComponent extends RootComponent implemen
 
     handleObservableError(err: ObservableInput<any>): ObservableInput<any> {
         console.error(err)
+        Toastify({
+            text: err.toString(),
+            duration: 3000,
+            close: true,
+            stopOnFocus: true,
+            style: {
+                background: '#E14D45',
+            }
+        }).showToast()
         return err
     }
 

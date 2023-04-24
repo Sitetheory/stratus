@@ -60,6 +60,7 @@ export default [
       'froala-editor',
       'html2pdf',
       'lodash',
+      'toastify-js',
       'zone.js/dist/zone',
       // TODO: This one may be a transformer, so it shouldn't need to be imported.
       '@agentepsilon/decko'
