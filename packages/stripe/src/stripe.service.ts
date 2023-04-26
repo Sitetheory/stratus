@@ -3,6 +3,7 @@ import {isEmpty, isNil, isString} from 'lodash'
 import {Stratus} from '@stratusjs/runtime/stratus'
 import {Collection} from '@stratusjs/angularjs/services/collection'
 import {safeUniqueId} from '@stratusjs/core/misc'
+import Toastify from 'toastify-js'
 
 interface StripeVariables {
     stripe?: stripe.Stripe
@@ -40,14 +41,34 @@ export class StripeService {
                     console.warn('Stripe Api was not initialized yet, waiting...')
                     await this.delay(3000)
                     if (!Object.prototype.hasOwnProperty.call(window, 'Stripe')) {
-                        console.error('Stripe Api was not initialized, cannot continue')
+                        const error = 'Stripe Api was not initialized, payment widgets cannot load.'
+                        console.error(error)
                         this.initializing = false
+                        Toastify({
+                            text: error,
+                            duration: 3000,
+                            close: true,
+                            stopOnFocus: true,
+                            style: {
+                                background: '#E14D45',
+                            }
+                        }).showToast()
                         return
                     }
                 }
             } catch (e) {
-                console.error('Stripe Api could not be fetched, cannot continue')
+                const error = 'Stripe Api could not be fetched, payment widgets cannot load.'
+                console.error(error)
                 this.initializing = false
+                Toastify({
+                    text: error,
+                    duration: 3000,
+                    close: true,
+                    stopOnFocus: true,
+                    style: {
+                        background: '#E14D45',
+                    }
+                }).showToast()
                 return
             }
             this.Stripe.stripe = (window.Stripe as stripe.StripeStatic)(this.publishKey)
@@ -136,7 +157,7 @@ export class StripeService {
 
     fetchCollections() {
         this.collections.forEach((collection) => {
-            collection.fetch()
+            collection.fetch().then()
             // console.log('refetching this collection')
         })
     }
@@ -199,7 +220,17 @@ export class StripeService {
             isEmpty(this.currentElement) ||
             this.currentElement.id !== id
         ) {
-            console.error('The StripeElement for', id, 'no longer exists. Cannot attach listener')
+            const error = `The StripeElement for${id} no longer exists. Cannot attach listener`
+            console.error(error)
+            Toastify({
+                text: error,
+                duration: 3000,
+                close: true,
+                stopOnFocus: true,
+                style: {
+                    background: '#3C90D1',
+                }
+            }).showToast()
             return
         }
         return this.currentElement.element.addEventListener(event, handler)
