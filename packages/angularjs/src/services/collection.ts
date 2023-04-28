@@ -422,6 +422,9 @@ export class Collection<T = LooseObject> extends EventManager {
                 this.filtering = !_.isEmpty(this.meta.get('api.q'))
                 this.paginate = !_.isEmpty(this.meta.get('api.p'))
 
+                // Clear Meta Temps
+                this.meta.clearTemp()
+
                 // Trigger Change Event
                 this.throttleTrigger('change')
                 this.trigger('complete')
