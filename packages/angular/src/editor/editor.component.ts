@@ -244,6 +244,7 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
 
     // Component Attributes
     @Input() property: string
+    @Input() classes: object
 
     // Dependencies
     _ = _
@@ -875,6 +876,11 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
         // Note: The request will contain the image source as src parameter.
         // imageManagerDeleteURL: '/Api/MediaSrc',
         // imageManagerPreloader: '/images/loader.gif',
+        // inlineClasses: {
+        //     'fr-class-code': 'Code',
+        //     'fr-class-highlighted': 'Highlighted',
+        //     'fr-class-transparency': 'Transparent'
+        // },
         linkEditButtons: [
             'linkOpen',
             // 'linkStyle',
@@ -1196,6 +1202,11 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
 
     ngOnInit() {
         this.initialized = true
+        // Hoist Custom Classes to Froala Config
+        if (!_.isUndefined(this.classes)) {
+            // @ts-ignore
+            this.froalaConfig.inlineClasses = this.classes
+        }
         // console.info(`${moduleName}.ngOnInit`)
         const dataControl = this.form.get('dataString')
         // This valueChanges field is an Event Emitter

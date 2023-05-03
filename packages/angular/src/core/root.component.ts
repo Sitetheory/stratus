@@ -8,6 +8,9 @@ import {
 import {
     ResponsiveComponent
 } from './responsive.component'
+import {
+    isJSON
+} from '@stratusjs/core/misc'
 
 /**
  * This provides common functionality for root components.
@@ -28,14 +31,14 @@ export class RootComponent extends ResponsiveComponent {
             const attrKebab = _.kebabCase(attr)
             const variants = [
                 attrKebab,
-                'data-' + attrKebab
+                `data-${attrKebab}`
             ]
             const variant = _.find(variants, (v) => elementRef.nativeElement.hasAttribute(v))
             if (_.isEmpty(variant)) {
                 return
             }
-            const value = sanitizer.sanitize(SecurityContext.HTML, elementRef.nativeElement.getAttribute(variant))
-            _.set(this, attr, value)
+            const value = sanitizer.sanitize(SecurityContext.STYLE, elementRef.nativeElement.getAttribute(variant))
+            _.set(this, attr, isJSON(value) ? JSON.parse(value) : value)
         })
     }
 }
