@@ -2470,12 +2470,18 @@ const angularJsService = (
     function orderBy(collection: Collection, propertyNames: string[] | string, reverse = false): void {
         if (propertyNames) {
             const orderPropertyNames = isArray(propertyNames) ? clone(propertyNames) : [clone(propertyNames)]
-            // BestPrice hotfix, as the variable is actually _BestPrice. Should actaully be requesting _BestPrice
+            // BestPrice hotfix, as the variable is actually _BestPrice. Should actually be requesting _BestPrice
+            // Status hotfix, as the variable is actually _Status. Should actually be requesting MlsStatus or StandardStatus
             orderPropertyNames.forEach((item: string, index: number) => {
                 if (item === 'BestPrice') {
                     orderPropertyNames[index] = '_BestPrice'
                 } else if (item === '-BestPrice') {
                     orderPropertyNames[index] = '-_BestPrice'
+                }
+                if (item === 'Status') {
+                    orderPropertyNames[index] = '_Status'
+                } else if (item === '-Status') {
+                    orderPropertyNames[index] = '-_Status'
                 }
             })
             collection.models = orderByFilter(collection.models, orderPropertyNames, reverse)
@@ -2662,6 +2668,7 @@ const angularJsService = (
             }
 
             // Sort once more on the front end to ensure it's ordered correctly
+            console.log('needs to hit orderBy here')
             orderBy(collection, options.order) // FIXME await?
 
             // Cut out any model counts beyond how many we should currently have
