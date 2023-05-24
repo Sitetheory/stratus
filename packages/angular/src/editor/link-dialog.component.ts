@@ -124,6 +124,7 @@ export class LinkDialogComponent extends ResponsiveComponent implements OnInit, 
     content: ContentEntity
     linkType = ''
     linkText = ''
+    linkInitText = ''
     linkURL = ''
     linkTarget = false
 
@@ -251,7 +252,7 @@ export class LinkDialogComponent extends ResponsiveComponent implements OnInit, 
             .subscribe((response: string) => this.linkText = response)
 
         // Populate Data from Froala Element
-        this.linkText = this.element ? this.element.textContent : ''
+        this.linkInitText = this.linkText = this.element ? this.element.textContent : ''
         this.dialogContentForm
             .get('linkTextInput')
             .patchValue(this.linkText)
