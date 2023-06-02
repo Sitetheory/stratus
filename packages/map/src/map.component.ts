@@ -19,7 +19,7 @@ import {DomSanitizer} from '@angular/platform-browser'
 import {keys} from 'ts-transformer-keys'
 import {Stratus} from '@stratusjs/runtime/stratus'
 // import {GoogleMap, MapInfoWindow, MapMarker} from '@angular/google-maps'
-import {debounce, isArray, isBoolean, isEmpty, isFunction, isNumber, isString, set} from 'lodash'
+import {clone, debounce, isArray, isBoolean, isEmpty, isFunction, isNumber, isString, set} from 'lodash'
 import {isJSON, safeUniqueId} from '@stratusjs/core/misc'
 import {RootComponent} from '../../angular/src/core/root.component'
 
@@ -489,17 +489,18 @@ export class MapComponent extends RootComponent implements OnInit, AfterViewInit
         }
 
         // Sizing Options
-        if (this.fullHeightMinusElements) {
-            // hydrate seems to htmlEntity encode when it isn;t suppose to, breaking JSON
+        if (this.fullHeightMinusElements && !isArray(this.fullHeightMinusElements)) {
+            // hydrate seems to htmlEntity encode when it isn;t suppose to, breaking JSON.
+            // If fullHeightMinusElements isn't JSON... attempt to decode first to see if we can allow that to be JSON or true/false
             this.fullHeightMinusElements = this.decodeHTML(this.fullHeightMinusElements)
         }
         const fullHeightMinusElementNames = this.fullHeightMinusElements && isJSON(this.fullHeightMinusElements) ?
-            JSON.parse(this.fullHeightMinusElements) : null
+            JSON.parse(this.fullHeightMinusElements) : isArray(this.fullHeightMinusElements) ? this.fullHeightMinusElements : null
         if (isArray(fullHeightMinusElementNames)) {
             this.fullHeight = true
             this.fullHeightMinusElementNames = fullHeightMinusElementNames
         } else if (this.fullHeightMinusElements && !isJSON(this.fullHeightMinusElements)) {
-            console.warn(this.uid, '- fullHeightMinusElements contains invalid JSON', this.fullHeightMinusElements)
+            console.warn(this.uid, '- fullHeightMinusElements contains invalid JSON', clone(this.fullHeightMinusElements))
         }
     }
 
