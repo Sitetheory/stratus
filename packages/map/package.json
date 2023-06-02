@@ -1,6 +1,6 @@
 {
   "name": "@stratusjs/map",
-  "version": "0.6.4",
+  "version": "0.6.5",
   "description": "Angular Google Map component to be used as an add-on to StratusJS",
   "main": "",
   "scripts": {
@@ -30,6 +30,6 @@
   },
   "dependencies": {
     "@angular/google-maps": "^11.2.13",
-    "@stratusjs/angular": "^0.6.4"
+    "@stratusjs/angular": "^0.7.2"
   }
 }
