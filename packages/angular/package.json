@@ -1,6 +1,6 @@
 {
   "name": "@stratusjs/angular",
-  "version": "0.7.2",
+  "version": "0.7.3",
   "description": "This is the angular package for StratusJS.",
   "scripts": {},
   "repository": {
@@ -16,7 +16,6 @@
   "keywords": [
     "sitetheory",
     "stratus",
-    "underscore",
     "lodash",
     "javascript",
     "typescript",
@@ -29,7 +28,7 @@
     "@mat-datetimepicker/core": "6.0.3",
     "@mat-datetimepicker/moment": "6.0.3",
     "@stratusjs/map": "^0.6.5",
-    "@stratusjs/stripe": "^1.5.3",
+    "@stratusjs/stripe": "^1.6.0",
     "core-js": "^3.19.0",
     "quill": "^1.3.7",
     "quill-autoformat": "^0.1.2",
