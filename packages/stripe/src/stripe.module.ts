@@ -6,6 +6,7 @@ import {FormsModule, ReactiveFormsModule} from '@angular/forms'
 import {MaterialModules} from '../../angular/src/material'
 import {StripePaymentMethodComponent} from './payment-method.component'
 import {StripePaymentMethodItemComponent} from './payment-method-item.component'
+import {StripePaymentMethodItemDisplayComponent} from './payment-method-item-display.component'
 import {StripePaymentMethodListComponent} from './payment-method-list.component'
 import {StripePaymentMethodSelectorComponent} from './payment-method-selector.component'
 import {StripeSetupIntentComponent} from './setup-intent.component'
@@ -22,6 +23,7 @@ import {StripeSetupIntentComponent} from './setup-intent.component'
     declarations: [
         StripePaymentMethodComponent,
         StripePaymentMethodItemComponent,
+        StripePaymentMethodItemDisplayComponent,
         StripePaymentMethodListComponent,
         StripePaymentMethodSelectorComponent,
         StripeSetupIntentComponent,
@@ -30,6 +32,7 @@ import {StripeSetupIntentComponent} from './setup-intent.component'
     entryComponents: [
         StripePaymentMethodComponent,
         StripePaymentMethodItemComponent,
+        StripePaymentMethodItemDisplayComponent,
         StripePaymentMethodListComponent,
         StripePaymentMethodSelectorComponent,
         StripeSetupIntentComponent,
@@ -37,6 +40,7 @@ import {StripeSetupIntentComponent} from './setup-intent.component'
     exports: [
         StripePaymentMethodComponent,
         StripePaymentMethodItemComponent,
+        StripePaymentMethodItemDisplayComponent,
         StripePaymentMethodListComponent,
         StripePaymentMethodSelectorComponent,
         StripeSetupIntentComponent,
@@ -49,6 +53,7 @@ export class StripeModule {}
 export const StripePackage: StratusPackage = {
     stratusModule: StripeModule,
     stratusComponents: {
+        'sa-stripe-payment-method-item-display': StripePaymentMethodItemDisplayComponent,
         'sa-stripe-payment-method-list': StripePaymentMethodListComponent,
         'sa-stripe-payment-method-selector': StripePaymentMethodSelectorComponent
     }
