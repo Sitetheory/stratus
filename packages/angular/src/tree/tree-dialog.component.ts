@@ -419,7 +419,7 @@ export class TreeDialogComponent extends ResponsiveComponent implements OnInit, 
     }
 
     getQueryUrl(query?: string, id?: string|number): string {
-        query = (!_.isString(query) || _.isEmpty(query)) ? '' : `"${query}"`
+        query = (!_.isString(query) || _.isEmpty(query)) ? '' : query
         id = !_.isString(id) && !_.isNumber(id) ? '' : `/${id}`
         return `${this.apiBase}${id}?limit=${this.limit}&${this.basicContentQueryAttributes}&q=${query}`
     }
