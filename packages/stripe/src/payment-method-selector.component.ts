@@ -245,7 +245,7 @@ export class StripePaymentMethodSelectorComponent extends RootComponent implemen
             (value?: Model) => {
                 // Avoid saving until the Model is truly available
                 if (!value || !value.completed) {
-                // if (!this.model.completed) {
+                    // if (!this.model.completed) {
                     return
                 }
 
@@ -255,7 +255,7 @@ export class StripePaymentMethodSelectorComponent extends RootComponent implemen
                     this.property,
                     this.normalizeOut(innerHTML || value)
                 )*/
-            })
+            }).then()
 
         await this.fetchPaymentMethods()
         // TODO grey out until loaded?
@@ -379,7 +379,7 @@ export class StripePaymentMethodSelectorComponent extends RootComponent implemen
         } */
         // console.log('will run subscriber next', dataNumber)
         this.subscriber.next(dataNumber)
-        // TODO: Add a returned Promise to ensure async/await can use this defer directly.
+        // ???: Add a returned Promise to ensure async/await can use this defer directly. (Observer can't use promise)
     }
 
     // dataRef(): number|null {
