@@ -2,7 +2,18 @@
         [attr.id]="elementId"
         [formGroup]="form"
 >
-    <mat-form-field style="width: 100%;" [class.payment-selected]="form.controls[fieldName].value">
+    <sa-stripe-setup-intent
+            *ngIf="paymentCollection.completed && !paymentCollection.pending && paymentCollection.models.length === 0"
+            data-detailed-billing-info="true"
+            [defaultBillingInfo]="defaultBillingInfo"
+            [urlRoot]="urlRoot"
+            [paymentMethodApiPath]="paymentMethodApiPath"
+            [addCardButtonText]="addCardButtonText"
+    ></sa-stripe-setup-intent>
+    <mat-form-field
+            [hidden]="!paymentCollection.completed || paymentCollection.pending || paymentCollection.models.length === 0"
+            style="width: 100%;" [class.payment-selected]="form.controls[fieldName].value"
+    >
         <mat-label>Payment Method</mat-label>
         <mat-select
                 [panelClass]="'sa-stripe-payment-method-selector-select-override'"
