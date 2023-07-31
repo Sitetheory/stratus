@@ -256,6 +256,7 @@ export class StripePaymentMethodComponent extends StripeComponent implements OnD
             this.formPending = false
             // Reload any collections listing PMs
             this.Stripe.fetchCollections()
+            // FIXME autoselect this card
             // })
         } else {
             // handle everything else

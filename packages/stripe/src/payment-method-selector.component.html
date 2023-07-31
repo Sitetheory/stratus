@@ -34,6 +34,7 @@
                 No Payment Method on file.
             </mat-option>
             <mat-option class="current-selection" *ngIf="form.controls[fieldName].value">
+                Current Method
                 <sa-stripe-payment-method-item [(model)]="form.controls[fieldName].value"></sa-stripe-payment-method-item>
             </mat-option>
             <mat-option
