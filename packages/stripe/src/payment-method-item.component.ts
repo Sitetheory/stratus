@@ -18,12 +18,7 @@ import {
     MatDialog,
     MatDialogRef
 } from '@angular/material/dialog'
-import {StripeComponent} from './stripe.service'
-
-
-// Services
-// import {StripeService} from '@stratusjs/stripe/stripe.service'
-
+import {StripeComponent, StripeService} from './stripe.service'
 
 // Local Setup
 const min = !cookie('env') ? '.min' : ''
@@ -55,7 +50,7 @@ export class StripePaymentMethodItemComponent extends StripeComponent implements
         private dialog: MatDialog,
         private elementRef: ElementRef,
         private sanitizer: DomSanitizer,
-        // private Stripe: StripeService,
+        private Stripe: StripeService,
     ) {
         // Chain constructor
         super()
@@ -142,15 +137,8 @@ export class StripePaymentMethodItemComponent extends StripeComponent implements
                 if (!dialogResult) {
                     return
                 }
-                let collection
-                if (this.model.collection) {
-                    collection = this.model.collection
-                }
                 await this.model.destroy()
-                if (collection) {
-                    // Refetch to get current PMs
-                    collection.fetch()
-                }
+                this.Stripe.fetchCollections() // re-fetch ALL stripe collections just in case (will close the select box too)
             })
         return dialog
     }
