@@ -9,6 +9,7 @@ import {
     OnInit,
     ViewChild
 } from '@angular/core'
+import {MatSelect} from '@angular/material/select'
 // import {ComponentPortal} from '@angular/cdk/portal'
 import {DomSanitizer} from '@angular/platform-browser'
 import {snakeCase} from 'lodash'
@@ -27,8 +28,6 @@ import {Observable, ObservableInput, Subscriber, timer} from 'rxjs'
 import {catchError, debounce} from 'rxjs/operators'
 import {FormBuilder, FormControl, FormGroup} from '@angular/forms'
 import Toastify from 'toastify-js'
-
-// import {EventBase} from '@stratusjs/core/events/eventBase'
 
 // Local Setup
 const min = !cookie('env') ? '.min' : ''
@@ -97,10 +96,7 @@ export class StripePaymentMethodSelectorComponent extends StripeListComponent im
         [this.fieldName]: new FormControl(), // optionally disabled on init to avoid known issues
         [this.fieldNameId]: new FormControl({disabled: true})
     })
-
-
-    // Component data
-    // collection: Collection
+    @ViewChild('paymentSelect', {static: false}) paymentSelect: MatSelect
 
     // paymentItemComponentPortal: ComponentPortal<StripePaymentMethodItemComponent>
 
@@ -273,17 +269,15 @@ export class StripePaymentMethodSelectorComponent extends StripeListComponent im
         this.Stripe.on(this.uid, 'collectionUpdated', (source, collection: Collection) => {
             // console.log('selector collectionUpdated!!!!', source, collection)
             this.refresh()
+            if (this.paymentSelect && this.paymentSelect.panelOpen) {
+                // Let's close the selector if we've had updates so we can see that new data (or remove it completely)
+                this.paymentSelect.close()
+            }
         })
 
         // TODO need a change watcher on the selector
         // console.log('inited selector, this is model', this.model)
     }
-
-    /*async fetchPaymentMethods() {
-        await this.collection.fetch()
-        console.log('selector fetchPaymentMethods')
-        await this.refresh()
-    }*/
 
     valueChanged(value: Model) {
         if (value) {

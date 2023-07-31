@@ -16,6 +16,7 @@
     >
         <mat-label>Payment Method</mat-label>
         <mat-select
+                #paymentSelect
                 [panelClass]="'sa-stripe-payment-method-selector-select-override'"
                 formControlName="{{fieldName}}"
                 [compareWith]="objectComparisonFunction"
