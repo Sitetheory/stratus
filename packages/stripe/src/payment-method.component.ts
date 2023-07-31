@@ -18,11 +18,10 @@ import {keys} from 'ts-transformer-keys'
 import {
     Stratus
 } from '@stratusjs/runtime/stratus'
-import {RootComponent} from '../../angular/src/core/root.component'
 import {Model, ModelOptions} from '@stratusjs/angularjs/services/model'
 import {cookie} from '@stratusjs/core/environment'
 import {safeUniqueId} from '@stratusjs/core/misc'
-import {StripeService} from './stripe.service'
+import {StripeComponent, StripeService} from './stripe.service'
 
 // Local Setup
 const min = !cookie('env') ? '.min' : ''
@@ -39,7 +38,7 @@ const localDir = `${Stratus.BaseUrl}${Stratus.DeploymentPath}@stratusjs/${packag
     templateUrl: `${localDir}${componentName}.component${min}.html`,
     // changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class StripePaymentMethodComponent extends RootComponent implements OnDestroy, OnInit {
+export class StripePaymentMethodComponent extends StripeComponent implements OnDestroy, OnInit {
 
     // Basic Component Settings
     title = `${packageName}_${componentName}_component`

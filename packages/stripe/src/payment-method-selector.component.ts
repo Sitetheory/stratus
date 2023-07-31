@@ -6,7 +6,8 @@ import {
     Component,
     ElementRef,
     Input,
-    OnInit
+    OnInit,
+    ViewChild
 } from '@angular/core'
 // import {ComponentPortal} from '@angular/cdk/portal'
 import {DomSanitizer} from '@angular/platform-browser'
@@ -15,10 +16,9 @@ import {keys} from 'ts-transformer-keys'
 import {
     Stratus
 } from '@stratusjs/runtime/stratus'
-import {RootComponent} from '../../angular/src/core/root.component'
 import {cookie} from '@stratusjs/core/environment'
 import {LooseObject, safeUniqueId} from '@stratusjs/core/misc'
-import {StripeService} from './stripe.service'
+import {StripeListComponent, StripeService} from './stripe.service'
 import {Registry} from '@stratusjs/angularjs/services/registry'
 import {Collection, CollectionOptions} from '@stratusjs/angularjs/services/collection'
 import {Model} from '@stratusjs/angularjs/services/model'
@@ -27,6 +27,7 @@ import {Observable, ObservableInput, Subscriber, timer} from 'rxjs'
 import {catchError, debounce} from 'rxjs/operators'
 import {FormBuilder, FormControl, FormGroup} from '@angular/forms'
 import Toastify from 'toastify-js'
+
 // import {EventBase} from '@stratusjs/core/events/eventBase'
 
 // Local Setup
@@ -43,11 +44,11 @@ const localDir = `${Stratus.BaseUrl}${Stratus.DeploymentPath}@stratusjs/${packag
     templateUrl: `${localDir}${componentName}.component${min}.html`,
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class StripePaymentMethodSelectorComponent extends RootComponent implements OnInit {
+export class StripePaymentMethodSelectorComponent extends StripeListComponent implements OnInit {
 
     // Basic Component Settings
     title = `${packageName}_${componentName}_component`
-    uid: string
+    // uid: string
     @Input() elementId: string
 
     // States
@@ -97,8 +98,9 @@ export class StripePaymentMethodSelectorComponent extends RootComponent implemen
         [this.fieldNameId]: new FormControl({disabled: true})
     })
 
+
     // Component data
-    paymentCollection: Collection
+    // collection: Collection
 
     // paymentItemComponentPortal: ComponentPortal<StripePaymentMethodItemComponent>
 
@@ -144,7 +146,7 @@ export class StripePaymentMethodSelectorComponent extends RootComponent implemen
         }
 
         // TODO needs to make use of Observables
-        this.paymentCollection = new Collection(apiOptions)
+        this.collection = new Collection(apiOptions)
 
         if (this.defaultBillingName) {
             this.defaultBillingInfo.name = this.defaultBillingName
@@ -217,13 +219,14 @@ export class StripePaymentMethodSelectorComponent extends RootComponent implemen
                     // In the case of data being edited by the code view or something else,
                     // we need to refresh the UI, as long as it has been initialized.
                     // FIXME: This doesn't work
+                    // console.log('selector editted by code', evt)
                     if (this.initialized) {
                         this.refresh().then()
                     }
                     return
                 }
                 dataControl.patchValue(evt)
-                // console.log('dataSub env', evt)
+                // console.log('selector dataSub env', evt)
                 this.refresh().then()
             })
         }
@@ -257,19 +260,30 @@ export class StripePaymentMethodSelectorComponent extends RootComponent implemen
                 )*/
             }).then()
 
-        await this.fetchPaymentMethods()
+        // await this.fetchPaymentMethods() // we don't want to allow refreshing manually anymore. refer to Service
+        /*await this.collection.fetch().then(() => {
+            console.log('selector manually fetched collection (refreshed)', this.collection)
+            this.refresh()
+        })*/
         // TODO grey out until loaded?
-        this.Stripe.registerCollection(this.paymentCollection)
+        this.Stripe.registerCollection(this, this.collection)
+        this.Stripe.fetchCollections(this.uid)
         this.initialized = true
+        this.Stripe.emit('init', this) // Note this component is ready
+        this.Stripe.on(this.uid, 'collectionUpdated', (source, collection: Collection) => {
+            // console.log('selector collectionUpdated!!!!', source, collection)
+            this.refresh()
+        })
 
         // TODO need a change watcher on the selector
         // console.log('inited selector, this is model', this.model)
     }
 
-    async fetchPaymentMethods() {
-        await this.paymentCollection.fetch()
+    /*async fetchPaymentMethods() {
+        await this.collection.fetch()
+        console.log('selector fetchPaymentMethods')
         await this.refresh()
-    }
+    }*/
 
     valueChanged(value: Model) {
         if (value) {

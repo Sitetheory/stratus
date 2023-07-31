@@ -24,6 +24,7 @@ import {
     StripePaymentMethodComponent,
     StripePaymentMethodDialogData
 } from './payment-method.component'
+import {StripeComponent} from './stripe.service'
 
 // Local Setup
 // const min = !cookie('env') ? '.min' : ''
@@ -36,7 +37,7 @@ const componentName = 'setup-intent'
     // templateUrl: `${localDir}/${parentModuleName}/${moduleName}.component.html`,
     template: '<button mat-raised-button (click)="addPaymentMethod($event)" [disabled]="newPaymentMethodPending || newPaymentMethodPrompt" [textContent]="addCardButtonText"></button>',
 })
-export class StripeSetupIntentComponent extends RootComponent implements OnInit {
+export class StripeSetupIntentComponent extends StripeComponent implements OnInit {
 
     // Basic Component Settings
     title = `${packageName}_${componentName}_component`

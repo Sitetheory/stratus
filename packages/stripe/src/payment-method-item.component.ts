@@ -10,7 +10,6 @@ import {keys} from 'ts-transformer-keys'
 import {
     Stratus
 } from '@stratusjs/runtime/stratus'
-import {RootComponent} from '../../angular/src/core/root.component'
 import {ConfirmDialogComponent} from '../../angular/src/confirm-dialog/confirm-dialog.component'
 import {Model} from '@stratusjs/angularjs/services/model'
 import {cookie} from '@stratusjs/core/environment'
@@ -19,6 +18,7 @@ import {
     MatDialog,
     MatDialogRef
 } from '@angular/material/dialog'
+import {StripeComponent} from './stripe.service'
 
 
 // Services
@@ -38,7 +38,7 @@ const localDir = `${Stratus.BaseUrl}${Stratus.DeploymentPath}@stratusjs/${packag
     selector: `sa-${packageName}-${componentName}`,
     templateUrl: `${localDir}${componentName}.component${min}.html`,
 })
-export class StripePaymentMethodItemComponent extends RootComponent implements OnInit {
+export class StripePaymentMethodItemComponent extends StripeComponent implements OnInit {
 
     // Basic Component Settings
     title = `${packageName}_${componentName}_component`

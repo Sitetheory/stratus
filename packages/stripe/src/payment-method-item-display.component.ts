@@ -10,9 +10,9 @@ import {keys} from 'ts-transformer-keys'
 import {
     Stratus
 } from '@stratusjs/runtime/stratus'
-import {RootComponent} from '../../angular/src/core/root.component'
 import {Model} from '@stratusjs/angularjs/services/model'
 import {safeUniqueId} from '@stratusjs/core/misc'
+import {StripeComponent} from './stripe.service'
 
 // Local Setup
 // const min = !cookie('env') ? '.min' : ''
@@ -27,7 +27,7 @@ const componentName = 'payment-method-item-display'
     selector: `sa-${packageName}-${componentName}`,
     template: '<sa-stripe-payment-method-item *ngIf="initialized" [(model)]="model" [editable]="false"></sa-stripe-payment-method-item>',
 })
-export class StripePaymentMethodItemDisplayComponent extends RootComponent implements OnInit {
+export class StripePaymentMethodItemDisplayComponent extends StripeComponent implements OnInit {
 
     // Basic Component Settings
     title = `${packageName}_${componentName}_component`

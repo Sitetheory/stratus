@@ -14,11 +14,10 @@ import {keys} from 'ts-transformer-keys'
 import {
     Stratus
 } from '@stratusjs/runtime/stratus'
-import {RootComponent} from '../../angular/src/core/root.component'
 import {Collection, CollectionOptions} from '@stratusjs/angularjs/services/collection'
 import {cookie} from '@stratusjs/core/environment'
 import {safeUniqueId} from '@stratusjs/core/misc'
-import {StripeService} from './stripe.service'
+import {StripeComponent, StripeService} from './stripe.service'
 
 
 
@@ -35,7 +34,7 @@ const localDir = `${Stratus.BaseUrl}${Stratus.DeploymentPath}@stratusjs/${packag
     selector: `sa-${packageName}-${componentName}`,
     templateUrl: `${localDir}${componentName}.component${min}.html`,
 })
-export class StripePaymentMethodListComponent extends RootComponent implements OnInit { // AfterViewInit
+export class StripePaymentMethodListComponent extends StripeComponent implements OnInit { // AfterViewInit
 
     // Basic Component Settings
     title = `${packageName}_${componentName}_component`
@@ -140,7 +139,7 @@ export class StripePaymentMethodListComponent extends RootComponent implements O
      */
     async ngOnInit() {
         await this.fetchPaymentMethods()
-        this.Stripe.registerCollection(this.paymentCollection)
+        this.Stripe.registerCollection(this, this.paymentCollection)
         this.initialized = true
 
     }
