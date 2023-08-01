@@ -1,5 +1,4 @@
 /* tslint:disable:no-inferrable-types */
-// Angular Core
 import {
     ChangeDetectionStrategy,
     ChangeDetectorRef,
@@ -12,7 +11,7 @@ import {
 import {MatSelect} from '@angular/material/select'
 // import {ComponentPortal} from '@angular/cdk/portal'
 import {DomSanitizer} from '@angular/platform-browser'
-import {snakeCase} from 'lodash'
+import {isEmpty, snakeCase} from 'lodash'
 import {keys} from 'ts-transformer-keys'
 import {
     Stratus
@@ -263,19 +262,44 @@ export class StripePaymentMethodSelectorComponent extends StripeListComponent im
         })*/
         // TODO grey out until loaded?
         this.Stripe.registerCollection(this, this.collection)
-        this.Stripe.fetchCollections(this.uid)
+        this.Stripe.fetchCollections(this.uid).then()
         this.initialized = true
         this.Stripe.emit('init', this) // Note this component is ready
-        this.Stripe.on(this.uid, 'collectionUpdated', (source, collection: Collection) => {
-            // console.log('selector collectionUpdated!!!!', source, collection)
+        this.Stripe.on(this.uid, 'collectionUpdated', (_source, _collection: [Collection]) => {
+            // console.log('selector collectionUpdated!!!!', _source, _collection)
             this.refresh()
             if (this.paymentSelect && this.paymentSelect.panelOpen) {
                 // Let's close the selector if we've had updates so we can see that new data (or remove it completely)
                 this.paymentSelect.close()
             }
         })
+        this.Stripe.on(
+            'Stripe',
+            'paymentMethodCreated',
+            (_source, details: [stripe.BillingDetails & {type:'card'|'ach'}]) =>
+            {
+                // The Stripe components are saying there is a new card added, lets find and select it!
+                const newCardDetails = details[0]
+                // console.log('selector sees the new payment method!!!!', clone(newCardDetails))
+                if (
+                    !isEmpty(newCardDetails.type) &&
+                    !isEmpty(newCardDetails.name) &&
+                    !isEmpty(newCardDetails.email)
+                ) {
+                    const newPM =  this.collection.models.slice(-1)[0] as Model
+                    // console.log('checking last card in collection', newPM)
+                    // Let's double check that these match up
+                    if (
+                        newPM.get('type') === newCardDetails.type &&
+                        newPM.get('name') === newCardDetails.name &&
+                        newPM.get('email') === newCardDetails.email
+                    ) {
+                        // console.log('new card seems to be!!!!', newPM)
+                        this.valueChanged(newPM)
+                    }
+                }
+        })
 
-        // TODO need a change watcher on the selector
         // console.log('inited selector, this is model', this.model)
     }
 
@@ -321,6 +345,7 @@ export class StripePaymentMethodSelectorComponent extends StripeListComponent im
         if (!data) {
             return null
         }
+        // console.log('running normalizeIn')
         return new Model({}, data)
         // return data
         // Normalize non-int values to strings.
@@ -352,7 +377,7 @@ export class StripePaymentMethodSelectorComponent extends StripeListComponent im
     }
 
     /**
-     * Used to compared the defaultPayment from the User/Site/Vendor and compare to which option to to select
+     * Used to compare the defaultPayment from the User/Site/Vendor and compare to which option to select
      */
     objectComparisonFunction(option: Model, value: Model ) : boolean {
         if (!option || !value) {
@@ -364,6 +389,9 @@ export class StripePaymentMethodSelectorComponent extends StripeListComponent im
 
     // Ensures Data is populated before hitting the Subscriber
     dataDefer(subscriber: Subscriber<any>) {
+        // this requires sitetheory to provide a populated PM and not just an id
+        // FIXME There is an issuie right now when saving that the Api returns an id instead of an object
+
         // console.log('dataDefer running', subscriber)
         this.subscriber = this.subscriber || subscriber
         if (!this.subscriber) {
@@ -377,14 +405,6 @@ export class StripePaymentMethodSelectorComponent extends StripeListComponent im
             }, 500)
             return
         }*/
-        /* if (!this.froalaConfig.useClasses) {
-            if (prevString === this.dataString) {
-                return
-            }
-            if (this.dev) {
-                console.log('changed value pushed to subscriber:', prevString, this.dataString)
-            }
-        } */
         // console.log('will run subscriber next', dataNumber)
         this.subscriber.next(dataNumber)
         // ???: Add a returned Promise to ensure async/await can use this defer directly. (Observer can't use promise)
@@ -396,6 +416,7 @@ export class StripePaymentMethodSelectorComponent extends StripeListComponent im
             // console.log('dataRef cant read model')
             return null
         }
+        // console.log('running dataRef')
         return this.normalizeIn(
             this.model.get(this.property)
         )

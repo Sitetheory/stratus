@@ -249,23 +249,25 @@ export class StripePaymentMethodComponent extends StripeComponent implements OnD
                 payment_method: setupIntent.payment_method
             }
             await model.save()
-            // TODO check if Sitetheory refreshed
             // hide form and Display a success message
-            // $scope.$applyAsync(() => {
             this.cardSaved = true
             this.formPending = false
             // Reload any collections listing PMs
-            this.Stripe.fetchCollections()
-            // FIXME autoselect this card
-            // })
+            await this.Stripe.fetchCollections()
+            // emit this new card to auto-select it
+            const cardDetails = {
+                type: 'card',
+                name: this.billingInfo.name,
+                email: this.billingInfo.email
+            }
+            // console.log('noting a new card', cardDetails)
+            this.Stripe.emitManual('paymentMethodCreated', 'Stripe', this, cardDetails)
         } else {
             // handle everything else
-            // $scope.$applyAsync(() => {
             this.formPending = false
             console.error('something went wrong. no error, no success', setupIntent)
             const displayError = document.getElementById(`${this.elementId}-errors`)
             displayError.textContent = 'An unknown Error has occurred'
-            // })
         }
     }
 

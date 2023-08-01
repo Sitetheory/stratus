@@ -1,4 +1,4 @@
-import {Injectable, Input, NgZone} from '@angular/core'
+import {Injectable, Input} from '@angular/core'
 import {RootComponent} from '@stratusjs/angular/core/root.component'
 import {isEmpty, isNil, isString, uniqueId} from 'lodash'
 import {Stratus} from '@stratusjs/runtime/stratus'
@@ -21,7 +21,9 @@ export class StripeListComponent<T = LooseObject> extends StripeComponent {
 }
 export type StripeEmitter = (source: StripeComponent, ...variables: any) => any
 export type StripeEmitterInit = StripeEmitter & ((source: StripeComponent) => any)
-export type StripeEmitterCollectionUpdated = StripeEmitter & ((source: StripeListComponent, collection?: Collection) => any)
+export type StripeEmitterCollectionUpdated = StripeEmitter & ((source: StripeListComponent, ...collection: [Collection]) => any)
+export type StripeEmitterPMCreated =
+    StripeEmitter & ((source: StripeListComponent, ...details: [stripe.BillingDetails & {type:'card'|'ach'}]) => any)
 
 @Injectable({
     providedIn: 'root'
@@ -40,6 +42,7 @@ export class StripeService {
             [onMethodName: string]: {[uid: string]: StripeEmitter}
             init?: {[uid: string]: StripeEmitterInit}
             collectionUpdated?: {[uid: string]: StripeEmitterCollectionUpdated}
+            paymentMethodCreated?: {[uid: string]: StripeEmitterPMCreated}
         }
     } = {
         /*idx_property_list_7: {
@@ -69,7 +72,7 @@ export class StripeService {
 
     constructor(
         // private http: HttpClient
-        private ngZone: NgZone
+        // private ngZone: NgZone
     ) {
         // Initialization
         Stratus.Services.Stripe = this
@@ -198,8 +201,8 @@ export class StripeService {
         this.collections[component.uid] = {uid: component.uid, component, collection}
     }
 
-    fetchCollections(uid?: string) {
-        let uids: string[] = []
+    async fetchCollections(uid?: string): Promise<void> {
+        let uids: string[]
         if(
             isString(uid) &&
             uid.length > 0
@@ -209,19 +212,24 @@ export class StripeService {
             uids = Object.keys(this.collections)
         }
 
+        const uidList: (() => Promise<void>)[] = []
         uids.forEach((uidName) => {
             if (Object.prototype.hasOwnProperty.call(this.collections, uidName)) {
-                this.collections[uidName].collection.fetch().then(() => {
-                    // console.log('Service refetched this collection', uidName, this.collections[uidName].collection)
-                    this.emitManual(
-                        'collectionUpdated',
-                        uidName,
-                        this.collections[uidName].component,
-                        this.collections[uidName].collection
-                    )
-                })
+                uidList.push(
+                    async () => {
+                        await this.collections[uidName].collection.fetch()
+                        this.emitManual(
+                            'collectionUpdated',
+                            uidName,
+                            this.collections[uidName].component,
+                            this.collections[uidName].collection
+                        )
+                    }
+                )
             }
         })
+        await Promise.all(uidList.map(fn => fn()))
+        // console.log('collections all fetched')
     }
 
     // we can only have one instance of card at a time, creating from managing features for it
