@@ -2,6 +2,7 @@
         [attr.id]="elementId"
         [formGroup]="form"
 >
+    <mat-progress-bar *ngIf="collection.pending" mode="indeterminate"></mat-progress-bar>
     <sa-stripe-setup-intent
             *ngIf="collection.completed && !collection.pending && collection.models.length === 0"
             data-detailed-billing-info="true"
