@@ -67,6 +67,7 @@ export class StripePaymentMethodSelectorComponent extends StripeListComponent im
 
     // Component Attributes
     @Input() addCardButtonText: string = 'Add Payment Method'
+    @Input() selectCardButtonText: string = 'Select Default Payment Method'
     @Input() disabled: boolean | string = false // inputs are strings..
     @Input() property: string
     @Input() detailedBillingInfo?: boolean
@@ -268,10 +269,7 @@ export class StripePaymentMethodSelectorComponent extends StripeListComponent im
         this.Stripe.on(this.uid, 'collectionUpdated', (_source, _collection: [Collection]) => {
             // console.log('selector collectionUpdated!!!!', _source, _collection)
             this.refresh()
-            if (this.paymentSelect && this.paymentSelect.panelOpen) {
-                // Let's close the selector if we've had updates so we can see that new data (or remove it completely)
-                this.paymentSelect.close()
-            }
+            this.selectorListClose()
         })
         this.Stripe.on(
             'Stripe',
@@ -445,6 +443,28 @@ export class StripePaymentMethodSelectorComponent extends StripeListComponent im
         if (paymentMethod.data.exp_year < year) {return true}
         if (paymentMethod.data.exp_year > year) {return false}
         return paymentMethod.data.exp_month < month
+    }
+
+    selectorListClose(ev?: any) {
+        if (ev) {
+            ev.preventDefault()
+            // ev.stopPropagation()
+        }
+        if (this.paymentSelect && this.paymentSelect.panelOpen) {
+            // Let's close the selector if we've had updates so we can see that new data (or remove it completely)
+            this.paymentSelect.close()
+        }
+    }
+
+    selectorListOpen(ev?: any) {
+        if (ev) {
+            ev.preventDefault()
+            // ev.stopPropagation()
+        }
+        if (this.paymentSelect && !this.paymentSelect.panelOpen) {
+            // Let's close the selector if we've had updates so we can see that new data (or remove it completely)
+            this.paymentSelect.open()
+        }
     }
 
 }

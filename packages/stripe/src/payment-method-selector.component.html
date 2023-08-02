@@ -14,14 +14,13 @@
             [hidden]="!collection.completed || collection.pending || collection.models.length === 0"
             style="width: 100%;" [class.payment-selected]="form.controls[fieldName].value"
     >
-        <mat-label>Payment Method</mat-label>
+        <mat-label [textContent]="form.controls[fieldName].value ? 'Payment Method' : selectCardButtonText"></mat-label>
         <mat-select
                 #paymentSelect
                 [panelClass]="'sa-stripe-payment-method-selector-select-override'"
                 formControlName="{{fieldName}}"
                 [compareWith]="objectComparisonFunction"
         >
-            <!-- TODO fine a way to display certain data formatted. `form.controls.dataNumber.value` is the saved id -->
             <mat-select-trigger>
                 <sa-stripe-payment-method-item *ngIf="form.controls[fieldName].value" [(model)]="form.controls[fieldName].value"></sa-stripe-payment-method-item>
                 <!--{{form.controls.dataNumber.value && form.controls.dataNumber.value.data ? form.controls.dataNumber.value.data.id : 'Not Selected'}}-->
