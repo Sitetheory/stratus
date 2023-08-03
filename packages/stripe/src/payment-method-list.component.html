@@ -1,44 +1,25 @@
 <div [attr.id]="elementId">
-    <mat-progress-bar *ngIf="paymentCollection.pending" mode="indeterminate"></mat-progress-bar>
-    <div *ngIf="paymentCollection.completed && !paymentCollection.pending && paymentCollection.models.length === 0" class="no-results">
-        No Payment Method on file.
-    </div>
-    <sa-stripe-payment-method-item
-            *ngFor="let paymentMethod of paymentCollection.models"
-            [attr.tabindex]="paymentMethod.data.id"
-            [(model)]="paymentMethod"
-    ></sa-stripe-payment-method-item>
-    <sa-stripe-setup-intent
-            [hidden]="!paymentCollection.completed || paymentCollection.pending"
-            data-detailed-billing-info="true"
-            [defaultBillingInfo]="defaultBillingInfo"
-            [urlRoot]="urlRoot"
-            [paymentMethodApiPath]="paymentMethodApiPath"
-            [addCardButtonText]="addCardButtonText"
-    ></sa-stripe-setup-intent>
-
-    <!--delete dialog popup -->
-    <!--script type="text/ng-template" id="delete-payment-method-dialog">
-        <md-dialog aria-label="Delete Payment Method">
-            <md-dialog-content class="md-dialog-content">
-                <h2 class="md-title">Warning</h2>
-                <p>Are you sure you want to delete this Payment Method? (this doesn't work yet)</p>
-            </md-dialog-content>
-            <md-dialog-actions>
-                <button mat-button
-                        class="md-icon-button btn-delete"
-                        aria-label="Confirm Delete"
-                        (click)="hide()"
-                >
-                    <mat-icon
-                            [svgIcon]="getSvg('sitetheorycore/images/icons/actionButtons/delete.svg') | async"
-                            aria-hidden="true"
-                    ></mat-icon>
-                </button>
-                <button mat-button aria-label="Cancel" (click)="hide()">
-                    Cancel
-                </button>
-            </md-dialog-actions>
-        </md-dialog>
-    </script-->
+    <mat-progress-bar *ngIf="collection.pending" mode="indeterminate"></mat-progress-bar>
+    <mat-list>
+        <mat-list-item *ngIf="collection.completed && !collection.pending && collection.models.length === 0" class="no-results">
+            No Payment Method on file.
+        </mat-list-item>
+        <mat-list-item
+                *ngFor="let paymentMethod of collection.models"
+                [attr.tabindex]="paymentMethod.data.id"
+        >
+            <sa-stripe-payment-method-item [(model)]="paymentMethod" [editable]="true"></sa-stripe-payment-method-item>
+        </mat-list-item>
+        <mat-list-item
+                [hidden]="!collection.completed || collection.pending"
+        >
+            <sa-stripe-setup-intent
+                    data-detailed-billing-info="true"
+                    [defaultBillingInfo]="defaultBillingInfo"
+                    [urlRoot]="urlRoot"
+                    [paymentMethodApiPath]="paymentMethodApiPath"
+                    [addCardButtonText]="addCardButtonText"
+            ></sa-stripe-setup-intent>
+        </mat-list-item>
+    </mat-list>
 </div>
