@@ -8,7 +8,7 @@
                 *ngFor="let paymentMethod of collection.models"
                 [attr.tabindex]="paymentMethod.data.id"
         >
-            <sa-stripe-payment-method-item [(model)]="paymentMethod" [editable]="true"></sa-stripe-payment-method-item>
+            <sa-stripe-payment-method-item [(model)]="paymentMethod" [editable]="true" [urlRoot]="urlRoot"></sa-stripe-payment-method-item>
         </mat-list-item>
         <mat-list-item
                 [hidden]="!collection.completed || collection.pending"

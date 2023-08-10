@@ -41,6 +41,9 @@ export class StripePaymentMethodItemComponent extends StripeComponent implements
     @Input() elementId: string
     @Input() model: Model
 
+    // Registry Attributes
+    @Input() urlRoot = '/Api'
+
     // States
     @Input() editable = false
     styled = false
@@ -80,7 +83,9 @@ export class StripePaymentMethodItemComponent extends StripeComponent implements
      */
     async ngOnInit() {
         this.initialized = true
-
+        if (this.urlRoot) {
+            this.model.urlRoot = `${this.urlRoot}${this.model.target ? '/' + this.model.target : ''}`
+        }
     }
 
     getCardLogoUrl(brand: string) {
