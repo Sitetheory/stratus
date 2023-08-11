@@ -10,15 +10,16 @@ import {keys} from 'ts-transformer-keys'
 import {
     Stratus
 } from '@stratusjs/runtime/stratus'
-import {RootComponent} from '../../angular/src/core/root.component'
 import {Model} from '@stratusjs/angularjs/services/model'
+import {cookie} from '@stratusjs/core/environment'
 import {safeUniqueId} from '@stratusjs/core/misc'
+import {StripeComponent} from './stripe.service'
 
 // Local Setup
-// const min = !cookie('env') ? '.min' : ''
+const min = !cookie('env') ? '.min' : ''
 const packageName = 'stripe'
 const componentName = 'payment-method-item-display'
-// const localDir = `${Stratus.BaseUrl}${Stratus.DeploymentPath}@stratusjs/${packageName}/src/`
+const localDir = `${Stratus.BaseUrl}${Stratus.DeploymentPath}@stratusjs/${packageName}/src/`
 
 /**
  * @title Dialog for Nested Tree
@@ -27,13 +28,11 @@ const componentName = 'payment-method-item-display'
     selector: `sa-${packageName}-${componentName}`,
     template: '<sa-stripe-payment-method-item *ngIf="initialized" [(model)]="model" [editable]="false"></sa-stripe-payment-method-item>',
 })
-export class StripePaymentMethodItemDisplayComponent extends RootComponent implements OnInit {
+export class StripePaymentMethodItemDisplayComponent extends StripeComponent implements OnInit {
 
     // Basic Component Settings
     title = `${packageName}_${componentName}_component`
-    uid: string
-    initialized = false
-    @Input() elementId: string
+
     model: Model
     @Input() name?: string
     @Input() brand?: string
@@ -52,6 +51,17 @@ export class StripePaymentMethodItemDisplayComponent extends RootComponent imple
         this.uid = safeUniqueId('sa', snakeCase(this.title))
         Stratus.Instances[this.uid] = this
         this.elementId = this.elementId || this.uid
+
+        // TODO: Assess & Possibly Remove when the System.js ecosystem is complete
+        // Load Component CSS until System.js can import CSS properly.
+        Stratus.Internals.CssLoader(`${localDir}${componentName}.component${min}.css`)
+            .then(() => {
+                this.styled = true
+            })
+            .catch(() => {
+                console.error('CSS Failed to load for Component:', this)
+                this.styled = false
+            })
 
         // Hydrate Root App Inputs
         this.hydrate(this.elementRef, this.sanitizer, keys<StripePaymentMethodItemDisplayComponent>())

@@ -18,11 +18,10 @@ import {keys} from 'ts-transformer-keys'
 import {
     Stratus
 } from '@stratusjs/runtime/stratus'
-import {RootComponent} from '../../angular/src/core/root.component'
 import {Model, ModelOptions} from '@stratusjs/angularjs/services/model'
 import {cookie} from '@stratusjs/core/environment'
 import {safeUniqueId} from '@stratusjs/core/misc'
-import {StripeService} from './stripe.service'
+import {StripeComponent, StripeService} from './stripe.service'
 
 // Local Setup
 const min = !cookie('env') ? '.min' : ''
@@ -39,12 +38,10 @@ const localDir = `${Stratus.BaseUrl}${Stratus.DeploymentPath}@stratusjs/${packag
     templateUrl: `${localDir}${componentName}.component${min}.html`,
     // changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class StripePaymentMethodComponent extends RootComponent implements OnDestroy, OnInit {
+export class StripePaymentMethodComponent extends StripeComponent implements OnDestroy, OnInit {
 
     // Basic Component Settings
     title = `${packageName}_${componentName}_component`
-    uid: string
-    @Input() elementId: string
 
     // Dependencies
     _: any
@@ -54,8 +51,6 @@ export class StripePaymentMethodComponent extends RootComponent implements OnDes
     @Input() paymentMethodApiPath: string = 'PaymentMethod'
 
     // States
-    styled = false
-    initialized = false
     cardComplete = false
     cardSaved = false
     formPending = false
@@ -250,22 +245,25 @@ export class StripePaymentMethodComponent extends RootComponent implements OnDes
                 payment_method: setupIntent.payment_method
             }
             await model.save()
-            // TODO check if Sitetheory refreshed
             // hide form and Display a success message
-            // $scope.$applyAsync(() => {
             this.cardSaved = true
             this.formPending = false
             // Reload any collections listing PMs
-            this.Stripe.fetchCollections()
-            // })
+            await this.Stripe.fetchCollections()
+            // emit this new card to auto-select it
+            const cardDetails = {
+                type: 'card',
+                name: this.billingInfo.name,
+                email: this.billingInfo.email
+            }
+            // console.log('noting a new card', cardDetails)
+            this.Stripe.emitManual('paymentMethodCreated', 'Stripe', this, cardDetails)
         } else {
             // handle everything else
-            // $scope.$applyAsync(() => {
             this.formPending = false
             console.error('something went wrong. no error, no success', setupIntent)
             const displayError = document.getElementById(`${this.elementId}-errors`)
             displayError.textContent = 'An unknown Error has occurred'
-            // })
         }
     }
 

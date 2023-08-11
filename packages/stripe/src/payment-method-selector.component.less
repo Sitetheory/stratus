@@ -1,6 +1,10 @@
 @medium-grey-color: #c5c5c5;
 sa-stripe-payment-method-selector,
 .sa-stripe-payment-method-selector-select-override {
+  [hidden] {
+    /* full hide */
+    display: none !important;
+  }
   /* select-override.mat-select is for controlling select popup options */
   &.mat-select-panel {
     max-height: 50vh;

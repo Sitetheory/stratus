@@ -1,24 +1,24 @@
 /* tslint:disable:no-inferrable-types */
-// Angular Core
 import {
     ChangeDetectionStrategy,
     ChangeDetectorRef,
     Component,
     ElementRef,
     Input,
-    OnInit
+    OnInit,
+    ViewChild
 } from '@angular/core'
+import {MatSelect} from '@angular/material/select'
 // import {ComponentPortal} from '@angular/cdk/portal'
 import {DomSanitizer} from '@angular/platform-browser'
-import {snakeCase} from 'lodash'
+import {isEmpty, snakeCase} from 'lodash'
 import {keys} from 'ts-transformer-keys'
 import {
     Stratus
 } from '@stratusjs/runtime/stratus'
-import {RootComponent} from '../../angular/src/core/root.component'
 import {cookie} from '@stratusjs/core/environment'
 import {LooseObject, safeUniqueId} from '@stratusjs/core/misc'
-import {StripeService} from './stripe.service'
+import {StripeListComponent, StripeService} from './stripe.service'
 import {Registry} from '@stratusjs/angularjs/services/registry'
 import {Collection, CollectionOptions} from '@stratusjs/angularjs/services/collection'
 import {Model} from '@stratusjs/angularjs/services/model'
@@ -27,7 +27,6 @@ import {Observable, ObservableInput, Subscriber, timer} from 'rxjs'
 import {catchError, debounce} from 'rxjs/operators'
 import {FormBuilder, FormControl, FormGroup} from '@angular/forms'
 import Toastify from 'toastify-js'
-// import {EventBase} from '@stratusjs/core/events/eventBase'
 
 // Local Setup
 const min = !cookie('env') ? '.min' : ''
@@ -43,16 +42,9 @@ const localDir = `${Stratus.BaseUrl}${Stratus.DeploymentPath}@stratusjs/${packag
     templateUrl: `${localDir}${componentName}.component${min}.html`,
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class StripePaymentMethodSelectorComponent extends RootComponent implements OnInit {
-
+export class StripePaymentMethodSelectorComponent extends StripeListComponent implements OnInit {
     // Basic Component Settings
     title = `${packageName}_${componentName}_component`
-    uid: string
-    @Input() elementId: string
-
-    // States
-    styled = false
-    initialized = false
 
     // Registry Attributes
     @Input() target: string
@@ -68,6 +60,7 @@ export class StripePaymentMethodSelectorComponent extends RootComponent implemen
 
     // Component Attributes
     @Input() addCardButtonText: string = 'Add Payment Method'
+    @Input() selectCardButtonText: string = 'Select Default Payment Method'
     @Input() disabled: boolean | string = false // inputs are strings..
     @Input() property: string
     @Input() detailedBillingInfo?: boolean
@@ -96,9 +89,7 @@ export class StripePaymentMethodSelectorComponent extends RootComponent implemen
         [this.fieldName]: new FormControl(), // optionally disabled on init to avoid known issues
         [this.fieldNameId]: new FormControl({disabled: true})
     })
-
-    // Component data
-    paymentCollection: Collection
+    @ViewChild('paymentSelect', {static: false}) paymentSelect: MatSelect
 
     // paymentItemComponentPortal: ComponentPortal<StripePaymentMethodItemComponent>
 
@@ -144,7 +135,7 @@ export class StripePaymentMethodSelectorComponent extends RootComponent implemen
         }
 
         // TODO needs to make use of Observables
-        this.paymentCollection = new Collection(apiOptions)
+        this.collection = new Collection(apiOptions)
 
         if (this.defaultBillingName) {
             this.defaultBillingInfo.name = this.defaultBillingName
@@ -217,13 +208,14 @@ export class StripePaymentMethodSelectorComponent extends RootComponent implemen
                     // In the case of data being edited by the code view or something else,
                     // we need to refresh the UI, as long as it has been initialized.
                     // FIXME: This doesn't work
+                    // console.log('selector editted by code', evt)
                     if (this.initialized) {
                         this.refresh().then()
                     }
                     return
                 }
                 dataControl.patchValue(evt)
-                // console.log('dataSub env', evt)
+                // console.log('selector dataSub env', evt)
                 this.refresh().then()
             })
         }
@@ -245,7 +237,7 @@ export class StripePaymentMethodSelectorComponent extends RootComponent implemen
             (value?: Model) => {
                 // Avoid saving until the Model is truly available
                 if (!value || !value.completed) {
-                // if (!this.model.completed) {
+                    // if (!this.model.completed) {
                     return
                 }
 
@@ -255,20 +247,51 @@ export class StripePaymentMethodSelectorComponent extends RootComponent implemen
                     this.property,
                     this.normalizeOut(innerHTML || value)
                 )*/
-            })
+            }).then()
 
-        await this.fetchPaymentMethods()
+        // await this.fetchPaymentMethods() // we don't want to allow refreshing manually anymore. refer to Service
+        /*await this.collection.fetch().then(() => {
+            console.log('selector manually fetched collection (refreshed)', this.collection)
+            this.refresh()
+        })*/
         // TODO grey out until loaded?
-        this.Stripe.registerCollection(this.paymentCollection)
+        this.Stripe.registerCollection(this, this.collection)
+        this.Stripe.fetchCollections(this.uid).then()
         this.initialized = true
+        this.Stripe.emit('init', this) // Note this component is ready
+        this.Stripe.on(this.uid, 'collectionUpdated', (_source, _collection: [Collection]) => {
+            // console.log('selector collectionUpdated!!!!', _source, _collection)
+            this.refresh()
+            this.selectorListClose()
+        })
+        this.Stripe.on(
+            'Stripe',
+            'paymentMethodCreated',
+            (_source, details: [stripe.BillingDetails & {type:'card'|'ach'}]) =>
+            {
+                // The Stripe components are saying there is a new card added, lets find and select it!
+                const newCardDetails = details[0]
+                // console.log('selector sees the new payment method!!!!', clone(newCardDetails))
+                if (
+                    !isEmpty(newCardDetails.type) &&
+                    !isEmpty(newCardDetails.name) &&
+                    !isEmpty(newCardDetails.email)
+                ) {
+                    const newPM =  this.collection.models.slice(-1)[0] as Model
+                    // console.log('checking last card in collection', newPM)
+                    // Let's double check that these match up
+                    if (
+                        newPM.get('type') === newCardDetails.type &&
+                        newPM.get('name') === newCardDetails.name &&
+                        newPM.get('email') === newCardDetails.email
+                    ) {
+                        // console.log('new card seems to be!!!!', newPM)
+                        this.valueChanged(newPM)
+                    }
+                }
+        })
 
-        // TODO need a change watcher on the selector
         // console.log('inited selector, this is model', this.model)
-    }
-
-    async fetchPaymentMethods() {
-        await this.paymentCollection.fetch()
-        await this.refresh()
     }
 
     valueChanged(value: Model) {
@@ -313,6 +336,7 @@ export class StripePaymentMethodSelectorComponent extends RootComponent implemen
         if (!data) {
             return null
         }
+        // console.log('running normalizeIn')
         return new Model({}, data)
         // return data
         // Normalize non-int values to strings.
@@ -344,7 +368,7 @@ export class StripePaymentMethodSelectorComponent extends RootComponent implemen
     }
 
     /**
-     * Used to compared the defaultPayment from the User/Site/Vendor and compare to which option to to select
+     * Used to compare the defaultPayment from the User/Site/Vendor and compare to which option to select
      */
     objectComparisonFunction(option: Model, value: Model ) : boolean {
         if (!option || !value) {
@@ -356,6 +380,9 @@ export class StripePaymentMethodSelectorComponent extends RootComponent implemen
 
     // Ensures Data is populated before hitting the Subscriber
     dataDefer(subscriber: Subscriber<any>) {
+        // this requires sitetheory to provide a populated PM and not just an id
+        // FIXME There is an issuie right now when saving that the Api returns an id instead of an object
+
         // console.log('dataDefer running', subscriber)
         this.subscriber = this.subscriber || subscriber
         if (!this.subscriber) {
@@ -369,17 +396,9 @@ export class StripePaymentMethodSelectorComponent extends RootComponent implemen
             }, 500)
             return
         }*/
-        /* if (!this.froalaConfig.useClasses) {
-            if (prevString === this.dataString) {
-                return
-            }
-            if (this.dev) {
-                console.log('changed value pushed to subscriber:', prevString, this.dataString)
-            }
-        } */
         // console.log('will run subscriber next', dataNumber)
         this.subscriber.next(dataNumber)
-        // TODO: Add a returned Promise to ensure async/await can use this defer directly.
+        // ???: Add a returned Promise to ensure async/await can use this defer directly. (Observer can't use promise)
     }
 
     // dataRef(): number|null {
@@ -388,6 +407,7 @@ export class StripePaymentMethodSelectorComponent extends RootComponent implemen
             // console.log('dataRef cant read model')
             return null
         }
+        // console.log('running dataRef')
         return this.normalizeIn(
             this.model.get(this.property)
         )
@@ -416,6 +436,28 @@ export class StripePaymentMethodSelectorComponent extends RootComponent implemen
         if (paymentMethod.data.exp_year < year) {return true}
         if (paymentMethod.data.exp_year > year) {return false}
         return paymentMethod.data.exp_month < month
+    }
+
+    selectorListClose(ev?: any) {
+        if (ev) {
+            ev.preventDefault()
+            // ev.stopPropagation()
+        }
+        if (this.paymentSelect && this.paymentSelect.panelOpen) {
+            // Let's close the selector if we've had updates so we can see that new data (or remove it completely)
+            this.paymentSelect.close()
+        }
+    }
+
+    selectorListOpen(ev?: any) {
+        if (ev) {
+            ev.preventDefault()
+            // ev.stopPropagation()
+        }
+        if (this.paymentSelect && !this.paymentSelect.panelOpen) {
+            // Let's close the selector if we've had updates so we can see that new data (or remove it completely)
+            this.paymentSelect.open()
+        }
     }
 
 }

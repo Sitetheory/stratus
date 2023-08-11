@@ -2,37 +2,54 @@
         [attr.id]="elementId"
         [formGroup]="form"
 >
-    <mat-form-field style="width: 100%;" [class.payment-selected]="form.controls[fieldName].value">
-        <mat-label>Payment Method</mat-label>
+    <mat-progress-bar *ngIf="collection.pending" mode="indeterminate"></mat-progress-bar>
+    <sa-stripe-setup-intent
+            *ngIf="collection.completed && !collection.pending && collection.models.length === 0"
+            data-detailed-billing-info="true"
+            [defaultBillingInfo]="defaultBillingInfo"
+            [urlRoot]="urlRoot"
+            [paymentMethodApiPath]="paymentMethodApiPath"
+            [addCardButtonText]="addCardButtonText"
+    ></sa-stripe-setup-intent>
+    <mat-form-field
+            [hidden]="!collection.completed || collection.pending || collection.models.length === 0"
+            style="width: 100%;" [class.payment-selected]="form.controls[fieldName].value"
+    >
+        <mat-label [textContent]="form.controls[fieldName].value ? 'Payment Method' : selectCardButtonText"></mat-label>
         <mat-select
+                #paymentSelect
                 [panelClass]="'sa-stripe-payment-method-selector-select-override'"
                 formControlName="{{fieldName}}"
                 [compareWith]="objectComparisonFunction"
         >
-            <!-- TODO fine a way to display certain data formatted. `form.controls.dataNumber.value` is the saved id -->
             <mat-select-trigger>
                 <sa-stripe-payment-method-item *ngIf="form.controls[fieldName].value" [(model)]="form.controls[fieldName].value"></sa-stripe-payment-method-item>
                 <!--{{form.controls.dataNumber.value && form.controls.dataNumber.value.data ? form.controls.dataNumber.value.data.id : 'Not Selected'}}-->
             </mat-select-trigger>
             <mat-option
                     class="no-results"
-                    *ngIf="paymentCollection.completed && !paymentCollection.pending && paymentCollection.models.length === 0"
+                    *ngIf="collection.completed && !collection.pending && collection.models.length === 0"
                     [disabled]="true"
             >
                 No Payment Method on file.
             </mat-option>
-            <mat-option class="current-selection" *ngIf="form.controls[fieldName].value">
+            <mat-option
+                    class="current-selection"
+                    *ngIf="form.controls[fieldName].value"
+                    [disabled]="form.controls[fieldName].value.data.status < 1"
+            >
+                Current Method
                 <sa-stripe-payment-method-item [(model)]="form.controls[fieldName].value"></sa-stripe-payment-method-item>
             </mat-option>
             <mat-option
-                    *ngFor="let paymentMethod of paymentCollection.models"
+                    *ngFor="let paymentMethod of collection.models"
                     [value]="paymentMethod"
                     [disabled]="isPMExpired(paymentMethod)"
             >
                 <sa-stripe-payment-method-item [(model)]="paymentMethod" [editable]="true"></sa-stripe-payment-method-item>
             </mat-option>
             <mat-option
-                    [hidden]="!paymentCollection.completed || paymentCollection.pending"
+                    [hidden]="!collection.completed || collection.pending"
                     [disabled]="true"
             >
                 <sa-stripe-setup-intent

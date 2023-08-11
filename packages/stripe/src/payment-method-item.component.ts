@@ -10,7 +10,6 @@ import {keys} from 'ts-transformer-keys'
 import {
     Stratus
 } from '@stratusjs/runtime/stratus'
-import {RootComponent} from '../../angular/src/core/root.component'
 import {ConfirmDialogComponent} from '../../angular/src/confirm-dialog/confirm-dialog.component'
 import {Model} from '@stratusjs/angularjs/services/model'
 import {cookie} from '@stratusjs/core/environment'
@@ -19,11 +18,7 @@ import {
     MatDialog,
     MatDialogRef
 } from '@angular/material/dialog'
-
-
-// Services
-// import {StripeService} from '@stratusjs/stripe/stripe.service'
-
+import {StripeComponent, StripeService} from './stripe.service'
 
 // Local Setup
 const min = !cookie('env') ? '.min' : ''
@@ -38,24 +33,21 @@ const localDir = `${Stratus.BaseUrl}${Stratus.DeploymentPath}@stratusjs/${packag
     selector: `sa-${packageName}-${componentName}`,
     templateUrl: `${localDir}${componentName}.component${min}.html`,
 })
-export class StripePaymentMethodItemComponent extends RootComponent implements OnInit {
+export class StripePaymentMethodItemComponent extends StripeComponent implements OnInit {
 
     // Basic Component Settings
     title = `${packageName}_${componentName}_component`
-    uid: string
-    @Input() elementId: string
     @Input() model: Model
-
-    // States
     @Input() editable = false
-    styled = false
-    initialized = false
+
+    // Registry Attributes
+    @Input() urlRoot = '/Api'
 
     constructor(
         private dialog: MatDialog,
         private elementRef: ElementRef,
         private sanitizer: DomSanitizer,
-        // private Stripe: StripeService,
+        private Stripe: StripeService,
     ) {
         // Chain constructor
         super()
@@ -85,7 +77,9 @@ export class StripePaymentMethodItemComponent extends RootComponent implements O
      */
     async ngOnInit() {
         this.initialized = true
-
+        if (this.urlRoot) {
+            this.model.urlRoot = `${this.urlRoot}${this.model.target ? '/' + this.model.target : ''}`
+        }
     }
 
     getCardLogoUrl(brand: string) {
@@ -142,15 +136,8 @@ export class StripePaymentMethodItemComponent extends RootComponent implements O
                 if (!dialogResult) {
                     return
                 }
-                let collection
-                if (this.model.collection) {
-                    collection = this.model.collection
-                }
                 await this.model.destroy()
-                if (collection) {
-                    // Refetch to get current PMs
-                    collection.fetch()
-                }
+                this.Stripe.fetchCollections() // re-fetch ALL stripe collections just in case (will close the select box too)
             })
         return dialog
     }

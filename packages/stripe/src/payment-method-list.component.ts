@@ -14,11 +14,10 @@ import {keys} from 'ts-transformer-keys'
 import {
     Stratus
 } from '@stratusjs/runtime/stratus'
-import {RootComponent} from '../../angular/src/core/root.component'
 import {Collection, CollectionOptions} from '@stratusjs/angularjs/services/collection'
 import {cookie} from '@stratusjs/core/environment'
 import {safeUniqueId} from '@stratusjs/core/misc'
-import {StripeService} from './stripe.service'
+import {StripeListComponent, StripeService} from './stripe.service'
 
 
 
@@ -35,19 +34,14 @@ const localDir = `${Stratus.BaseUrl}${Stratus.DeploymentPath}@stratusjs/${packag
     selector: `sa-${packageName}-${componentName}`,
     templateUrl: `${localDir}${componentName}.component${min}.html`,
 })
-export class StripePaymentMethodListComponent extends RootComponent implements OnInit { // AfterViewInit
+export class StripePaymentMethodListComponent extends StripeListComponent implements OnInit { // AfterViewInit
 
     // Basic Component Settings
     title = `${packageName}_${componentName}_component`
-    uid: string
-    @Input() elementId: string
-
-    // States
-    styled = false
-    initialized = false
 
     // Registry Attributes
     @Input() urlRoot: string = '/Api'
+    // @Input() registryModel: boolean | string // inputs are strings.. // false will disable Registry
     @Input() paymentMethodApiPath: string = 'PaymentMethod'
 
     // Component Attributes
@@ -65,8 +59,13 @@ export class StripePaymentMethodListComponent extends RootComponent implements O
     @Input() defaultBillingAddress2?: string
     defaultBillingInfo: stripe.BillingDetails = {address: {}}
 
-    // Component data
-    paymentCollection: Collection
+    // Stratus Data Connectivity
+    // registry = new Registry()
+    // fetched: Promise<boolean|Collection>
+    // Observable Connection
+    // dataSub: Observable<[]>
+    // onChange = new Subject()
+    // subscriber: Subscriber<any>
 
     constructor(
         private elementRef: ElementRef,
@@ -107,7 +106,7 @@ export class StripePaymentMethodListComponent extends RootComponent implements O
         }
 
         // TODO needs to make use of Observables
-        this.paymentCollection = new Collection(apiOptions)
+        this.collection = new Collection(apiOptions)
 
         if (this.defaultBillingName) {
             this.defaultBillingInfo.name = this.defaultBillingName
@@ -139,18 +138,12 @@ export class StripePaymentMethodListComponent extends RootComponent implements O
      * On load, attempt to prepare and render the Card element
      */
     async ngOnInit() {
-        await this.fetchPaymentMethods()
-        this.Stripe.registerCollection(this.paymentCollection)
+        this.Stripe.registerCollection(this, this.collection)
+        this.Stripe.fetchCollections(this.uid).then()
         this.initialized = true
-
-    }
-
-    /*ngAfterViewInit() {
-        // this.paymentItemComponentPortal = new ComponentPortal(StripePaymentMethodItemComponent)
-    }*/
-
-    async fetchPaymentMethods() {
-        await this.paymentCollection.fetch()
-        await this.refresh()
+        this.Stripe.emit('init', this) // Note this component is ready
+        this.Stripe.on(this.uid, 'collectionUpdated', (_source, _collection: [Collection]) => {
+            this.refresh()
+        })
     }
 }
