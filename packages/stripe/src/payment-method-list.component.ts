@@ -18,7 +18,6 @@ import {Collection, CollectionOptions} from '@stratusjs/angularjs/services/colle
 import {cookie} from '@stratusjs/core/environment'
 import {safeUniqueId} from '@stratusjs/core/misc'
 import {StripeListComponent, StripeService} from './stripe.service'
-import {Model} from '@stratusjs/angularjs/services/model'
 
 
 
@@ -39,12 +38,6 @@ export class StripePaymentMethodListComponent extends StripeListComponent implem
 
     // Basic Component Settings
     title = `${packageName}_${componentName}_component`
-    uid: string
-    @Input() elementId: string
-
-    // States
-    styled = false
-    initialized = false
 
     // Registry Attributes
     @Input() urlRoot: string = '/Api'

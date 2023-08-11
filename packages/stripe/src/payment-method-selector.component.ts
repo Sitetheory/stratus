@@ -43,15 +43,8 @@ const localDir = `${Stratus.BaseUrl}${Stratus.DeploymentPath}@stratusjs/${packag
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class StripePaymentMethodSelectorComponent extends StripeListComponent implements OnInit {
-
     // Basic Component Settings
     title = `${packageName}_${componentName}_component`
-    // uid: string
-    @Input() elementId: string
-
-    // States
-    styled = false
-    initialized = false
 
     // Registry Attributes
     @Input() target: string

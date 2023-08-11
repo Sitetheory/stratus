@@ -41,8 +41,6 @@ export class StripeSetupIntentComponent extends StripeComponent implements OnIni
 
     // Basic Component Settings
     title = `${packageName}_${componentName}_component`
-    uid: string
-    @Input() elementId: string
 
     // States
     styled = false

@@ -11,14 +11,15 @@ import {
     Stratus
 } from '@stratusjs/runtime/stratus'
 import {Model} from '@stratusjs/angularjs/services/model'
+import {cookie} from '@stratusjs/core/environment'
 import {safeUniqueId} from '@stratusjs/core/misc'
 import {StripeComponent} from './stripe.service'
 
 // Local Setup
-// const min = !cookie('env') ? '.min' : ''
+const min = !cookie('env') ? '.min' : ''
 const packageName = 'stripe'
 const componentName = 'payment-method-item-display'
-// const localDir = `${Stratus.BaseUrl}${Stratus.DeploymentPath}@stratusjs/${packageName}/src/`
+const localDir = `${Stratus.BaseUrl}${Stratus.DeploymentPath}@stratusjs/${packageName}/src/`
 
 /**
  * @title Dialog for Nested Tree
@@ -31,9 +32,7 @@ export class StripePaymentMethodItemDisplayComponent extends StripeComponent imp
 
     // Basic Component Settings
     title = `${packageName}_${componentName}_component`
-    uid: string
-    initialized = false
-    @Input() elementId: string
+
     model: Model
     @Input() name?: string
     @Input() brand?: string
@@ -52,6 +51,17 @@ export class StripePaymentMethodItemDisplayComponent extends StripeComponent imp
         this.uid = safeUniqueId('sa', snakeCase(this.title))
         Stratus.Instances[this.uid] = this
         this.elementId = this.elementId || this.uid
+
+        // TODO: Assess & Possibly Remove when the System.js ecosystem is complete
+        // Load Component CSS until System.js can import CSS properly.
+        Stratus.Internals.CssLoader(`${localDir}${componentName}.component${min}.css`)
+            .then(() => {
+                this.styled = true
+            })
+            .catch(() => {
+                console.error('CSS Failed to load for Component:', this)
+                this.styled = false
+            })
 
         // Hydrate Root App Inputs
         this.hydrate(this.elementRef, this.sanitizer, keys<StripePaymentMethodItemDisplayComponent>())

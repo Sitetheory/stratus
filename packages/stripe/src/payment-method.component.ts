@@ -42,8 +42,6 @@ export class StripePaymentMethodComponent extends StripeComponent implements OnD
 
     // Basic Component Settings
     title = `${packageName}_${componentName}_component`
-    uid: string
-    @Input() elementId: string
 
     // Dependencies
     _: any
@@ -53,8 +51,6 @@ export class StripePaymentMethodComponent extends StripeComponent implements OnD
     @Input() paymentMethodApiPath: string = 'PaymentMethod'
 
     // States
-    styled = false
-    initialized = false
     cardComplete = false
     cardSaved = false
     formPending = false

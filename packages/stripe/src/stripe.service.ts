@@ -15,6 +15,8 @@ export class StripeComponent extends RootComponent {
     title: string
     uid: string
     @Input() elementId: string
+    styled = false
+    initialized = false
 }
 export class StripeListComponent<T = LooseObject> extends StripeComponent {
     collection: Collection<T>

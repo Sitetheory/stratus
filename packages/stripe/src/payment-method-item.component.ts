@@ -37,17 +37,11 @@ export class StripePaymentMethodItemComponent extends StripeComponent implements
 
     // Basic Component Settings
     title = `${packageName}_${componentName}_component`
-    uid: string
-    @Input() elementId: string
     @Input() model: Model
+    @Input() editable = false
 
     // Registry Attributes
     @Input() urlRoot = '/Api'
-
-    // States
-    @Input() editable = false
-    styled = false
-    initialized = false
 
     constructor(
         private dialog: MatDialog,
