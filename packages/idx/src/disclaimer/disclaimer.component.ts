@@ -75,28 +75,33 @@ Stratus.Components.IdxDisclaimer = {
         $scope.alwaysShow = typeof $attrs.hideOnDuplicate === 'undefined'
         Stratus.Internals.CssLoader(`${localDir}${$attrs.template || componentName}.component${min}.css`).then()
 
-        let mlsVariables: MLSService[]
+        let mlsVariables: {[serviceId: number]: MLSService}
 
         /**
          * All actions that happen first when the component loads
          * Needs to be placed in a function, as the functions below need to the initialized first
          */
         const init = async () => {
+            // console.log('disclaimer running init')
             // Register this Disclaimer with the IDX service
             Idx.registerDisclaimerInstance($scope.elementId, $scope)
 
             Idx.on('Idx', 'sessionInit', () => {
+                // console.log('disclaimer sessionInit hit')
                 if (!$scope.initialized) {
+                    // console.log('disclaimer was not initialized yet, doing processMLSDisclaimer()')
                     $scope.processMLSDisclaimer()
                     $scope.initialized = true
                 }
                 // This only gets called once
                 Idx.on('Idx', 'fetchTimeUpdate', (_scope: null, _serviceId, _modelName, _fetchTime) => {
+                    // console.log('disclaimer fetchTimeUpdate hit, doing processMLSDisclaimer()')
                     $scope.processMLSDisclaimer(true)
                     // console.log('Fetch Times have updated!!!', serviceId, modelName, fetchTime)
                 })
             })
             Idx.on('Idx', 'sessionRefresh', () => {
+                // console.log('disclaimer session refreshed, doing processMLSDisclaimer()')
                 $scope.processMLSDisclaimer(true)
                 $scope.initialized = true
             })
@@ -154,21 +159,25 @@ Stratus.Components.IdxDisclaimer = {
 
         this.$onInit = () => {
             $scope.Idx = Idx
+            // console.log('disclaimer running $onInit', this)
 
             let initNow = true
             if (Object.prototype.hasOwnProperty.call($attrs.$attr, 'initNow')) {
                 // TODO: This needs better logic to determine what is acceptably initialized
                 initNow = isJSON($attrs.initNow) ? JSON.parse($attrs.initNow) : false
+                // console.log('disclaimer initNow currently', clone(initNow))
             }
 
             const stopWatchingService = $scope.$watch('$ctrl.service', (service: unknown) => {
                 $scope.service = isString(service) && isJSON(service) ? JSON.parse(service) : []
+                // console.log('disclaimer saw service change is now', clone($scope.service))
                 $scope.processMLSDisclaimer(true)
                 $scope.$applyAsync()
                 stopWatchingService()
             })
 
             if (initNow) {
+                // console.log('disclaimer forcing init on boot')
                 init().then()
                 return
             }
@@ -177,7 +186,9 @@ Stratus.Components.IdxDisclaimer = {
                 if (initNowCtrl !== true) {
                     return
                 }
+                // console.log('disclaimer saw initNow become true', clone(initNowCtrl))
                 if (!$scope.initialized) {
+                    // console.log('disclaimer doing init after boot', this)
                     init().then()
                 }
                 stopWatchingInitNow()
@@ -188,7 +199,7 @@ Stratus.Components.IdxDisclaimer = {
          * @param reset - set true to force reset
          */
         $scope.getMLSVariables = (reset?: boolean): MLSService[] => {
-            if (!mlsVariables || reset) {
+            if (!mlsVariables || Object.keys(mlsVariables).length === 0 || reset) {
                 mlsVariables = []
                 let mlsServicesRequested: number[] = null
                 // Ensure we are only requesting the services we are using
@@ -208,7 +219,7 @@ Stratus.Components.IdxDisclaimer = {
                     mlsVariables[service.id] = service
                 })
             }
-            return mlsVariables
+            return Object.values(mlsVariables)
         }
 
         /**
@@ -217,10 +228,13 @@ Stratus.Components.IdxDisclaimer = {
          * TODO Idx needs to supply MLSVariables interface
          */
         $scope.processMLSDisclaimer = (reset?: boolean): void => {
+            // console.log('disclaimer processMLSDisclaimer running')
             const services: MLSService[] = $scope.getMLSVariables(reset)
+            // console.log('disclaimer got these services', clone(services))
             $scope.idxService = []
             let disclaimerComplete = ''
             services.forEach(service => {
+                // console.log('disclaimer processing', clone(service))
                 let singleDisclaimer = ''
 
                 if (service.fetchTime[$scope.type]) {
@@ -245,6 +259,7 @@ Stratus.Components.IdxDisclaimer = {
                 cleanService.disclaimerString = singleDisclaimer
                 cleanService.disclaimerHTML = $sce.trustAsHtml(singleDisclaimer)
                 $scope.idxService.push(cleanService)
+                // console.log('disclaimer got this cleanService', clone(cleanService))
             })
         }
 

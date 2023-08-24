@@ -392,7 +392,7 @@ interface IdxSharedValue {
 
 // Internal
 interface Session {
-    services: MLSService[],
+    services: {[serviceId: number]: MLSService},
     lastCreated: Date,
     lastTtl: number
     expires?: Date
@@ -1119,7 +1119,7 @@ const angularJsService = (
         return $q(async (resolve: void | any, reject: any) => {
             try {
                 if (
-                    session.services.length < 1 ||
+                    Object.keys(session.services).length < 1 ||
                     session.expires < new Date(Date.now() + (5 * 1000)) // if expiring in the next 5 seconds
                 ) {
                     // need to send ?cacheReset=true to ensure the token is new
@@ -1184,7 +1184,7 @@ const angularJsService = (
      * @param response.data.services Array<MLSService>
      */
     function tokenHandleGoodResponse(response: TokenResponse, keepAlive = false): void {
-        session.services = []
+        session.services = {}
         /** {MLSService} service */
         response.data.services.forEach((service) => {
             if (Object.prototype.hasOwnProperty.call(service, 'id')) {
@@ -2224,7 +2224,7 @@ const angularJsService = (
                 }
             })
         } else {
-            session.services.forEach(service => {
+            Object.values(session.services).forEach(service => {
                 if (!isEmpty(service)) {
                     serviceList.push({
                         id: service.id,
