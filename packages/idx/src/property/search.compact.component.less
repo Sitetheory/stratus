@@ -2,8 +2,8 @@
 search.filter.component.less and admin/search.component.less should be copies of each other for ease of development
 Nothing should be outside 'stratus-idx-property-search'/'.md-panel.stratus-idx-property-search-menu' or it will leak into other modules
 */
-stratus-idx-property-search,
-.md-panel.stratus-idx-property-search-menu {
+stratus-idx-property-search .property-search-compact,
+.md-panel.stratus-idx-property-search-menu.property-search-compact {
   height: auto;
 
   /* md-input-container adds a ton of spacing by default. This will remove it */
@@ -25,7 +25,7 @@ stratus-idx-property-search,
   }
 }
 stratus-idx-property-search {
-  .idx-search-component {
+  .idx-search-component.property-search-compact {
     margin-bottom: 20px;
     //padding-bottom: 10px;
     //border-bottom: 1px solid rgba(0,0,0,.15);
@@ -108,7 +108,7 @@ stratus-idx-property-search {
       }
     }
   }
-  &.sidebar {
+  &.sidebar .property-search-compact  {
     .idx-search-component {
       .open-filters {
         margin-top: 10px;
@@ -122,7 +122,7 @@ stratus-idx-property-search {
 /***************
  * Search Menu
  **************/
-.stratus-idx-property-search-menu {
+.stratus-idx-property-search-menu.property-search-compact {
   &.md-panel {
     background-color: #fff;
     max-width: 85%;

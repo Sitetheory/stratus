@@ -4,6 +4,10 @@
  * @see https://github.com/Sitetheory/stratus/wiki/Idx-Property-List-Widget
  */
 
+// Compile Stylesheets
+import './list.component.less'
+import './list.carousel.component.less'
+
 // Runtime
 import {clone, cloneDeep, extend, forEach, get, isArray, isEmpty, isEqual, isNil, isNumber, isString} from 'lodash'
 import {Stratus} from '@stratusjs/runtime/stratus'
@@ -40,6 +44,7 @@ const packageName = 'idx'
 const moduleName = 'property'
 const componentName = 'list'
 const localDir = `${Stratus.BaseUrl}${Stratus.DeploymentPath}@stratusjs/${packageName}/src/${moduleName}/`
+const localDistStyle = `${Stratus.BaseUrl}${Stratus.DeploymentPath}@stratusjs/${packageName}/dist/${packageName}.bundle.min.css`
 
 type OrderOptions = {
     [key: string]: string[]
@@ -316,7 +321,8 @@ Stratus.Components.IdxPropertyList = {
             if (!$scope.tokenLoaded && $attrs.tokenUrl) {
                 Idx.setTokenURL($attrs.tokenUrl)
             }
-            Stratus.Internals.CssLoader(`${localDir}${$attrs.template || componentName}.component${min}.css`).then()
+            // Stratus.Internals.CssLoader(`${localDir}${$attrs.template || componentName}.component${min}.css`).then()
+            Stratus.Internals.CssLoader(localDistStyle).then()
 
             /**
              * Allow query to be loaded initially from the URL

@@ -36,6 +36,8 @@ dist/**/*.min.js
 # Webpack Builds
 packages/*/dist/**/*.js
 packages/*/dist/**/*.js.map
+packages/*/dist/**/*.css
+packages/*/dist/**/*.css.map
 
 # Package Minifications
 packages/*/src/**/*.min.js

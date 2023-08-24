@@ -4,6 +4,9 @@
  * @see https://github.com/Sitetheory/stratus/wiki/Idx-Member-List-Widget
  */
 
+// Compile Stylesheets
+import './list.component.less'
+
 // Runtime
 import {clone, forEach, isString} from 'lodash'
 import {Stratus} from '@stratusjs/runtime/stratus'
@@ -36,6 +39,7 @@ const moduleName = 'member'
 const componentName = 'list'
 // There is not a very consistent way of pathing in Stratus at the moment
 const localDir = `${Stratus.BaseUrl}${Stratus.DeploymentPath}@stratusjs/${packageName}/src/${moduleName}/`
+const localDistStyle = `${Stratus.BaseUrl}${Stratus.DeploymentPath}@stratusjs/${packageName}/dist/${packageName}.bundle.min.css`
 
 export type IdxMemberListScope = IdxListScope<Member> & {
     options: CompileFilterOptions // FIXME rename to query
@@ -85,7 +89,8 @@ Stratus.Components.IdxMemberList = {
         if ($attrs.tokenUrl) {
             Idx.setTokenURL($attrs.tokenUrl)
         }
-        Stratus.Internals.CssLoader(`${localDir}${$attrs.template || componentName}.component${min}.css`).then()
+        // Stratus.Internals.CssLoader(`${localDir}${$attrs.template || componentName}.component${min}.css`).then()
+        Stratus.Internals.CssLoader(localDistStyle).then()
 
         let defaultOptions: LooseObject
 

@@ -236,6 +236,13 @@ export default [
       }),
       nodeResolve({
         // browser: true
+      }),
+      postcss({
+        extract: 'idx.bundle.min.css',
+        config: false,
+        use: ['less'],
+        minimize: true,
+        sourceMap: true
       })
     ]
   },

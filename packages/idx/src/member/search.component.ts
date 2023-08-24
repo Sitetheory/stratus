@@ -4,9 +4,12 @@
  * @see https://github.com/Sitetheory/stratus/wiki/Idx-Member-Search-Widget
  */
 
+// Compile Stylesheets
+import './search.component.less'
+
 import {forEach} from 'lodash'
 import {Stratus} from '@stratusjs/runtime/stratus'
-import {element, material, IAttributes, ITimeoutService, IScope, IQService, IWindowService} from 'angular'
+import {element, material, IAttributes, IScope, IQService} from 'angular'
 import 'angular-material'
 import {CompileFilterOptions, IdxEmitter, IdxSearchScope, IdxService} from '@stratusjs/idx/idx'
 import {hydrate, isJSON, LooseObject, safeUniqueId} from '@stratusjs/core/misc'
@@ -23,6 +26,7 @@ const moduleName = 'member'
 const componentName = 'search'
 // There is not a very consistent way of pathing in Stratus at the moment
 const localDir = `${Stratus.BaseUrl}${Stratus.DeploymentPath}@stratusjs/${packageName}/src/${moduleName}/`
+const localDistStyle = `${Stratus.BaseUrl}${Stratus.DeploymentPath}@stratusjs/${packageName}/dist/${packageName}.bundle.min.css`
 
 export type IdxMemberSearchScope = IdxSearchScope & {
     options: object | any // FIXME
@@ -48,10 +52,10 @@ Stratus.Components.IdxMemberSearch = {
         $attrs: IAttributes,
         $q: IQService,
         $mdDialog: material.IDialogService,
-        $mdPanel: material.IPanelService,
+        // $mdPanel: material.IPanelService,
         $scope: IdxMemberSearchScope,
-        $timeout: ITimeoutService,
-        $window: IWindowService,
+        // $timeout: ITimeoutService,
+        // $window: IWindowService,
         Idx: IdxService,
     ) {
         // Initialize
@@ -62,7 +66,8 @@ Stratus.Components.IdxMemberSearch = {
         if ($attrs.tokenUrl) {
             Idx.setTokenURL($attrs.tokenUrl)
         }
-        Stratus.Internals.CssLoader(`${localDir}${$attrs.template || componentName}.component${min}.css`).then()
+        // Stratus.Internals.CssLoader(`${localDir}${$attrs.template || componentName}.component${min}.css`).then()
+        Stratus.Internals.CssLoader(localDistStyle).then()
 
         this.$onInit = () => {
             $scope.listId = $attrs.listId || null

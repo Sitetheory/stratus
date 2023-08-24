@@ -3,6 +3,9 @@
  * @example <stratus-idx-disclaimer>
  */
 
+// Compile Stylesheets
+import './disclaimer.component.less'
+
 // Runtime
 import {isArray, isEmpty, isNumber, isString, isUndefined} from 'lodash'
 import {Stratus} from '@stratusjs/runtime/stratus'
@@ -23,6 +26,7 @@ const moduleName = 'disclaimer'
 const componentName = 'disclaimer'
 // There is not a very consistent way of pathing in Stratus at the moment
 const localDir = `${Stratus.BaseUrl}${Stratus.DeploymentPath}@stratusjs/${packageName}/src/${moduleName}/`
+const localDistStyle = `${Stratus.BaseUrl}${Stratus.DeploymentPath}@stratusjs/${packageName}/dist/${packageName}.bundle.min.css`
 
 export interface CleanService extends MLSService {
     disclaimerString?: string
@@ -73,7 +77,8 @@ Stratus.Components.IdxDisclaimer = {
         // FIXME if type !'Property' | 'Media' | 'Member' | 'Office' | 'OpenHouse', revert to Property
         // FIXME can later use this for last time checks
         $scope.alwaysShow = typeof $attrs.hideOnDuplicate === 'undefined'
-        Stratus.Internals.CssLoader(`${localDir}${$attrs.template || componentName}.component${min}.css`).then()
+        // Stratus.Internals.CssLoader(`${localDir}${$attrs.template || componentName}.component${min}.css`).then()
+        Stratus.Internals.CssLoader(localDistStyle).then()
 
         let mlsVariables: {[serviceId: number]: MLSService}
 

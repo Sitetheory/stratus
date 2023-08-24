@@ -4,6 +4,10 @@
  * @see https://github.com/Sitetheory/stratus/wiki/Idx-Property-Details-Widget
  */
 
+// Compile Stylesheets
+import './details.component.less'
+import './details.classic.component.less'
+
 // Runtime
 import {extend, get, isArray, isNumber} from 'lodash'
 import {Stratus} from '@stratusjs/runtime/stratus'
@@ -33,6 +37,7 @@ const packageName = 'idx'
 const moduleName = 'property'
 const componentName = 'details'
 const localDir = `${Stratus.BaseUrl}${Stratus.DeploymentPath}@stratusjs/${packageName}/src/${moduleName}/`
+const localDistStyle = `${Stratus.BaseUrl}${Stratus.DeploymentPath}@stratusjs/${packageName}/dist/${packageName}.bundle.min.css`
 
 export type IdxPropertyDetailsScope = IdxDetailsScope<Property> & {
     // model: Model<Property>
@@ -112,7 +117,8 @@ Stratus.Components.IdxPropertyDetails = {
         if ($attrs.tokenUrl) {
             Idx.setTokenURL($attrs.tokenUrl)
         }
-        Stratus.Internals.CssLoader(`${localDir}${$attrs.template || componentName}.component${min}.css`).then()
+        // Stratus.Internals.CssLoader(`${localDir}${$attrs.template || componentName}.component${min}.css`).then()
+        Stratus.Internals.CssLoader(localDistStyle).then()
 
         let mlsVariables: MLSService
         let googleMapEmbed: string
