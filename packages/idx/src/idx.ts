@@ -342,6 +342,7 @@ export interface MLSService {
         medium?: string
         large?: string
     }
+    mandatoryLogo?: string[]
 }
 
 /** Sitetheory contact information */
@@ -391,7 +392,7 @@ interface IdxSharedValue {
 
 // Internal
 interface Session {
-    services: MLSService[],
+    services: {[serviceId: number]: MLSService},
     lastCreated: Date,
     lastTtl: number
     expires?: Date
@@ -1118,7 +1119,7 @@ const angularJsService = (
         return $q(async (resolve: void | any, reject: any) => {
             try {
                 if (
-                    session.services.length < 1 ||
+                    Object.keys(session.services).length < 1 ||
                     session.expires < new Date(Date.now() + (5 * 1000)) // if expiring in the next 5 seconds
                 ) {
                     // need to send ?cacheReset=true to ensure the token is new
@@ -1183,7 +1184,7 @@ const angularJsService = (
      * @param response.data.services Array<MLSService>
      */
     function tokenHandleGoodResponse(response: TokenResponse, keepAlive = false): void {
-        session.services = []
+        session.services = {}
         /** {MLSService} service */
         response.data.services.forEach((service) => {
             if (Object.prototype.hasOwnProperty.call(service, 'id')) {
@@ -1209,6 +1210,12 @@ const angularJsService = (
                     service.logo = {
                         default: null
                     }
+                }
+                if (
+                    !Object.prototype.hasOwnProperty.call(service, 'mandatoryLogo') ||
+                    service.mandatoryLogo === null
+                ) {
+                    service.mandatoryLogo = []
                 }
                 session.services[service.id] = service
                 session.lastCreated = new Date(service.created)// The object is a String being converted to Date
@@ -2211,12 +2218,13 @@ const angularJsService = (
                         disclaimer: session.services[serviceId].disclaimer,
                         fetchTime: session.services[serviceId].fetchTime,
                         analyticsEnabled: session.services[serviceId].analyticsEnabled,
-                        logo: session.services[serviceId].logo
+                        logo: session.services[serviceId].logo,
+                        mandatoryLogo: session.services[serviceId].mandatoryLogo
                     })
                 }
             })
         } else {
-            session.services.forEach(service => {
+            Object.values(session.services).forEach(service => {
                 if (!isEmpty(service)) {
                     serviceList.push({
                         id: service.id,
@@ -2224,7 +2232,8 @@ const angularJsService = (
                         disclaimer: service.disclaimer,
                         fetchTime: service.fetchTime,
                         analyticsEnabled: service.analyticsEnabled,
-                        logo: service.logo
+                        logo: service.logo,
+                        mandatoryLogo: service.mandatoryLogo
                     })
                 }
             })
@@ -2668,7 +2677,7 @@ const angularJsService = (
             }
 
             // Sort once more on the front end to ensure it's ordered correctly
-            console.log('needs to hit orderBy here')
+            // console.log('needs to hit orderBy here')
             orderBy(collection, options.order) // FIXME await?
 
             // Cut out any model counts beyond how many we should currently have

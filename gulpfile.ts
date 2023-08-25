@@ -171,7 +171,9 @@ const locations: Locations = {
             'packages/*/src/**/*.less'
         ],
         compile: [],
-        external: []
+        external: [
+            'packages/idx/src/**/*.less'
+        ]
     },
     sass: {
         core: [
@@ -192,7 +194,8 @@ const locations: Locations = {
         ],
         external: [],
         nonstandard: [
-            'packages/*/src/**/*.css'
+            'packages/*/src/**/*.css',
+            'packages/*/dist/**/*.min.css'
         ]
     },
     coffee: {

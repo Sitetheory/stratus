@@ -3,8 +3,8 @@ search.filter.component.less and admin/search.component.less should be copies of
 Nothing should be outside 'stratus-idx-property-search'/'.md-panel.stratus-idx-property-search-menu' or it will leak into other modules
 */
 
-stratus-idx-property-search[data-list-id^="property-list"],
-.md-panel#stratus-idx-property-search-menu {
+stratus-idx-property-search[data-list-id^="property-list"] .property-search-default,
+.md-panel#stratus-idx-property-search-menu.property-search-default {
   position: relative;
   .click-out {
     position: fixed;
@@ -326,7 +326,8 @@ stratus-idx-property-search[data-list-id^="property-list"],
   //  }
   //}
 }
-stratus-idx-property-search[data-list-id^="property-list"] #stratus-idx-property-search-menu {
+
+stratus-idx-property-search[data-list-id^="property-list"] #stratus-idx-property-search-menu.property-search-default {
   position: relative;
   z-index: -1000;
   .more-filters {

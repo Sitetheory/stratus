@@ -4,10 +4,14 @@
  * @see https://github.com/Sitetheory/stratus/wiki/Idx-Property-List-Widget
  */
 
+// Compile Stylesheets
+import './list.component.less'
+import './list.carousel.component.less'
+
 // Runtime
 import {clone, cloneDeep, extend, forEach, get, isArray, isEmpty, isEqual, isNil, isNumber, isString} from 'lodash'
 import {Stratus} from '@stratusjs/runtime/stratus'
-import {element, material, IAnchorScrollService, IAttributes, ISCEService, ITimeoutService, IQService, IWindowService} from 'angular'
+import {element, material, IAnchorScrollService, IAttributes, ITimeoutService, IQService, IWindowService} from 'angular'
 import 'angular-material'
 import 'angular-sanitize'
 import {MarkerSettings} from '@stratusjs/map/map.component'
@@ -40,6 +44,7 @@ const packageName = 'idx'
 const moduleName = 'property'
 const componentName = 'list'
 const localDir = `${Stratus.BaseUrl}${Stratus.DeploymentPath}@stratusjs/${packageName}/src/${moduleName}/`
+const localDistStyle = `${Stratus.BaseUrl}${Stratus.DeploymentPath}@stratusjs/${packageName}/dist/${packageName}.bundle.min.css`
 
 type OrderOptions = {
     [key: string]: string[]
@@ -289,7 +294,7 @@ Stratus.Components.IdxPropertyList = {
         $scope: IdxPropertyListScope,
         $timeout: ITimeoutService,
         $window: IWindowService,
-        $sce: ISCEService,
+        // $sce: ISCEService,
         Idx: IdxService,
     ) {
         // Initialize
@@ -300,7 +305,7 @@ Stratus.Components.IdxPropertyList = {
             $scope.tokenLoaded = true
         }
 
-        let mlsVariables: MLSService[]
+        let mlsVariables: {[serviceId: number]: MLSService}
         let defaultQuery: CompileFilterOptions
         let lastQuery: CompileFilterOptions
 
@@ -316,7 +321,8 @@ Stratus.Components.IdxPropertyList = {
             if (!$scope.tokenLoaded && $attrs.tokenUrl) {
                 Idx.setTokenURL($attrs.tokenUrl)
             }
-            Stratus.Internals.CssLoader(`${localDir}${$attrs.template || componentName}.component${min}.css`).then()
+            // Stratus.Internals.CssLoader(`${localDir}${$attrs.template || componentName}.component${min}.css`).then()
+            Stratus.Internals.CssLoader(localDistStyle).then()
 
             /**
              * Allow query to be loaded initially from the URL
@@ -808,8 +814,8 @@ Stratus.Components.IdxPropertyList = {
          * @param reset - set true to force reset
          */
         $scope.getMLSVariables = (reset?: boolean): MLSService[] => {
-            if (!mlsVariables || reset) {
-                mlsVariables = []
+            if (!mlsVariables || Object.keys(mlsVariables).length === 0  || reset) {
+                mlsVariables = {}
                 let mlsServicesRequested = null
                 // Ensure we are only requesting the services we are using
                 if (
@@ -828,17 +834,17 @@ Stratus.Components.IdxPropertyList = {
                     mlsVariables[service.id] = service
                 })
             }
-            return mlsVariables
+            return Object.values(mlsVariables)
         }
 
         /**
          * Display an MLS' Name
          */
         $scope.getMLSName = (serviceId: number): string => {
-            const services = $scope.getMLSVariables()
+            $scope.getMLSVariables()
             let name = 'MLS'
-            if (services[serviceId]) {
-                name = services[serviceId].name
+            if (mlsVariables[serviceId]) {
+                name = mlsVariables[serviceId].name
             }
             return name
         }
@@ -847,10 +853,10 @@ Stratus.Components.IdxPropertyList = {
          * Display an MLS' Logo
          */
         $scope.getMLSLogo = (serviceId: number, size: 'default' | 'tiny' | 'small' | 'medium' | 'large' = 'default'): string | null => {
-            const services = $scope.getMLSVariables()
+            $scope.getMLSVariables()
             let logo
-            if (services[serviceId]) {
-                logo = get(services[serviceId].logo, size) || get(services[serviceId].logo, 'default')
+            if (mlsVariables[serviceId]) {
+                logo = get(mlsVariables[serviceId].logo, size) || get(mlsVariables[serviceId].logo, 'default')
             }
             return logo
         }

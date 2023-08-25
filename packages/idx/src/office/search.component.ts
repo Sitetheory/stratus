@@ -4,6 +4,9 @@
  * @see https://github.com/Sitetheory/stratus/wiki/Idx-Office-Search-Widget
  */
 
+// Compile Stylesheets
+import './search.group-selector.component.less'
+
 // Runtime
 import {isArray, isEmpty, isNumber, isString, trim} from 'lodash'
 import {Stratus} from '@stratusjs/runtime/stratus'
@@ -40,6 +43,7 @@ const moduleName = 'office'
 const componentName = 'search'
 // There is not a very consistent way of pathing in Stratus at the moment
 const localDir = `${Stratus.BaseUrl}${Stratus.DeploymentPath}@stratusjs/${packageName}/src/${moduleName}/`
+const localDistStyle = `${Stratus.BaseUrl}${Stratus.DeploymentPath}@stratusjs/${packageName}/dist/${packageName}.bundle.min.css`
 
 type OfficeSelectable = {
     id: string
@@ -106,7 +110,8 @@ Stratus.Components.IdxOfficeSearch = {
         if ($attrs.tokenUrl) {
             Idx.setTokenURL($attrs.tokenUrl)
         }
-        Stratus.Internals.CssLoader(`${localDir}${$attrs.template || componentName}.component${min}.css`).then()
+        // Stratus.Internals.CssLoader(`${localDir}${$attrs.template || componentName}.component${min}.css`).then()
+        Stratus.Internals.CssLoader(localDistStyle).then()
 
         // FIXME need to add sync-instance
         // FIXME need to add sync-instance-variable

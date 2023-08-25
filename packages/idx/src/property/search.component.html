@@ -1,6 +1,6 @@
 
 <div id="{{elementId}}"
-     class="idx-search-component search-full"
+     class="property-search property-search-default idx-search-component search-full"
      role="search" aria-label="Property" data-ng-cloak
 >
     <h2 data-ng-show="widgetName" data-ng-bind="widgetName"></h2>
@@ -192,6 +192,7 @@
 
     <!-- More Filters -->
     <div id="stratus-idx-property-search-menu"
+         class="property-search property-search-default"
          data-ng-class="{'open-filters' : $parent.advancedFiltersStatus}"
          data-ng-if="searchType == 'advanced'"
     >

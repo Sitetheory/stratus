@@ -4,6 +4,11 @@
  * @see https://github.com/Sitetheory/stratus/wiki/Idx-Property-Search-Widget
  */
 
+// Compile Stylesheets
+import './search.component.less'
+import './search.compact.component.less'
+import './search.classic.component.less'
+
 // Runtime
 import _, {
     clone,
@@ -254,7 +259,7 @@ Stratus.Components.IdxPropertySearch = {
         // Default values
         let defaultQuery: LooseObject
         let lastQuery: CompileFilterOptions
-        let mlsVariables: MLSService[]
+        let mlsVariables: {[serviceId: number]: MLSService}
         $scope.openPrice = false
         $scope.advancedFiltersStatus = false
         $scope.advancedSearchUrl = ''
@@ -599,9 +604,13 @@ Stratus.Components.IdxPropertySearch = {
          */
         $scope.getMLSVariables = (reset?: boolean): MLSService[] => {
             if (!mlsVariables || reset) {
-                mlsVariables = Idx.getMLSVariables()
+                // mlsVariables = Idx.getMLSVariables()
+                mlsVariables = {}
+                Idx.getMLSVariables().forEach((service: MLSService) => {
+                    mlsVariables[service.id] = service
+                })
             }
-            return mlsVariables
+            return Object.values(mlsVariables)
         }
 
         /**

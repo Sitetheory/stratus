@@ -4,10 +4,14 @@
  * @see https://github.com/Sitetheory/stratus/wiki/Idx-Property-Details-Widget
  */
 
+// Compile Stylesheets
+import './details.component.less'
+import './details.classic.component.less'
+
 // Runtime
-import {extend, get, isArray} from 'lodash'
+import {extend, get, isArray, isNumber} from 'lodash'
 import {Stratus} from '@stratusjs/runtime/stratus'
-import {IAttributes, ILocationService, ISCEService} from 'angular'
+import {IAttributes, ISCEService} from 'angular'
 import {MarkerSettings} from '@stratusjs/map/map.component'
 import {
     IdxDetailsScope,
@@ -33,6 +37,7 @@ const packageName = 'idx'
 const moduleName = 'property'
 const componentName = 'details'
 const localDir = `${Stratus.BaseUrl}${Stratus.DeploymentPath}@stratusjs/${packageName}/src/${moduleName}/`
+const localDistStyle = `${Stratus.BaseUrl}${Stratus.DeploymentPath}@stratusjs/${packageName}/dist/${packageName}.bundle.min.css`
 
 export type IdxPropertyDetailsScope = IdxDetailsScope<Property> & {
     // model: Model<Property>
@@ -95,7 +100,7 @@ Stratus.Components.IdxPropertyDetails = {
     },
     controller(
         $attrs: IAttributes,
-        $location: ILocationService,
+        // $location: ILocationService,
         $sce: ISCEService,
         $scope: IdxPropertyDetailsScope,
         ListTrac: any,
@@ -112,7 +117,8 @@ Stratus.Components.IdxPropertyDetails = {
         if ($attrs.tokenUrl) {
             Idx.setTokenURL($attrs.tokenUrl)
         }
-        Stratus.Internals.CssLoader(`${localDir}${$attrs.template || componentName}.component${min}.css`).then()
+        // Stratus.Internals.CssLoader(`${localDir}${$attrs.template || componentName}.component${min}.css`).then()
+        Stratus.Internals.CssLoader(localDistStyle).then()
 
         let mlsVariables: MLSService
         let googleMapEmbed: string
@@ -130,6 +136,10 @@ Stratus.Components.IdxPropertyDetails = {
             $scope.options.service = $attrs.service && isJSON($attrs.service) ? JSON.parse($attrs.service) : null
             $scope.options.ListingKey = $attrs.listingKey && isJSON($attrs.listingKey) ?
                 JSON.parse($attrs.listingKey) : $attrs.listingKey || null
+            if (isNumber($scope.options.ListingKey) && $scope.options.ListingKey > 1000000000000000000) {
+                // if the number is too big it will turn into an exponent... don't let it. remain a string
+                $scope.options.ListingKey = $attrs.listingKey
+            }
             $scope.options.ListingId = $attrs.listingId && isJSON($attrs.listingId) ?
                 JSON.parse($attrs.listingId) : $attrs.listingId || null
             // Set default images and fields

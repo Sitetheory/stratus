@@ -14,22 +14,23 @@ stratus-idx-disclaimer {
     .disclaimer-container {
       /* Individual MLS' will each have a separate .disclaimer-container */
       margin-bottom: 35px;
-      .mls-service-logo {
-        /* In future, Logos will be maintained outside of the disclaimer text (not here) TODO remove this section */
-        display: block;
-        max-width: 80px;
-        margin-top: 20px;
-      }
     }
-    .mls-logos-container {
+    .mls-logos-section {
       display: inline-block;
-      width: 80px;
       margin: 0;
-      .mls-service-logo {
+      .mls-logos-container {
+        /* Individual MLS' will each have a separate .mls-logo-container */
         display: block;
         float: left;
-        max-width: 80px;
-        margin-right: 10px;
+        .mls-service-logo {
+          /* An Individual MLS' may each have a multiple .mls-service-logos */
+          display: block;
+          float: left;
+          width: unset;
+          max-width: 80px;
+          max-height: 75px;
+          margin-right: 10px;
+        }
       }
     }
   }
