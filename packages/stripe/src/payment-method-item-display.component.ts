@@ -26,7 +26,7 @@ const localDir = `${Stratus.BaseUrl}${Stratus.DeploymentPath}@stratusjs/${packag
  */
 @Component({
     selector: `sa-${packageName}-${componentName}`,
-    template: '<sa-stripe-payment-method-item *ngIf="initialized" [(model)]="model" [editable]="false"></sa-stripe-payment-method-item>',
+    template: '<sa-stripe-payment-method-item *ngIf="initialized" [(model)]="model" [editable]="false" [templateStyle]="templateStyle"></sa-stripe-payment-method-item>',
 })
 export class StripePaymentMethodItemDisplayComponent extends StripeComponent implements OnInit {
 
@@ -39,6 +39,8 @@ export class StripePaymentMethodItemDisplayComponent extends StripeComponent imp
     @Input() last4?: string
     @Input() expMonth?: number
     @Input() expYear?: number
+
+    @Input() templateStyle = 'default'
 
     constructor(
         private elementRef: ElementRef,

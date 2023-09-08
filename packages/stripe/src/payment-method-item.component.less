@@ -8,6 +8,7 @@ sa-stripe-payment-method-item {
     margin: 5px 1px;
     max-width: 220px;
     background-color: @light-blue-color;
+    padding: 0;
     &.expired {
       background-color: @medium-grey-color;
       &::before {
@@ -26,11 +27,16 @@ sa-stripe-payment-method-item {
       }
     }
     mat-card-content {
+      display: block;
       animation: background-color 2s ease-out both;
       -webkit-animation: background-color 2s ease-out both;
       white-space: pre;
 
+      padding: 16px;
       /* padding-top: 20px; */
+      &.style-minimal {
+        padding: 5px 10px;
+      }
     }
     mat-grid-tile .aligned-tile {
       display: flex;
