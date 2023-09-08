@@ -54,17 +54,6 @@ export class StripePaymentMethodItemDisplayComponent extends StripeComponent imp
         Stratus.Instances[this.uid] = this
         this.elementId = this.elementId || this.uid
 
-        // TODO: Assess & Possibly Remove when the System.js ecosystem is complete
-        // Load Component CSS until System.js can import CSS properly.
-        Stratus.Internals.CssLoader(`${localDir}${componentName}.component${min}.css`)
-            .then(() => {
-                this.styled = true
-            })
-            .catch(() => {
-                console.error('CSS Failed to load for Component:', this)
-                this.styled = false
-            })
-
         // Hydrate Root App Inputs
         this.hydrate(this.elementRef, this.sanitizer, keys<StripePaymentMethodItemDisplayComponent>())
     }
