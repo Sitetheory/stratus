@@ -236,7 +236,7 @@ Stratus.Components.IdxMemberList = {
                 try {
                     // resolve(Idx.fetchProperties($scope, 'collection', $scope.query, refresh))
                     // Grab the new property listings
-                    const results = await Idx.fetchMembers($scope, 'collection', $scope.options, refresh)
+                    const results = await Idx.fetchMembers($scope.elementId, 'collection', $scope.options, refresh)
                     Idx.emit('searched', $scope, clone($scope.query))
                     resolve(results)
                 } catch (e) {

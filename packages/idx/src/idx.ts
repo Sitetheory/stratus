@@ -46,7 +46,7 @@ export interface IdxService {
 
     // Fetch Methods
     fetchMembers(
-        $scope: any,
+        uid: string,
         collectionVarName: string,
         options?: Pick<CompileFilterOptions,
             'service' | 'where' | 'order' | 'page' | 'perPage' | 'fields' | 'images' | 'office'>,
@@ -55,7 +55,7 @@ export interface IdxService {
     ): Promise<Collection>
 
     fetchOffices(
-        $scope: any,
+        uid: string,
         collectionVarName: string,
         options?: Pick<CompileFilterOptions, 'service' | 'where' | 'order' | 'page' | 'perPage' | 'fields' | 'images' | 'office' | 'managingBroker' | 'members'>,
         refresh?: boolean,
@@ -63,7 +63,8 @@ export interface IdxService {
     ): Promise<Collection>
 
     fetchProperties(
-        $scope: IdxComponentScope, collectionVarName: string,
+        uid: string,
+        collectionVarName: string,
         options?: Pick<CompileFilterOptions, 'service' | 'where' | 'page' | 'perPage' | 'order' | 'fields' | 'images' | 'openhouses'>,
         refresh?: boolean,
         listName?: string
@@ -1624,10 +1625,9 @@ const angularJsService = (
 
     /**
      * Sync a Collection with all members of a certain instance
-     * @param moduleName -
-     * @param scopedCollectionVarName -
      */
     function createOrSyncCollectionVariable<T>(
+        uid: string,
         moduleName: 'office' | 'member' | 'property',
         scopedCollectionVarName: string
     ): Collection<T> {
@@ -1635,6 +1635,7 @@ const angularJsService = (
         Object.keys(instance[moduleName].list).forEach(listName => {
             if (
                 !collection &&
+                listName === uid &&
                 Object.prototype.hasOwnProperty.call(instance[moduleName].list, listName) &&
                 Object.prototype.hasOwnProperty.call(instance[moduleName].list[listName], scopedCollectionVarName) &&
                 instance[moduleName].list[listName][scopedCollectionVarName] instanceof Collection
@@ -1648,8 +1649,11 @@ const angularJsService = (
         }
         Object.keys(instance[moduleName].list).forEach(listName => {
             if (
-                !Object.prototype.hasOwnProperty.call(instance[moduleName].list[listName], scopedCollectionVarName) ||
-                (instance[moduleName].list[listName][scopedCollectionVarName] as unknown as Collection<T>) !== collection
+                listName === uid &&
+                (
+                    !Object.prototype.hasOwnProperty.call(instance[moduleName].list[listName], scopedCollectionVarName) ||
+                    (instance[moduleName].list[listName][scopedCollectionVarName] as unknown as Collection<T>) !== collection
+                )
             ) {
                 (instance[moduleName].list[listName][scopedCollectionVarName] as unknown as Collection<T>) = collection
             }
@@ -2518,7 +2522,7 @@ const angularJsService = (
 
     /**
      * Will sync only with lists
-     * @param $scope - {Object}
+     * @param uid - string
      * @param collectionVarName - The variable name assigned in the scope to hold the Collection results {String}
      * @param options - {Object=}
      * @param options.service - Specify certain MLS Services to load from - {[Number]=}
@@ -2534,7 +2538,7 @@ const angularJsService = (
      * @param compileFilterFunction - {Function}
      */
     async function genericSearchCollection<T>(
-        $scope: object | any,
+        uid: string,
         collectionVarName: string,
         options = {} as CompileFilterOptions,
         refresh = false,
@@ -2567,7 +2571,7 @@ const angularJsService = (
         const apiModelSingular = getSingularApiModelName(apiModel)
 
         // Prepare the same Collection for each List
-        const collection: Collection<T> = await createOrSyncCollectionVariable<T>(moduleName, collectionVarName)
+        const collection: Collection<T> = await createOrSyncCollectionVariable<T>(uid, moduleName, collectionVarName)
 
         // Set API paths to fetch listing data for each MLS Service
         const filterQuery = compileFilterFunction(options)
@@ -2806,7 +2810,7 @@ const angularJsService = (
 
     /**
      *
-     * @param $scope = {Object}
+     * @param uid - string
      * @param collectionVarName - The variable name assigned in the scope to hold the Collection results = {String}
      * @param options - {Object=}
      * @param options.service - Specify certain MLS Services to load from - {[Number]=}
@@ -2822,7 +2826,8 @@ const angularJsService = (
      * @param refresh - Append to currently loaded collection or fetch freshly - {Boolean=}
      */
     async function fetchProperties(
-        $scope: IdxComponentScope,
+        // $scope: IdxComponentScope,
+        uid: string,
         collectionVarName: string,
         options = {} as Pick<CompileFilterOptions, 'service' | 'where' | 'page' | 'perPage' | 'order' | 'fields' | 'images' | 'openhouses'>,
         refresh = false,
@@ -2907,7 +2912,7 @@ const angularJsService = (
         }
 
         return genericSearchCollection<Property>(
-            $scope,
+            uid,
             collectionVarName,
             options,
             refresh,
@@ -2949,7 +2954,7 @@ const angularJsService = (
 
     /**
      *
-     * @param $scope - {Object}
+     * @param uid - string
      * @param collectionVarName - The variable name assigned in the scope to hold the Collection results - {String}
      * @param options - {Object=}
      * @param options.service - Specify certain MLS Services to load from - {[Number]=}
@@ -2965,7 +2970,7 @@ const angularJsService = (
      * @param refresh - Append to currently loaded collection or fetch freshly - {Boolean=}
      */
     async function fetchMembers(
-        $scope: object | any,
+        uid: string,
         collectionVarName: string,
         options = {} as Pick<CompileFilterOptions, 'service' | 'where' | 'order' | 'page' | 'perPage' | 'fields' | 'images' | 'office'>,
         refresh = false
@@ -2998,7 +3003,7 @@ const angularJsService = (
         ]
         // options.where['ListType'] = ['House','Townhouse'];
 
-        return genericSearchCollection<Member>($scope, collectionVarName, options, refresh,
+        return genericSearchCollection<Member>(uid, collectionVarName, options, refresh,
             'member',
             'Members',
             compileMemberFilter
@@ -3007,7 +3012,7 @@ const angularJsService = (
 
     /**
      *
-     * @param $scope - {Object}
+     * @param uid - string
      * @param collectionVarName - The variable name assigned in the scope to hold the Collection results {String}
      * @param options - {Object=}
      * @param options.service - Specify certain MLS Services to load from {[Number]=}
@@ -3024,7 +3029,7 @@ const angularJsService = (
      * @param refresh - Append to currently loaded collection or fetch freshly - {Boolean=}
      */
     async function fetchOffices(
-        $scope: object | any,
+        uid: string,
         collectionVarName: string,
         options = {} as Pick<CompileFilterOptions, 'service' | 'where' | 'order' | 'page' | 'perPage' | 'fields' | 'images' | 'office' | 'managingBroker' | 'members'>,
         refresh = false
@@ -3053,7 +3058,7 @@ const angularJsService = (
         // options.where['ListType'] = ['House','Townhouse'];
         refresh ||= false
 
-        return genericSearchCollection<Office>($scope, collectionVarName, options, refresh,
+        return genericSearchCollection<Office>(uid, collectionVarName, options, refresh,
             'office',
             'Offices',
             compileOfficeFilter

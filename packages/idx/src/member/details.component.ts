@@ -147,7 +147,7 @@ Stratus.Components.IdxMemberDetails = {
                 memberQuery.service &&
                 (memberQuery.where.MemberKey || memberQuery.where.MemberStateLicense)
             ) {
-                await Idx.fetchMembers($scope, 'collection', memberQuery, true, 'MemberDetailsList')
+                await Idx.fetchMembers($scope.elementId, 'collection', memberQuery, true, 'MemberDetailsList')
             } else {
                 console.error('No Service Id or Member Key/License is fetch from')
             }
