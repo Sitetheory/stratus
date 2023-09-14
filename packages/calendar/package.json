@@ -24,7 +24,7 @@
     "ical"
   ],
   "engines": {
-    "yarn": ">= 1.21.1"
+    "npm": ">= 8.19.3"
   },
   "dependencies": {
     "@fullcalendar/common": "^5.11.2",

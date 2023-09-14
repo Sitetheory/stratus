@@ -23,7 +23,7 @@
     "angularjs"
   ],
   "engines": {
-    "yarn": ">= 1.21.1"
+    "npm": ">= 8.19.3"
   },
   "dependencies": {
     "@stratusjs/core": "^0.5.2",

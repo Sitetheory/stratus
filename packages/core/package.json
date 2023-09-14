@@ -21,7 +21,7 @@
     "typescript"
   ],
   "engines": {
-    "yarn": ">= 1.21.1"
+    "npm": ">= 8.19.3"
   },
   "dependencies": {
     "lodash": "^4.17.21",
