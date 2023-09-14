@@ -23,7 +23,7 @@
     "backend"
   ],
   "engines": {
-    "yarn": ">= 1.21.1"
+    "npm": ">= 8.19.3"
   },
   "dependencies": {
     "tslib": "^1.11.1"

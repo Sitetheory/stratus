@@ -244,6 +244,7 @@
             'stratus.directives.singleClick': stratusjsAngularJsExtrasBundlePath,
             'stratus.directives.src': stratusjsAngularJsExtrasBundlePath,
             'stratus.directives.stringToNumber': stratusjsAngularJsExtrasBundlePath,
+            'stratus.directives.tabRouting': stratusjsAngularJsExtrasBundlePath,
             'stratus.directives.timestampToDate': stratusjsAngularJsExtrasBundlePath,
             'stratus.directives.trigger': stratusjsAngularJsExtrasBundlePath,
             'stratus.directives.validate': stratusjsAngularJsExtrasBundlePath,
