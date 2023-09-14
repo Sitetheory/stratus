@@ -652,7 +652,7 @@ Stratus.Components.IdxPropertyList = {
                     try {
                         // resolve(Idx.fetchProperties($scope, 'collection', $scope.query, refresh))
                         // Grab the new property listings
-                        const results = await Idx.fetchProperties($scope, 'collection', $scope.query, refresh)
+                        const results = await Idx.fetchProperties($scope.elementId, 'collection', $scope.query, refresh)
                         lastQuery = cloneDeep($scope.query)
                         // $applyAsync will automatically be applied
                         Idx.emit('searched', $scope, clone($scope.query))

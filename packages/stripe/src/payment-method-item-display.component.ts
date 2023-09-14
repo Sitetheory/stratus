@@ -26,7 +26,7 @@ const localDir = `${Stratus.BaseUrl}${Stratus.DeploymentPath}@stratusjs/${packag
  */
 @Component({
     selector: `sa-${packageName}-${componentName}`,
-    template: '<sa-stripe-payment-method-item *ngIf="initialized" [(model)]="model" [editable]="false"></sa-stripe-payment-method-item>',
+    template: '<sa-stripe-payment-method-item *ngIf="initialized" [(model)]="model" [editable]="false" [templateStyle]="templateStyle"></sa-stripe-payment-method-item>',
 })
 export class StripePaymentMethodItemDisplayComponent extends StripeComponent implements OnInit {
 
@@ -40,6 +40,8 @@ export class StripePaymentMethodItemDisplayComponent extends StripeComponent imp
     @Input() expMonth?: number
     @Input() expYear?: number
 
+    @Input() templateStyle = 'default'
+
     constructor(
         private elementRef: ElementRef,
         private sanitizer: DomSanitizer,
@@ -51,17 +53,6 @@ export class StripePaymentMethodItemDisplayComponent extends StripeComponent imp
         this.uid = safeUniqueId('sa', snakeCase(this.title))
         Stratus.Instances[this.uid] = this
         this.elementId = this.elementId || this.uid
-
-        // TODO: Assess & Possibly Remove when the System.js ecosystem is complete
-        // Load Component CSS until System.js can import CSS properly.
-        Stratus.Internals.CssLoader(`${localDir}${componentName}.component${min}.css`)
-            .then(() => {
-                this.styled = true
-            })
-            .catch(() => {
-                console.error('CSS Failed to load for Component:', this)
-                this.styled = false
-            })
 
         // Hydrate Root App Inputs
         this.hydrate(this.elementRef, this.sanitizer, keys<StripePaymentMethodItemDisplayComponent>())

@@ -20,8 +20,9 @@
         ></mat-icon-->
     </button>
     <!-- TODO make look more like either credit card or check(ACH) -->
-    <mat-card-content>
-        <mat-grid-list cols="3" rowHeight="35px">
+    <mat-card-content [className]="'style-'+templateStyle">
+        <!-- rowHeight="35px" -->
+        <mat-grid-list cols="3" rowHeight="{{templateStyle == 'minimal' ? 15 : 35}}px">
             <mat-grid-tile colspan="3">
                 <span [innerHTML]="model.data.name" class="aligned-tile name" [style.justifyContent]="'flex-start'"></span>
             </mat-grid-tile>

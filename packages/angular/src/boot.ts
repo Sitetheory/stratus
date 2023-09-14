@@ -36,6 +36,7 @@ function angularBoot() {
         'sa-map',
         'sa-media-selector',
         'sa-selector',
+        'sa-stripe-payment-method-item-display',
         'sa-stripe-payment-method-list',
         'sa-stripe-payment-method-selector',
         'sa-tree'

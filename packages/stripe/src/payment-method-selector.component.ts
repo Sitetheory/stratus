@@ -61,6 +61,7 @@ export class StripePaymentMethodSelectorComponent extends StripeListComponent im
     // Component Attributes
     @Input() addCardButtonText: string = 'Add Payment Method'
     @Input() selectCardButtonText: string = 'Select Default Payment Method'
+    @Input() selectedTemplateStyle = 'default'
     @Input() disabled: boolean | string = false // inputs are strings..
     @Input() property: string
     @Input() detailedBillingInfo?: boolean

@@ -39,6 +39,7 @@ export class StripePaymentMethodItemComponent extends StripeComponent implements
     title = `${packageName}_${componentName}_component`
     @Input() model: Model
     @Input() editable = false
+    @Input() templateStyle = 'default'
 
     // Registry Attributes
     @Input() urlRoot = '/Api'

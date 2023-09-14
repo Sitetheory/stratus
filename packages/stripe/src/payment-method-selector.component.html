@@ -23,7 +23,7 @@
                 [compareWith]="objectComparisonFunction"
         >
             <mat-select-trigger>
-                <sa-stripe-payment-method-item *ngIf="form.controls[fieldName].value" [(model)]="form.controls[fieldName].value"></sa-stripe-payment-method-item>
+                <sa-stripe-payment-method-item *ngIf="form.controls[fieldName].value" [(model)]="form.controls[fieldName].value" [templateStyle]="selectedTemplateStyle"></sa-stripe-payment-method-item>
                 <!--{{form.controls.dataNumber.value && form.controls.dataNumber.value.data ? form.controls.dataNumber.value.data.id : 'Not Selected'}}-->
             </mat-select-trigger>
             <mat-option
