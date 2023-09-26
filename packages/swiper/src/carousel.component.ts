@@ -7,13 +7,14 @@
 import {clone, findKey, get, has, isArray, isBoolean, isNull, isUndefined} from 'lodash'
 import {Stratus} from '@stratusjs/runtime/stratus'
 import {IAttributes, IAugmentedJQuery, IController, IScope, ITimeoutService, IWindowService} from 'angular'
+import {Swiper} from 'swiper'
 import {
-    Swiper, SwiperOptions,
     // Modules
     A11y, Autoplay, Navigation, Pagination, Scrollbar, Zoom, // + Thumbs
     // Effects
     EffectCoverflow, EffectCube, EffectFade, EffectFlip // EffectCards, EffectCreative
-} from 'swiper'
+} from 'swiper/modules'
+import {SwiperOptions} from 'swiper/types/swiper-options'
 import {PaginationOptions} from 'swiper/types/modules/pagination'
 import {AutoplayOptions} from 'swiper/types/modules/autoplay'
 // Stratus Dependencies
