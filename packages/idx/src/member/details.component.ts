@@ -17,10 +17,7 @@ import {isJSON, LooseObject, safeUniqueId} from '@stratusjs/core/misc'
 import {cookie} from '@stratusjs/core/environment'
 
 // Stratus Preload
-import '@stratusjs/angularjs-extras/filters/math'
-import '@stratusjs/angularjs-extras/filters/moment'
-// tslint:disable-next-line:no-duplicate-imports
-import '@stratusjs/idx/idx'
+import '@stratusjs/angularjs-extras' // filters/math + filters/moment
 
 // Environment
 const min = !cookie('env') ? '.min' : ''

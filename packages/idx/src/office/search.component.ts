@@ -29,13 +29,6 @@ import {isJSON, safeUniqueId} from '@stratusjs/core/misc'
 import {cookie} from '@stratusjs/core/environment'
 import {IdxOfficeListScope} from '@stratusjs/idx/office/list.component'
 
-// Stratus Preload
-// tslint:disable-next-line:no-duplicate-imports
-import '@stratusjs/idx/idx'
-// tslint:disable-next-line:no-duplicate-imports
-import '@stratusjs/idx/office/list.component'
-import '@stratusjs/idx/disclaimer/disclaimer.component'
-
 // Environment
 const min = !cookie('env') ? '.min' : ''
 const packageName = 'idx'

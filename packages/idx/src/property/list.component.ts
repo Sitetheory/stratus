@@ -31,12 +31,7 @@ import {isJSON, safeUniqueId} from '@stratusjs/core/misc'
 import {cookie} from '@stratusjs/core/environment'
 
 // Stratus Preload
-import '@stratusjs/angularjs-extras/directives/src'
-import '@stratusjs/idx/disclaimer/disclaimer.component'
-// tslint:disable-next-line:no-duplicate-imports
-import '@stratusjs/idx/idx'
-import '@stratusjs/idx/map/map.component'
-import '@stratusjs/idx/property/details.component'
+import '@stratusjs/angularjs-extras' // directives/src
 
 // Environment
 const min = !cookie('env') ? '.min' : ''

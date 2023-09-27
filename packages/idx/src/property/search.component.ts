@@ -43,13 +43,7 @@ import {isJSON, LooseObject, safeUniqueId} from '@stratusjs/core/misc'
 import {cookie} from '@stratusjs/core/environment'
 
 // Stratus Preload
-import '@stratusjs/angularjs-extras/directives/stringToNumber'
-import '@stratusjs/angularjs-extras/filters/numeral'
-// tslint:disable-next-line:no-duplicate-imports
-import '@stratusjs/idx/idx'
-import '@stratusjs/idx/office/list.component' // Office needs to load for the office selector
-// tslint:disable-next-line:no-duplicate-imports
-import '@stratusjs/idx/office/search.component' // Office needs to load for the office selector
+import '@stratusjs/angularjs-extras' // directives/stringToNumber + filters/numeral
 
 type NameValuePair = {
     name: string

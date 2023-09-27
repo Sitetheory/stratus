@@ -26,12 +26,6 @@ import {Collection} from '@stratusjs/angularjs/services/collection' // Needed as
 import {isJSON, LooseObject, safeUniqueId} from '@stratusjs/core/misc'
 import {cookie} from '@stratusjs/core/environment'
 
-// Stratus Preload
-// tslint:disable-next-line:no-duplicate-imports
-import '@stratusjs/idx/idx'
-import '@stratusjs/idx/disclaimer/disclaimer.component'
-import '@stratusjs/idx/member/details.component'
-
 // Environment
 const min = !cookie('env') ? '.min' : ''
 const packageName = 'idx'
