@@ -623,7 +623,7 @@ export type IdxEmitterSearched = IdxEmitter & ((source: IdxComponentScope, query
 
 // All Service functionality
 const angularJsService = (
-    $injector: auto.IInjectorService,
+    // $injector: auto.IInjectorService,
     $http: IHttpService,
     $location: ILocationService,
     $mdToast: material.IToastService,
@@ -2565,7 +2565,7 @@ const angularJsService = (
         const apiModelSingular = getSingularApiModelName(apiModel)
 
         // Prepare the same Collection for each List
-        const collection: Collection<T> = await createOrSyncCollectionVariable<T>(uid, moduleName, collectionVarName)
+        const collection: Collection<T> = createOrSyncCollectionVariable<T>(uid, moduleName, collectionVarName)
 
         // Set API paths to fetch listing data for each MLS Service
         const filterQuery = compileFilterFunction(options)
