@@ -607,13 +607,7 @@ interface SearchObject {
         'numberEqualLess' | // Input is a string/number, needs to equal or less than another number field
         'andOr', // Input is a string/number, needs to evaluate on any of the supplied statements contained
     apiField?: string, // Used if the widgetField name is different from the field in database
-    andOr?: Array<{
-        apiField: string,
-        type: 'valueEquals'
-            | 'stringLike'
-            | 'stringLikeArray'
-            | 'stringIncludesArray'
-    }>
+    andOr?: Omit<SearchObject, 'andOr'>[]
 }
 
 export type IdxEmitter = (source: IdxComponentScope, var1?: any, var2?: any, var3?: any) => any
@@ -1062,7 +1056,7 @@ const angularJsService = (
 
     /**
      * Return a Disclaimer scope
-     * @param disclaimerUid? - uid of Disclaimer
+     * @param disclaimerUid - uid of Disclaimer
      */
     function getDisclaimerInstance(disclaimerUid?: string): {[uid: string]: IdxDisclaimerScope} | null {
         return disclaimerUid ? (
