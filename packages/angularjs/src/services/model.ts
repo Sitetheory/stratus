@@ -614,7 +614,7 @@ export class Model<T = LooseObject> extends ModelBase<T> {
                 const status: { code: string }[] = this.meta.get('status') || []
 
                 // Evaluate Payload
-                if (this.meta.has('status') && _.first(status).code !== 'SUCCESS') {
+                if (this.meta.get('status[0].code') !== 'SUCCESS') {
                     this.error = true
                 } else if (_.isArray(payload) && payload.length) {
                     this.recv = _.first(payload)
