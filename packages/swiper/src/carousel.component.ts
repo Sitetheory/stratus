@@ -648,6 +648,11 @@ Stratus.Components.SwiperCarousel = {
                 // console.log('parameters:', $scope.swiperParameters, $ctrl)
                 $scope.swiper = new Swiper($scope.swiperContainer, $scope.swiperParameters)
                 // console.log('created $scope.swiper', clone($scope.swiper))
+
+                // FIXME there is a delay on the navigation buytton when the transition has completely finished
+                // FIXME possibly set a bypass and force next/prev slide anyways by testing this event
+                // $scope.swiper.on('navigationNext', () => {})
+
                 /*
                 Issue: When loading a page, the first time a set of Swiper slideshows are called, it will load fine.
                 However, if a set is loaded a second time, the slides seem to fail to initialize and the next/prev buttons do not register.
