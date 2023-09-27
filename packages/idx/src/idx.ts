@@ -19,8 +19,8 @@ import {
     IQService,
     IWindowService
 } from 'angular'
-import {Model, ModelOptions, ModelSyncOptions} from '@stratusjs/angularjs/services/model' // Needed as Class
-import {Collection, CollectionSyncOptions} from '@stratusjs/angularjs/services/collection' // Needed as Class
+import {Model, ModelOptions, ModelSyncOptions} from '@stratusjs/angularjs/services/model'
+import {Collection, CollectionSyncOptions} from '@stratusjs/angularjs/services/collection'
 import {
     isJSON,
     LooseFunction,
@@ -34,10 +34,6 @@ import {IdxPropertySearchScope} from '@stratusjs/idx/property/search.component'
 import {IdxMemberListScope} from '@stratusjs/idx/member/list.component'
 
 // Stratus Preload
-// tslint:disable-next-line:no-duplicate-imports
-import '@stratusjs/angularjs/services/model' // Needed as $provider
-// tslint:disable-next-line:no-duplicate-imports
-import '@stratusjs/angularjs/services/collection' // Needed as $provider
 import '@stratusjs/idx/listTrac'
 
 export interface IdxService {
