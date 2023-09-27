@@ -125,10 +125,17 @@ export class ModelBase<T = LooseObject> extends EventManager {
 
     // TODO: Change this into the _.get function...
     get(attr: any) {
+        if (typeof attr !== 'string' || !this.data || typeof this.data !== 'object') {
+            return undefined
+        }
+        return _.get(this.data, attr)
+        // Note: This get function below has been replaced by the _.get() above
+        /* *
         return _.reduce(typeof attr === 'string' ? attr.split('.') : [],
             (attrs: any, a: any) => {
                 return attrs && attrs[a]
             }, this.data)
+        /* */
     }
 
     // TODO: Change this into the _.has function...
