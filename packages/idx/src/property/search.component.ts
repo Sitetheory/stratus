@@ -248,8 +248,6 @@ Stratus.Components.IdxPropertySearch = {
             Idx.setTokenURL($attrs.tokenUrl)
         }
 
-        Stratus.Internals.CssLoader(`${localDir}${$attrs.template || componentName}.component${min}.css`).then()
-
         // Default values
         let defaultQuery: LooseObject
         let lastQuery: CompileFilterOptions
