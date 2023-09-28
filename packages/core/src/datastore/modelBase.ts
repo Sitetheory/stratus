@@ -110,7 +110,12 @@ export class ModelBase<T = LooseObject> extends EventManager {
 
     toPatch(): LooseObject {
         const patchData = {}
-        const changeSet = patch(this.data, this.recv, this.ignoreKeys)
+        let changeSet = patch(this.data, this.recv, this.ignoreKeys)
+        const removals = patch(this.recv, this.data, this.ignoreKeys)
+        if (removals && !_.isEmpty(removals)) {
+            changeSet = changeSet || {}
+            _.forEach(removals, (value: any, key: string) => !_.has(changeSet, key) ? changeSet[key] = value : null)
+        }
         if (!changeSet || _.isEmpty(changeSet)) {
             return patchData
         }
