@@ -57,6 +57,7 @@ const moduleName = 'property'
 const componentName = 'search'
 // There is not a very consistent way of pathing in Stratus at the moment
 const localDir = `${Stratus.BaseUrl}${Stratus.DeploymentPath}@stratusjs/${packageName}/src/${moduleName}/`
+const localDistStyle = `${Stratus.BaseUrl}${Stratus.DeploymentPath}@stratusjs/${packageName}/dist/${packageName}.bundle.min.css`
 
 type ListingTypeSelectionSetting = {
     name: string
@@ -247,6 +248,8 @@ Stratus.Components.IdxPropertySearch = {
         if ($attrs.tokenUrl) {
             Idx.setTokenURL($attrs.tokenUrl)
         }
+
+        Stratus.Internals.CssLoader(localDistStyle).then()
 
         // Default values
         let defaultQuery: LooseObject
