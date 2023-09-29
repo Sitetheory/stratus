@@ -570,12 +570,17 @@ Stratus.Components.IdxPropertyList = {
                 // Check and remove incompatible where combinations. Basically if Location or neighborhood are used, remove the others
                 if (!isEmpty(query.where.Location)) {
                     query.where.City = []
+                    query.where.eCity = []
                     query.where.UnparsedAddress = ''
                     query.where.Neighborhood = []
+                    query.where.eNeighborhood = []
                     query.where.CityRegion = []
+                    query.where.eCityRegion = []
                     query.where.PostalCode = []
                     query.where.MLSAreaMajor = []
+                    query.where.eMLSAreaMajor = []
                     query.where.SubdivisionName = []
+                    query.where.eSubdivisionName = []
                 }
 
                 // Page checks

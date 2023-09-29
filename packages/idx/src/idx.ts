@@ -258,17 +258,24 @@ export interface WhereOptions extends LooseObject {
     Status?: string[] | string,
     UnparsedAddress?: string,
     City?: string[] | string,
+    eCity?: string[] | string,
     PostalCode?: string[] | string,
     CityRegion?: string[] | string,
+    eCityRegion?: string[] | string,
     CountyOrParish?: string[] | string,
+    eCountyOrParish?: string[] | string,
     MLSAreaMajor?: string[] | string,
+    eMLSAreaMajor?: string[] | string,
     SubdivisionName?: string[] | string,
+    eSubdivisionName?: string[] | string,
     ListPriceMin?: number | any,
     ListPriceMax?: number | any,
     Bathrooms?: number | any, // Previously BathroomsFullMin
     Bedrooms?: number | any, // Previously BedroomsTotalMin
     Location?: string,
+    eLocation?: string,
     Neighborhood?: string[] | string,
+    eNeighborhood?: string[] | string,
     AgentLicense?: string[] | string, // Converts on server to multiple checks
     OfficeNumber?: string[] | string, // Converts on server to multiple checks
     OfficeName?: string[] | string, // Converts on server to multiple checks
@@ -641,18 +648,25 @@ const angularJsService = (
     // Blank options to initialize arrays
     const defaultWhereOptions: WhereOptions = {
         City: [], // Added as default so search and manipulate
+        eCity: [], // Added as default so search and manipulate
         UnparsedAddress: '', // Added as default so search and manipulate
         Location: '', // Added as default so search and manipulate
+        eLocation: '', // Added as default so search and manipulate
         Status: [],
         ListingId: [],
         ListingType: [],
         CountyOrParish: [],
+        eCountyOrParish: [],
         MLSAreaMajor: [],
+        eMLSAreaMajor: [],
         SubdivisionName: [],
+        eSubdivisionName: [],
         Neighborhood: [],
+        eNeighborhood: [],
         PostalCode: [],
         // NOTE: at this point we don't know if CityRegion is used (or how it differs from MLSAreaMajor)
         CityRegion: [],
+        eCityRegion: [],
         AgentLicense: [],
         OfficeNumber: [],
         OfficeName: []
@@ -1683,37 +1697,51 @@ const angularJsService = (
             },
             stringLikeArray: (searchObject, value) => {
                 value = typeof value === 'string' ? [value] : value
-                const stringLikeArrayOrStatement: MongoWhereQuery[] = []
-                value.forEach((requestedValue: string) => {
-                    // Don't perform empty like searches
-                    if (!isEmpty(requestedValue)) {
-                        stringLikeArrayOrStatement.push({
-                            [searchObject.apiField]: {
-                                like: requestedValue,
-                                options: 'i'
-                            }
-                        })
+
+                if (value.length > 1) {
+                    const stringLikeArrayOrStatement: MongoWhereQuery[] = []
+                    value.forEach((requestedValue: string) => {
+                        // Don't perform empty like searches
+                        if (!isEmpty(requestedValue)) {
+                            stringLikeArrayOrStatement.push({
+                                [searchObject.apiField]: {
+                                    like: requestedValue,
+                                    options: 'i'
+                                }
+                            })
+                        }
+                    })
+                    if (!isEmpty(stringLikeArrayOrStatement)) {
+                        andStatement.push({or: stringLikeArrayOrStatement})
                     }
-                })
-                if (!isEmpty(stringLikeArrayOrStatement)) {
-                    andStatement.push({or: stringLikeArrayOrStatement})
+                } else if (value.length === 1) {
+                    if (!isEmpty(value[0])) {
+                        whereQuery[searchObject.apiField] = {
+                            like: value[0],
+                            options: 'i'
+                        }
+                    }
                 }
             },
             stringIncludesArray: (searchObject, value) => {
                 value = typeof value === 'string' ? [value] : value
-                if (value.length > 0) {
+                if (value.length > 1) {
                     whereQuery[searchObject.apiField] = {
                         inq: value
                     }
+                } else if (value.length === 1) {
+                    whereQuery[searchObject.apiField] = value[0]
                 }
             },
             stringIncludesArrayAlternative: (searchObject, value) => {
                 // For some reason, `inq` doesn't work in certain situations. This is to overcome that
                 value = typeof value === 'string' ? [value] : value
-                if (value.length > 0) {
+                if (value.length > 1) {
                     whereQuery[searchObject.apiField] = {
                         in: value
                     }
+                } else if (value.length === 1) {
+                    whereQuery[searchObject.apiField] = value[0]
                 }
             },
             numberEqualGreater: (searchObject, value) => {
@@ -1775,7 +1803,7 @@ const angularJsService = (
                             }
                         } else if (orObject.type === 'stringLikeArray') {
                             value = typeof value === 'string' ? [value] : value
-                            if (value.length > 0) {
+                            if (value.length > 1) {
                                 value.forEach((requestedValue: string) => {
                                     // Don't perform empty like searches
                                     if (!isEmpty(requestedValue)) {
@@ -1787,21 +1815,40 @@ const angularJsService = (
                                         })
                                     }
                                 })
+                            } else if (value.length === 1) {
+                                // Don't perform empty like searches
+                                if (!isEmpty(value[0])) {
+                                    andOrOrStatement.push({
+                                        [orObject.apiField]: {
+                                            like: value[0],
+                                            options: 'i'
+                                        }
+                                    })
+                                }
                             }
                         } else if (orObject.type === 'stringIncludesArray') {
                             value = typeof value === 'string' ? [value] : value
-                            if (value.length > 0) {
+                            if (value.length > 1) {
                                 andOrOrStatement.push({
                                     [orObject.apiField]: {
                                         inq: value
                                     }
+                                })
+                            } else if (value.length === 1) {
+                                andOrOrStatement.push({
+                                    [orObject.apiField]:  value[0]
                                 })
                             }
                         }
                     })
 
                     if (!isEmpty(andOrOrStatement)) {
-                        andStatement.push({or: andOrOrStatement})
+                        // andStatement.push({or: andOrOrStatement})
+                        if (andOrOrStatement.length > 1) {
+                            andStatement.push({or: andOrOrStatement})
+                        } else if (andOrOrStatement.length === 1) {
+                            andStatement.push(andOrOrStatement[0])
+                        }
                     }
                 }
             }
@@ -1885,6 +1932,10 @@ const angularJsService = (
                 City: {
                     type: 'stringLikeArray'
                 },
+                eCity: {
+                    apiField: 'City',
+                    type: 'stringIncludesArray'
+                },
                 PostalCode: {
                     type: 'stringIncludesArray'
                 },
@@ -1892,17 +1943,34 @@ const angularJsService = (
                     // Note: only 'in' seems to work as a replacement for inq when nested in another object
                     type: 'stringLikeArray'
                 },
+                eCountyOrParish: {
+                    apiField: 'CountyOrParish',
+                    // stringIncludesArrayAlternative
+                    type: 'stringIncludesArray'
+                },
                 SubdivisionName: {
                     // Note: only 'in' seems to work as a replacement for inq when nested in another object
                     type: 'stringLikeArray'
+                },
+                eSubdivisionName: {
+                    apiField: 'SubdivisionName',
+                    type: 'stringIncludesArray'
                 },
                 MLSAreaMajor: {
                     // Note: only 'in' seems to work as a replacement for inq when nested in another object
                     type: 'stringLikeArray'
                 },
+                eMLSAreaMajor: {
+                    apiField: 'MLSAreaMajor',
+                    type: 'stringIncludesArray'
+                },
                 CityRegion: {
                     // Note: only 'in' seems to work as a replacement for inq when nested in another object
                     type: 'stringLikeArray'
+                },
+                eCityRegion: {
+                    apiField: 'CityRegion',
+                    type: 'stringIncludesArray'
                 },
                 Location: {
                     type: 'andOr',
@@ -1921,12 +1989,37 @@ const angularJsService = (
                         {apiField: 'ListingId', type: 'stringIncludesArray'},
                     ]
                 },
+                eLocation: {
+                    type: 'andOr',
+                    andOr: [
+                        {apiField: 'City', type: 'stringIncludesArray'},
+                        {apiField: 'CityRegion', type: 'stringIncludesArray'},
+                        {apiField: 'CountyOrParish', type: 'stringIncludesArray'},
+                        {apiField: 'SubdivisionName', type: 'stringIncludesArray'},
+                        {apiField: 'MLSAreaMajor', type: 'stringIncludesArray'},
+                        {apiField: 'PostalCode', type: 'stringIncludesArray'},
+                        // TODO: in the future we should pass in a new defined field like Address (that will
+                        // TODO: search UnparsedAddress if it exists for the service, OR the API will parse
+                        // TODO: it into StreetNumber, StreetName, StreetSuffix, depending on what's provided
+                        // TODO: and all those are LIKE (but all must match LIKE)
+                        {apiField: 'UnparsedAddress', type: 'stringLikeArray'},
+                        {apiField: 'ListingId', type: 'stringIncludesArray'},
+                    ]
+                },
                 Neighborhood: {
                     type: 'andOr',
                     andOr: [
                         {apiField: 'CityRegion', type: 'stringLikeArray'},
                         {apiField: 'SubdivisionName', type: 'stringLikeArray'},
                         {apiField: 'MLSAreaMajor', type: 'stringLikeArray'}
+                    ]
+                },
+                eNeighborhood: {
+                    type: 'andOr',
+                    andOr: [
+                        {apiField: 'CityRegion', type: 'stringIncludesArray'},
+                        {apiField: 'SubdivisionName', type: 'stringIncludesArray'},
+                        {apiField: 'MLSAreaMajor', type: 'stringIncludesArray'}
                     ]
                 }
             }
@@ -2887,13 +2980,19 @@ const angularJsService = (
         // OpenHousesOnly can work fast enough if there is more filters. Disable otherwise
         if (
             isEmpty(options.where.Neighborhood) &&
+            isEmpty(options.where.eNeighborhood) &&
             isEmpty(options.where.Location) &&
+            isEmpty(options.where.eLocation) &&
             isEmpty(options.where.AgentLicense) &&
             isEmpty(options.where.OfficeNumber) &&
             isEmpty(options.where.City) &&
+            isEmpty(options.where.eCity) &&
             isEmpty(options.where.CityRegion) &&
+            isEmpty(options.where.eCityRegion) &&
             isEmpty(options.where.CountyOrParish) &&
+            isEmpty(options.where.eCountyOrParish) &&
             isEmpty(options.where.MLSAreaMajor) &&
+            isEmpty(options.where.eMLSAreaMajor) &&
             isEmpty(options.where.PostalCode) &&
             isEmpty(options.where.UnparsedAddress)
         ) {
