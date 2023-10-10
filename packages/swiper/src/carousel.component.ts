@@ -651,7 +651,13 @@ Stratus.Components.SwiperCarousel = {
 
                 // FIXME there is a delay on the navigation buytton when the transition has completely finished
                 // FIXME possibly set a bypass and force next/prev slide anyways by testing this event
-                // $scope.swiper.on('navigationNext', () => {})
+                /*$scope.swiper.on('navigationNext', () => {
+                    // check if($scope.swiper.animating)
+                    console.log('hit navigationNext')
+                }) // slideNextTransitionEnd
+                $scope.swiper.on('slideNextTransitionEnd', () => {
+                    console.log('hit slideNextTransitionEnd')
+                })*/
 
                 /*
                 Issue: When loading a page, the first time a set of Swiper slideshows are called, it will load fine.
