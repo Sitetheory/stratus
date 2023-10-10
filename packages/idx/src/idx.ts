@@ -1898,11 +1898,11 @@ const angularJsService = (
                 },
                 ListPriceMin: {
                     type: 'numberEqualGreater',
-                    apiField: 'ListPrice'
+                    apiField: '_BestPrice'
                 },
                 ListPriceMax: {
                     type: 'numberEqualLess',
-                    apiField: 'ListPrice'
+                    apiField: '_BestPrice'
                 },
                 Bathrooms: {
                     type: 'numberEqualGreater'
