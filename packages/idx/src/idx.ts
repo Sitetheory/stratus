@@ -2351,14 +2351,18 @@ const angularJsService = (
     }
 
     /**
-     * Parse the hangbang Url for the serviceId and ListingKey of a listings
+     * Parse the hang bang Url for the serviceId and ListingKey of a listings
      * Save variables in urlOptions.Listing
      * returns {String} - Remaining unparsed hashbang variables
      */
     function getListingOptionsFromUrlString(path: string): string {
         // FIXME can't read unless ListingKey must end with /
         // /Listing/1/81582540/8883-Rancho/
-        const regex = /\/Listing\/(\d+?)\/(.*?)\/([\w-_]*)?\/?/
+        // const regex = /\/Listing\/(\d+?)\/(.*?)\/([\w-_]*)?\/?/
+        // Group 1 (Service Id) require match a digit between 1-3 characters
+        // Group 2 (Listing Key) require match at least 1 character that's not a space or /
+        // Group 3 (Address hash to dispose of) optionally match an ending / or a / with - delimited strings optionally ending with /
+        const regex = /\/Listing\/(\d{1,3})\/([^/\s]+)(\/?[\w\-_]*\/?)?/
         const matches = regex.exec(path)
         path = path.replace(regex, '')
         if (
@@ -2393,6 +2397,7 @@ const angularJsService = (
             // standard had me remove regex = /([^\/]+)\/([^\/]+)/g  (notice the missing \'s)
             // regex = /([^/]+)\/([^/]+)/g
             // quantifying * (0+) instead of + (1+) allows noting empty strings and well as trailing values
+            // Group 1 (Variable) match a digit between 1-3 characters
             regex = /([^/]+)\/([^/]*)/g
 
             const whileLoopAssignmentBypass = (regexp: RegExp, value: string) => {
