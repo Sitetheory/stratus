@@ -34,6 +34,17 @@
                     data-ng-if="!isPresetLocationSet()">
                 <label>City, Neighborhood, Zip</label>
                 <input
+                        data-ng-if="!options.query.where.Location"
+                        data-ng-model="options.query.where.eLocation"
+                        data-ng-blur="search()"
+                        type="text"
+                        size="22"
+                        maxlength="250"
+                        data-ng-keyup="$event.keyCode == 13 && search()"
+                        autocomplete="off"
+                >
+                <input
+                        data-ng-if="options.query.where.Location"
                         data-ng-model="options.query.where.Location"
                         data-ng-blur="search()"
                         type="text"
@@ -58,7 +69,7 @@
             <!-- NOTE: three of these get cleared as arrays -->
             <a
                     class="custom-clear"
-                    data-ng-if="(options.query.where.Location.length || isPresetLocationSet())"
+                    data-ng-if="(options.query.where.eLocation.length || options.query.where.Location.length || isPresetLocationSet())"
                     data-ng-click="resetLocationQuery(); search()"
             >
                 <md-icon md-svg-src="{{ localDir + 'images/icons/actionButtons/clear.svg' }}"></md-icon>
@@ -321,7 +332,7 @@
 
             <div
                     class="extras"
-                    data-ng-show="options.query.where.OpenHouseOnly || options.query.where.eNeighborhood.length || options.query.where.Neighborhood.length || options.query.where.Location.length || options.query.where.AgentLicense.length || options.officeGroups.length || options.query.where.eCity.length || options.query.where.City.length || options.query.where.eCountyOrParish.length || options.query.where.CountyOrParish.length || options.query.where.eMLSAreaMajor.length || options.query.where.MLSAreaMajor.length || options.query.where.PostalCode.length"
+                    data-ng-show="options.query.where.OpenHouseOnly || options.query.where.eNeighborhood.length || options.query.where.Neighborhood.length || options.query.where.eLocation.length || options.query.where.Location.length || options.query.where.AgentLicense.length || options.officeGroups.length || options.query.where.eCity.length || options.query.where.City.length || options.query.where.eCountyOrParish.length || options.query.where.CountyOrParish.length || options.query.where.eMLSAreaMajor.length || options.query.where.MLSAreaMajor.length || options.query.where.PostalCode.length"
             >
                 <h4>Extras</h4>
                 <!-- 'Openhouses Only' is only allowed when more filters are supplied due to speed restrictions -->

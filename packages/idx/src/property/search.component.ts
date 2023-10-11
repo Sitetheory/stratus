@@ -475,6 +475,7 @@ Stratus.Components.IdxPropertySearch = {
 
         $scope.resetLocationQuery = (): void => {
             $scope.options.query.where.Location = ''
+            $scope.options.query.where.eLocation = ''
             $scope.options.query.where.City = []
             $scope.options.query.where.eCity = []
             $scope.options.query.where.CountyOrParish = []
