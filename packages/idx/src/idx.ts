@@ -2341,6 +2341,7 @@ const angularJsService = (
      * returns {Object}
      */
     function getOptionsFromUrl(): UrlsOptionsObject {
+        // console.log('running getOptionsFromUrl')
         let path = $location.path()
 
         path = getListingOptionsFromUrlString(path)
@@ -2378,6 +2379,7 @@ const angularJsService = (
      * returns {String} - Remaining unparsed hangbang variables
      */
     function getSearchOptionsFromUrlString(path: string): string {
+        // console.log('getSearchOptionsFromUrlString', path)
         // /Search/ListPriceMin/500000/SomeVar/aValue
         let regex = /\/Search\/(.*)?\/?/
         let matches = regex.exec(path)
@@ -2389,22 +2391,23 @@ const angularJsService = (
             const rawSearchOptions = matches[1]
             // Time to separate all the values out in pairs between /'s
             // standard had me remove regex = /([^\/]+)\/([^\/]+)/g  (notice the missing \'s)
-            regex = /([^/]+)\/([^/]+)/g
+            // regex = /([^/]+)\/([^/]+)/g
+            // quantifying * (0+) instead of + (1+) allows noting empty strings and well as trailing values
+            regex = /([^/]+)\/([^/]*)/g
 
             const whileLoopAssignmentBypass = (regexp: RegExp, value: string) => {
                 matches = regexp.exec(value)
+                // console.log('whileLoopAssignmentBypass value', value, matches)
                 return matches
             }
 
+            // console.log('rawSearchOptions', clone(rawSearchOptions))
             // while ((matches = regex.exec(rawSearchOptions)) != null) {
             while (whileLoopAssignmentBypass(regex, rawSearchOptions) != null) {
-                if (
-                    matches[1] &&
-                    matches[2]
-                ) {
+                if (matches[1]) {
                     // Check for a comma to break into an array.
                     // This might need to be altered as sometimes a comma might be used for something
-                    if (matches[2].includes(',')) {
+                    if (matches[2] && matches[2].includes(',')) {
                         // matches[2] = matches[2].split(',')
                         // Save the pairing results into urlOptions.Search
                         urlOptions.Search[matches[1]] = matches[2].split(',')
@@ -2480,7 +2483,7 @@ const angularJsService = (
                         defaultValue = [defaultValue]
                     }
                     if (!isEqual(defaultValue, compareValue)) {
-                        // console.log(searchOptionName, defaultValue, compareValue)
+                        console.log(searchOptionName, defaultValue, compareValue)
                         searchPath += searchOptionName + '/' + compareValue + '/'
                     }
                 }

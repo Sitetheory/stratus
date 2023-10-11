@@ -432,6 +432,7 @@ Stratus.Components.IdxPropertyList = {
 
             if ($scope.urlLoad) {
                 // first set the UrlQuery via defaults (cloning so it can't be altered)
+                // console.log('defaultQuery started as', clone(defaultQuery))
                 Idx.setUrlOptions('Search', JSON.parse(JSON.stringify(defaultQuery)))
                 // Load Query from the provided URL settings
                 urlQuery = Idx.getOptionsFromUrl()
