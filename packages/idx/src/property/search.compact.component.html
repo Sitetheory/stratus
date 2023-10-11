@@ -154,7 +154,7 @@
                     </div>
 
                     <md-checkbox
-                            data-ng-show="options.query.where.Neighborhood.length || options.query.where.Location.length || options.query.where.AgentLicense.length || options.query.where.OfficeNumber.length || options.query.where.City.length || options.query.where.CountyOrParish.length || options.query.where.MLSAreaMajor.length || options.query.where.PostalCode.length"
+                            data-ng-show="options.query.where.eNeighborhood.length || options.query.where.Neighborhood.length || options.query.where.Location.length || options.query.where.AgentLicense.length || options.officeGroups.length || options.query.where.eCity.length || options.query.where.City.length || options.query.where.eCountyOrParish.length || options.query.where.CountyOrParish.length || options.query.where.eMLSAreaMajor.length || options.query.where.MLSAreaMajor.length || options.query.where.PostalCode.length"
                             class="show-open-houses font-secondary"
                             data-ng-model="options.query.where.OpenHouseOnly"
                             aria-label="Open Houses Only"
@@ -214,10 +214,24 @@
                     </div>
 
                     <!-- Only Include if these were preset in a Property Filter pages and we need the ability to remove them -->
-                    <div data-ng-if="options.query.where.City.length || options.query.where.CountyOrParish.length || options.query.where.MLSAreaMajor.length || options.query.where.PostalCode.length">
+                    <div data-ng-if="options.query.where.eCity.length || options.query.where.City.length || options.query.where.eCountyOrParish.length || options.query.where.CountyOrParish.length || options.query.where.eMLSAreaMajor.length || options.query.where.MLSAreaMajor.length || options.query.where.PostalCode.length">
                         <div class="sale-status-border dotted-spaced-underline"></div>
                         <h3 data-layout-align="space-around center">Preset Filters</h3>
                         <div class="specific-filters" data-layout="row" data-layout-align="space-around center" aria-label="Specific Areas">
+                            <div class="search-input" data-ng-if="options.query.where.eCity.length">
+                                <md-chips
+                                        class="city-id font-secondary"
+                                        aria-label="Cities to Limit"
+                                        data-ng-model="options.query.where.eCity"
+                                        data-md-enable-chip-edit="true"
+                                        data-md-add-on-blur="true"
+                                        data-md-separator-keys="[$mdConstant.KEY_CODE.ENTER, $mdConstant.KEY_CODE.COMMA]"
+                                        data-placeholder="City"
+                                        data-secondary-placeholder="+City"
+                                        data-delete-button-label="Remove City"
+                                        data-delete-hint="Press delete to remove City"
+                                ></md-chips>
+                            </div>
                             <div class="search-input" data-ng-if="options.query.where.City.length">
                                 <md-chips
                                         class="city-id font-secondary"
@@ -230,6 +244,20 @@
                                         data-secondary-placeholder="+City"
                                         data-delete-button-label="Remove City"
                                         data-delete-hint="Press delete to remove City"
+                                ></md-chips>
+                            </div>
+                            <div class="search-input" data-ng-if="options.query.where.eCountyOrParish.length">
+                                <md-chips
+                                        class="area-id font-secondary"
+                                        aria-label="Counties to Limit"
+                                        data-ng-model="options.query.where.eCountyOrParish"
+                                        data-md-enable-chip-edit="true"
+                                        data-md-add-on-blur="true"
+                                        data-md-separator-keys="[$mdConstant.KEY_CODE.ENTER, $mdConstant.KEY_CODE.COMMA]"
+                                        data-placeholder="County"
+                                        data-secondary-placeholder="+County"
+                                        data-delete-button-label="Remove County"
+                                        data-delete-hint="Press delete to remove County"
                                 ></md-chips>
                             </div>
                             <div class="search-input" data-ng-if="options.query.where.CountyOrParish.length">
@@ -246,6 +274,20 @@
                                         data-delete-hint="Press delete to remove County"
                                 ></md-chips>
                             </div>
+                            <div class="search-input" data-ng-if="options.query.where.eMLSAreaMajor.length">
+                                <md-chips
+                                        class="area-id font-secondary"
+                                        aria-label="Areas to Limit"
+                                        data-ng-model="options.query.where.eMLSAreaMajor"
+                                        data-md-enable-chip-edit="true"
+                                        data-md-add-on-blur="true"
+                                        data-md-separator-keys="[$mdConstant.KEY_CODE.ENTER, $mdConstant.KEY_CODE.COMMA]"
+                                        data-placeholder="Area Major"
+                                        data-secondary-placeholder="+Area"
+                                        data-delete-button-label="Remove Area"
+                                        data-delete-hint="Press delete to remove Area"
+                                ></md-chips>
+                            </div>
                             <div class="search-input" data-ng-if="options.query.where.MLSAreaMajor.length">
                                 <md-chips
                                         class="area-id font-secondary"
@@ -258,6 +300,20 @@
                                         data-secondary-placeholder="+Area"
                                         data-delete-button-label="Remove Area"
                                         data-delete-hint="Press delete to remove Area"
+                                ></md-chips>
+                            </div>
+                            <div class="search-input" data-ng-if="options.query.where.eNeighborhood.length">
+                                <md-chips
+                                        class="area-id font-secondary"
+                                        aria-label="Neighborhoods to Limit"
+                                        data-ng-model="options.query.where.eNeighborhood"
+                                        data-md-enable-chip-edit="true"
+                                        data-md-add-on-blur="true"
+                                        data-md-separator-keys="[$mdConstant.KEY_CODE.ENTER, $mdConstant.KEY_CODE.COMMA]"
+                                        data-placeholder="Neighborhood"
+                                        data-secondary-placeholder="+Neighborhood"
+                                        data-delete-button-label="Remove Neighborhood"
+                                        data-delete-hint="Press delete to remove Neighborhood"
                                 ></md-chips>
                             </div>
                             <div class="search-input" data-ng-if="options.query.where.Neighborhood.length">

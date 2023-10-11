@@ -31,12 +31,7 @@ import {isJSON, safeUniqueId} from '@stratusjs/core/misc'
 import {cookie} from '@stratusjs/core/environment'
 
 // Stratus Preload
-import '@stratusjs/angularjs-extras/directives/src'
-import '@stratusjs/idx/disclaimer/disclaimer.component'
-// tslint:disable-next-line:no-duplicate-imports
-import '@stratusjs/idx/idx'
-import '@stratusjs/idx/map/map.component'
-import '@stratusjs/idx/property/details.component'
+import '@stratusjs/angularjs-extras' // directives/src
 
 // Environment
 const min = !cookie('env') ? '.min' : ''
@@ -575,12 +570,17 @@ Stratus.Components.IdxPropertyList = {
                 // Check and remove incompatible where combinations. Basically if Location or neighborhood are used, remove the others
                 if (!isEmpty(query.where.Location)) {
                     query.where.City = []
+                    query.where.eCity = []
                     query.where.UnparsedAddress = ''
                     query.where.Neighborhood = []
+                    query.where.eNeighborhood = []
                     query.where.CityRegion = []
+                    query.where.eCityRegion = []
                     query.where.PostalCode = []
                     query.where.MLSAreaMajor = []
+                    query.where.eMLSAreaMajor = []
                     query.where.SubdivisionName = []
+                    query.where.eSubdivisionName = []
                 }
 
                 // Page checks

@@ -7,13 +7,14 @@
 import {clone, findKey, get, has, isArray, isBoolean, isNull, isUndefined} from 'lodash'
 import {Stratus} from '@stratusjs/runtime/stratus'
 import {IAttributes, IAugmentedJQuery, IController, IScope, ITimeoutService, IWindowService} from 'angular'
+import {Swiper} from 'swiper'
 import {
-    Swiper, SwiperOptions,
     // Modules
     A11y, Autoplay, Navigation, Pagination, Scrollbar, Zoom, // + Thumbs
     // Effects
     EffectCoverflow, EffectCube, EffectFade, EffectFlip // EffectCards, EffectCreative
-} from 'swiper'
+} from 'swiper/modules'
+import {SwiperOptions} from 'swiper/types/swiper-options'
 import {PaginationOptions} from 'swiper/types/modules/pagination'
 import {AutoplayOptions} from 'swiper/types/modules/autoplay'
 // Stratus Dependencies
@@ -647,6 +648,17 @@ Stratus.Components.SwiperCarousel = {
                 // console.log('parameters:', $scope.swiperParameters, $ctrl)
                 $scope.swiper = new Swiper($scope.swiperContainer, $scope.swiperParameters)
                 // console.log('created $scope.swiper', clone($scope.swiper))
+
+                // FIXME there is a delay on the navigation buytton when the transition has completely finished
+                // FIXME possibly set a bypass and force next/prev slide anyways by testing this event
+                /*$scope.swiper.on('navigationNext', () => {
+                    // check if($scope.swiper.animating)
+                    console.log('hit navigationNext')
+                }) // slideNextTransitionEnd
+                $scope.swiper.on('slideNextTransitionEnd', () => {
+                    console.log('hit slideNextTransitionEnd')
+                })*/
+
                 /*
                 Issue: When loading a page, the first time a set of Swiper slideshows are called, it will load fine.
                 However, if a set is loaded a second time, the slides seem to fail to initialize and the next/prev buttons do not register.

@@ -47,11 +47,26 @@
                                 data-delete-hint="Press delete to remove City"
                         ></md-chips>
                     </div>
+                    <div class="search-input deprecated" data-flex="50"
+                         data-ng-if="options.query.where.CountyOrParish && options.query.where.CountyOrParish.length">
+                        <md-chips
+                                class="county font-secondary"
+                                aria-label="Counties to Limit (deprecated)"
+                                data-ng-model="options.query.where.CountyOrParish"
+                                data-md-enable-chip-edit="true"
+                                data-md-add-on-blur="true"
+                                data-md-separator-keys="[$mdConstant.KEY_CODE.ENTER, $mdConstant.KEY_CODE.COMMA]"
+                                data-placeholder="County (deprecated)"
+                                data-secondary-placeholder="+County (deprecated)"
+                                data-delete-button-label="Remove County (deprecated)"
+                                data-delete-hint="Press delete to remove County (deprecated)"
+                        ></md-chips>
+                    </div>
                     <div class="search-input" data-flex="50">
                         <md-chips
                                 class="county font-secondary"
                                 aria-label="Counties to Limit"
-                                data-ng-model="options.query.where.CountyOrParish"
+                                data-ng-model="options.query.where.eCountyOrParish"
                                 data-md-enable-chip-edit="true"
                                 data-md-add-on-blur="true"
                                 data-md-separator-keys="[$mdConstant.KEY_CODE.ENTER, $mdConstant.KEY_CODE.COMMA]"
@@ -64,7 +79,7 @@
                 </div>
                 <div data-layout="row">
                     <div
-                            class="search-input" data-flex="50"
+                            class="search-input deprecated" data-flex="50"
                             data-ng-if="options.query.where.MLSAreaMajor && options.query.where.MLSAreaMajor.length"
                     >
                         <md-chips
@@ -80,11 +95,26 @@
                                 data-delete-hint="Press delete to remove Area (deprecated)"
                         ></md-chips>
                     </div>
-                    <div class="search-input" data-flex="50">
+                    <div class="search-input deprecated" data-flex="50"
+                         data-ng-if="options.query.where.Neighborhood && options.query.where.Neighborhood.length">
                         <md-chips
                                 class="neighborhood font-secondary"
                                 aria-label="Neighborhoods to Limit"
                                 data-ng-model="options.query.where.Neighborhood"
+                                data-md-enable-chip-edit="true"
+                                data-md-add-on-blur="true"
+                                data-md-separator-keys="[$mdConstant.KEY_CODE.ENTER, $mdConstant.KEY_CODE.COMMA]"
+                                data-placeholder="Neighborhood (deprecated)"
+                                data-secondary-placeholder="+Neighborhood (deprecated)"
+                                data-delete-button-label="Remove Neighborhood (deprecated)"
+                                data-delete-hint="Press delete to remove Neighborhood (deprecated)"
+                        ></md-chips>
+                    </div>
+                    <div class="search-input" data-flex="50">
+                        <md-chips
+                                class="neighborhood font-secondary"
+                                aria-label="Neighborhoods to Limit"
+                                data-ng-model="options.query.where.eNeighborhood"
                                 data-md-enable-chip-edit="true"
                                 data-md-add-on-blur="true"
                                 data-md-separator-keys="[$mdConstant.KEY_CODE.ENTER, $mdConstant.KEY_CODE.COMMA]"

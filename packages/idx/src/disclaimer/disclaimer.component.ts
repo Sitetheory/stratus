@@ -15,10 +15,6 @@ import {cookie} from '@stratusjs/core/environment'
 import {IdxComponentScope, IdxEmitter, IdxService, MLSService} from '@stratusjs/idx/idx'
 import moment from 'moment'
 
-// Stratus Preload
-// tslint:disable-next-line:no-duplicate-imports
-import '@stratusjs/idx/idx'
-
 // Environment
 const min = !cookie('env') ? '.min' : ''
 const packageName = 'idx'

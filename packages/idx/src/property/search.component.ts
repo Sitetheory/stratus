@@ -23,7 +23,8 @@ import _, {
     isString,
     isUndefined,
     map,
-    throttle
+    throttle,
+    union
 } from 'lodash'
 import {Stratus} from '@stratusjs/runtime/stratus'
 import {element, material, IAttributes, ITimeoutService, IQService, IWindowService} from 'angular'
@@ -43,13 +44,7 @@ import {isJSON, LooseObject, safeUniqueId} from '@stratusjs/core/misc'
 import {cookie} from '@stratusjs/core/environment'
 
 // Stratus Preload
-import '@stratusjs/angularjs-extras/directives/stringToNumber'
-import '@stratusjs/angularjs-extras/filters/numeral'
-// tslint:disable-next-line:no-duplicate-imports
-import '@stratusjs/idx/idx'
-import '@stratusjs/idx/office/list.component' // Office needs to load for the office selector
-// tslint:disable-next-line:no-duplicate-imports
-import '@stratusjs/idx/office/search.component' // Office needs to load for the office selector
+import '@stratusjs/angularjs-extras' // directives/stringToNumber + filters/numeral
 
 type NameValuePair = {
     name: string
@@ -63,6 +58,7 @@ const moduleName = 'property'
 const componentName = 'search'
 // There is not a very consistent way of pathing in Stratus at the moment
 const localDir = `${Stratus.BaseUrl}${Stratus.DeploymentPath}@stratusjs/${packageName}/src/${moduleName}/`
+const localDistStyle = `${Stratus.BaseUrl}${Stratus.DeploymentPath}@stratusjs/${packageName}/dist/${packageName}.bundle.min.css`
 
 type ListingTypeSelectionSetting = {
     name: string
@@ -79,7 +75,7 @@ export type IdxPropertySearchScope = IdxSearchScope & {
     listLinkUrl: string
     // Can be 'simple' (location only), 'basic' (beds/baths, price, etc), 'advanced' (dropdown filters)
     searchType: 'simple' | 'basic' | 'advanced'
-    // Href to a url
+    // Href to an url
     advancedSearchUrl: string
     advancedSearchLinkName: string
     advancedFiltersStatus: boolean
@@ -118,6 +114,8 @@ export type IdxPropertySearchScope = IdxSearchScope & {
         agentGroups: SelectionGroup[]
         officeGroups: SelectionGroup[]
     }
+    presetLocationText: string // Will be formed based on the original query where
+    presetOtherFiltersText?: string // Will be formed based on the original query Agent, Office Group, and Listing ID
     displayFilterFullHeight: boolean
     variableSyncing: object | any
     filterMenu?: material.IPanelRef & any // material.IPanelRef // disabled because we need to set reposition()
@@ -127,10 +125,13 @@ export type IdxPropertySearchScope = IdxSearchScope & {
     canDisplayListingTypeButton(listType: ListingTypeSelectionSetting): boolean
     displayOfficeGroupSelector(searchTerm?: string, editIndex?: number, ev?: any): void
     getMLSVariables(reset?: boolean): MLSService[]
+    getPresetLocations(): string[]
     hasQueryChanged(): boolean
-    /** @deprecated use _.includes */
     inArray(item: any, array: any[]): boolean
     isIntersecting(itemArray: any[], array: any[]): boolean
+    isPresetLocationSet(): boolean
+    resetLocationQuery(): void
+    parsePresetLocationText(): void
     selectDefaultListingType(listingGroup?: string): void
     setQuery(newQuery?: CompileFilterOptions): void
     setWhere(newWhere?: WhereOptions): void
@@ -155,7 +156,7 @@ Stratus.Components.IdxPropertySearch = {
         initNow: '=',
         /**
          * Type: string
-         * To determine what datasources the Idx widgets are able to pull from and their temporary credentials, a
+         * To determine what datasource the Idx widgets are able to pull from and their temporary credentials, a
          * `token-url` directs to the location that manages this widget's subscription and provides what Idx servers it
          * has access to.
          */
@@ -164,7 +165,7 @@ Stratus.Components.IdxPropertySearch = {
         tokenOnLoad: '@',
         /**
          * Type: string
-         * Id of Property List widget to attach and control. The counterpart Property List widget's `element-id` must be
+         * ID of Property List widget to attach and control. The counterpart Property List widget's `element-id` must be
          * defined and the same as this `list-id` (See Property List). Multiple Search widgets may attach to the same
          * List widget but, a Search widget may only control a single List widget.
          */
@@ -172,7 +173,7 @@ Stratus.Components.IdxPropertySearch = {
         /**
          * Type: string
          * Default: '/property/list'
-         * If a List widget does not share the same page as this Search widget or they are not connected via
+         * If a List widget does not share the same page as this Search widget, or they are not connected via
          * `list-id`/`element-id`, searching will instead load a new page to where ever the List widget may be found
          * (Url provided here).
          */
@@ -254,7 +255,7 @@ Stratus.Components.IdxPropertySearch = {
             Idx.setTokenURL($attrs.tokenUrl)
         }
 
-        Stratus.Internals.CssLoader(`${localDir}${$attrs.template || componentName}.component${min}.css`).then()
+        Stratus.Internals.CssLoader(localDistStyle).then()
 
         // Default values
         let defaultQuery: LooseObject
@@ -264,12 +265,13 @@ Stratus.Components.IdxPropertySearch = {
         $scope.advancedFiltersStatus = false
         $scope.advancedSearchUrl = ''
         $scope.advancedSearchLinkName = 'Advanced Search'
+        $scope.presetLocationText = ''
         // Used by template
         $scope.$mdConstant = $mdConstant
 
         /**
          * All actions that happen first when the component loads
-         * Needs to be placed in a function, as the functions below need to the initialized first
+         * Need to be placed in a function, as the functions below need to the initialized first
          */
         const init = async () => {
             $scope.widgetName = $attrs.widgetName || ''
@@ -420,7 +422,7 @@ Stratus.Components.IdxPropertySearch = {
             $scope.$applyAsync(() => {
                 $scope.initialized = true
             })
-            // await $scope.variableSync() sync is moved to teh timeout above so it can still work with List widgets
+            // await $scope.variableSync() sync is moved to teh timeout above, so it can still work with List widgets
             Idx.emit('init', $scope)
         }
 
@@ -470,6 +472,59 @@ Stratus.Components.IdxPropertySearch = {
                 // console.log('watched ListingType', $scope.options.query.ListingType, $scope.options.selection.ListingType.group)
             }
         })
+
+        $scope.resetLocationQuery = (): void => {
+            $scope.options.query.where.Location = ''
+            $scope.options.query.where.City = []
+            $scope.options.query.where.eCity = []
+            $scope.options.query.where.CountyOrParish = []
+            $scope.options.query.where.eCountyOrParish = []
+            $scope.options.query.where.MLSAreaMajor = []
+            $scope.options.query.where.eMLSAreaMajor = []
+            $scope.options.query.where.Neighborhood = []
+            $scope.options.query.where.eNeighborhood = []
+            $scope.options.query.where.PostalCode = []
+
+            $scope.parsePresetLocationText()
+        }
+
+        $scope.getPresetLocations = (): string[] => {
+            const currentWhere = $scope.options.query.where
+            return union(
+                currentWhere.City,
+                currentWhere.eCity,
+                currentWhere.CountyOrParish,
+                currentWhere.eCountyOrParish,
+                currentWhere.MLSAreaMajor,
+                currentWhere.eMLSAreaMajor,
+                currentWhere.Neighborhood,
+                currentWhere.eNeighborhood,
+                currentWhere.PostalCode,
+            )
+        }
+
+        $scope.isPresetLocationSet = (): boolean => {
+            return $scope.getPresetLocations().length > 0
+        }
+
+        $scope.parsePresetLocationText = (): void => {
+            $scope.presetLocationText = $scope.getPresetLocations().join(', ')
+            $scope.presetOtherFiltersText = null
+            if (
+                $scope.options.officeGroups.length > 0 ||
+                $scope.options.query.where.AgentLicense.length > 0 ||
+                $scope.options.query.where.ListingId.length > 0
+            ) {
+                const filterCounts = Idx.countArraysNotEmpty([
+                    $scope.options.officeGroups,
+                    $scope.options.query.where.AgentLicense as string[],
+                    $scope.options.query.where.ListingId as string[]
+                ])
+                if (filterCounts > 0) {
+                    $scope.presetOtherFiltersText = `+${filterCounts} Filter${filterCounts > 1 ? 's' : ''}`
+                }
+            }
+        }
 
         /**
          * Sync Gutensite form variables to a Stratus scope
@@ -529,7 +584,6 @@ Stratus.Components.IdxPropertySearch = {
             return $scope.options.forRent === listType.lease && $scope.options.selection.ListingType.group[listType.group]
         }
 
-        /** @deprecated use _.includes */
         $scope.inArray = (item: any, array: any[]) => includes(array, item)
 
         $scope.isIntersecting = (itemArray: any[], array: any[]): boolean => {
@@ -644,6 +698,7 @@ Stratus.Components.IdxPropertySearch = {
                     $scope.options.query.where[key] = [$scope.options.query.where[key]]
                 }
             })
+            $scope.parsePresetLocationText()
             // console.log('setWhere', clone($scope.options.query.where))
         }
 
@@ -656,6 +711,7 @@ Stratus.Components.IdxPropertySearch = {
                 }
                 // console.log('setting lastQuery setWhereDefaults', cloneDeep($scope.options.query))
                 lastQuery = cloneDeep($scope.options.query)
+                $scope.parsePresetLocationText()
             })
         }
 
@@ -695,8 +751,8 @@ Stratus.Components.IdxPropertySearch = {
             }
             if (listScope) {
                 // $scope.options.query.service = [1]
-                // $scope.options.query.where.Page = 1 // just a fall back, as it gets 'Page 2'
-                // $scope.options.query.page = 1 // just a fall back, as it gets 'Page 2'
+                // $scope.options.query.where.Page = 1 // just a fallback, as it gets 'Page 2'
+                // $scope.options.query.page = 1 // just a fallback, as it gets 'Page 2'
                 // console.log('sending search', clone($scope.options.query))
 
                 /* const searchQuery: CompileFilterOptions = {
@@ -758,7 +814,7 @@ Stratus.Components.IdxPropertySearch = {
                 ` data-list-id="office-group-selector-${$scope.elementId}"` +
                 ` data-options='${JSON.stringify(options)}'` +
                 ` data-sync-instance="${$scope.elementId}"` + // search needs to update this scope
-                ` data-sync-instance-variable="options.officeGroups"` + // search needs find this variable in this scope to update
+                ` data-sync-instance-variable="options.officeGroups"` + // search needs to find this variable in this scope to update
                 ` data-sync-instance-variable-index="${editIndex}"` +
                 '></stratus-idx-office-search>' +
                 '<stratus-idx-office-list' +
@@ -801,7 +857,7 @@ Stratus.Components.IdxPropertySearch = {
                     $scope.validateOfficeGroups()
                     // IDX.setUrlOptions('Listing', {})
                     // IDX.refreshUrlOptions(defaultOptions)
-                    // Revery page title back to what it was
+                    // Revert page title back to what it was
                     // IDX.setPageTitle()
                     // Let's destroy it to save memory
                     // $timeout(IDX.unregisterDetailsInstance('property_member_detail_popup'), 10)

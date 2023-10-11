@@ -14,9 +14,7 @@ import {MapComponent, MarkerSettings} from '@stratusjs/map/map.component'
 import {numeralFormat} from '@stratusjs/angularjs-extras/filters/numeral'
 
 // Stratus Preload
-// tslint:disable-next-line:no-duplicate-imports
-import '@stratusjs/idx/idx'
-import '@stratusjs/map/map' // We need sa-map
+import '@stratusjs/angular' // sa-map
 
 // Environment
 const min = !cookie('env') ? '.min' : ''
