@@ -9,7 +9,7 @@ import './list.component.less'
 import './list.carousel.component.less'
 
 // Runtime
-import {clone, cloneDeep, extend, forEach, get, isArray, isEmpty, isEqual, isNil, isNumber, isString} from 'lodash'
+import {clone, cloneDeep, compact, extend, forEach, get, isArray, isEmpty, isEqual, isNil, isNumber, isString, union} from 'lodash'
 import {Stratus} from '@stratusjs/runtime/stratus'
 import {element, material, IAnchorScrollService, IAttributes, ITimeoutService, IQService, IWindowService} from 'angular'
 import 'angular-material'
@@ -88,10 +88,12 @@ export type IdxPropertyListScope = IdxListScope<Property> & {
     getMLSName(serviceId: number): string
     getMLSLogo(serviceId: number, size?: 'default' | 'tiny' | 'small' | 'medium' | 'large'): string | null
     getMLSVariables(reset?: boolean): MLSService[]
+    getOtherPresetFilterCount(): number
     getOrderName(): string
     getOrderOptions(): { [key: string]: string[] }
     getStreetAddress(property: Property): string
     hasQueryChanged(): boolean
+    resetLocationQuery(): void
     /*searchProperties(
         query?: CompileFilterOptions,
         refresh?: boolean,
@@ -446,6 +448,23 @@ Stratus.Components.IdxPropertyList = {
                 ) {
                     $scope.displayModelDetails((urlQuery.Listing as Property)) // FIXME a quick fix as this contains ListingKey
                 }
+
+                $scope.Idx.ensureItemsAreArrays(
+                    $scope.query.where, [
+                        'City',
+                        'eCity',
+                        'CountyOrParish',
+                        'eCountyOrParish',
+                        'MLSAreaMajor',
+                        'eMLSAreaMajor',
+                        'Neighborhood',
+                        'eNeighborhood',
+                        'PostalCode',
+                        'OfficeNumber',
+                        'AgentLicense',
+                        'ListingId'
+                    ]
+                )
             }
 
             if ($scope.searchOnLoad) {
@@ -497,6 +516,38 @@ Stratus.Components.IdxPropertyList = {
                 Idx.emit('collectionUpdated', $scope, $scope.collection)
             }
         })
+
+        $scope.getOtherPresetFilterCount = (): number => {
+            const currentWhere = $scope.query.where
+            let filterCounts = compact(union(
+                currentWhere.OfficeNumber,
+                currentWhere.AgentLicense,
+                currentWhere.ListingId
+            )).length
+            if (currentWhere.OpenHouseOnly) {
+                filterCounts++
+            }
+            return filterCounts
+        }
+
+        $scope.resetLocationQuery = (): void => {
+            $scope.query.where.Location = ''
+            $scope.query.where.eLocation = ''
+            $scope.query.where.City = []
+            $scope.query.where.eCity = []
+            $scope.query.where.CountyOrParish = []
+            $scope.query.where.eCountyOrParish = []
+            $scope.query.where.MLSAreaMajor = []
+            $scope.query.where.eMLSAreaMajor = []
+            $scope.query.where.Neighborhood = []
+            $scope.query.where.eNeighborhood = []
+            $scope.query.where.PostalCode = []
+            $scope.query.where.ListingId = []
+
+            // Reset Agent and license for the sake of user
+            $scope.query.where.AgentLicense = []
+            $scope.query.where.OfficeNumber = []
+        }
 
         $scope.getPageModels = (): Property[] => {
             // console.log('checking $scope.collection.models', $scope.collection.models)

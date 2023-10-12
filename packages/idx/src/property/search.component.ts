@@ -13,6 +13,7 @@ import './search.classic.component.less'
 import _, {
     clone,
     cloneDeep,
+    compact,
     extend,
     includes,
     intersection,
@@ -125,6 +126,7 @@ export type IdxPropertySearchScope = IdxSearchScope & {
     canDisplayListingTypeButton(listType: ListingTypeSelectionSetting): boolean
     displayOfficeGroupSelector(searchTerm?: string, editIndex?: number, ev?: any): void
     getMLSVariables(reset?: boolean): MLSService[]
+    getOtherPresetFilterCount(): number
     getPresetLocations(): string[]
     hasQueryChanged(): boolean
     inArray(item: any, array: any[]): boolean
@@ -485,13 +487,19 @@ Stratus.Components.IdxPropertySearch = {
             $scope.options.query.where.Neighborhood = []
             $scope.options.query.where.eNeighborhood = []
             $scope.options.query.where.PostalCode = []
+            $scope.options.query.where.ListingId = []
+
+            // Reset Agent and license for the sake of user
+            $scope.options.query.where.AgentLicense = []
+            $scope.options.query.where.OfficeNumber = []
+            $scope.options.officeGroups = []
 
             $scope.parsePresetLocationText()
         }
 
         $scope.getPresetLocations = (): string[] => {
             const currentWhere = $scope.options.query.where
-            return union(
+            return compact(union(
                 currentWhere.City,
                 currentWhere.eCity,
                 currentWhere.CountyOrParish,
@@ -501,7 +509,20 @@ Stratus.Components.IdxPropertySearch = {
                 currentWhere.Neighborhood,
                 currentWhere.eNeighborhood,
                 currentWhere.PostalCode,
-            )
+            ))
+        }
+
+        $scope.getOtherPresetFilterCount = (): number => {
+            const currentWhere = $scope.options.query.where
+            let filterCounts = compact(union(
+                currentWhere.OfficeNumber,
+                currentWhere.AgentLicense,
+                currentWhere.ListingId
+            )).length
+            if (currentWhere.OpenHouseOnly) {
+                filterCounts++
+            }
+            return filterCounts
         }
 
         $scope.isPresetLocationSet = (): boolean => {
@@ -511,19 +532,10 @@ Stratus.Components.IdxPropertySearch = {
         $scope.parsePresetLocationText = (): void => {
             $scope.presetLocationText = $scope.getPresetLocations().join(', ')
             $scope.presetOtherFiltersText = null
-            if (
-                $scope.options.officeGroups.length > 0 ||
-                $scope.options.query.where.AgentLicense.length > 0 ||
-                $scope.options.query.where.ListingId.length > 0
-            ) {
-                const filterCounts = Idx.countArraysNotEmpty([
-                    $scope.options.officeGroups,
-                    $scope.options.query.where.AgentLicense as string[],
-                    $scope.options.query.where.ListingId as string[]
-                ])
-                if (filterCounts > 0) {
-                    $scope.presetOtherFiltersText = `+${filterCounts} Filter${filterCounts > 1 ? 's' : ''}`
-                }
+
+            const filterCounts = $scope.getOtherPresetFilterCount()
+            if (filterCounts > 0) {
+                $scope.presetOtherFiltersText = `+${filterCounts} Filter${filterCounts > 1 ? 's' : ''}`
             }
         }
 
@@ -854,6 +866,7 @@ Stratus.Components.IdxPropertySearch = {
                 }
             })
                 .then(() => {
+                    $scope.validateOfficeGroups()
                 }, () => {
                     $scope.validateOfficeGroups()
                     // IDX.setUrlOptions('Listing', {})

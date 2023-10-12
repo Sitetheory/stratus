@@ -269,7 +269,7 @@
                     </md-checkbox>
                 </div>
                 <md-checkbox
-                        data-ng-show="options.query.where.eNeighborhood.length || options.query.where.Neighborhood.length || options.query.where.eLocation.length || options.query.where.Location.length || options.query.where.AgentLicense.length || options.officeGroups.length || options.query.where.eCity.length || || options.query.where.City.length || options.query.where.eCountyOrParish.length || options.query.where.CountyOrParish.length || options.query.where.eMLSAreaMajor.length || || options.query.where.MLSAreaMajor.length || options.query.where.PostalCode.length"
+                        data-ng-show="options.query.where.OpenHouseOnly || isPresetLocationSet() || options.query.where.eLocation.length || options.query.where.Location.length || options.query.where.AgentLicense.length || options.query.where.OfficeNumber.length"
                         data-ng-model="options.query.where.OpenHouseOnly"
                         aria-label="Open Houses Only"
                         data-layout="row"

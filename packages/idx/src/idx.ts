@@ -81,6 +81,8 @@ export interface IdxService {
 
     getSearchInstanceLinks(searchUid: string, listType?: string): (IdxPropertyListScope | IdxComponentScope)[]
 
+    ensureItemsAreArrays(itemParent: LooseObject, itemNames: string[]): void
+
     registerDetailsInstance(
         uid: string,
         moduleName: 'member' | 'office' | 'property',
@@ -3526,6 +3528,17 @@ const angularJsService = (
         return arrayList.filter((e)=>e.length).length
     }
 
+    function ensureItemsAreArrays(itemParent: LooseObject, itemNames: string[]) {
+        itemNames.forEach(itemName => {
+            if (
+                itemParent.hasOwnProperty(itemName) &&
+                !isArray(itemParent[itemName])
+            ) {
+                itemParent[itemName] = isEmpty(itemParent[itemName]) ? [] : [itemParent[itemName]]
+            }
+        })
+    }
+
     return {
         fetchMembers,
         fetchOffices,
@@ -3536,6 +3549,7 @@ const angularJsService = (
         devLog,
         emit,
         emitManual,
+        ensureItemsAreArrays,
         getContactVariables,
         getDefaultWhereOptions,
         getDisclaimerInstance,
