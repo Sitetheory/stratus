@@ -7,12 +7,12 @@
 
             <h3>Location</h3>
             <div class="location-specs" data-layout="column">
-                <div data-layout="row" data-ng-if="options.query.where.Location && options.query.where.Location.length">
+                <div data-layout="row" data-ng-if="options.query.where.eLocation && options.query.where.eLocation.length">
                     <div class="search-input" data-flex>
                         <md-chips
                                 class="location font-secondary"
                                 aria-label="Location to Limit"
-                                data-ng-model="options.query.where.Location"
+                                data-ng-model="options.query.where.eLocation"
                                 data-md-enable-chip-edit="true"
                                 data-md-add-on-blur="true"
                                 data-md-separator-keys="[$mdConstant.KEY_CODE.ENTER, $mdConstant.KEY_CODE.COMMA]"
@@ -20,6 +20,22 @@
                                 data-secondary-placeholder="+Location"
                                 data-delete-button-label="Remove Location"
                                 data-delete-hint="Press delete to remove Location"
+                        ></md-chips>
+                    </div>
+                </div>
+                <div data-layout="row" data-ng-if="options.query.where.Location && options.query.where.Location.length">
+                    <div class="search-input deprecated" data-flex>
+                        <md-chips
+                                class="location font-secondary"
+                                aria-label="Location to Limit (deprecated)"
+                                data-ng-model="options.query.where.Location"
+                                data-md-enable-chip-edit="true"
+                                data-md-add-on-blur="true"
+                                data-md-separator-keys="[$mdConstant.KEY_CODE.ENTER, $mdConstant.KEY_CODE.COMMA]"
+                                data-placeholder="City, Neighborhood, Zip, Address"
+                                data-secondary-placeholder="+Location (deprecated)"
+                                data-delete-button-label="Remove Location (deprecated)"
+                                data-delete-hint="Press delete to remove Location (deprecated)"
                         ></md-chips>
                     </div>
                 </div>
@@ -253,7 +269,7 @@
                     </md-checkbox>
                 </div>
                 <md-checkbox
-                        data-ng-show="options.query.where.Neighborhood.length || options.query.where.Location.length || options.query.where.AgentLicense.length || options.query.where.OfficeNumber.length || options.query.where.City.length || options.query.where.CountyOrParish.length || options.query.where.MLSAreaMajor.length || options.query.where.PostalCode.length"
+                        data-ng-show="options.query.where.OpenHouseOnly || isPresetLocationSet() || options.query.where.eLocation.length || options.query.where.Location.length || options.query.where.AgentLicense.length || options.query.where.OfficeNumber.length"
                         data-ng-model="options.query.where.OpenHouseOnly"
                         aria-label="Open Houses Only"
                         data-layout="row"

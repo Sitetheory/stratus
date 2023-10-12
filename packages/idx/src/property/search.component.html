@@ -34,6 +34,17 @@
                     data-ng-if="!isPresetLocationSet()">
                 <label>City, Neighborhood, Zip</label>
                 <input
+                        data-ng-if="!options.query.where.Location"
+                        data-ng-model="options.query.where.eLocation"
+                        data-ng-blur="search()"
+                        type="text"
+                        size="22"
+                        maxlength="250"
+                        data-ng-keyup="$event.keyCode == 13 && search()"
+                        autocomplete="off"
+                >
+                <input
+                        data-ng-if="options.query.where.Location"
                         data-ng-model="options.query.where.Location"
                         data-ng-blur="search()"
                         type="text"
@@ -43,9 +54,6 @@
                         autocomplete="off"
                 >
             </md-input-container>
-
-            <!-- TODO: for now we are not setting the location to the combined presets because we can't get the focus working. But if we do, the code will need to be fixed because CountyOrParish, MLSAreaMajor and PostalCode are arrays not strings: data-ng-click="options.query.where.Location = _.trim(options.query.where.City + ' ' + options.query.where.CountyOrParish + ' ' + options.query.where.MLSAreaMajor + ' ' + options.query.where.PostalCode); options.query.where.City = null; options.query.where.CountyOrParish = null; options.query.where.MLSAreaMajor = null; options.query.where.PostalCode = null;"
-            -->
 
             <!-- TODO: make this gray in the CSS -->
             <div class="preset-location"
@@ -58,7 +66,7 @@
             <!-- NOTE: three of these get cleared as arrays -->
             <a
                     class="custom-clear"
-                    data-ng-if="(options.query.where.Location.length || isPresetLocationSet())"
+                    data-ng-if="(options.query.where.eLocation.length || options.query.where.Location.length || isPresetLocationSet())"
                     data-ng-click="resetLocationQuery(); search()"
             >
                 <md-icon md-svg-src="{{ localDir + 'images/icons/actionButtons/clear.svg' }}"></md-icon>
@@ -321,7 +329,7 @@
 
             <div
                     class="extras"
-                    data-ng-show="options.query.where.OpenHouseOnly || options.query.where.eNeighborhood.length || options.query.where.Neighborhood.length || options.query.where.Location.length || options.query.where.AgentLicense.length || options.officeGroups.length || options.query.where.eCity.length || options.query.where.City.length || options.query.where.eCountyOrParish.length || options.query.where.CountyOrParish.length || options.query.where.eMLSAreaMajor.length || options.query.where.MLSAreaMajor.length || options.query.where.PostalCode.length"
+                    data-ng-show="options.query.where.OpenHouseOnly || isPresetLocationSet() || options.query.where.eLocation.length || options.query.where.Location.length || options.query.where.AgentLicense.length || options.query.where.OfficeNumber.length"
             >
                 <h4>Extras</h4>
                 <!-- 'Openhouses Only' is only allowed when more filters are supplied due to speed restrictions -->

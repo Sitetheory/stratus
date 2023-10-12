@@ -21,13 +21,13 @@
             We didn't find any properties that fit your criteria.<span> You might want to try a broader search.</span>
             <div
                     class="other-preset-filters"
-                    data-ng-if="query.where.OfficeNumber.length > 0 || query.where.AgentLicense.length > 0 || query.where.ListingId.length > 0"
+                    data-ng-if="getOtherPresetFilterCount() > 0"
             >
-                This search includes <span data-ng-bind="Idx.countArraysNotEmpty([query.where.OfficeNumber, query.where.AgentLicense, query.where.ListingId])"></span>
+                This search includes <span data-ng-bind="getOtherPresetFilterCount()"></span>
                 other filter(s).
             </div>
             <md-button
-                    data-ng-click="query.where.Location = ''; query.where.City = []; query.where.CountyOrParish = []; query.where.MLSAreaMajor = []; query.where.Neighborhood = []; query.where.PostalCode = []; query.where.OfficeNumber = []; query.where.AgentLicense = []; query.where.ListingId = []; search()"
+                    data-ng-click="query.where.OpenHousesOnly = null; resetLocationQuery(); search()"
                     aria-label="Clear Filters"
             >
                 Clear All Filters

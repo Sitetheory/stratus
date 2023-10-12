@@ -81,6 +81,8 @@ export interface IdxService {
 
     getSearchInstanceLinks(searchUid: string, listType?: string): (IdxPropertyListScope | IdxComponentScope)[]
 
+    ensureItemsAreArrays(itemParent: LooseObject, itemNames: string[]): void
+
     registerDetailsInstance(
         uid: string,
         moduleName: 'member' | 'office' | 'property',
@@ -2341,6 +2343,7 @@ const angularJsService = (
      * returns {Object}
      */
     function getOptionsFromUrl(): UrlsOptionsObject {
+        // console.log('running getOptionsFromUrl')
         let path = $location.path()
 
         path = getListingOptionsFromUrlString(path)
@@ -2350,14 +2353,18 @@ const angularJsService = (
     }
 
     /**
-     * Parse the hangbang Url for the serviceId and ListingKey of a listings
+     * Parse the hang bang Url for the serviceId and ListingKey of a listings
      * Save variables in urlOptions.Listing
      * returns {String} - Remaining unparsed hashbang variables
      */
     function getListingOptionsFromUrlString(path: string): string {
         // FIXME can't read unless ListingKey must end with /
         // /Listing/1/81582540/8883-Rancho/
-        const regex = /\/Listing\/(\d+?)\/(.*?)\/([\w-_]*)?\/?/
+        // const regex = /\/Listing\/(\d+?)\/(.*?)\/([\w-_]*)?\/?/
+        // Group 1 (Service Id) require match a digit between 1-3 characters
+        // Group 2 (Listing Key) require match at least 1 character that's not a space or /
+        // Group 3 (Address hash to dispose of) optionally match an ending / or a / with - delimited strings optionally ending with /
+        const regex = /\/Listing\/(\d{1,3})\/([^/\s]+)(\/?[\w\-_]*\/?)?/
         const matches = regex.exec(path)
         path = path.replace(regex, '')
         if (
@@ -2378,6 +2385,7 @@ const angularJsService = (
      * returns {String} - Remaining unparsed hangbang variables
      */
     function getSearchOptionsFromUrlString(path: string): string {
+        // console.log('getSearchOptionsFromUrlString', path)
         // /Search/ListPriceMin/500000/SomeVar/aValue
         let regex = /\/Search\/(.*)?\/?/
         let matches = regex.exec(path)
@@ -2389,22 +2397,24 @@ const angularJsService = (
             const rawSearchOptions = matches[1]
             // Time to separate all the values out in pairs between /'s
             // standard had me remove regex = /([^\/]+)\/([^\/]+)/g  (notice the missing \'s)
-            regex = /([^/]+)\/([^/]+)/g
+            // regex = /([^/]+)\/([^/]+)/g
+            // quantifying * (0+) instead of + (1+) allows noting empty strings and well as trailing values
+            // Group 1 (Variable) match a digit between 1-3 characters
+            regex = /([^/]+)\/([^/]*)/g
 
             const whileLoopAssignmentBypass = (regexp: RegExp, value: string) => {
                 matches = regexp.exec(value)
+                // console.log('whileLoopAssignmentBypass value', value, matches)
                 return matches
             }
 
+            // console.log('rawSearchOptions', clone(rawSearchOptions))
             // while ((matches = regex.exec(rawSearchOptions)) != null) {
             while (whileLoopAssignmentBypass(regex, rawSearchOptions) != null) {
-                if (
-                    matches[1] &&
-                    matches[2]
-                ) {
+                if (matches[1]) {
                     // Check for a comma to break into an array.
                     // This might need to be altered as sometimes a comma might be used for something
-                    if (matches[2].includes(',')) {
+                    if (matches[2] && matches[2].includes(',')) {
                         // matches[2] = matches[2].split(',')
                         // Save the pairing results into urlOptions.Search
                         urlOptions.Search[matches[1]] = matches[2].split(',')
@@ -2480,7 +2490,7 @@ const angularJsService = (
                         defaultValue = [defaultValue]
                     }
                     if (!isEqual(defaultValue, compareValue)) {
-                        // console.log(searchOptionName, defaultValue, compareValue)
+                        console.log(searchOptionName, defaultValue, compareValue)
                         searchPath += searchOptionName + '/' + compareValue + '/'
                     }
                 }
@@ -3518,6 +3528,17 @@ const angularJsService = (
         return arrayList.filter((e)=>e.length).length
     }
 
+    function ensureItemsAreArrays(itemParent: LooseObject, itemNames: string[]) {
+        itemNames.forEach(itemName => {
+            if (
+                itemParent.hasOwnProperty(itemName) &&
+                !isArray(itemParent[itemName])
+            ) {
+                itemParent[itemName] = isEmpty(itemParent[itemName]) ? [] : [itemParent[itemName]]
+            }
+        })
+    }
+
     return {
         fetchMembers,
         fetchOffices,
@@ -3528,6 +3549,7 @@ const angularJsService = (
         devLog,
         emit,
         emitManual,
+        ensureItemsAreArrays,
         getContactVariables,
         getDefaultWhereOptions,
         getDisclaimerInstance,

@@ -7,11 +7,21 @@
             <!-- TODO: add Address -->
             <div class="search-input" data-flex-gt-sm="40">
                 <md-input-container class="md-block minimal">
-                <label>City, Neighborhood, Zip, Address</label>
-                <input data-ng-model="options.query.where.Location" type="text" maxlength="250"
-                       data-ng-keyup="$event.keyCode == 13 && options.query.where.Location && search()"
-                       autocomplete="off"
-                >
+                    <label>City, Neighborhood, Zip, Address</label>
+                    <input
+                            data-ng-if="!options.query.where.Location"
+                            data-ng-model="options.query.where.eLocation"
+                            type="text" maxlength="250"
+                            data-ng-keyup="$event.keyCode == 13 && search()"
+                            autocomplete="off"
+                    >
+                    <input
+                            data-ng-if="options.query.where.Location"
+                            data-ng-model="options.query.where.Location"
+                            type="text" maxlength="250"
+                            data-ng-keyup="$event.keyCode == 13 && search()"
+                            autocomplete="off"
+                    >
                 </md-input-container>
             </div>
 
@@ -154,7 +164,7 @@
                     </div>
 
                     <md-checkbox
-                            data-ng-show="options.query.where.eNeighborhood.length || options.query.where.Neighborhood.length || options.query.where.Location.length || options.query.where.AgentLicense.length || options.officeGroups.length || options.query.where.eCity.length || options.query.where.City.length || options.query.where.eCountyOrParish.length || options.query.where.CountyOrParish.length || options.query.where.eMLSAreaMajor.length || options.query.where.MLSAreaMajor.length || options.query.where.PostalCode.length"
+                            data-ng-show="isPresetLocationSet() || options.query.where.eLocation.length || options.query.where.Location.length || options.query.where.AgentLicense.length || options.query.where.OfficeNumber.length"
                             class="show-open-houses font-secondary"
                             data-ng-model="options.query.where.OpenHouseOnly"
                             aria-label="Open Houses Only"
