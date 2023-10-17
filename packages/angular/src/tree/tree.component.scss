@@ -38,6 +38,7 @@
     position: relative;
     float: right;
   }
+  // Drop Location Borders
   .drop {
     &-inside {
       border: 2px solid #00b7ff !important;
@@ -57,37 +58,99 @@
   }
   .tree-node {
     // We have to use 'block' since 'flex' makes the Drag & Drop even more inaccurate
-    display: block;
+    //display: block;
+
+    // Grid works better for alignment and Drag & Drop calculations
+    display: grid;
+
+    // Padding Options
+    //padding-top: .225rem;
+    //padding-bottom: .225rem;
     //padding: 20px 10px;
-    //border-bottom: solid 1px #ccc;
+
+    // Height & Alignment
+    //min-height: 2.5rem;
+    vertical-align: middle;
+    place-content: center start;
+
+    // Debug Borders
+    //border: dashed 1px #ccc;
+
     //color: rgba(0, 0, 0, 0.87);
+
+    // Flex Design (Doesn't work well with Drag & Drop(
     //display: flex;
     //flex-direction: row;
+
+    // Flex Alignment
     //align-items: center;
     //justify-content: space-between;
     //box-sizing: border-box;
+
+    // Cursor
     cursor: move;
+
+    // Alternate Indentation Calculations
+    //&:before {
+    //  position: absolute;
+    //  top: 15px;
+    //  left: 0;
+    //  width: 10px;
+    //  height: 1px;
+    //  margin: auto;
+    //  content: '';
+    //  background-color: #666;
+    //}
+
+    // Material Buttons
     a, mat-button, mat-icon-button {
       cursor: pointer;
     }
     // only show certain elements on hover
     .hover {
+      &-box {
+        padding-right: 0.5rem;
+      }
       &-box:hover ~ .hover-show {
         display: unset;
       }
       &-show {
         display: none;
+        padding-bottom: 1rem;
+        padding-right: 5rem;
         &:hover {
           display: unset;
         }
       }
     }
 
-    .tree-node { // be explicit for child padding
-      padding-left: 40px;
-      //border-left: dashed 1px #222222;
+    .tree-node {
+      // be explicit for child padding
+      padding-left: 2.5rem;
+      .tree-node-content {
+        padding-top: 0.25rem;
+        padding-bottom: 0.25rem;
+        .node-name {
+          font-size: 10pt;
+        }
+      }
+
+      // Debug Borders
+      //border: dashed 1px #ccc;
     }
     .tree-node-content {
+      .node-name {
+        font-weight: bold;
+        font-size: 15pt;
+        padding-right: 0.5rem;
+      }
+      padding-top: 1rem;
+      padding-bottom: 1rem;
+      padding-right: 0.5rem;
+      //.mat-icon-button {
+      //  width: auto;
+      //  height: auto;
+      //}
       .visibility-off {
         opacity: 0.5;
       }
@@ -122,7 +185,7 @@
     }
     &.cdk-drop-list-dragging {
       .tree-node:not(.cdk-drag-placeholder) {
-        //transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+        transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
       }
     }
     &:last-child {
@@ -130,6 +193,7 @@
     }
   }
   .cdk {
+    // NOTE: Much of these Drag Selectors won't work, since this element gets pulled out of the Tree Element when being dragged.
     &-drag {
       &-preview {
         //box-sizing: border-box;
@@ -164,6 +228,9 @@
         //  border-style: dashed !important;
         //  border-radius: 4px !important;
         //}
+        .hover-show {
+          display: none !important;
+        }
       }
       &-receiving {
         //min-width: 100px;
@@ -207,6 +274,32 @@
 //    }
 //  }
 //}
+
+// NOTE: CDK Drag needs to be outside .tree, since this element gets pulled out of the Tree Element when being dragged.
+.cdk {
+  &-drag {
+    &-preview {
+      box-sizing: border-box;
+      border-radius: 4px;
+      //box-shadow: 0 5px 5px -3px rgba(0, 0, 0, 0.2),
+      //0 8px 10px 1px rgba(0, 0, 0, 0.14),
+      //0 3px 14px 2px rgba(0, 0, 0, 0.12);
+      padding: 0 !important;
+      .hover-show {
+        display: none !important;
+      }
+    }
+    &-placeholder {
+      opacity: 50%;
+      .hover-show {
+        display: none !important;
+      }
+    }
+    //&-animating {
+    //  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+    //}
+  }
+}
 
 // Tree Dialog
 .tree-dialog-content {
