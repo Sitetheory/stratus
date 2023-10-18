@@ -611,11 +611,16 @@ export class Model<T = LooseObject> extends ModelBase<T> {
                 this.meta.set((response as LooseObject).meta || {})
                 this.route.set((response as LooseObject).route || {})
                 const payload = (response as LooseObject).payload || response
-                const status: { code: string }[] = this.meta.get('status') || []
 
                 // Evaluate Payload
-                if (this.meta.has('status') && this.meta.get('status[0].code') !== 'SUCCESS') {
-                    this.error = true
+                if (this.meta.has('status')) {
+                    if (this.meta.get('status[0].code') !== 'SUCCESS') {
+                        this.error = true
+                    } else if (_.isArray(payload) && payload.length) {
+                        this.recv = _.first(payload)
+                    } else if (_.isObject(payload) && !_.isArray(payload)) {
+                        this.recv = payload
+                    }
                 } else if (_.isArray(payload) && payload.length) {
                     this.recv = _.first(payload)
                     this.error = false
