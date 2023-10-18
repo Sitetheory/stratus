@@ -400,7 +400,10 @@ export class Collection<T = LooseObject> extends EventManager {
                 // XHR Flags
                 this.error = false
 
-                if (this.direct) {
+                // Check Status and Associate Payload
+                if (this.meta.has('status') && this.meta.get('status[0].code') !== 'SUCCESS') {
+                    this.error = true
+                } else if (this.direct) {
                     this.models = payload
                 } else if (_.isArray(payload)) {
                     this.inject(payload)
@@ -410,8 +413,12 @@ export class Collection<T = LooseObject> extends EventManager {
                         this.inject(value, key)
                     })
                 } else {
-                    this.error = true
-                    console.error('malformed payload:', payload)
+                    // If we've gotten this far, it's passed the status check if one is available
+                    if (!this.meta.has('status')) {
+                        // If the status check was not available, this classifies as an error, since the payload is invalid.
+                        this.error = true
+                    }
+                    console.warn(`Invalid Payload: ${request.method} ${request.url}`)
                 }
 
                 // XHR Flags
