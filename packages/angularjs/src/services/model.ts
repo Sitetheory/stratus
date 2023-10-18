@@ -612,23 +612,23 @@ export class Model<T = LooseObject> extends ModelBase<T> {
                 this.route.set((response as LooseObject).route || {})
                 const payload = (response as LooseObject).payload || response
 
-                // Evaluate Payload
-                if (this.meta.has('status')) {
-                    if (this.meta.get('status[0].code') !== 'SUCCESS') {
-                        this.error = true
-                    } else if (_.isArray(payload) && payload.length) {
-                        this.recv = _.first(payload)
-                    } else if (_.isObject(payload) && !_.isArray(payload)) {
-                        this.recv = payload
-                    }
+                // XHR Flags
+                this.error = false
+
+                // Check Status and Associate Payload
+                if (this.meta.has('status') && this.meta.get('status[0].code') !== 'SUCCESS') {
+                    this.error = true
                 } else if (_.isArray(payload) && payload.length) {
                     this.recv = _.first(payload)
-                    this.error = false
                 } else if (_.isObject(payload) && !_.isArray(payload)) {
                     this.recv = payload
-                    this.error = false
                 } else {
-                    this.error = true
+                    // If we've gotten this far, it's passed the status check if one is available
+                    if (!this.meta.has('status')) {
+                        // If the status check was not available, this classifies as an error, since the payload is invalid.
+                        this.error = true
+                    }
+                    console.warn(`Invalid Payload: ${request.method} ${request.url}`)
                 }
 
                 // Report Invalid Payloads
