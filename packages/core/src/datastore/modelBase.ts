@@ -119,7 +119,12 @@ export class ModelBase<T = LooseObject> extends EventManager {
         if (!changeSet || _.isEmpty(changeSet)) {
             return patchData
         }
-        _.forEach(changeSet, (value: any, key: string) => _.set(patchData, key, _.get(this.data, key)))
+        _.forEach(changeSet, (value: any, key: string) => {
+            if (!_.has(this.data, key)) {
+                return
+            }
+            _.set(patchData, key, _.get(this.data, key))
+        })
         return patchData
     }
 
