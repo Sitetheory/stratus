@@ -49,11 +49,12 @@ import {RefreshInterface} from '../core/refresh.interface'
 // Services
 import {BackendService} from '../backend.service'
 import {Registry} from '@stratusjs/angularjs/services/registry'
-import {cookie} from '@stratusjs/core/environment'
 
 // Core Classes
 import {EventManager} from '@stratusjs/core/events/eventManager'
 import {EventBase} from '@stratusjs/core/events/eventBase'
+import {cookie} from '@stratusjs/core/environment'
+import {isJSON} from '@stratusjs/core/misc'
 
 // AngularJS Classes
 import {
@@ -196,7 +197,6 @@ export class TreeComponent extends RootComponent implements OnInit, OnDestroy {
     expandDelay = 1000
     dropData: DropData = null
     cdkDropListSortingDisabled = true
-    dropDebug = false
 
     // Tree Specific
     tree: Node[]
@@ -209,6 +209,10 @@ export class TreeComponent extends RootComponent implements OnInit, OnDestroy {
     // Methods
     // hasChild = (index: number, node: any) => this.getChildren(node).length > 0
     // hasChild = (index: number, node: any) => node.children && node.children.length > 0
+
+    // User Settings
+    isBorder = false
+    isDebug = false
 
     constructor(
         public iconRegistry: MatIconRegistry,
@@ -322,6 +326,16 @@ export class TreeComponent extends RootComponent implements OnInit, OnDestroy {
         // Initialize Drop List Map
         this.dropListIdMap[`${this.uid}_parent_drop_list`] = true
         this.trackDropLists()
+
+        // Initialize User Settings
+        const isBorder = cookie('tree-node-border')
+        if (isBorder && isJSON(isBorder)) {
+            this.isBorder = JSON.parse(isBorder)
+        }
+        const isDebug = cookie('tree-debug')
+        if (isDebug && isJSON(isDebug)) {
+            this.isDebug = JSON.parse(isDebug)
+        }
 
         // Mark as complete
         this.isInitialized = true
@@ -546,7 +560,7 @@ export class TreeComponent extends RootComponent implements OnInit, OnDestroy {
     //     return this.getIdsRecursive(this.parentItem).reverse()
     // }
 
-    public onDragDrop(event: CdkDragDrop<any>) {
+    public async onDragDrop(event: CdkDragDrop<any>) {
         // ignore drops outside of the tree
         if (!event.isPointerOverContainer) {
             return
@@ -582,7 +596,7 @@ export class TreeComponent extends RootComponent implements OnInit, OnDestroy {
             this.treeMap[_.toNumber(this.dropData.targetId)] : null
 
         // Debug Data
-        if (cookie('env') && this.dropDebug) {
+        if (cookie('env') && this.isDebug) {
             console.group('onDragDrop()')
             _.forEach(
                 [
@@ -602,7 +616,7 @@ export class TreeComponent extends RootComponent implements OnInit, OnDestroy {
         // with the drop location and this attempts to correct it in these
         // specific edge cases
         if (targetDropNode && !this.nodeIsEqual(parentNode, targetDropNode)) {
-            if (cookie('env') && this.dropDebug) {
+            if (cookie('env') && this.isDebug) {
                 console.log(`target drop node differs: ${targetDropNode.id} -> ${targetDropNode.model.get('name')}`)
                 console.log('target drop node is the same as target node:', targetNode.id === targetDropNode.id)
             }
@@ -619,7 +633,7 @@ export class TreeComponent extends RootComponent implements OnInit, OnDestroy {
                         break
                 }
             }
-            if (cookie('env') && this.dropDebug) {
+            if (cookie('env') && this.isDebug) {
                 console.log('target drop node selected:', parentNode ? `${parentNode.id} -> ${parentNode.model.get('name')}` : 'none')
             }
         }
@@ -648,7 +662,7 @@ export class TreeComponent extends RootComponent implements OnInit, OnDestroy {
             targetNode.model.set('nestParent', this.buildNodePatch(parentNode))
 
             // Display debug data
-            if (cookie('env') && this.dropDebug) {
+            if (cookie('env') && this.isDebug) {
                 console.log(`new parent: ${targetNode.model.get('nestParent.name') || null}`)
             }
         }
@@ -668,7 +682,7 @@ export class TreeComponent extends RootComponent implements OnInit, OnDestroy {
                     if (this.dropData.action === 'after') {
                         targetDropIndex++
                     }
-                    if (cookie('env') && this.dropDebug) {
+                    if (cookie('env') && this.isDebug) {
                         console.log('index change (drop node):', `${event.previousIndex} -> ${targetDropIndex}`)
                     }
                     break
@@ -688,14 +702,13 @@ export class TreeComponent extends RootComponent implements OnInit, OnDestroy {
                 node.model.set('priority', priority++)
             })
             // Display debug data
-            if (cookie('env') && this.dropDebug) {
+            if (cookie('env') && this.isDebug) {
                 console.log('new priority:', targetNode.model.get('priority'))
             }
         }
 
         // Close Debug Group
-        if (cookie('env') && this.dropDebug) {
-            console.log(`new parent: ${targetNode.model.get('nestParent.name') || null}`)
+        if (cookie('env') && this.isDebug) {
             console.groupEnd()
         }
 
@@ -716,14 +729,17 @@ export class TreeComponent extends RootComponent implements OnInit, OnDestroy {
         // })
 
         // Start XHR
-        targetNode.model.save()
+        await targetNode.model.save()
 
         // Enable Listeners
         this.unsettled = false
 
+        // Refresh UI
+        // await this.refresh()
+
         // update pipe
-        // this.subscriber.next(tree)
-        // this.ref.detectChanges()
+        this.subscriber.next(this.dataRef())
+        this.ref.detectChanges()
 
         // propagate change
         // this.collection.throttleTrigger('change')

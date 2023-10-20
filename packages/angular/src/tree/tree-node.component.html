@@ -5,19 +5,18 @@
 
 <div class="tree-node-content"
      [class.display-none]="parent && !isExpanded(parent)"
+     [class.border]="tree.isBorder"
      [attr.data-id]="node.id"
      [attr.id]="'node-'+node.id">
 
-    <!-- use a disabled button to provide padding for tree leaf -->
-    <a mat-icon-button
-       class="hover-box"
-       *ngIf="!hasChild(node)"
-       disabled>
-    </a>
+    <!-- use a span to provide padding for tree leaf -->
+    <span class="mat-button-placeholder"
+       *ngIf="!hasChild(node)">
+        &nbsp;
+    </span>
 
     <!-- use a regular button to control expandable nodes -->
     <a mat-icon-button
-       class="hover-box"
        *ngIf="hasChild(node)"
         (click)="toggleExpandedClick(node)"
         (dblclick)="toggleExpandedDblClick(node)"
