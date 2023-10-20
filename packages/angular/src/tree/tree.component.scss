@@ -38,22 +38,24 @@
     position: relative;
     float: right;
   }
-  // Drop Location Borders
-  .drop {
-    &-inside {
-      border: 2px solid #00b7ff !important;
-      //padding-top: 5px;
-      //padding-bottom: 5px;
-    }
-    &-before {
-      border-top: 2px solid #00b7ff !important;
-      //padding-top: 5px;
-      //padding-bottom: 5px;
-    }
-    &-after {
-      border-bottom: 2px solid #00b7ff !important;
-      //padding-top: 5px;
-      //padding-bottom: 5px;
+  // Drop Location Borders (Only while Dragging)
+  .cdk-drop-list-dragging {
+    .drop {
+      &-inside {
+        border: 2px solid #00b7ff !important;
+        //padding-top: 5px;
+        //padding-bottom: 5px;
+      }
+      &-before {
+        border-top: 2px solid #00b7ff !important;
+        //padding-top: 5px;
+        //padding-bottom: 5px;
+      }
+      &-after {
+        border-bottom: 2px solid #00b7ff !important;
+        //padding-top: 5px;
+        //padding-bottom: 5px;
+      }
     }
   }
   .tree-node {
@@ -72,9 +74,6 @@
     //min-height: 2.5rem;
     vertical-align: middle;
     place-content: center start;
-
-    // Debug Borders
-    //border: dashed 1px #ccc;
 
     //color: rgba(0, 0, 0, 0.87);
 
@@ -135,14 +134,26 @@
         }
       }
 
-      // Debug Borders
+      // Debug Child Borders
       //border: dashed 1px #ccc;
     }
     .tree-node-content {
+      // Cell Borders
+      &.border {
+        border: dashed 1px #ccc;
+      }
       .node-name {
         font-weight: bold;
         font-size: 15pt;
         padding-right: 0.5rem;
+      }
+      // this maintains alignment for parents without children
+      .mat-button-placeholder {
+        display: inline-block;
+        width: 40px;
+        height: 40px;
+        vertical-align: baseline;
+        line-height: 40px;
       }
       padding-top: 1rem;
       padding-bottom: 1rem;
@@ -289,9 +300,15 @@
         display: none !important;
       }
     }
+    // Dragging Placeholder
     &-placeholder {
       opacity: 50%;
+      // Hide Hover Buttons
       .hover-show {
+        display: none !important;
+      }
+      // Hide Children
+      .tree-node-drop-list {
         display: none !important;
       }
     }
