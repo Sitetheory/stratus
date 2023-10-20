@@ -738,11 +738,11 @@ export class TreeComponent extends RootComponent implements OnInit, OnDestroy {
         // await this.refresh()
 
         // update pipe
-        this.subscriber.next(this.dataRef())
-        this.ref.detectChanges()
+        // this.subscriber.next(this.dataRef())
+        // this.ref.detectChanges()
 
         // propagate change
-        // this.collection.throttleTrigger('change')
+        this.collection.throttleTrigger('change')
     }
 
     // private canBeDropped(event: CdkDragDrop<any, any>): boolean {
