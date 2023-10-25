@@ -20,6 +20,7 @@ import {Collection} from '../services/collection'
 // Stratus Dependencies
 import {
     isJSON,
+    getUrlParams,
     setUrlParams
 } from '@stratusjs/core/misc'
 
@@ -50,6 +51,7 @@ Stratus.Controllers.Generic = [
         Stratus.Instances[$scope.uid] = $scope
 
         // Registry
+        // TODO: This should be moved lower
         await R.fetch($element, $scope)
 
         // Wrappers
@@ -82,6 +84,55 @@ Stratus.Controllers.Generic = [
         // Angular Wrappers
         $scope.getHTML = $sce.trustAsHtml
         $scope.getURL = $sce.trustAsResourceUrl
+
+        // URL Functions
+        $scope.getAnchor = () => {
+            const url = window.location.href
+            if (!url || !url.length) {
+                return false
+            }
+            const anchor = url.indexOf('#')
+            if (anchor < 0) {
+                return false
+            }
+            if ((anchor + 1) >= url.length) {
+                return false
+            }
+            return url.substring(anchor + 1, url.length)
+        }
+        $scope.scrollToAnchor = (anchor?: string, inUrl?: boolean) => {
+            $log.log(`scrollToAnchor: ${anchor}`)
+            if (!anchor || _.isEmpty(anchor)) {
+                $log.warn('anchor id not set!')
+                return false
+            }
+            // default inUrl to true for now
+            if (_.isUndefined(inUrl)) {
+                inUrl = true
+            }
+            if (inUrl && anchor !== $scope.getAnchor()) {
+                return false
+            }
+            const el = $window.document.getElementById(anchor)
+            if (!el) {
+                $log.warn(`element not found: ${anchor}`)
+                return false
+            }
+            $log.log(`start scroll: ${anchor}`)
+            // TODO: We can add an event listener and make this function async() if the need ever arises,
+            //       but I don't have a non-polling solution for this at the moment
+            /* *
+            addEventListener('scroll', e => {
+                // Note: Don't forget to removeEventListener() at the end!
+                // Note: Chrome has been building a window.onscrollend event, but I don't know it will be released.
+                $log.log(e)
+            })
+            /* */
+            el.scrollIntoView({ behavior: 'smooth' })
+            return true
+        }
+
+        // TODO: Move await to here
 
         // Bind Redraw to all Change Events
         if ($scope.data && _.isFunction($scope.data.on)) {
