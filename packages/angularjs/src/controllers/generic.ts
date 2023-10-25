@@ -51,7 +51,9 @@ Stratus.Controllers.Generic = [
         Stratus.Instances[$scope.uid] = $scope
 
         // Registry
-        // TODO: This should be moved lower
+        // TODO: This should be moved to the end of this initialization function,
+        //       but this can affect the timing of odd DOM implementations, so
+        //       this feature will need to be planned and tested.
         await R.fetch($element, $scope)
 
         // Wrappers
@@ -100,15 +102,18 @@ Stratus.Controllers.Generic = [
             }
             return url.substring(anchor + 1, url.length)
         }
-        $scope.scrollToAnchor = (anchor?: string, inUrl?: boolean) => {
-            $log.log(`scrollToAnchor: ${anchor}`)
+        /**
+         * @param anchor - The anchor you'd like to smooth scroll to.  You can use the getAnchor() function if you'd like to point to the anchor in the URL.
+         * @param inUrl  - This flags whether the anchor needs to be present in the URL to continue.  If you're using the getAnchor() call above, this isn't necessary.
+         * @param delay  - This gives a delay of only 1ms, but is enough to lower the priority of this calculation, since javascript runs concurrently.
+         */
+        $scope.scrollToAnchor = (anchor?: string, inUrl?: boolean, delay?: number) => {
             if (!anchor || _.isEmpty(anchor)) {
                 $log.warn('anchor id not set!')
                 return false
             }
-            // default inUrl to true for now
             if (_.isUndefined(inUrl)) {
-                inUrl = true
+                inUrl = false
             }
             if (inUrl && anchor !== $scope.getAnchor()) {
                 return false
@@ -118,7 +123,6 @@ Stratus.Controllers.Generic = [
                 $log.warn(`element not found: ${anchor}`)
                 return false
             }
-            $log.log(`start scroll: ${anchor}`)
             // TODO: We can add an event listener and make this function async() if the need ever arises,
             //       but I don't have a non-polling solution for this at the moment
             /* *
@@ -128,11 +132,22 @@ Stratus.Controllers.Generic = [
                 $log.log(e)
             })
             /* */
-            el.scrollIntoView({ behavior: 'smooth' })
+            // Execute Smooth Scroll
+            if (!delay) {
+                $log.info(`start scroll: ${anchor}`)
+                // TODO: If a method is found, this could check if an element is visible before scrolling
+                el.scrollIntoView({ behavior: 'smooth' })
+                return true
+            }
+            // Delay Smooth Scroll
+            $log.info(`[${delay}] delay scroll: 1 ms`)
+            setTimeout(() => {
+                $scope.scrollToAnchor(anchor, inUrl, --delay)
+            }, 1)
             return true
         }
 
-        // TODO: Move await to here
+        // TODO: Consider moving the R.fetch() here
 
         // Bind Redraw to all Change Events
         if ($scope.data && _.isFunction($scope.data.on)) {
