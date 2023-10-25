@@ -134,17 +134,16 @@ Stratus.Controllers.Generic = [
             /* */
             // Execute Smooth Scroll
             if (!delay) {
-                $log.info(`start scroll: ${anchor}`)
+                // $log.info(`start scroll: ${anchor}`)
                 // TODO: If a method is found, this could check if an element is visible before scrolling
                 el.scrollIntoView({ behavior: 'smooth' })
                 return true
             }
             // Delay Smooth Scroll
-            $log.info(`[${delay}] delay scroll: 1 ms`)
-            setTimeout(() => {
+            // $log.info(`delay scroll: ${anchor}`)
+            return setTimeout(() => {
                 $scope.scrollToAnchor(anchor, inUrl, --delay)
             }, 1)
-            return true
         }
 
         // TODO: Consider moving the R.fetch() here
