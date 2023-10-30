@@ -117,7 +117,7 @@ export type IdxPropertySearchScope = IdxSearchScope & {
     }
     presetLocationText: string // Will be formed based on the original query where
     presetLocationHTML: any // Will be formed based on the original query where
-    presetOtherFiltersText?: string // Will be formed based on the original query Agent, Office Group, and Listing ID
+    presetOtherFiltersCountText?: string // Will be formed based on the original query Agent, Office Group, and Listing ID
     displayFilterFullHeight: boolean
     variableSyncing: object | any
     filterMenu?: material.IPanelRef & any // material.IPanelRef // disabled because we need to set reposition()
@@ -541,10 +541,10 @@ Stratus.Components.IdxPropertySearch = {
                 $scope.presetLocationHTML = null
             }
 
-            $scope.presetOtherFiltersText = null
+            $scope.presetOtherFiltersCountText = null
             const filterCounts = $scope.getOtherPresetFilterCount()
             if (filterCounts > 0) {
-                $scope.presetOtherFiltersText = `+${filterCounts} Filter${filterCounts > 1 ? 's' : ''}`
+                $scope.presetOtherFiltersCountText = `+${filterCounts} Filter${filterCounts > 1 ? 's' : ''}`
             }
         }
 
