@@ -28,7 +28,7 @@ import _, {
     union
 } from 'lodash'
 import {Stratus} from '@stratusjs/runtime/stratus'
-import {element, material, IAttributes, ITimeoutService, IQService, IWindowService} from 'angular'
+import {element, material, IAttributes, ITimeoutService, IQService, IWindowService, ISCEService} from 'angular'
 import 'angular-material'
 import {
     CompileFilterOptions,
@@ -116,6 +116,7 @@ export type IdxPropertySearchScope = IdxSearchScope & {
         officeGroups: SelectionGroup[]
     }
     presetLocationText: string // Will be formed based on the original query where
+    presetLocationHTML: any // Will be formed based on the original query where
     presetOtherFiltersText?: string // Will be formed based on the original query Agent, Office Group, and Listing ID
     displayFilterFullHeight: boolean
     variableSyncing: object | any
@@ -241,6 +242,7 @@ Stratus.Components.IdxPropertySearch = {
         $mdConstant: any, // mdChips item
         $mdDialog: material.IDialogService,
         $mdPanel: material.IPanelService,
+        $sce: ISCEService,
         $scope: IdxPropertySearchScope,
         $timeout: ITimeoutService,
         $window: IWindowService,
@@ -530,9 +532,16 @@ Stratus.Components.IdxPropertySearch = {
         }
 
         $scope.parsePresetLocationText = (): void => {
-            $scope.presetLocationText = $scope.getPresetLocations().join(', ')
-            $scope.presetOtherFiltersText = null
+            const locations = $scope.getPresetLocations()
+            $scope.presetLocationText = locations.join(', ')
+            if (!isEmpty($scope.presetLocationText)) {
+                const html = `<span>${locations.join('</span><span>')}</span>`
+                $scope.presetLocationHTML = $sce.trustAsHtml(html)
+            } else {
+                $scope.presetLocationHTML = null
+            }
 
+            $scope.presetOtherFiltersText = null
             const filterCounts = $scope.getOtherPresetFilterCount()
             if (filterCounts > 0) {
                 $scope.presetOtherFiltersText = `+${filterCounts} Filter${filterCounts > 1 ? 's' : ''}`

@@ -58,7 +58,7 @@
             <!-- TODO: make this gray in the CSS -->
             <div class="preset-location"
                  data-ng-if="isPresetLocationSet()">
-                <span data-ng-bind="presetLocationText"></span>
+                <span data-ng-html="presetLocationHTML"></span>
                 <span class="other-preset-filters" data-ng-show="presetOtherFiltersText" data-ng-bind="presetOtherFiltersText"></span>
             </div>
             <!-- TODO: We cannot currently get focus to work because we can't find the element: data-ng-click="angular.element('#filterLocation').focus()". In the future it would be nice to populate. FIX: Element doesn't not exist on load, should possibly be given as a widget option when Element is ready with relying on id. -->
