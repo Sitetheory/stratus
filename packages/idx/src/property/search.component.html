@@ -61,7 +61,10 @@
                 <span class="location-list-truncated span-comma-delimited" data-ng-bind-html="presetLocationHTML"></span>
                 <span class="preset-locations-count location-popup-on-hover" data-ng-show="presetLocationsRemainingCountText" data-ng-bind="presetLocationsRemainingCountText"></span>
                 <span class="preset-other-filters-count" data-ng-show="!presetLocationsRemainingCountText && presetOtherFiltersCountText" data-ng-bind="presetOtherFiltersCountText"></span>
-                <div class="location-popup-list span-comma-delimited" data-ng-bind-html="presetLocationHTML"></div>
+                <div class="location-popup-list">
+                    <div class="span-comma-delimited" data-ng-bind-html="presetLocationHTML"></div>
+                    <div class="preset-other-filters-count" data-ng-show="presetOtherFiltersCountText" data-ng-bind="presetOtherFiltersCountText"></div>
+                </div>
             </div>
             <!-- TODO: We cannot currently get focus to work because we can't find the element: data-ng-click="angular.element('#filterLocation').focus()". In the future it would be nice to populate. FIX: Element doesn't not exist on load, should possibly be given as a widget option when Element is ready with relying on id. -->
             <!-- NOTE: We shouldn't supply ids unless they are given a unique number at the end as HTML does not allow duplicate ids -->

@@ -168,6 +168,7 @@ stratus-idx-property-search[data-list-id^="property-list"] .property-search-defa
 
         .span-comma-delimited {
           span {
+            display: inline-block;
             padding-right: 4px;
             &:after {
               display: inline;
@@ -214,17 +215,16 @@ stratus-idx-property-search[data-list-id^="property-list"] .property-search-defa
             background: #fff;
             box-shadow: 2px 2px 6px rgba(0,0,0,.3);
             padding: 12px;
-            span {
-              display: block;
+            z-index: 1000;
+            .preset-other-filters-count {
+              margin-top: 5px;
             }
-            /*span {
-              display: inline-block;
-            }*/
-            /*&.list-reveal {
-              display: block;
-            }*/
           }
-          .preset-locations-count {}
+          /* counts of "Extra" Location filters not displayed */
+          .preset-locations-count {
+            /* Allows for user to less easily drop t he popup */
+            padding: 10px 10px 10px 2px;
+          }
           /* counts of non-location filters */
           .preset-other-filters-count {
             font-size: 10px;
