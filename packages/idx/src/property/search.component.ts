@@ -117,7 +117,9 @@ export type IdxPropertySearchScope = IdxSearchScope & {
     }
     presetLocationText: string // Will be formed based on the original query where
     presetLocationHTML: any // Will be formed based on the original query where
-    presetOtherFiltersCountText?: string // Will be formed based on the original query Agent, Office Group, and Listing ID
+    presetOtherFiltersCountText?: string // Will be formed based on the original query Agent, Office Group, and Listing ID (with + text)
+    presetLocationsCountText?: string // Number of Location filters in use (with + text)
+    presetLocationsRemainingCountText?: string // Number of Location filters in use minus 2 (with + text)
     displayFilterFullHeight: boolean
     variableSyncing: object | any
     filterMenu?: material.IPanelRef & any // material.IPanelRef // disabled because we need to set reposition()
@@ -537,8 +539,20 @@ Stratus.Components.IdxPropertySearch = {
             if (!isEmpty($scope.presetLocationText)) {
                 const html = `<span>${locations.join('</span><span>')}</span>`
                 $scope.presetLocationHTML = $sce.trustAsHtml(html)
+                // console.log('parsePresetLocationText forming html of', html, $scope.presetLocationHTML)
             } else {
                 $scope.presetLocationHTML = null
+            }
+
+            $scope.presetLocationsCountText = null
+            $scope.presetLocationsRemainingCountText = null
+            // $scope.presetLocationsCountText = `+${locations.length} Locations${locations.length > 1 ? 's' : ''}`
+            // FIXME we may need a better controller to determine the number of locations to display... Bandaid for now
+            if (locations.length > 0) {
+                $scope.presetLocationsCountText = `+${locations.length}`
+                if (locations.length > 2) {
+                    $scope.presetLocationsRemainingCountText = `+${locations.length - 2}`
+                }
             }
 
             $scope.presetOtherFiltersCountText = null

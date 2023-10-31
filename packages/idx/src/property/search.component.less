@@ -154,7 +154,7 @@ stratus-idx-property-search[data-list-id^="property-list"] .property-search-defa
           left: 0;
           right: 0;
           margin-left: 20px;
-          padding-right: 30px;
+          padding-right: 70px;
         }
         md-input-container.minimal {
           margin-left: 48px;
@@ -165,15 +165,79 @@ stratus-idx-property-search[data-list-id^="property-list"] .property-search-defa
             font-size: 16px;
           }
         }
+
+        .span-comma-delimited {
+          span {
+            padding-right: 4px;
+            &:after {
+              display: inline;
+              content: ',';
+            }
+            &:last-child {
+              padding-right: 0;
+             &:after {
+               display: none;
+             }
+           }
+         }
+        }
         .preset-location {
           cursor: default;
           font-size: 16px;
           color: #999;
-          .other-preset-filters {
+          text-transform: capitalize;
+
+          .location-list-truncated {
+            span {
+              display: none;
+              &:nth-child(1),
+              &:nth-child(2) {
+                display: inline-block;
+              }
+              &:last-child,
+              &:nth-child(2) {
+                &:after {
+                  display: none;
+                }
+              }
+            }
+          }
+          .location-popup-on-hover:hover ~ .location-popup-list {
+            display: block;
+          }
+          .location-popup-list {
+            pointer-events: none;
+            display: none;
+            position: absolute;
+            transform: translateY(-50%);
+            width: 200px;
+            background: #fff;
+            box-shadow: 2px 2px 6px rgba(0,0,0,.3);
+            padding: 12px;
+            span {
+              display: block;
+            }
+            /*span {
+              display: inline-block;
+            }*/
+            /*&.list-reveal {
+              display: block;
+            }*/
+          }
+          .preset-locations-count {}
+          /* counts of non-location filters */
+          .preset-other-filters-count {
             font-size: 10px;
             color: rgb(220 100 70);
           }
+          /*.preset-locations-count {
+            position: absolute;
+            z-index: 1000;
+            top: 0;
+            right: 40px;
+          }*/
         }
+
         .custom-clear {
           transform: translateY(-50%);
           position: absolute;
@@ -195,6 +259,7 @@ stratus-idx-property-search[data-list-id^="property-list"] .property-search-defa
             fill: #000;
           }
         }
+
         .location-input.md-input-focused ~ .custom-clear {
           display: none;
         }
