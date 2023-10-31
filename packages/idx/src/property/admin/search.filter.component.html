@@ -49,11 +49,26 @@
                                    autocomplete="off">
                         </md-input-container>
                     </div -->
+                    <div class="search-input deprecated" data-flex="50"
+                         data-ng-if="options.query.where.City && options.query.where.City.length">
+                        <md-chips
+                                class="city font-secondary"
+                                aria-label="City to Limit (deprecated)"
+                                data-ng-model="options.query.where.City"
+                                data-md-enable-chip-edit="true"
+                                data-md-add-on-blur="true"
+                                data-md-separator-keys="[$mdConstant.KEY_CODE.ENTER, $mdConstant.KEY_CODE.COMMA]"
+                                data-placeholder="City (deprecated)"
+                                data-secondary-placeholder="+City (deprecated)"
+                                data-delete-button-label="Remove City (deprecated)"
+                                data-delete-hint="Press delete to remove City (deprecated)"
+                        ></md-chips>
+                    </div>
                     <div class="search-input" data-flex="50">
                         <md-chips
                                 class="city font-secondary"
                                 aria-label="City to Limit"
-                                data-ng-model="options.query.where.City"
+                                data-ng-model="options.query.where.eCity"
                                 data-md-enable-chip-edit="true"
                                 data-md-add-on-blur="true"
                                 data-md-separator-keys="[$mdConstant.KEY_CODE.ENTER, $mdConstant.KEY_CODE.COMMA]"

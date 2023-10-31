@@ -28,7 +28,7 @@ import _, {
     union
 } from 'lodash'
 import {Stratus} from '@stratusjs/runtime/stratus'
-import {element, material, IAttributes, ITimeoutService, IQService, IWindowService} from 'angular'
+import {element, material, IAttributes, ITimeoutService, IQService, IWindowService, ISCEService} from 'angular'
 import 'angular-material'
 import {
     CompileFilterOptions,
@@ -116,7 +116,10 @@ export type IdxPropertySearchScope = IdxSearchScope & {
         officeGroups: SelectionGroup[]
     }
     presetLocationText: string // Will be formed based on the original query where
-    presetOtherFiltersText?: string // Will be formed based on the original query Agent, Office Group, and Listing ID
+    presetLocationHTML: any // Will be formed based on the original query where
+    presetOtherFiltersCountText?: string // Will be formed based on the original query Agent, Office Group, and Listing ID (with + text)
+    presetLocationsCountText?: string // Number of Location filters in use (with + text)
+    presetLocationsRemainingCountText?: string // Number of Location filters in use minus 2 (with + text)
     displayFilterFullHeight: boolean
     variableSyncing: object | any
     filterMenu?: material.IPanelRef & any // material.IPanelRef // disabled because we need to set reposition()
@@ -241,6 +244,7 @@ Stratus.Components.IdxPropertySearch = {
         $mdConstant: any, // mdChips item
         $mdDialog: material.IDialogService,
         $mdPanel: material.IPanelService,
+        $sce: ISCEService,
         $scope: IdxPropertySearchScope,
         $timeout: ITimeoutService,
         $window: IWindowService,
@@ -530,12 +534,31 @@ Stratus.Components.IdxPropertySearch = {
         }
 
         $scope.parsePresetLocationText = (): void => {
-            $scope.presetLocationText = $scope.getPresetLocations().join(', ')
-            $scope.presetOtherFiltersText = null
+            const locations = $scope.getPresetLocations()
+            $scope.presetLocationText = locations.join(', ')
+            if (!isEmpty($scope.presetLocationText)) {
+                const html = `<span>${locations.join('</span><span>')}</span>`
+                $scope.presetLocationHTML = $sce.trustAsHtml(html)
+                // console.log('parsePresetLocationText forming html of', html, $scope.presetLocationHTML)
+            } else {
+                $scope.presetLocationHTML = null
+            }
 
+            $scope.presetLocationsCountText = null
+            $scope.presetLocationsRemainingCountText = null
+            // $scope.presetLocationsCountText = `+${locations.length} Locations${locations.length > 1 ? 's' : ''}`
+            // FIXME we may need a better controller to determine the number of locations to display... Bandaid for now
+            if (locations.length > 0) {
+                $scope.presetLocationsCountText = `+${locations.length}`
+                if (locations.length > 2) {
+                    $scope.presetLocationsRemainingCountText = `+${locations.length - 2}`
+                }
+            }
+
+            $scope.presetOtherFiltersCountText = null
             const filterCounts = $scope.getOtherPresetFilterCount()
             if (filterCounts > 0) {
-                $scope.presetOtherFiltersText = `+${filterCounts} Filter${filterCounts > 1 ? 's' : ''}`
+                $scope.presetOtherFiltersCountText = `+${filterCounts} Filter${filterCounts > 1 ? 's' : ''}`
             }
         }
 
