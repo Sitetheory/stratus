@@ -10,6 +10,10 @@ import {
 
 // Stratus Core
 import {
+    cookie
+} from '@stratusjs/core/environment'
+import {
+    isJSON,
     LooseObject
 } from '@stratusjs/core/misc'
 
@@ -38,7 +42,8 @@ FroalaEditor.PLUGINS.linkManager = function linkManager (editor: any) {
     // Local Variables
     let inputButton: InputButtonPlugin
 
-    const debug = false
+    const debugCookie = cookie('debug-link-manager')
+    const debug = !!(isJSON(debugCookie) ? JSON.parse(debugCookie) : false)
 
     // When the plugin is initialized,this will be called.
     function _init() {
@@ -158,7 +163,8 @@ FroalaEditor.RegisterQuickInsertButton('link', {
 
     // Callback for the button.
     callback: function linkManagerCallback () {
-        const debug = false
+        const debugCookie = cookie('debug-link-manager-quick-insert')
+        const debug = !!(isJSON(debugCookie) ? JSON.parse(debugCookie) : false)
         const inputButton = new InputButtonPlugin<Link>({
             name: 'Link Manager',
             eventName: 'link-library',
