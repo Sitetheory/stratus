@@ -885,7 +885,8 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             'linkOpen',
             // 'linkStyle',
             // 'linkEdit',
-            'linkManagerEdit',
+            // FIXME: This is disabled for now because it places the links at the top of the field instead of at the cursor.
+            // 'linkManagerEdit',
             'linkRemove',
         ],
         linkInsertButtons: [

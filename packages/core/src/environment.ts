@@ -5,7 +5,7 @@ import {seconds} from './conversion'
 import _ from 'lodash'
 
 // Cookie Getter & Setter
-export function cookie(name: any, value?: any, expires?: any, path?: any, domain?: any, secure?: any, sameSite?: any) {
+export function cookie(name: any, value?: any, expires?: any, path?: any, domain?: any, secure?: any, sameSite?: any): string|null {
     const request = {
         name,
         value,
