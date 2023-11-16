@@ -34,9 +34,10 @@
                     data-ng-if="!isPresetLocationSet()">
                 <label>City, Neighborhood, Zip</label>
                 <input
+                        class="input-eLocation"
                         data-ng-if="!options.query.where.Location"
                         data-ng-model="options.query.where.eLocation"
-                        data-ng-blur="search()"
+                        data-ng-blur="options.query.where.eLocation.length && search()"
                         type="text"
                         size="22"
                         maxlength="250"
@@ -44,6 +45,7 @@
                         autocomplete="off"
                 >
                 <input
+                        class="input-Location"
                         data-ng-if="options.query.where.Location"
                         data-ng-model="options.query.where.Location"
                         data-ng-blur="search()"
@@ -72,7 +74,7 @@
             <a
                     class="custom-clear"
                     data-ng-if="(options.query.where.eLocation.length || options.query.where.Location.length || isPresetLocationSet())"
-                    data-ng-click="resetLocationQuery();"
+                    data-ng-click="resetLocationQuery(); focusElement('.location-input .input-eLocation')"
             >
                 <md-icon md-svg-src="{{ localDir + 'images/icons/actionButtons/clear.svg' }}"></md-icon>
             </a>

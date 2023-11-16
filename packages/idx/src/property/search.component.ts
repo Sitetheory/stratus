@@ -28,7 +28,7 @@ import _, {
     union
 } from 'lodash'
 import {Stratus} from '@stratusjs/runtime/stratus'
-import {element, material, IAttributes, ITimeoutService, IQService, IWindowService, ISCEService} from 'angular'
+import {element, material, IAttributes, ITimeoutService, IQService, IWindowService, ISCEService, IAugmentedJQuery} from 'angular'
 import 'angular-material'
 import {
     CompileFilterOptions,
@@ -128,6 +128,7 @@ export type IdxPropertySearchScope = IdxSearchScope & {
     // Functions
     canDisplayListingTypeButton(listType: ListingTypeSelectionSetting): boolean
     displayOfficeGroupSelector(searchTerm?: string, editIndex?: number, ev?: any): void
+    focusElement(selector: string): void
     getMLSVariables(reset?: boolean): MLSService[]
     getOtherPresetFilterCount(): number
     getPresetLocations(): string[]
@@ -240,6 +241,7 @@ Stratus.Components.IdxPropertySearch = {
     },
     controller(
         $attrs: IAttributes,
+        $element: IAugmentedJQuery,
         $q: IQService,
         $mdConstant: any, // mdChips item
         $mdDialog: material.IDialogService,
@@ -559,6 +561,21 @@ Stratus.Components.IdxPropertySearch = {
             const filterCounts = $scope.getOtherPresetFilterCount()
             if (filterCounts > 0) {
                 $scope.presetOtherFiltersCountText = `+${filterCounts} Filter${filterCounts > 1 ? 's' : ''}`
+            }
+        }
+
+        /** Focus a requested element. Only selectors elements within the component. */
+        $scope.focusElement = (selector: string): void => {
+            if (!isEmpty(selector)){
+                $timeout(() => {
+                    const elementThis = $element[0]
+                    const elementSelected = elementThis.querySelector(selector)
+                    if (!elementSelected) {
+                        console.warn('unable to find focusable element of', selector)
+                        return
+                    }
+                    (elementSelected as any).focus()
+                }, 100) // Delay to allow angular to process first
             }
         }
 
