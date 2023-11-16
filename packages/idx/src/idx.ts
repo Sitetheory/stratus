@@ -2004,7 +2004,8 @@ const angularJsService = (
                         // TODO: search UnparsedAddress if it exists for the service, OR the API will parse
                         // TODO: it into StreetNumber, StreetName, StreetSuffix, depending on what's provided
                         // TODO: and all those are LIKE (but all must match LIKE)
-                        {apiField: 'UnparsedAddress', type: 'stringLikeArray'},
+                        // Disabled UnparsedAddress as it is regex and not equals
+                        // {apiField: 'UnparsedAddress', type: 'stringLikeArray'},
                         {apiField: 'ListingId', type: 'stringIncludesArray'},
                     ]
                 },
