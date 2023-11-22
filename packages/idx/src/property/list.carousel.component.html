@@ -57,7 +57,7 @@
                                             <md-icon class="property-icon icon-bed" md-svg-src="{{::localDir + 'images/icons/bed.svg'}}"></md-icon>
                                         </span>
                                         <span class="property-bath line-separator-left" data-ng-show="::$parent.slideData.BathroomsFull > 0 || $parent.slideData.BathroomsTotalInteger > 0" role="text">
-                                            <span data-ng-bind="::$parent.slideData.BathroomsFull || $parent.slideData.BathroomsTotalInteger" property="numberOfFullBathrooms"></span><span data-ng-show="::$parent.slideData.BathroomsHalf || $parent.slideData.BathroomsOneQuarter || $parent.slideData.BathroomsPartial">+</span>
+                                            <span data-ng-bind="::$parent.slideData.BathroomsFull || $parent.slideData.BathroomsTotalInteger" property="numberOfFullBathrooms"></span><span data-ng-show="::$parent.slideData.BathroomsHalf || $parent.slideData.BathroomsOneQuarter || $parent.slideData.BathroomsThreeQuarter || $parent.slideData.BathroomsPartial">+</span>
                                             <md-icon class="property-icon icon-bath" md-svg-src="{{::localDir + 'images/icons/bath.svg'}}"></md-icon>
                                         </span>
                                         <span class="property-sqft line-separator-left" data-ng-show="::$parent.slideData.LivingArea && $parent.slideData.LivingArea > 0" role="text">

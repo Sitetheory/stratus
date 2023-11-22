@@ -2970,7 +2970,9 @@ const angularJsService = (
             'ListingKey',
             'BathroomsTotalInteger',
             'BathroomsFull',
+            'BathroomsHalf',
             'BathroomsOneQuarter',
+            'BathroomsThreeQuarter',
             'BathroomsPartial',
             'BedroomsTotal'
         ]

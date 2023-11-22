@@ -63,6 +63,9 @@
                         <li data-ng-if="::model.data.BathroomsOneQuarter && model.data.BathroomsOneQuarter > 0" role="text">
                             <span data-ng-bind="::model.data.BathroomsOneQuarter"></span> Quarter Baths
                         </li>
+                        <li data-ng-if="::model.data.BathroomsThreeQuarter && model.data.BathroomsThreeQuarter > 0" role="text">
+                            <span data-ng-bind="::model.data.BathroomsThreeQuarter"></span> Three Quarter Baths
+                        </li>
                         <li data-ng-if="::model.data.BathroomsPartial && model.data.BathroomsPartial > 0" role="text">
                             <span data-ng-bind="::model.data.BathroomsPartial" property="numberOfPartialBathrooms"></span> Partial Baths
                         </li>
