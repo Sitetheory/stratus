@@ -117,6 +117,7 @@ export class Collection<T = LooseObject> extends EventManager {
     target?: any = null
     targetSuffix?: string = null
     urlRoot = '/Api'
+    toast = false
 
     // Unsure usage
     qualifier = '' // data-ng-if
@@ -290,6 +291,7 @@ export class Collection<T = LooseObject> extends EventManager {
                     collection: this,
                     completed: true,
                     received: true,
+                    toast: this.toast,
                     type: type || null,
                     watch: this.watch
                 }, target))
@@ -453,21 +455,29 @@ export class Collection<T = LooseObject> extends EventManager {
                     this.throttleTrigger('change')
                     this.trigger('error', error)
                     reject(error)
-                    throw error
+                    return
                 })
         })
     }
 
     fetch(action?: string, data?: LooseObject, options?: CollectionSyncOptions) {
-        return this.sync(action, data || this.meta.get('api'), options)
-            .catch(async (error: any) => {
+        return new Promise(async (resolve: any, reject: any) => {
+            this.sync(action, data || this.meta.get('api'), options)
+                .then(resolve)
+                .catch(async (error: any) => {
                     console.error('FETCH:', error)
+                    // TODO: Move toast to something external (outside of Stratus scope)
+                    if (!this.toast) {
+                        reject(error)
+                        return
+                    }
                     if (!$mdToast) {
                         // TODO: Verify the whether the const is necessity
                         // tslint:disable-next-line:no-unused-variable
                         // const wait = await serviceVerify()
                         await serviceVerify()
                     }
+                    // TODO: Use Toastify to avoid this deprecated AngularJS mdToast attempt...
                     $mdToast.show(
                         $mdToast.simple()
                             .textContent('Failure to Fetch!')
@@ -475,8 +485,10 @@ export class Collection<T = LooseObject> extends EventManager {
                             .position('top right')
                             .hideDelay(3000)
                     )
-                }
-            )
+                    reject(error)
+                    return
+                })
+        })
     }
 
     filter(query: string) {

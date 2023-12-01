@@ -67,6 +67,7 @@ const serviceVerify = async () => {
             // TODO: this is only used for the watcher (find a native replacement)
             $rootScope = injector.get('$rootScope')
             // TODO: this is only used in 4 places to respond to errors (find a native replacement)
+            // TODO: Switch to Toastify, which now works independently in our system...
             $mdToast = injector.get('$mdToast')
         }
         if ($rootScope && $mdToast) {
@@ -104,6 +105,7 @@ export interface ModelOptions extends ModelBaseOptions {
     stagger?: boolean,
     target?: string,
     targetSuffix?: string,
+    toast?: boolean,
     type?: string,
     urlRoot?: string,
     urlSync?: boolean,
@@ -729,41 +731,52 @@ export class Model<T = LooseObject> extends ModelBase<T> {
             })
             .catch((error: any) => {
                 // (/(.*)\sReceived/i).exec(error.message)[1]
+                // FIXME: The UI should be able to handle more than a status of 500...
                 // Treat a fatal error like 500 (our UI code relies on this distinction)
+                // TODO: This should not default to status 500.  It should contain the actual status.
                 this.status = 500
                 this.error = true
                 this.resetXHRFlags()
                 console.error(`XHR: ${request.method} ${request.url}`, error)
+                // reject and close promise
                 reject(error)
-                throw error
+                return
             })
         })
     }
 
     fetch(action?: string, data?: LooseObject, options?: ModelSyncOptions) {
-        return this.sync(action, data || this.meta.get('api'), options)
-            .catch(async (message: any) => {
-                this.status = 500
-                this.error = true
-                this.resetXHRFlags()
-                console.error('FETCH:', message)
-                // TODO: Move toast to something external (outside of Stratus scope)
-                if (!this.toast) {
+        return new Promise(async (resolve: any, reject: any) => {
+            this.sync(action, data || this.meta.get('api'), options)
+                .then(resolve)
+                .catch(async (error: any) => {
+                    // TODO: This should not default to status 500.  It should contain the actual status.
+                    this.status = 500
+                    this.error = true
+                    this.resetXHRFlags()
+                    console.error('FETCH:', error)
+                    // TODO: Move toast to something external (outside of Stratus scope)
+                    if (!this.toast) {
+                        reject(error)
+                        return
+                    }
+                    // TODO: Use Toastify to avoid this deprecated AngularJS mdToast attempt...
+                    if (!$mdToast) {
+                        // TODO: Verify the whether the const is necessity
+                        // tslint:disable-next-line:no-unused-variable
+                        const wait = await serviceVerify()
+                    }
+                    $mdToast.show(
+                        $mdToast.simple()
+                            .textContent('Failure to fetch data!')
+                            .toastClass('errorMessage')
+                            .position('top right')
+                            .hideDelay(3000)
+                    )
+                    reject(error)
                     return
-                }
-                if (!$mdToast) {
-                    // TODO: Verify the whether the const is necessity
-                    // tslint:disable-next-line:no-unused-variable
-                    const wait = await serviceVerify()
-                }
-                $mdToast.show(
-                    $mdToast.simple()
-                        .textContent('Failure to fetch data!')
-                        .toastClass('errorMessage')
-                        .position('top right')
-                        .hideDelay(3000)
-                )
-            })
+                })
+        })
     }
 
     save(options?: any): Promise<any> {
@@ -803,31 +816,39 @@ export class Model<T = LooseObject> extends ModelBase<T> {
             options = {}
         }
         options.patch = _.has(options, 'patch') ? options.patch : true
-        return this.sync(this.getIdentifier() ? 'PUT' : 'POST',
-            this.toJSON({
-                patch: options.patch
-            }))
-            .catch(async (message: any) => {
-                this.error = true
-                this.resetXHRFlags()
-                console.error('SAVE:', message)
-                // TODO: Move toast to something external (outside of Stratus scope)
-                if (!this.toast) {
+        return new Promise(async (resolve: any, reject: any) => {
+            this.sync(this.getIdentifier() ? 'PUT' : 'POST',
+                this.toJSON({
+                    patch: options.patch
+                }))
+                .then(resolve)
+                .catch(async (error: any) => {
+                    this.error = true
+                    this.resetXHRFlags()
+                    console.error('SAVE:', error)
+                    // TODO: Move toast to something external (outside of Stratus scope)
+                    if (!this.toast) {
+                        reject(error)
+                        return
+                    }
+                    // TODO: Use Toastify to avoid this deprecated AngularJS mdToast attempt...
+                    if (!$mdToast) {
+                        // TODO: Verify the whether the const is necessity
+                        // tslint:disable-next-line:no-unused-variable
+                        const wait = await serviceVerify()
+                        console.log('mdToast loaded:', wait)
+                    }
+                    $mdToast.show(
+                        $mdToast.simple()
+                            .textContent('Failure to Save!')
+                            .toastClass('errorMessage')
+                            .position('top right')
+                            .hideDelay(3000)
+                    )
+                    reject(error)
                     return
-                }
-                if (!$mdToast) {
-                    // TODO: Verify the whether the const is necessity
-                    // tslint:disable-next-line:no-unused-variable
-                    const wait = await serviceVerify()
-                }
-                $mdToast.show(
-                    $mdToast.simple()
-                        .textContent('Failure to Save!')
-                        .toastClass('errorMessage')
-                        .position('top right')
-                        .hideDelay(3000)
-                )
-            })
+                })
+        })
     }
 
     saveIdle() {
@@ -1109,37 +1130,46 @@ export class Model<T = LooseObject> extends ModelBase<T> {
                 resolve(this.data)
             })
         }
-        return this.sync('DELETE', {})
-            .then((data: any) => {
-                if (this.error) {
+        return new Promise(async (resolve: any, reject: any) => {
+            this.sync('DELETE', {})
+                .then((data: any) => {
+                    // TODO: This should not need an error check in the success portion of the Promise, but I'm going to leave it here
+                    //       until we are certain there isn't any code paths relying on this rejection.
+                    if (this.error) {
+                        reject(this.error)
+                        return
+                    }
+                    this.throttleTrigger('change')
+                    if (this.collection) {
+                        this.collection.remove(this)
+                    }
+                })
+                .catch(async (error: any) => {
+                    this.error = true
+                    this.resetXHRFlags()
+                    console.error('DESTROY:', error)
+                    // TODO: Move toast to something external (outside of Stratus scope)
+                    if (!this.toast) {
+                        reject(error)
+                        return
+                    }
+                    // TODO: Use Toastify to avoid this deprecated AngularJS mdToast attempt...
+                    if (!$mdToast) {
+                        // TODO: Verify the whether the const is necessity
+                        // tslint:disable-next-line:no-unused-variable
+                        const wait = await serviceVerify()
+                    }
+                    $mdToast.show(
+                        $mdToast.simple()
+                            .textContent('Failure to Delete!')
+                            .toastClass('errorMessage')
+                            .position('top right')
+                            .hideDelay(3000)
+                    )
+                    reject(error)
                     return
-                }
-                this.throttleTrigger('change')
-                if (this.collection) {
-                    this.collection.remove(this)
-                }
-            })
-            .catch(async (message: any) => {
-                this.error = true
-                this.resetXHRFlags()
-                console.error('DESTROY:', message)
-                // TODO: Move toast to something external (outside of Stratus scope)
-                if (!this.toast) {
-                    return
-                }
-                if (!$mdToast) {
-                    // TODO: Verify the whether the const is necessity
-                    // tslint:disable-next-line:no-unused-variable
-                    const wait = await serviceVerify()
-                }
-                $mdToast.show(
-                    $mdToast.simple()
-                        .textContent('Failure to Delete!')
-                        .toastClass('errorMessage')
-                        .position('top right')
-                        .hideDelay(3000)
-                )
-            })
+                })
+        })
     }
 }
 
