@@ -88,7 +88,7 @@
                                         <span data-ng-bind="::property.BedroomsTotal" property="numberOfBedrooms"></span> Beds
                                     </span>
                                     <span data-ng-if="::property.BathroomsFull > 0 || property.BathroomsTotalInteger > 0" role="text">
-                                        <span data-ng-bind="::property.BathroomsFull || property.BathroomsTotalInteger" property="numberOfFullBathrooms"></span><span data-ng-if="::property.BathroomsHalf || property.BathroomsOneQuarter || property.BathroomsPartial">+</span>
+                                        <span data-ng-bind="::property.BathroomsFull || property.BathroomsTotalInteger" property="numberOfFullBathrooms"></span><span data-ng-if="::property.BathroomsHalf || property.BathroomsOneQuarter || property.BathroomsThreeQuarter || property.BathroomsPartial">+</span>
                                         Baths
                                         </span>
                                     <span data-ng-bind="::property.PropertySubType || property.PropertyType || property._Class" property="accommodationCategory"></span>
