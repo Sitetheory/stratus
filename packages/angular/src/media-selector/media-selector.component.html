@@ -33,7 +33,11 @@
                  *ngFor="let selectedModel of dataSub | async; let i = index"
                  [cdkDropListData]="i"
             >
-                <div class="media-selected-list-row media-selected-box media-selected-box-grid"
+                <!--
+                Note: I've added the media-selected-list class to this element, which is not intentional for this design,
+                      is a temporary solution to the issue of broken CSS when this item is dragged out of the parent above.
+                -->
+                <div class="media-selected-list-row media-selected-box media-selected-box-grid media-selected-list"
                      cdkDrag
                      [cdkDragData]="i"
                      (cdkDragEntered)="dragEntered($event)"
