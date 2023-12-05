@@ -35,14 +35,14 @@ import {
     XHRRequest
 } from '@stratusjs/core/datastore/xhr'
 
-// Modules
-import 'angular-material' // Reliant for $mdToast
-
 // AngularJS Dependency Injector
 import {getInjector} from '../injector'
 
 // AngularJS Services
 import {Collection} from './collection'
+
+// Third-Party
+import Toastify from 'toastify-js'
 
 // Instantiate Injector
 let injector = getInjector()
@@ -50,13 +50,11 @@ let injector = getInjector()
 // Angular Services
 // let $rootScope: angular.IRootScopeService = injector ? injector.get('$rootScope') : null
 let $rootScope: angular.IRootScopeService
-// let $mdToast: angular.material.IToastService = injector ? injector.get('$mdToast') : null
-let $mdToast: angular.material.IToastService
 
 // Service Verification Function
 const serviceVerify = async () => {
     return new Promise(async (resolve, reject) => {
-        if ($rootScope && $mdToast) {
+        if ($rootScope) {
             resolve(true)
             return
         }
@@ -66,19 +64,15 @@ const serviceVerify = async () => {
         if (injector) {
             // TODO: this is only used for the watcher (find a native replacement)
             $rootScope = injector.get('$rootScope')
-            // TODO: this is only used in 4 places to respond to errors (find a native replacement)
-            // TODO: Switch to Toastify, which now works independently in our system...
-            $mdToast = injector.get('$mdToast')
         }
-        if ($rootScope && $mdToast) {
+        if ($rootScope) {
             resolve(true)
             return
         }
         setTimeout(() => {
             if (cookie('env')) {
-                console.log('wait for $rootScope, & $mdToast service:', {
-                    $rootScope,
-                    $mdToast
+                console.log('wait for $rootScope service:', {
+                    $rootScope
                 })
             }
             serviceVerify().then(resolve)
@@ -130,7 +124,7 @@ export class Model<T = LooseObject> extends ModelBase<T> {
     type?: string = null
     manifest = false
     stagger = false
-    toast = false
+    toast = true
     identifier?: string | number = null
     urlRoot = '/Api'
     targetSuffix?: string = null
@@ -272,27 +266,26 @@ export class Model<T = LooseObject> extends ModelBase<T> {
             //   }
             //   this.collection.throttleTrigger('change')
             // })
+            // TODO: This needs to be wrapped in a new promise!!!
             if (that.manifest && !that.getIdentifier()) {
                 that.sync('POST', that.meta.has('api') ? {
                     meta: that.meta.get('api'),
                     payload: {}
-                } : {}).catch(async (message: any) => {
-                    console.error('MANIFEST:', message)
+                } : {}).catch(async (error: XMLHttpRequest) => {
+                    console.error('MANIFEST:', error)
                     if (!that.toast) {
                         return
                     }
-                    if (!$mdToast) {
-                        // TODO: Verify the whether the const is necessity
-                        // tslint:disable-next-line:no-unused-variable
-                        const wait = await serviceVerify()
-                    }
-                    $mdToast.show(
-                        $mdToast.simple()
-                            .textContent('Failure to Manifest!')
-                            .toastClass('errorMessage')
-                            .position('top right')
-                            .hideDelay(3000)
-                    )
+                    Toastify({
+                        text: `Unable to Manifest ${that.target}.`,
+                        duration: 12000,
+                        close: true,
+                        stopOnFocus: true,
+                        style: {
+                            background: '#E14D45',
+                        }
+                    }).showToast()
+                    that.toastError(error)
                 })
             }
         })
@@ -755,24 +748,20 @@ export class Model<T = LooseObject> extends ModelBase<T> {
                     this.error = true
                     this.resetXHRFlags()
                     console.error('FETCH:', error)
-                    // TODO: Move toast to something external (outside of Stratus scope)
                     if (!this.toast) {
                         reject(error)
                         return
                     }
-                    // TODO: Use Toastify to avoid this deprecated AngularJS mdToast attempt...
-                    if (!$mdToast) {
-                        // TODO: Verify the whether the const is necessity
-                        // tslint:disable-next-line:no-unused-variable
-                        const wait = await serviceVerify()
-                    }
-                    $mdToast.show(
-                        $mdToast.simple()
-                            .textContent('Failure to fetch data!')
-                            .toastClass('errorMessage')
-                            .position('top right')
-                            .hideDelay(3000)
-                    )
+                    Toastify({
+                        text: `Unable to Fetch ${this.target}.`,
+                        duration: 12000,
+                        close: true,
+                        stopOnFocus: true,
+                        style: {
+                            background: '#E14D45',
+                        }
+                    }).showToast()
+                    this.toastError(error)
                     reject(error)
                     return
                 })
@@ -826,25 +815,20 @@ export class Model<T = LooseObject> extends ModelBase<T> {
                     this.error = true
                     this.resetXHRFlags()
                     console.error('SAVE:', error)
-                    // TODO: Move toast to something external (outside of Stratus scope)
                     if (!this.toast) {
                         reject(error)
                         return
                     }
-                    // TODO: Use Toastify to avoid this deprecated AngularJS mdToast attempt...
-                    if (!$mdToast) {
-                        // TODO: Verify the whether the const is necessity
-                        // tslint:disable-next-line:no-unused-variable
-                        const wait = await serviceVerify()
-                        console.log('mdToast loaded:', wait)
-                    }
-                    $mdToast.show(
-                        $mdToast.simple()
-                            .textContent('Failure to Save!')
-                            .toastClass('errorMessage')
-                            .position('top right')
-                            .hideDelay(3000)
-                    )
+                    Toastify({
+                        text: `Unable to Save ${this.target}.`,
+                        duration: 12000,
+                        close: true,
+                        stopOnFocus: true,
+                        style: {
+                            background: '#E14D45',
+                        }
+                    }).showToast()
+                    this.toastError(error)
                     reject(error)
                     return
                 })
@@ -1148,28 +1132,44 @@ export class Model<T = LooseObject> extends ModelBase<T> {
                     this.error = true
                     this.resetXHRFlags()
                     console.error('DESTROY:', error)
-                    // TODO: Move toast to something external (outside of Stratus scope)
                     if (!this.toast) {
                         reject(error)
                         return
                     }
-                    // TODO: Use Toastify to avoid this deprecated AngularJS mdToast attempt...
-                    if (!$mdToast) {
-                        // TODO: Verify the whether the const is necessity
-                        // tslint:disable-next-line:no-unused-variable
-                        const wait = await serviceVerify()
-                    }
-                    $mdToast.show(
-                        $mdToast.simple()
-                            .textContent('Failure to Delete!')
-                            .toastClass('errorMessage')
-                            .position('top right')
-                            .hideDelay(3000)
-                    )
+                    Toastify({
+                        text: `Unable to Delete ${this.target}.`,
+                        duration: 12000,
+                        close: true,
+                        stopOnFocus: true,
+                        style: {
+                            background: '#E14D45',
+                        }
+                    }).showToast()
+                    this.toastError(error)
                     reject(error)
                     return
                 })
         })
+    }
+
+    toastError(error: XMLHttpRequest) {
+        const digest = (error.responseText && isJSON(error.responseText)) ? JSON.parse(error.responseText) : null
+        if (!digest) {
+            return
+        }
+        const message = _.get(digest, 'meta.status[0].message') || _.get(digest, 'error.stack') || _.get(digest, 'error.exception[0].message') || null
+        if (!message) {
+            return
+        }
+        Toastify({
+            text: `Error: ${message}`,
+            duration: 12000,
+            close: true,
+            stopOnFocus: true,
+            style: {
+                background: '#E14D45',
+            }
+        }).showToast()
     }
 }
 
@@ -1179,14 +1179,10 @@ Stratus.Services.Model = [
     '$provide', ($provide: any) => {
         $provide.factory('Model', [
             // '$rootScope',
-            // '$mdToast',
             (
-                // $h: angular.IHttpService,
-                // $r: angular.IRootScopeService,
-                // $m: angular.material.IToastService
+                // $r: angular.IRootScopeService
             ) => {
                 // $rootScope = $r
-                // $mdToast = $m
                 return Model
             }
         ])
