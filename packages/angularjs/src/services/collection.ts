@@ -22,49 +22,11 @@ import {
 } from '@stratusjs/core/misc'
 import {XHR, XHRRequest} from '@stratusjs/core/datastore/xhr'
 
-// Modules
-import 'angular-material' // Reliant for $mdToast
-
-// AngularJS Dependency Injector
-import {getInjector} from '../injector'
-
 // AngularJS Services
 import {Model, ModelOptions} from './model'
 
-// Instantiate Injector
-let injector = getInjector()
-
-// Angular Services
-// let $mdToast: angular.material.IToastService = injector ? injector.get('$mdToast') : null
-let $mdToast: angular.material.IToastService
-
-// Service Verification Function
-const serviceVerify = async () => {
-    return new Promise(async (resolve, reject) => {
-        if ($mdToast) {
-            resolve(true)
-            return
-        }
-        if (!injector) {
-            injector = getInjector()
-        }
-        if (injector) {
-            $mdToast = injector.get('$mdToast')
-        }
-        if ($mdToast) {
-            resolve(true)
-            return
-        }
-        setTimeout(() => {
-            if (cookie('env')) {
-                console.log('wait for $mdToast service:', {
-                    $mdToast
-                })
-            }
-            serviceVerify().then(resolve)
-        }, 250)
-    })
-}
+// Third-Party
+import Toastify from 'toastify-js'
 
 export interface HttpPrototype {
     headers: LooseObject
@@ -117,7 +79,7 @@ export class Collection<T = LooseObject> extends EventManager {
     target?: any = null
     targetSuffix?: string = null
     urlRoot = '/Api'
-    toast = false
+    toast = true
 
     // Unsure usage
     qualifier = '' // data-ng-if
@@ -464,27 +426,22 @@ export class Collection<T = LooseObject> extends EventManager {
         return new Promise(async (resolve: any, reject: any) => {
             this.sync(action, data || this.meta.get('api'), options)
                 .then(resolve)
-                .catch(async (error: any) => {
+                .catch(async (error: XMLHttpRequest) => {
                     console.error('FETCH:', error)
-                    // TODO: Move toast to something external (outside of Stratus scope)
                     if (!this.toast) {
                         reject(error)
                         return
                     }
-                    if (!$mdToast) {
-                        // TODO: Verify the whether the const is necessity
-                        // tslint:disable-next-line:no-unused-variable
-                        // const wait = await serviceVerify()
-                        await serviceVerify()
-                    }
-                    // TODO: Use Toastify to avoid this deprecated AngularJS mdToast attempt...
-                    $mdToast.show(
-                        $mdToast.simple()
-                            .textContent('Failure to Fetch!')
-                            .toastClass('errorMessage')
-                            .position('top right')
-                            .hideDelay(3000)
-                    )
+                    Toastify({
+                        text: `Unable to Fetch ${this.target}.`,
+                        duration: 12000,
+                        close: true,
+                        stopOnFocus: true,
+                        style: {
+                            background: '#E14D45',
+                        }
+                    }).showToast()
+                    this.toastError(error)
                     reject(error)
                     return
                 })
@@ -590,6 +547,26 @@ export class Collection<T = LooseObject> extends EventManager {
 
     exists(attribute: string) {
         return !!_.reduce(this.pluck(attribute) || [], (memo: any, data: any) => memo || !_.isUndefined(data))
+    }
+
+    toastError(error: XMLHttpRequest) {
+        const digest = (error.responseText && isJSON(error.responseText)) ? JSON.parse(error.responseText) : null
+        if (!digest) {
+            return
+        }
+        const message = _.get(digest, 'meta.status[0].message') || _.get(digest, 'error.stack') || _.get(digest, 'error.exception[0].message') || null
+        if (!message) {
+            return
+        }
+        Toastify({
+            text: `Error: ${message}`,
+            duration: 12000,
+            close: true,
+            stopOnFocus: true,
+            style: {
+                background: '#E14D45',
+            }
+        }).showToast()
     }
 }
 

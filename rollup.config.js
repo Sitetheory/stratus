@@ -92,6 +92,7 @@ export default [
     },
     external: [
       'lodash',
+      'toastify-js',
       'angular',
       '@stratusjs',
       'angular-material',
