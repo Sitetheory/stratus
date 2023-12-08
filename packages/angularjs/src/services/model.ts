@@ -271,13 +271,15 @@ export class Model<T = LooseObject> extends ModelBase<T> {
                 that.sync('POST', that.meta.has('api') ? {
                     meta: that.meta.get('api'),
                     payload: {}
-                } : {}).catch(async (error: XMLHttpRequest) => {
+                } : {}).catch(async (error: XMLHttpRequest|ErrorBase) => {
                     console.error('MANIFEST:', error)
                     if (!that.toast) {
                         return
                     }
+                    const errorMessage = that.errorMessage(error)
+                    const formatMessage = errorMessage ? `: ${errorMessage}` : '.'
                     Toastify({
-                        text: `Unable to Manifest ${that.target}.`,
+                        text: `Unable to Manifest ${that.target}${formatMessage}`,
                         duration: 12000,
                         close: true,
                         stopOnFocus: true,
@@ -285,7 +287,7 @@ export class Model<T = LooseObject> extends ModelBase<T> {
                             background: '#E14D45',
                         }
                     }).showToast()
-                    that.toastError(error)
+                    that.errorMessage(error)
                 })
             }
         })
@@ -722,7 +724,7 @@ export class Model<T = LooseObject> extends ModelBase<T> {
 
                 return
             })
-            .catch((error: any) => {
+            .catch((error: XMLHttpRequest|ErrorBase) => {
                 // (/(.*)\sReceived/i).exec(error.message)[1]
                 // FIXME: The UI should be able to handle more than a status of 500...
                 // Treat a fatal error like 500 (our UI code relies on this distinction)
@@ -742,7 +744,7 @@ export class Model<T = LooseObject> extends ModelBase<T> {
         return new Promise(async (resolve: any, reject: any) => {
             this.sync(action, data || this.meta.get('api'), options)
                 .then(resolve)
-                .catch(async (error: any) => {
+                .catch(async (error: XMLHttpRequest|ErrorBase) => {
                     // TODO: This should not default to status 500.  It should contain the actual status.
                     this.status = 500
                     this.error = true
@@ -752,8 +754,10 @@ export class Model<T = LooseObject> extends ModelBase<T> {
                         reject(error)
                         return
                     }
+                    const errorMessage = this.errorMessage(error)
+                    const formatMessage = errorMessage ? `: ${errorMessage}` : '.'
                     Toastify({
-                        text: `Unable to Fetch ${this.target}.`,
+                        text: `Unable to Fetch ${this.target}${formatMessage}`,
                         duration: 12000,
                         close: true,
                         stopOnFocus: true,
@@ -761,7 +765,6 @@ export class Model<T = LooseObject> extends ModelBase<T> {
                             background: '#E14D45',
                         }
                     }).showToast()
-                    this.toastError(error)
                     reject(error)
                     return
                 })
@@ -811,7 +814,7 @@ export class Model<T = LooseObject> extends ModelBase<T> {
                     patch: options.patch
                 }))
                 .then(resolve)
-                .catch(async (error: any) => {
+                .catch(async (error: XMLHttpRequest|ErrorBase) => {
                     this.error = true
                     this.resetXHRFlags()
                     console.error('SAVE:', error)
@@ -819,8 +822,10 @@ export class Model<T = LooseObject> extends ModelBase<T> {
                         reject(error)
                         return
                     }
+                    const errorMessage = this.errorMessage(error)
+                    const formatMessage = errorMessage ? `: ${errorMessage}` : '.'
                     Toastify({
-                        text: `Unable to Save ${this.target}.`,
+                        text: `Unable to Save ${this.target}${formatMessage}`,
                         duration: 12000,
                         close: true,
                         stopOnFocus: true,
@@ -828,7 +833,6 @@ export class Model<T = LooseObject> extends ModelBase<T> {
                             background: '#E14D45',
                         }
                     }).showToast()
-                    this.toastError(error)
                     reject(error)
                     return
                 })
@@ -1128,7 +1132,7 @@ export class Model<T = LooseObject> extends ModelBase<T> {
                         this.collection.remove(this)
                     }
                 })
-                .catch(async (error: any) => {
+                .catch(async (error: XMLHttpRequest|ErrorBase) => {
                     this.error = true
                     this.resetXHRFlags()
                     console.error('DESTROY:', error)
@@ -1136,8 +1140,10 @@ export class Model<T = LooseObject> extends ModelBase<T> {
                         reject(error)
                         return
                     }
+                    const errorMessage = this.errorMessage(error)
+                    const formatMessage = errorMessage ? `: ${errorMessage}` : '.'
                     Toastify({
-                        text: `Unable to Delete ${this.target}.`,
+                        text: `Unable to Delete ${this.target}${formatMessage}`,
                         duration: 12000,
                         close: true,
                         stopOnFocus: true,
@@ -1145,31 +1151,26 @@ export class Model<T = LooseObject> extends ModelBase<T> {
                             background: '#E14D45',
                         }
                     }).showToast()
-                    this.toastError(error)
                     reject(error)
                     return
                 })
         })
     }
 
-    toastError(error: XMLHttpRequest) {
+    errorMessage(error: XMLHttpRequest|ErrorBase): string|null {
+        if (error instanceof ErrorBase) {
+            console.error(`[${error.code}] ${error.message}`, error)
+            return error.code != 'Internal' ? error.message : null
+        }
         const digest = (error.responseText && isJSON(error.responseText)) ? JSON.parse(error.responseText) : null
         if (!digest) {
-            return
+            return null
         }
-        const message = _.get(digest, 'meta.status[0].message') || _.get(digest, 'error.stack') || _.get(digest, 'error.exception[0].message') || null
+        const message = _.get(digest, 'meta.status[0].message') || _.get(digest, 'error.exception[0].message') || null
         if (!message) {
-            return
+            return null
         }
-        Toastify({
-            text: `Error: ${message}`,
-            duration: 12000,
-            close: true,
-            stopOnFocus: true,
-            style: {
-                background: '#E14D45',
-            }
-        }).showToast()
+        return message
     }
 }
 
