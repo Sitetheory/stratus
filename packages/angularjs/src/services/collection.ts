@@ -426,14 +426,16 @@ export class Collection<T = LooseObject> extends EventManager {
         return new Promise(async (resolve: any, reject: any) => {
             this.sync(action, data || this.meta.get('api'), options)
                 .then(resolve)
-                .catch(async (error: XMLHttpRequest) => {
+                .catch(async (error: XMLHttpRequest|ErrorBase) => {
                     console.error('FETCH:', error)
                     if (!this.toast) {
                         reject(error)
                         return
                     }
+                    const errorMessage = this.errorMessage(error)
+                    const formatMessage = errorMessage ? `: ${errorMessage}` : '.'
                     Toastify({
-                        text: `Unable to Fetch ${this.target}.`,
+                        text: `Unable to Fetch ${this.target}${formatMessage}`,
                         duration: 12000,
                         close: true,
                         stopOnFocus: true,
@@ -441,7 +443,6 @@ export class Collection<T = LooseObject> extends EventManager {
                             background: '#E14D45',
                         }
                     }).showToast()
-                    this.toastError(error)
                     reject(error)
                     return
                 })
@@ -549,24 +550,20 @@ export class Collection<T = LooseObject> extends EventManager {
         return !!_.reduce(this.pluck(attribute) || [], (memo: any, data: any) => memo || !_.isUndefined(data))
     }
 
-    toastError(error: XMLHttpRequest) {
+    errorMessage(error: XMLHttpRequest|ErrorBase): string|null {
+        if (error instanceof ErrorBase) {
+            console.error(`[${error.code}] ${error.message}`, error)
+            return error.code != 'Internal' ? error.message : null
+        }
         const digest = (error.responseText && isJSON(error.responseText)) ? JSON.parse(error.responseText) : null
         if (!digest) {
-            return
+            return null
         }
-        const message = _.get(digest, 'meta.status[0].message') || _.get(digest, 'error.stack') || _.get(digest, 'error.exception[0].message') || null
+        const message = _.get(digest, 'meta.status[0].message') || _.get(digest, 'error.exception[0].message') || null
         if (!message) {
-            return
+            return null
         }
-        Toastify({
-            text: `Error: ${message}`,
-            duration: 12000,
-            close: true,
-            stopOnFocus: true,
-            style: {
-                background: '#E14D45',
-            }
-        }).showToast()
+        return message
     }
 }
 
