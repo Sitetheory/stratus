@@ -224,6 +224,7 @@
             skrollr: `${boot.deployment}@stratusjs/angularjs-extras/src/normalizers/skrollr.init${boot.suffix}`,
             '@stratusjs/angularjs-extras': stratusjsAngularJsExtrasBundlePath,
             '@stratusjs/angularjs-extras/*': stratusjsAngularJsExtrasBundlePath,
+            'stratus.components.angularjsBoot': stratusjsAngularJsExtrasBundlePath,
             'stratus.components.citation': stratusjsAngularJsExtrasBundlePath,
             'stratus.components.jsonEditor': stratusjsAngularJsExtrasBundlePath,
             'stratus.components.twitterFeed': stratusjsAngularJsExtrasBundlePath,
@@ -271,6 +272,7 @@
             '@stratusjs/calendar/*': stratusjsCalendarBundlePath,
             '@fullcalendar/*': stratusjsCalendarBundlePath,
             'stratus.components.calendar': stratusjsCalendarBundlePath,
+            'stratus.components.calendarBoot': stratusjsCalendarBundlePath, // Forcibly load the Calendar Bundle (non-existent)
 
             /* @stratus/idx Package Paths */
             '@stratusjs/idx': stratusjsIdxBundlePath,
@@ -287,6 +289,7 @@
             'stratus.components.idxPropertyDetailsSubSection': stratusjsIdxBundlePath,
             'stratus.components.idxPropertyList': stratusjsIdxBundlePath,
             'stratus.components.idxPropertySearch': stratusjsIdxBundlePath,
+            'stratus.components.idxBoot': stratusjsIdxBundlePath,
 
             /* @stratusjs/core Package Paths */
             '@stratusjs/core': `${boot.deployment}@stratusjs/core/dist/core.bundle${boot.suffix}`,
@@ -311,6 +314,7 @@
             '@stratusjs/swiper': stratusjsSwiperBundlePath,
             '@stratusjs/swiper/*': stratusjsSwiperBundlePath,
             'stratus.components.swiperCarousel': stratusjsSwiperBundlePath,
+            'stratus.components.swiperBoot': stratusjsSwiperBundlePath,
 
             /* Third Party Libraries */
 
