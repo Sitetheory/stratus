@@ -365,7 +365,11 @@ export class Collection<T = LooseObject> extends EventManager {
                 this.error = false
 
                 // Check Status and Associate Payload
-                if (this.meta.has('status') && this.meta.get('status[0].code') !== 'SUCCESS') {
+                if (
+                    (this.meta.has('success') && !this.meta.get('success'))
+                    // Removing checks for status[0]
+                    // || (!this.meta.has('success') && this.meta.has('status') && this.meta.get('status[0].code') !== 'SUCCESS')
+                ) {
                     this.error = true
                 } else if (this.direct) {
                     this.models = payload
@@ -378,7 +382,7 @@ export class Collection<T = LooseObject> extends EventManager {
                     })
                 } else {
                     // If we've gotten this far, it's passed the status check if one is available
-                    if (!this.meta.has('status')) {
+                    if (!this.meta.has('status') && !this.meta.has('success')) {
                         // If the status check was not available, this classifies as an error, since the payload is invalid.
                         this.error = true
                     }

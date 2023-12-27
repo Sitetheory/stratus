@@ -613,7 +613,11 @@ export class Model<T = LooseObject> extends ModelBase<T> {
                 this.error = false
 
                 // Check Status and Associate Payload
-                if (this.meta.has('status') && this.meta.get('status[0].code') !== 'SUCCESS') {
+                if (
+                    (this.meta.has('success') && !this.meta.get('success'))
+                    // Removing checks for status[0]
+                    // || (!this.meta.has('success') && this.meta.has('status') && this.meta.get('status[0].code') !== 'SUCCESS')
+                ) {
                     this.error = true
                 } else if (_.isArray(payload) && payload.length) {
                     this.recv = _.first(payload)
@@ -621,7 +625,7 @@ export class Model<T = LooseObject> extends ModelBase<T> {
                     this.recv = payload
                 } else {
                     // If we've gotten this far, it's passed the status check if one is available
-                    if (!this.meta.has('status')) {
+                    if (!this.meta.has('status') && !this.meta.has('success')) {
                         // If the status check was not available, this classifies as an error, since the payload is invalid.
                         this.error = true
                     }
