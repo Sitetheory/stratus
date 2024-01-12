@@ -9,7 +9,6 @@
 import {Stratus} from '@stratusjs/runtime/stratus'
 import {extend, isArray} from 'lodash'
 import {
-    IAugmentedJQuery,
     IAttributes,
     ICompileService,
     IHttpService,
@@ -20,11 +19,10 @@ import {
 } from 'angular'
 import moment from 'moment'
 import 'moment-range'
-
-import '@stratusjs/angularjs-extras'
 import {cookie} from '@stratusjs/core/environment'
 import {isJSON, safeUniqueId} from '@stratusjs/core/misc'
 import {ICalExpander} from '@stratusjs/calendar/iCal'
+import { customViewPluginConstructor } from '@stratusjs/calendar/customView'
 
 // FullCalendar
 import {Calendar, EventApi} from '@fullcalendar/core'
@@ -35,8 +33,8 @@ import fullCalendarDayGridPlugin from '@fullcalendar/daygrid'
 import fullCalendarTimeGridPlugin from '@fullcalendar/timegrid'
 import fullCalendarListPlugin from '@fullcalendar/list'
 
-// Components
-import { customViewPluginConstructor } from '@stratusjs/calendar/customView'
+// Stratus Preload
+import '@stratusjs/angularjs-extras'
 
 // Environment
 const min = !cookie('env') ? '.min' : ''
@@ -44,6 +42,7 @@ const packageName = 'calendar'
 const localDir = `${Stratus.BaseUrl}${Stratus.DeploymentPath}@stratusjs/${packageName}/src`
 
 export type CalendarScope = IScope & {
+    uid: string
     elementId: string
     calendarId: string
     initialized: boolean
@@ -125,18 +124,17 @@ Stratus.Components.Calendar = {
     controller(
         $scope: CalendarScope,
         $attrs: IAttributes,
-        $element: IAugmentedJQuery,
+        // $element: IAugmentedJQuery,
         $sce: ISCEService,
-        $mdPanel: material.IPanelService,
+        // $mdPanel: material.IPanelService,
         $mdDialog: material.IDialogService,
         $http: IHttpService,
         $compile: ICompileService
     ) {
         // Initialize
-        const $ctrl = this
-        $ctrl.uid = safeUniqueId(packageName)
-        Stratus.Instances[$ctrl.uid] = $scope
-        $scope.elementId = $attrs.elementId || $ctrl.uid
+        $scope.uid = safeUniqueId(packageName)
+        Stratus.Instances[$scope.uid] = $scope
+        $scope.elementId = $attrs.elementId || $scope.uid
 
         // noinspection JSIgnoredPromiseFromCall
         Stratus.Internals.CssLoader(`${localDir}/${packageName}${min}.css`)
@@ -227,28 +225,52 @@ Stratus.Components.Calendar = {
         // noinspection JSIgnoredPromiseFromCall
         Stratus.Internals.CssLoader(resourceUrl('@fullcalendar/common'))
         // Check if dayGrid is used and load the CSS. load here as well rather than at init
-        if ($scope.options.possibleViews.some((r: any) => ['dayGrid', 'dayGridDay', 'dayGridWeek', 'dayGridMonth'].includes(r))) {
+        if ($scope.options.possibleViews.some((r: string) => ['dayGrid', 'dayGridDay', 'dayGridWeek', 'dayGridMonth'].includes(r))) {
             // noinspection JSIgnoredPromiseFromCall
             Stratus.Internals.CssLoader(resourceUrl('@fullcalendar/daygrid'))
         }
         // Check if timeGrid is used and load the CSS. load here as well rather than at init
-        if ($scope.options.possibleViews.some((r: any) => ['timeGrid', 'timeGridDay', 'timeGridWeek'].includes(r))) {
+        if ($scope.options.possibleViews.some((r: string) => ['timeGrid', 'timeGridDay', 'timeGridWeek'].includes(r))) {
             // noinspection JSIgnoredPromiseFromCall
             Stratus.Internals.CssLoader(
                 resourceUrl('@fullcalendar/timegrid')
             )
         }
         // Check if dayGrid is used and load the CSS. load here as well rather than at init
-        if ($scope.options.possibleViews.some((r: any) => ['list', 'listDay', 'listWeek', 'listMonth', 'listYear'].includes(r))) {
+        if ($scope.options.possibleViews.some((r: string) => ['list', 'listDay', 'listWeek', 'listMonth', 'listYear'].includes(r))) {
             // noinspection JSIgnoredPromiseFromCall
             Stratus.Internals.CssLoader(
                 resourceUrl('@fullcalendar/list')
             )
         }
 
-        $ctrl.$onInit = () => {
+        /**
+         * Compile $scope.options.header and $scope.options.possibleViews into something viewable on the page
+         */
+        const prepareHeader = () => {
+            if ($scope.options.header) {
+                return
+            }
+            const headerLeft = 'prev,next today'
+            const headerCenter = 'title'
+            let headerRight = 'month,weekGrid,dayGrid'
+            // All this is assuming tha the default Header is not customized
+            if (isArray($scope.options.possibleViews)) {
+                // FIXME Other views don't have a proper 'name' yet. (such as lists), need a Naming scheme
+                headerRight = $scope.options.possibleViews.join(',')
+            }
+
+            // object. Defines the buttons and title at the top of the calendar. See http://fullcalendar.io/docs/display/header/
+            $scope.options.header = {
+                left: headerLeft,
+                center: headerCenter,
+                right: headerRight
+            }
+        }
+
+        this.$onInit = () => {
             // Compile the fullcalendar header to look usable
-            $ctrl.prepareHeader()
+            prepareHeader()
 
             setTimeout(async () => {
                 try {
@@ -258,7 +280,7 @@ Stratus.Components.Calendar = {
                     }
                     // Render happens once prior to any url fetching
                     $scope.$applyAsync(async () => {
-                        await $ctrl.render()
+                        await this.render()
                     })
                     setTimeout(async () => {
                         // render a second and third time for safety... as it doesn't seem to always grab the window size
@@ -385,30 +407,6 @@ Stratus.Components.Calendar = {
         }
 
         /**
-         * Compile $scope.options.header and $scope.options.possibleViews into something viewable on the page
-         */
-        $ctrl.prepareHeader = () => {
-            if ($scope.options.header) {
-                return
-            }
-            const headerLeft = 'prev,next today'
-            const headerCenter = 'title'
-            let headerRight = 'month,weekGrid,dayGrid'
-            // All this is assuming tha the default Header is not customized
-            if (isArray($scope.options.possibleViews)) {
-                // FIXME Other views don't have a proper 'name' yet. (such as lists), need a Naming scheme
-                headerRight = $scope.options.possibleViews.join(',')
-            }
-
-            // object. Defines the buttons and title at the top of the calendar. See http://fullcalendar.io/docs/display/header/
-            $scope.options.header = {
-                left: headerLeft,
-                center: headerCenter,
-                right: headerRight
-            }
-        }
-
-        /**
          * Initializes the fullcalendar display. Required before anything may be added to the calendar
          * @TODO Methods to look into:
          * 'viewRender' for callbacks on new date range (pagination maybe)  - http:// fullcalendar.io/docs/display/viewRender/
@@ -416,7 +414,7 @@ Stratus.Components.Calendar = {
          * 'windowResize' for callbacks on window resizing - https://fullcalendar.io/docs/handleWindowResize
          * 'render' force calendar to redraw - https://fullcalendar.io/docs/render
          */
-        $ctrl.render = () => {
+        this.render = () => {
             // return new Promise((resolve) => {
             $scope.calendarEl = document.getElementById($scope.calendarId)
 

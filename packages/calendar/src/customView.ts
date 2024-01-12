@@ -2,17 +2,10 @@
 
 // Runtime
 import {Stratus} from '@stratusjs/runtime/stratus'
-
-// Libraries
-import _ from 'lodash'
-import angular from 'angular'
-// tslint:disable-next-line:no-duplicate-imports
-import 'angular'
+import {isArray, isEmpty} from 'lodash'
+import {IAttributes, ICompileService, ISCEService, IScope} from 'angular'
 import 'moment'
 import 'moment-range'
-
-// FullCalendar
-// import '@fullcalendar/core'
 import {
     EventApi,
     SpecificViewContentArg,
@@ -20,21 +13,13 @@ import {
     createPlugin,
     sliceEventStore
 } from '@fullcalendar/core'
-
-// Angular 1 Modules
 import 'angular-material'
-
-// Services
-import '@stratusjs/angularjs/services/model'
-import '@stratusjs/angularjs/services/collection'
-import '@stratusjs/angularjs/services/registry'
-
-// Components
 import { CalendarScope } from '@stratusjs/calendar/calendar'
-
-
-// Stratus Utilities
 import {cookie} from '@stratusjs/core/environment'
+import {safeUniqueId} from '@stratusjs/core/misc'
+
+// Stratus Preload
+import '@stratusjs/angularjs'
 
 type  EventApiExtended = EventApi & {
     descriptionHTML?: any
@@ -47,7 +32,8 @@ const componentName = 'customView'
 const localDir = `${Stratus.BaseUrl}${Stratus.DeploymentPath}@stratusjs/${packageName}/src/${componentName}`
 const defaultTemplate = 'default'
 
-type CalendarCustomViewScope = angular.IScope & {
+type CalendarCustomViewScope = IScope & {
+    uid: string
     elementId: string
     template: string
     $parent: CalendarScope
@@ -64,19 +50,16 @@ Stratus.Components.CalendarCustomView = {
         uid: '@'
     },
     controller(
-        $scope: CalendarCustomViewScope, // angular.IScope & any, // CalendarCustomViewScope
-        $attrs: angular.IAttributes & any
+        $scope: CalendarCustomViewScope, // IScope & any, // CalendarCustomViewScope
+        $attrs: IAttributes
     ) {
         // Initialize
-        const $ctrl = this
-
-        $scope.template = $attrs.template && !_.isEmpty($attrs.template) ? $attrs.template : defaultTemplate
+        $scope.template = $attrs.template && !isEmpty($attrs.template) ? $attrs.template : defaultTemplate
         // WARNING DO NOT force a new uid if it was already provided by the parent or else it'll break the connection
         // uid should have be created by the View. Rely on that instead
-        $ctrl.uid = $attrs.uid && !_.isEmpty($attrs.uid) ? $attrs.uid :
-            _.uniqueId(`${_.camelCase(packageName)}_${_.camelCase(componentName)}_${_.camelCase($scope.template)}_`)
-        Stratus.Instances[$ctrl.uid] = $scope
-        $scope.elementId = $ctrl.uid
+        $scope.uid = $attrs.uid && !isEmpty($attrs.uid) ? $attrs.uid : safeUniqueId(packageName, componentName, $scope.template)
+        Stratus.Instances[$scope.uid] = $scope
+        $scope.elementId = $scope.uid
         $scope.events = []
 
         // Load this particular template's CSS
@@ -87,11 +70,11 @@ Stratus.Components.CalendarCustomView = {
 
         // Make sure we reference our current scope, or events may not be updated
         $scope.$applyAsync(() => {
-            $scope.$parent.customViews[$ctrl.uid] = $scope.template
+            $scope.$parent.customViews[$scope.uid] = $scope.template
             // console.log('$scope.$parent.customViews.' + $ctrl.uid, 'set to:', $scope.template)
         })
 
-        $ctrl.$onInit = () => {
+        this.$onInit = () => {
             // console.log('CalendarCustomView inited')
             // console.log('$scope.$parent', $scope.$parent)
         }
@@ -111,17 +94,17 @@ Stratus.Components.CalendarCustomView = {
         }
 
         $scope.destroy = () => {
-            delete $scope.$parent.customViews[$ctrl.uid]
-            if (typeof Stratus.Instances[$ctrl.uid].remove === 'function') {
-                Stratus.Instances[$ctrl.uid].remove()
+            delete $scope.$parent.customViews[$scope.uid]
+            if (typeof Stratus.Instances[$scope.uid].remove === 'function') {
+                Stratus.Instances[$scope.uid].remove()
             }
             $scope.$destroy()
-            delete Stratus.Instances[$ctrl.uid]
+            delete Stratus.Instances[$scope.uid]
         }
     },
     templateUrl(
-        $element: JQLite,
-        $attrs: angular.IAttributes & any
+        // $element: JQLite,
+        $attrs: IAttributes & any
     ) {
         return `${localDir}.${$attrs.template || defaultTemplate}${min}.html`
     }
@@ -129,26 +112,26 @@ Stratus.Components.CalendarCustomView = {
 
 class CustomViewConfig {
     $calendarScope: CalendarScope
-    $compile: angular.ICompileService
-    $sce: angular.ISCEService
+    $compile: ICompileService
+    $sce: ISCEService
     template: string
     uid: string
 
     $scope: CalendarCustomViewScope
     eventsWaiting: EventApiExtended[]
-    componentEl: any
+    componentEl: JQLite
 
     constructor(
         $calendarScope: CalendarScope,
-        $compile: angular.ICompileService,
-        $sce: angular.ISCEService,
+        $compile: ICompileService,
+        $sce: ISCEService,
         template: string = 'default'
     ) {
         this.$calendarScope = $calendarScope
         this.$compile = $compile
         this.$sce = $sce
         this.template = template
-        this.uid = _.uniqueId(`${_.camelCase(packageName)}_${_.camelCase(componentName)}_${_.camelCase(this.template)}_`)
+        this.uid = safeUniqueId(packageName, componentName, this.template)
 
         const calendarCustomViewComponent = $compile(`
             <stratus-calendar-custom-view data-uid="${this.uid}" data-template="${this.template}">
@@ -186,7 +169,7 @@ class CustomViewConfig {
         const sliceEventObjects = sliceEventStore(
             props.eventStore, props.eventUiBases, props.dateProfile.activeRange, props.nextDayThreshold
         )
-        if (!Object.prototype.hasOwnProperty.call(sliceEventObjects, 'fg') || !_.isArray(sliceEventObjects.fg)) {
+        if (!Object.prototype.hasOwnProperty.call(sliceEventObjects, 'fg') || !isArray(sliceEventObjects.fg)) {
             return events
         }
         sliceEventObjects.fg.forEach((eventRaw) => {
@@ -228,8 +211,8 @@ class CustomViewConfig {
 
 const CustomViewConfigConstructor = (
     $calendarScope: CalendarScope,
-    $compile: angular.ICompileService,
-    $sce: angular.ISCEService,
+    $compile: ICompileService,
+    $sce: ISCEService,
     template: string = 'default'
 ) => {
     const customViewConfig = new CustomViewConfig(
@@ -242,7 +225,7 @@ const CustomViewConfigConstructor = (
     return { // RenderHookProps<ViewProps>
         classNames: [ 'custom-view' ],
         content: (props: SpecificViewContentArg & ViewProps) => { // : SpecificViewContentArg & ViewProps
-            // console.log('content() ran', _.clone(props))
+            // console.log('content() ran', clone(props))
             // console.log('template is', template)
             customViewConfig.renderEvents(props)
             return { domNodes: customViewConfig.getDomNodes() }
@@ -252,8 +235,8 @@ const CustomViewConfigConstructor = (
 
 export function customViewPluginConstructor(
     $calendarScope: CalendarScope,
-    $compile: angular.ICompileService,
-    $sce: angular.ISCEService
+    $compile: ICompileService,
+    $sce: ISCEService
 ) {
     return createPlugin({
         initialView: 'custom', // defaultView: 'custom',
