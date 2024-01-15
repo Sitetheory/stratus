@@ -91,13 +91,13 @@ body[class^="SitetheoryCalendarBundle"]:not(.disable-scroll) {
     &.fc-button-primary:not(:disabled).fc-button-active {
       text-transform: uppercase;
       font-size: 11px;
-      color: #222;
+      color: #222; /* --fc-button-text-color . needs new var for hover */
       letter-spacing: 1px;
       text-shadow: none;
       box-shadow: none;
       border: none;
-      border-left: 1px solid #ccc;
-      background: none;
+      border-left: 1px solid #ccc; /* --fc-button-border-color, --fc-button-hover-border-color */
+      background: none; /* --fc-button-bg-color, --fc-button-hover-bg-color */
       &:first-child {
         border-left: none;
       }
@@ -105,7 +105,7 @@ body[class^="SitetheoryCalendarBundle"]:not(.disable-scroll) {
         font-weight: bold;
       }
       &:hover {
-        color: #888;
+        color: #888; /* normally --fc-button-text-color ... needs a hover specific */
       }
     }
 
@@ -264,7 +264,7 @@ body[class^="SitetheoryCalendarBundle"]:not(.disable-scroll) {
   }
   .fc-list-event-graphic {
     .fc-list-event-dot {
-      border-color: #111;
+      border-color: #111; /* --fc-event-border-color */
     }
   }
   .fc-list-event,
@@ -280,7 +280,7 @@ body[class^="SitetheoryCalendarBundle"]:not(.disable-scroll) {
       }
       .fc-list-event-graphic {
         .fc-list-event-dot {
-          border-color: #000;
+          border-color: #000; /* --fc-event-border-color */
         }
       }
     }
@@ -295,7 +295,7 @@ body[class^="SitetheoryCalendarBundle"]:not(.disable-scroll) {
     border: 1px solid transparent;
     cursor: pointer;
     .fc-event-main {
-      color: #111;
+      color: #111; /* --fc-event-text-color */
     }
     &:hover {
       background-color: #777;
