@@ -7,7 +7,7 @@
 
 // credit to https://github.com/leonaard/icalendar2fullcalendar for ics conversion
 import {Stratus} from '@stratusjs/runtime/stratus'
-import {extend, isArray} from 'lodash'
+import {clone, extend, isArray} from 'lodash'
 import {
     IAttributes,
     ICompileService,
@@ -17,11 +17,12 @@ import {
     material,
     element
 } from 'angular'
-import moment from 'moment'
-import 'moment-range'
+import moment from 'moment' // still needed by fullcalendar
+import 'moment-range' // still needed by fullcalendar
+// import 'moment-timezone'
 import {cookie} from '@stratusjs/core/environment'
 import {isJSON, safeUniqueId} from '@stratusjs/core/misc'
-import {ICalExpander} from '@stratusjs/calendar/iCal'
+import {FullCalEventExtendedProps, ICalExpander} from '@stratusjs/calendar/iCal'
 import { customViewPluginConstructor } from '@stratusjs/calendar/customView'
 
 // FullCalendar
@@ -88,6 +89,7 @@ export type CalendarScope = IScope & {
         defaultDate: Date
         nowIndicator: boolean
         timeZone: string // 'local'
+        eventForceTimezones: boolean // If the Event Popup should display time in their TZid instead of the Calendar's set zone
         eventForceAllDay: boolean
         eventLimit: number // 7
         eventLimitClick: 'popover' | 'week' | 'day' | string // 'popover'
@@ -177,6 +179,8 @@ Stratus.Components.Calendar = {
         }
         $scope.options.buttonText = extend({}, defaultButtonText, $scope.options.buttonText)
         $scope.options.defaultView = $scope.options.defaultView || 'dayGridMonth'
+
+        $scope.options.eventForceTimezones = $scope.options.eventForceTimezones || false
 
         // Not used yet @see https://fullcalendar.io/docs/header
         $scope.options.possibleViews = $scope.options.possibleViews || ['dayGridMonth', 'timeGridWeek', 'timeGridDay']
@@ -355,6 +359,20 @@ Stratus.Components.Calendar = {
             return false // Return false to not issue other functions (such as URL clicking)
         }
 
+        type CalendarEventDialog = {
+            $scope: IScope
+            eventData: EventApi & {
+                extendedProps: FullCalEventExtendedProps
+                descriptionHTML: any // html
+                spanMultiDay: boolean
+                eventTimeZone: string
+            }
+            calendarTimeZone: string
+
+            $onInit(): void // angular.IController['$onInit']
+            close(): void
+        }
+
         // Create MDDialog popup for an event
         $scope.displayEventDialog = (calEvent: EventApi, clickEvent: MouseEvent) => {
             $mdDialog.show({
@@ -369,38 +387,61 @@ Stratus.Components.Calendar = {
                 },
                 bindToController: true,
                 controllerAs: 'ctrl',
+                // controller: this.EventDialogController
                 controller() { // $scope, $mdDialog unused
-                    const dc = this
+                    const dialog: CalendarEventDialog  = this
 
-                    const close = () => {
-                        if ($mdDialog) {
-                            $mdDialog.hide()
-                        }
-                    }
-
-                    dc.$onInit = () => {
+                    dialog.$onInit = () => {
                         // Set a timezone that's easy to grab
-                        dc.timeZone = ''
+                        dialog.calendarTimeZone = 'local'
                         if (
-                            dc.eventData &&
-                            dc.eventData._calendar &&
-                            dc.eventData._calendar.dateEnv &&
-                            dc.eventData._calendar.dateEnv.timeZone !== 'local'
+                            dialog.eventData &&
+                            dialog.eventData._context &&
+                            dialog.eventData._context.dateEnv // &&
+                            // dialog.eventData._context.dateEnv.timeZone !== 'local'
                         ) {
-                            dc.timeZone = dc.eventData._calendar.dateEnv.timeZone
+                            dialog.calendarTimeZone = dialog.eventData._context.dateEnv.timeZone
+                        }
+
+                        dialog.eventData.eventTimeZone = dialog.calendarTimeZone
+                        // Overwrite the displayed time with the Event's to display
+                        if (
+                            $scope.options.eventForceTimezones &&
+                            dialog.eventData &&
+                            !dialog.eventData.descriptionHTML &&
+                            Object.prototype.hasOwnProperty.call(dialog.eventData.constructor.prototype, 'extendedProps') &&
+                            Object.prototype.hasOwnProperty.call(dialog.eventData.extendedProps, 'timeZone')
+                        ) {
+                            dialog.eventData.eventTimeZone = dialog.eventData.extendedProps.timeZone
                         }
 
                         // The event saves misc data to the 'extendedProps' field. So we'll merge this in
                         if (
-                            dc.eventData &&
-                            !dc.eventData.descriptionHTML &&
-                            Object.prototype.hasOwnProperty.call(dc.eventData.constructor.prototype, 'extendedProps') &&
-                            Object.prototype.hasOwnProperty.call(dc.eventData.extendedProps, 'description')
+                            dialog.eventData &&
+                            !dialog.eventData.descriptionHTML &&
+                            Object.prototype.hasOwnProperty.call(dialog.eventData.constructor.prototype, 'extendedProps') &&
+                            Object.prototype.hasOwnProperty.call(dialog.eventData.extendedProps, 'description')
                         ) {
-                            dc.eventData.descriptionHTML = $sce.trustAsHtml(dc.eventData.extendedProps.description)
+                            dialog.eventData.descriptionHTML = $sce.trustAsHtml(dialog.eventData.extendedProps.description)
                         }
 
-                        dc.close = close
+                        const millisecondsInDay = 86400000
+                        const millisecondsInInstance =
+                            dialog.eventData._instance.range.end.getTime() - dialog.eventData._instance.range.start.getTime()
+                        const NumDaysSpanned = millisecondsInInstance / millisecondsInDay
+                        dialog.eventData.spanMultiDay = false
+                        if (NumDaysSpanned > 0.9) {
+                            dialog.eventData.spanMultiDay = true
+                        }
+
+                        // dialog.close = close
+                        console.log(clone(this))
+                    }
+
+                    dialog.close = () => {
+                        if ($mdDialog) {
+                            $mdDialog.hide()
+                        }
                     }
                 }
             })

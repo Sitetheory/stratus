@@ -4,8 +4,8 @@
 import {Stratus} from '@stratusjs/runtime/stratus'
 import {isArray, isEmpty} from 'lodash'
 import {IAttributes, ICompileService, ISCEService, IScope} from 'angular'
-import 'moment'
-import 'moment-range'
+// import 'moment'
+// import 'moment-range'
 import {
     EventApi,
     SpecificViewContentArg,

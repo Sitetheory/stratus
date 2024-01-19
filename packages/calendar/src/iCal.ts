@@ -3,7 +3,7 @@
 
 // Runtime
 import {Stratus} from '@stratusjs/runtime/stratus'
-import {forEach} from 'lodash'
+import {clone, forEach} from 'lodash'
 import {auto} from 'angular'
 import 'ical.js' // Global ICAL variable.... not able to be sandboxed yet
 import {LooseObject} from '@stratusjs/core/misc'
@@ -198,9 +198,12 @@ export class ICalExpander {
     // Processes an Event into generic Object format.
     // Events that were reoccurring need to use flattenRecurringEvent to process extra data
     flattenEvent(e: ICalEvent): ICalEventCleaned {
+        // console.log('flattenEvent has zone', clone(e.startDate.timezone))
         return {
             startDate: e.startDate.toJSDate(),
             endDate: e.endDate.toJSDate(),
+            // timeZone: e.startDate.zone.tzid,
+            timeZone: e.startDate.timezone === 'Z' ? 'UTC' : e.startDate.timezone,
             description: e.description,
             title: e.summary,
             summary: e.summary,
@@ -245,6 +248,7 @@ export class ICalExpander {
         return {
             start: e.startDate.toJSDate(),
             end: e.endDate.toJSDate(),
+            timeZone: e.startDate.timezone === 'Z' ? 'UTC' : e.startDate.timezone,
             title: e.summary,
             summary: e.summary,
             description: e.description,
@@ -280,22 +284,28 @@ export class ICalExpander {
     }
 }
 
-interface FullCalEvent {
+/** These appear in extendedProps object */
+export interface FullCalEventExtendedProps {
+    summary: string
+    description: string
+    attendees: unknown[]
+    organizer?: string
+    location?: string
+    allDay?: boolean // Custom item
+    image?: string // Custom item
+    timeZone: string
+}
+
+interface FullCalEvent extends FullCalEventExtendedProps {
     id: string
     start: Date
     end: Date
     title: string
     summary: string
-    description: string
-    attendees: unknown[]
-    organizer: string
-    location: string
     url?: string // Custom item
-    allDay?: boolean // Custom item
-    image?: string // Custom item
 }
 
-interface ICalEventCleaned {
+interface ICalEventCleaned extends FullCalEventExtendedProps {
     uid: string
     recurrenceId?: Date
     sequence: number
@@ -303,13 +313,7 @@ interface ICalEventCleaned {
     endDate: Date
     title: string
     summary: string
-    description: string
-    attendees: unknown[]
-    organizer: string
-    location: string
-    url?: string // Custom item
-    allDay?: boolean // Custom item
-    image?: string // Custom item
+    url?: string
 }
 
 /** @see ical.js/lib/ical/component.js */
@@ -358,6 +362,7 @@ interface ICalRecurExpansion {
 
 /** @see ical.js/lib/ical/time.js */
 interface ICalTime {
+    timezone: string
     isDate(): boolean
     toJSDate(): Date
     toUnixTime(): number
