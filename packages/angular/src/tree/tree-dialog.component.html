@@ -121,7 +121,7 @@
     </mat-form-field>
 
     <mat-checkbox [(ngModel)]="browserTarget"
-                  (ngModelChange)="onBrowserTargetChange($event)">
+                  (change)="onBrowserTargetChange($event)">
         Open in new window
     </mat-checkbox>
 
