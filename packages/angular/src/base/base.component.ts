@@ -92,7 +92,7 @@ export class BaseComponent extends RootComponent implements OnInit, OnChanges {
     }
 
     ngOnInit() {
-        console.info('selector.ngOnInit')
+        console.info('base.ngOnInit')
     }
 
     ngOnChanges() {

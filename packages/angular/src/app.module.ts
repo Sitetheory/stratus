@@ -40,6 +40,7 @@ import {BaseComponent} from './base/base.component'
 // Stratus Custom Directives/Components
 import {ConfirmDialogComponent} from './confirm-dialog/confirm-dialog.component'
 import {EditorComponent} from './editor/editor.component'
+import {JsonComponent} from './json/json.component'
 import {MediaSelectorComponent} from './media-selector/media-selector.component'
 import {SelectorComponent} from './selector/selector.component'
 import {TreeComponent} from './tree/tree.component'
@@ -56,6 +57,11 @@ import {
     FroalaEditorModule,
     FroalaViewModule
 } from 'angular-froala-wysiwyg'
+
+// ngx-json-viewer Module (Required by JSON)
+import {
+   NgxJsonViewerModule
+} from 'ngx-json-viewer'
 
 // Editor Dialogs
 import {CitationDialogComponent} from './editor/citation-dialog.component'
@@ -111,6 +117,7 @@ const ngModuleImports: any[] = [
     HttpClientModule,
     MaterialModules,
     MatNativeDateModule,
+    NgxJsonViewerModule,
     ReactiveFormsModule,
     // SelectorComponent.forRoot()
 ]
@@ -122,6 +129,7 @@ const ngDeclarations: any[] = [
     CodeViewDialogComponent,
     ConfirmDialogComponent,
     EditorComponent,
+    JsonComponent,
     LinkDialogComponent,
     MediaDialogComponent,
     MediaSelectorComponent,
@@ -138,6 +146,7 @@ const ngEntryComponents: any[] = [
     CodeViewDialogComponent,
     ConfirmDialogComponent,
     EditorComponent,
+    JsonComponent,
     LinkDialogComponent,
     MediaDialogComponent,
     MediaSelectorComponent,
@@ -150,6 +159,7 @@ const ngEntryComponents: any[] = [
 const appModuleComponents = {
     'sa-base': BaseComponent,
     'sa-editor': EditorComponent,
+    'sa-json': JsonComponent,
     'sa-media-selector': MediaSelectorComponent,
     'sa-selector': SelectorComponent,
     'sa-tree': TreeComponent

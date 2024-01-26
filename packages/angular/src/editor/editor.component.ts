@@ -733,6 +733,7 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             // Stratus Angular+ Tags
             'sa-boot',
             'sa-editor',
+            'sa-json',
             'sa-map',
             'sa-media-selector',
             'sa-selector',
@@ -837,6 +838,7 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             // Stratus Angular+ Tags
             'sa-boot',
             'sa-editor',
+            'sa-json',
             'sa-map',
             'sa-media-selector',
             'sa-selector',

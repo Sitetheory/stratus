@@ -30,7 +30,7 @@
   "dependencies": {
     "@stratusjs/angularjs": "^0.6.4",
     "@stratusjs/angularjs-extras": "^0.13.0",
-    "@stratusjs/boot": "^1.1.0",
+    "@stratusjs/boot": "^1.2.0",
     "@stratusjs/runtime": "^0.12.1",
     "swiper": "^10.3.0"
   }

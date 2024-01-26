@@ -33,7 +33,7 @@
     "@stratusjs/angular": "^0.8.3",
     "@stratusjs/angularjs": "^0.7.1",
     "@stratusjs/angularjs-extras": "^0.13.0",
-    "@stratusjs/boot": "^1.1.0",
+    "@stratusjs/boot": "^1.2.0",
     "@stratusjs/map": "^0.6.5",
     "@stratusjs/runtime": "^0.12.1",
     "@stratusjs/swiper": "^1.2.2"
