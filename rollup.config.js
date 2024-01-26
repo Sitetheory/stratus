@@ -2,7 +2,11 @@
 import multi from '@rollup/plugin-multi-entry'
 import { nodeResolve } from '@rollup/plugin-node-resolve'
 // import commonjs from '@rollup/plugin-commonjs'
+import typescript from '@rollup/plugin-typescript'
 import postcss from 'rollup-plugin-postcss'
+
+// TypeScript Transformers
+import { default as keysTransformer } from 'ts-transformer-keys/transformer'
 
 export default [
   // ------------------------
@@ -39,43 +43,58 @@ export default [
   // ------------------------
   // This includes all things in app.module.ts like the Map Package, Stripe, etc
   {
-    input: {
-      include: [
-        './packages/angular/src/**/*.js'
-      ],
-      exclude: [
-        // min files
-        './packages/angular/src/**/*.min.js',
-        // test files
-        './packages/angular/src/test/**/*.js',
-        // unused
-        './packages/angular/src/quill-plugins/**/*.js',
-        // prototype file (not functional)
-        './packages/angular/src/angular.module.js',
-        // boot controls angular detection, so it shouldn't be packages
-        './packages/angular/src/boot.js'
-      ]
-    },
+    input: './packages/angular/src/main.ts',
     external: [
       'froala-editor',
       'html2pdf',
       'lodash',
       'toastify-js',
+      '@stratusjs',
+      '@stratusjs/angularjs',
+      '@stratusjs/angularjs-extras',
+      '@stratusjs/backend',
+      '@stratusjs/boot',
+      '@stratusjs/calendar',
+      '@stratusjs/core',
+      '@stratusjs/react',
+      '@stratusjs/runtime',
+      '@stratusjs/swiper',
+      'angular',
+      'angular-material',
+      'angular-sanitize',
       'zone.js/dist/zone',
       // TODO: This one may be a transformer, so it shouldn't need to be imported.
       '@agentepsilon/decko'
     ],
     output: {
-      // file: 'packages/angular/dist/angular.bundle.js',
-      dir: 'packages/angular/dist/',
+      file: 'packages/angular/dist/angular.bundle.js',
       format: 'system'
     },
     plugins: [
-      multi({
-        exports: true,
-        entryFileName: 'angular.bundle.js'
+      // angular({
+      //   replace:false,
+      //   preprocessors: {
+      //     template: template => minify(template, {
+      //       caseSensitive: true, // Angular+ uses case sensitive templates
+      //       collapseWhitespace: true,
+      //       removeComments: true,
+      //       removeEmptyAttributes: true
+      //     }),
+      //     // style: scss => compile(scss),
+      //   }
+      // }),
+      nodeResolve(),
+      typescript({
+        tsconfig: './tsconfig.rollup.json',
+        transformers: {
+          before: [
+            {
+              type: 'program',
+              factory: (program) => keysTransformer(program)
+            }
+          ]
+        }
       }),
-      nodeResolve()
     ]
   },
   // ------------------------

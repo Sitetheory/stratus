@@ -280,7 +280,7 @@ export class SelectorComponent extends RootComponent { // implements OnInit, OnC
         })
         xhr.send()
             .then((response: LooseObject | Array<LooseObject> | string) => {
-                if (!_.isObject(response) || _.get(response, 'meta.status[0].code') !== 'SUCCESS') {
+                if (!_.isObject(response) || (_.has(response, 'meta.success') && !_.get(response, 'meta.success'))) {
                     console.error('error[toggleStatus]:', response)
                     model.status = statusOriginal
                     this.refresh()

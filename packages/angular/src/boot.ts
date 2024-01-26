@@ -33,6 +33,7 @@ function angularBoot() {
         // 'sa-base',
         'sa-boot', // Forcibly Boot Angular. Useful if element is not directly on a page onLoad
         'sa-editor',
+        'sa-json',
         'sa-map',
         'sa-media-selector',
         'sa-selector',
