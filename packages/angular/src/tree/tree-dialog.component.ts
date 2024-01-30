@@ -23,6 +23,9 @@ import {
     IconOptions,
     MatIconRegistry
 } from '@angular/material/icon'
+import {
+    MatCheckboxChange
+} from '@angular/material/checkbox/checkbox'
 
 // RXJS
 import {
@@ -188,6 +191,7 @@ export class TreeDialogComponent extends ResponsiveComponent implements OnInit, 
         // Hoist Components
         this.tree = this.data.tree
         this.treeNode = this.data.treeNode
+        this.browserTarget = this.data.browserTarget !== null
 
         // Hoist Services
         this.backend = this.data.backend
@@ -339,11 +343,11 @@ export class TreeDialogComponent extends ResponsiveComponent implements OnInit, 
         // this.refresh()
     }
 
-    onBrowserTargetChange($event: any): void {
-        this.data.browserTarget = this.browserTarget ? '_blank' : null
+    onBrowserTargetChange($event: MatCheckboxChange): void {
+        this.data.browserTarget = $event.checked ? '_blank' : null
     }
 
-    displayContentText(content: ContentEntity) {
+    displayContentText(content: ContentEntity): string|void {
         // Ensure Content is Selected before Display Text
         if (!content) {
             return
@@ -364,7 +368,7 @@ export class TreeDialogComponent extends ResponsiveComponent implements OnInit, 
     //     }
     // }
 
-    private handleContent(response:HttpResponse<Convoy<ContentEntity>>) {
+    private handleContent(response: HttpResponse<Convoy<ContentEntity>>) {
         if (!response.ok || response.status !== 200 || _.isEmpty(response.body)) {
             this.filteredContent = []
             // FIXME: We have to go in this roundabout way to force changes to be detected since the
