@@ -7,9 +7,8 @@
 
 // credit to https://github.com/leonaard/icalendar2fullcalendar for ics conversion
 import {Stratus} from '@stratusjs/runtime/stratus'
-import {extend, isArray} from 'lodash'
+import {clone, extend, isArray} from 'lodash'
 import {
-    IAugmentedJQuery,
     IAttributes,
     ICompileService,
     IHttpService,
@@ -18,13 +17,13 @@ import {
     material,
     element
 } from 'angular'
-import moment from 'moment'
-import 'moment-range'
-
-import '@stratusjs/angularjs-extras'
+import moment from 'moment' // still needed by fullcalendar
+import 'moment-range' // still needed by fullcalendar
+// import 'moment-timezone'
 import {cookie} from '@stratusjs/core/environment'
 import {isJSON, safeUniqueId} from '@stratusjs/core/misc'
-import {ICalExpander} from '@stratusjs/calendar/iCal'
+import {FullCalEventExtendedProps, ICalExpander} from '@stratusjs/calendar/iCal'
+import { customViewPluginConstructor } from '@stratusjs/calendar/customView'
 
 // FullCalendar
 import {Calendar, EventApi} from '@fullcalendar/core'
@@ -35,8 +34,8 @@ import fullCalendarDayGridPlugin from '@fullcalendar/daygrid'
 import fullCalendarTimeGridPlugin from '@fullcalendar/timegrid'
 import fullCalendarListPlugin from '@fullcalendar/list'
 
-// Components
-import { customViewPluginConstructor } from '@stratusjs/calendar/customView'
+// Stratus Preload
+import '@stratusjs/angularjs-extras'
 
 // Environment
 const min = !cookie('env') ? '.min' : ''
@@ -44,6 +43,7 @@ const packageName = 'calendar'
 const localDir = `${Stratus.BaseUrl}${Stratus.DeploymentPath}@stratusjs/${packageName}/src`
 
 export type CalendarScope = IScope & {
+    uid: string
     elementId: string
     calendarId: string
     initialized: boolean
@@ -89,6 +89,7 @@ export type CalendarScope = IScope & {
         defaultDate: Date
         nowIndicator: boolean
         timeZone: string // 'local'
+        eventForceTimezones: boolean // If the Event Popup should display time in their TZid instead of the Calendar's set zone
         eventForceAllDay: boolean
         eventLimit: number // 7
         eventLimitClick: 'popover' | 'week' | 'day' | string // 'popover'
@@ -125,18 +126,17 @@ Stratus.Components.Calendar = {
     controller(
         $scope: CalendarScope,
         $attrs: IAttributes,
-        $element: IAugmentedJQuery,
+        // $element: IAugmentedJQuery,
         $sce: ISCEService,
-        $mdPanel: material.IPanelService,
+        // $mdPanel: material.IPanelService,
         $mdDialog: material.IDialogService,
         $http: IHttpService,
         $compile: ICompileService
     ) {
         // Initialize
-        const $ctrl = this
-        $ctrl.uid = safeUniqueId(packageName)
-        Stratus.Instances[$ctrl.uid] = $scope
-        $scope.elementId = $attrs.elementId || $ctrl.uid
+        $scope.uid = safeUniqueId(packageName)
+        Stratus.Instances[$scope.uid] = $scope
+        $scope.elementId = $attrs.elementId || $scope.uid
 
         // noinspection JSIgnoredPromiseFromCall
         Stratus.Internals.CssLoader(`${localDir}/${packageName}${min}.css`)
@@ -179,6 +179,8 @@ Stratus.Components.Calendar = {
         }
         $scope.options.buttonText = extend({}, defaultButtonText, $scope.options.buttonText)
         $scope.options.defaultView = $scope.options.defaultView || 'dayGridMonth'
+
+        $scope.options.eventForceTimezones = $scope.options.eventForceTimezones || false
 
         // Not used yet @see https://fullcalendar.io/docs/header
         $scope.options.possibleViews = $scope.options.possibleViews || ['dayGridMonth', 'timeGridWeek', 'timeGridDay']
@@ -227,28 +229,52 @@ Stratus.Components.Calendar = {
         // noinspection JSIgnoredPromiseFromCall
         Stratus.Internals.CssLoader(resourceUrl('@fullcalendar/common'))
         // Check if dayGrid is used and load the CSS. load here as well rather than at init
-        if ($scope.options.possibleViews.some((r: any) => ['dayGrid', 'dayGridDay', 'dayGridWeek', 'dayGridMonth'].includes(r))) {
+        if ($scope.options.possibleViews.some((r: string) => ['dayGrid', 'dayGridDay', 'dayGridWeek', 'dayGridMonth'].includes(r))) {
             // noinspection JSIgnoredPromiseFromCall
             Stratus.Internals.CssLoader(resourceUrl('@fullcalendar/daygrid'))
         }
         // Check if timeGrid is used and load the CSS. load here as well rather than at init
-        if ($scope.options.possibleViews.some((r: any) => ['timeGrid', 'timeGridDay', 'timeGridWeek'].includes(r))) {
+        if ($scope.options.possibleViews.some((r: string) => ['timeGrid', 'timeGridDay', 'timeGridWeek'].includes(r))) {
             // noinspection JSIgnoredPromiseFromCall
             Stratus.Internals.CssLoader(
                 resourceUrl('@fullcalendar/timegrid')
             )
         }
         // Check if dayGrid is used and load the CSS. load here as well rather than at init
-        if ($scope.options.possibleViews.some((r: any) => ['list', 'listDay', 'listWeek', 'listMonth', 'listYear'].includes(r))) {
+        if ($scope.options.possibleViews.some((r: string) => ['list', 'listDay', 'listWeek', 'listMonth', 'listYear'].includes(r))) {
             // noinspection JSIgnoredPromiseFromCall
             Stratus.Internals.CssLoader(
                 resourceUrl('@fullcalendar/list')
             )
         }
 
-        $ctrl.$onInit = () => {
+        /**
+         * Compile $scope.options.header and $scope.options.possibleViews into something viewable on the page
+         */
+        const prepareHeader = () => {
+            if ($scope.options.header) {
+                return
+            }
+            const headerLeft = 'prev,next today'
+            const headerCenter = 'title'
+            let headerRight = 'month,weekGrid,dayGrid'
+            // All this is assuming tha the default Header is not customized
+            if (isArray($scope.options.possibleViews)) {
+                // FIXME Other views don't have a proper 'name' yet. (such as lists), need a Naming scheme
+                headerRight = $scope.options.possibleViews.join(',')
+            }
+
+            // object. Defines the buttons and title at the top of the calendar. See http://fullcalendar.io/docs/display/header/
+            $scope.options.header = {
+                left: headerLeft,
+                center: headerCenter,
+                right: headerRight
+            }
+        }
+
+        this.$onInit = () => {
             // Compile the fullcalendar header to look usable
-            $ctrl.prepareHeader()
+            prepareHeader()
 
             setTimeout(async () => {
                 try {
@@ -258,7 +284,7 @@ Stratus.Components.Calendar = {
                     }
                     // Render happens once prior to any url fetching
                     $scope.$applyAsync(async () => {
-                        await $ctrl.render()
+                        await this.render()
                     })
                     setTimeout(async () => {
                         // render a second and third time for safety... as it doesn't seem to always grab the window size
@@ -333,6 +359,20 @@ Stratus.Components.Calendar = {
             return false // Return false to not issue other functions (such as URL clicking)
         }
 
+        type CalendarEventDialog = {
+            $scope: IScope
+            eventData: EventApi & {
+                extendedProps: FullCalEventExtendedProps
+                descriptionHTML: any // html
+                spanMultiDay: boolean
+                eventTimeZone: string
+            }
+            calendarTimeZone: string
+
+            $onInit(): void // angular.IController['$onInit']
+            close(): void
+        }
+
         // Create MDDialog popup for an event
         $scope.displayEventDialog = (calEvent: EventApi, clickEvent: MouseEvent) => {
             $mdDialog.show({
@@ -347,65 +387,64 @@ Stratus.Components.Calendar = {
                 },
                 bindToController: true,
                 controllerAs: 'ctrl',
+                // controller: this.EventDialogController
                 controller() { // $scope, $mdDialog unused
-                    const dc = this
+                    const dialog: CalendarEventDialog  = this
 
-                    const close = () => {
-                        if ($mdDialog) {
-                            $mdDialog.hide()
-                        }
-                    }
-
-                    dc.$onInit = () => {
+                    dialog.$onInit = () => {
                         // Set a timezone that's easy to grab
-                        dc.timeZone = ''
+                        dialog.calendarTimeZone = 'local'
                         if (
-                            dc.eventData &&
-                            dc.eventData._calendar &&
-                            dc.eventData._calendar.dateEnv &&
-                            dc.eventData._calendar.dateEnv.timeZone !== 'local'
+                            dialog.eventData &&
+                            dialog.eventData._context &&
+                            dialog.eventData._context.dateEnv // &&
+                            // dialog.eventData._context.dateEnv.timeZone !== 'local'
                         ) {
-                            dc.timeZone = dc.eventData._calendar.dateEnv.timeZone
+                            dialog.calendarTimeZone = dialog.eventData._context.dateEnv.timeZone
+                        }
+
+                        dialog.eventData.eventTimeZone = dialog.calendarTimeZone
+                        // Overwrite the displayed time with the Event's to display
+                        if (
+                            $scope.options.eventForceTimezones &&
+                            dialog.eventData &&
+                            !dialog.eventData.descriptionHTML &&
+                            Object.prototype.hasOwnProperty.call(dialog.eventData.constructor.prototype, 'extendedProps') &&
+                            Object.prototype.hasOwnProperty.call(dialog.eventData.extendedProps, 'timeZone')
+                        ) {
+                            dialog.eventData.eventTimeZone = dialog.eventData.extendedProps.timeZone
                         }
 
                         // The event saves misc data to the 'extendedProps' field. So we'll merge this in
                         if (
-                            dc.eventData &&
-                            !dc.eventData.descriptionHTML &&
-                            Object.prototype.hasOwnProperty.call(dc.eventData.constructor.prototype, 'extendedProps') &&
-                            Object.prototype.hasOwnProperty.call(dc.eventData.extendedProps, 'description')
+                            dialog.eventData &&
+                            !dialog.eventData.descriptionHTML &&
+                            Object.prototype.hasOwnProperty.call(dialog.eventData.constructor.prototype, 'extendedProps') &&
+                            Object.prototype.hasOwnProperty.call(dialog.eventData.extendedProps, 'description')
                         ) {
-                            dc.eventData.descriptionHTML = $sce.trustAsHtml(dc.eventData.extendedProps.description)
+                            dialog.eventData.descriptionHTML = $sce.trustAsHtml(dialog.eventData.extendedProps.description)
                         }
 
-                        dc.close = close
+                        const millisecondsInDay = 86400000
+                        const millisecondsInInstance =
+                            dialog.eventData._instance.range.end.getTime() - dialog.eventData._instance.range.start.getTime()
+                        const NumDaysSpanned = millisecondsInInstance / millisecondsInDay
+                        dialog.eventData.spanMultiDay = false
+                        if (NumDaysSpanned > 0.9) {
+                            dialog.eventData.spanMultiDay = true
+                        }
+
+                        // dialog.close = close
+                        console.log(clone(this))
+                    }
+
+                    dialog.close = () => {
+                        if ($mdDialog) {
+                            $mdDialog.hide()
+                        }
                     }
                 }
             })
-        }
-
-        /**
-         * Compile $scope.options.header and $scope.options.possibleViews into something viewable on the page
-         */
-        $ctrl.prepareHeader = () => {
-            if ($scope.options.header) {
-                return
-            }
-            const headerLeft = 'prev,next today'
-            const headerCenter = 'title'
-            let headerRight = 'month,weekGrid,dayGrid'
-            // All this is assuming tha the default Header is not customized
-            if (isArray($scope.options.possibleViews)) {
-                // FIXME Other views don't have a proper 'name' yet. (such as lists), need a Naming scheme
-                headerRight = $scope.options.possibleViews.join(',')
-            }
-
-            // object. Defines the buttons and title at the top of the calendar. See http://fullcalendar.io/docs/display/header/
-            $scope.options.header = {
-                left: headerLeft,
-                center: headerCenter,
-                right: headerRight
-            }
         }
 
         /**
@@ -416,7 +455,7 @@ Stratus.Components.Calendar = {
          * 'windowResize' for callbacks on window resizing - https://fullcalendar.io/docs/handleWindowResize
          * 'render' force calendar to redraw - https://fullcalendar.io/docs/render
          */
-        $ctrl.render = () => {
+        this.render = () => {
             // return new Promise((resolve) => {
             $scope.calendarEl = document.getElementById($scope.calendarId)
 

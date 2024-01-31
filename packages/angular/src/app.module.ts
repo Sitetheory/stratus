@@ -42,6 +42,7 @@ import {ConfirmDialogComponent} from './confirm-dialog/confirm-dialog.component'
 import {EditorComponent} from './editor/editor.component'
 import {MediaSelectorComponent} from './media-selector/media-selector.component'
 import {SelectorComponent} from './selector/selector.component'
+import {TimezoneSelectorComponent} from './timezone-selector/timezone-selector.component'
 import {TreeComponent} from './tree/tree.component'
 import {TreeDialogComponent} from './tree/tree-dialog.component'
 import {TreeNodeComponent} from './tree/tree-node.component'
@@ -126,6 +127,7 @@ const ngDeclarations: any[] = [
     MediaDialogComponent,
     MediaSelectorComponent,
     SelectorComponent,
+    TimezoneSelectorComponent,
     TreeComponent,
     TreeDialogComponent,
     TreeNodeComponent,
@@ -142,6 +144,7 @@ const ngEntryComponents: any[] = [
     MediaDialogComponent,
     MediaSelectorComponent,
     SelectorComponent,
+    TimezoneSelectorComponent,
     TreeComponent,
     TreeDialogComponent,
     TreeNodeComponent,
@@ -152,6 +155,7 @@ const appModuleComponents = {
     'sa-editor': EditorComponent,
     'sa-media-selector': MediaSelectorComponent,
     'sa-selector': SelectorComponent,
+    'sa-timezone-selector': TimezoneSelectorComponent,
     'sa-tree': TreeComponent
 }
 

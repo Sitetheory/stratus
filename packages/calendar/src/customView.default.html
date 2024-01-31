@@ -8,9 +8,9 @@
 		<p class="event-time" role="text">
 			<span class="event-time-label  label">Time: </span>
 			<!-- TODO if AllDay, remove time stamps and show day only? -->
-			<time class="event-time-start" data-ng-bind="::eventData.start | moment:{unix:false, format:'dddd MMM Do, h:mm a', tz:options.timeZone}" datetime="{{::eventData.start}}"></time>
+			<time class="event-time-start" data-ng-bind="::eventData.start | luxon:{unix:false, format:'cccc LLL d, h:mm a zz', tz:options.timeZone}" datetime="{{::eventData.start}}"></time>
 			<span class="event-time-end" data-ng-if="::eventData.end != null"> <!-- data-ng-if="::eventData.end" causes digest errors..? -->
-                - <time data-ng-bind="eventData.end  | moment:{unix:false, format:'h:mm a', tz:options.timeZone}" datetime="{{::eventData.end}}"></time>
+                - <time data-ng-bind="eventData.end  | luxon:{unix:false, format:'h:mm a', tz:options.timeZone}" datetime="{{::eventData.end}}"></time>
                 <!-- TODO detect if it's not in the same day to add the day to the end time again -->
             </span>
 		</p>

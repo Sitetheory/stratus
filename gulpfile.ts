@@ -425,7 +425,7 @@ function compressPreserve() {
             mangle: false,
             output: {
                 comments: false,
-                ecma: 5,
+                ecma: 2015,
                 wrap_func_args: false
             }
             // sourceMap: {
