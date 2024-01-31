@@ -58,7 +58,7 @@
             </md-input-container>
 
 
-            <div class="preset-location">
+            <div class="preset-location" data-ng-if="isPresetLocationSet()">
                 <span class="location-list-truncated span-comma-delimited" data-ng-bind-html="presetLocationHTML"></span>
                 <span class="preset-locations-count location-popup-on-hover" data-ng-show="presetLocationsRemainingCountText" data-ng-bind="presetLocationsRemainingCountText"></span>
                 <span class="preset-other-filters-count" data-ng-show="!presetLocationsRemainingCountText && presetOtherFiltersCountText" data-ng-bind="presetOtherFiltersCountText"></span>
