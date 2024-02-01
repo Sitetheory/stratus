@@ -1,7 +1,7 @@
-<mat-form-field>
-    <mat-label>Select Timezone</mat-label>
+<mat-form-field [style.width.px]=330>
+    <mat-label>{{label}}</mat-label>
     <input type="text"
-           placeholder="Timezone"
+           placeholder="Select Timezone"
            matInput
            [formControl]="inputTimezone"
            [matAutocomplete]="auto">

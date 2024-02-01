@@ -24,6 +24,7 @@ import {Stratus} from '@stratusjs/runtime/stratus'
 import {cookie} from '@stratusjs/core/environment'
 import {EventManager} from '@stratusjs/core/events/eventManager'
 import {RootComponent} from '../core/root.component'
+import {isEmpty} from 'lodash'
 
 // AngularJS Classes
 import {Registry} from '@stratusjs/angularjs/services/registry'
@@ -98,7 +99,9 @@ export class TimezoneSelectorComponent extends RootComponent implements OnInit {
     // Note: It may be better to LifeCycle::tick(), but this works for now
 
     // Multi-Framework Event Connectivity
+    label = 'Select Timezone'
     timezone: string
+    currentTimezone: string
     inputTimezone = new FormControl('')
     timezoneList: string[] = []
     filteredTimezones: Observable<string[]>
@@ -121,6 +124,9 @@ export class TimezoneSelectorComponent extends RootComponent implements OnInit {
 
         // Prepare all possible timezones
         this.timezoneList = (Intl as any).supportedValuesOf('timeZone')
+
+        // Get our own timezone
+        this.currentTimezone = (Intl as any).DateTimeFormat().resolvedOptions().timeZone
 
         // Hydrate Root App Inputs
         this.hydrate(elementRef, sanitizer, keys<TimezoneSelectorComponent>())
@@ -165,6 +171,7 @@ export class TimezoneSelectorComponent extends RootComponent implements OnInit {
                 return
             }
             this.timezone = evt
+            this.updateLabel()
             this.inputTimezone.setValue(this.timezone)
             this.refresh().then()
         })
@@ -172,7 +179,16 @@ export class TimezoneSelectorComponent extends RootComponent implements OnInit {
     async ngOnInit() {
         // Watch for input box changes
         this.inputTimezone.valueChanges.forEach((value?: string) => this.valueChanged(value)).then()
+        this.updateLabel()
         this.initialized = true
+    }
+
+    private updateLabel() {
+        if (isEmpty(this.timezone) || this.timezone === 'local') {
+            this.label = `(local - Currently displayed in ${this.currentTimezone})`
+        } else {
+            this.label = 'Select Timezone'
+        }
     }
 
     /** Filter the inout box and output similar possible options */
@@ -210,13 +226,14 @@ export class TimezoneSelectorComponent extends RootComponent implements OnInit {
         return this.model.get(this.property)
     }
 
-    /** Any time the value of the inout box is changed */
+    /** Any time the value of the input box is changed */
     valueChanged(value: string) {
         if (!value) {
             return
         }
         // Update the field to allow external apps to read
         this.timezone = value
+        this.updateLabel()
         this.inputTimezone.setValue(this.timezone)
         if (!this.model || !this.model.completed) {
             return
