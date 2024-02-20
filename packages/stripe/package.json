@@ -1,6 +1,6 @@
 {
   "name": "@stratusjs/stripe",
-  "version": "1.8.0",
+  "version": "1.9.0",
   "description": "Angular Stripe Elements components to be used as an add on to StratusJS",
   "main": "",
   "scripts": {
@@ -29,7 +29,7 @@
     "npm": ">= 8.19.3"
   },
   "dependencies": {
-    "@stratusjs/angular": "^0.7.6",
+    "@stratusjs/angular": "^0.9.2",
     "@stratusjs/runtime": "^0.12.1",
     "toastify-js": "^1.12.0"
   }
