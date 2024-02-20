@@ -46,7 +46,8 @@ export class StripePaymentMethodListComponent extends StripeListComponent implem
 
     // Component Attributes
     @Input() addCardButtonText: string = 'Add Payment Method'
-    @Input() disabled: boolean | string = false // inputs are strings..
+    @Input() addCardDisabled: boolean = false
+    @Input() disabled: boolean | string = false // TODO this is not used?
     @Input() property: string
     @Input() detailedBillingInfo?: boolean
     @Input() defaultBillingName?: string
