@@ -11,7 +11,7 @@
             <sa-stripe-payment-method-item [(model)]="paymentMethod" [editable]="true" [urlRoot]="urlRoot"></sa-stripe-payment-method-item>
         </mat-list-item>
         <mat-list-item
-                [hidden]="!collection.completed || collection.pending"
+                [hidden]="addCardDisabled || !collection.completed || collection.pending"
         >
             <sa-stripe-setup-intent
                     data-detailed-billing-info="true"
