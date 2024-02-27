@@ -4,7 +4,7 @@
 import {
     Stratus
 } from '@stratusjs/runtime/stratus'
-import {clone, extend, isObject, isString} from 'lodash'
+import {clone, extend, isEmpty, isObject, isString} from 'lodash'
 import {DateTime, Interval} from 'luxon'
 import {seconds} from '@stratusjs/core/conversion'
 import {DurationUnit} from 'luxon/src/duration'
@@ -45,6 +45,7 @@ const convertLuxon = (date: LuxonPossibleInput, unix?: boolean): DateTime => {
  */
 Stratus.Filters.Luxon = () => {
     return (input: LuxonPossibleInput, options?: LuxonOptions) => {
+        // Setup defaults
         const currentOptionsLuxon: LuxonOptions = {
             unix: true,
             since: false,
@@ -53,6 +54,9 @@ Stratus.Filters.Luxon = () => {
             format: 'LLL d yyyy, h:mma'
         }
         if (isObject(options)) extend(currentOptionsLuxon, options)
+        if (!currentOptionsLuxon.tz || isEmpty(currentOptionsLuxon.tz)) currentOptionsLuxon.tz = 'local'
+
+        // Process luxon logic
         let timeLuxon = convertLuxon(input, currentOptionsLuxon.unix)
         if (!timeLuxon.isValid) {
             console.warn('Invalid DateTime', clone(input), clone(timeLuxon))
