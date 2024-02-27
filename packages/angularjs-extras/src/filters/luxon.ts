@@ -50,7 +50,7 @@ Stratus.Filters.Luxon = () => {
             since: false,
             relative: '1w', // Difference between two dates (with human grammar)
             duration: 'days', // Used with 'diff' to display the incremental between: seconds, minutes, hours, days, weeks, months, years
-            format: 'MMM Do yyyy, h:mma'
+            format: 'LLL d yyyy, h:mma'
         }
         if (isObject(options)) extend(currentOptionsLuxon, options)
         let timeLuxon = convertLuxon(input, currentOptionsLuxon.unix)
