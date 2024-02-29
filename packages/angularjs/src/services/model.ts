@@ -5,7 +5,26 @@
 import {keys} from 'ts-transformer-keys'
 
 // Runtime
-import _ from 'lodash'
+import {
+    cloneDeep,
+    extend,
+    filter,
+    forEach,
+    get,
+    has,
+    head,
+    isArray,
+    isEmpty,
+    isEqual,
+    isNumber,
+    isObject,
+    isString,
+    isUndefined,
+    map,
+    once,
+    set,
+    throttle
+} from 'lodash'
 import angular from 'angular'
 import {Stratus} from '@stratusjs/runtime/stratus'
 
@@ -170,7 +189,7 @@ export class Model<T = LooseObject> extends ModelBase<T> {
     }
 
     // Methods
-    throttle = _.throttle(this.fetch, 1000)
+    throttle = throttle(this.fetch, 1000)
     initialize?: () => void = null
 
     constructor(options: ModelOptions = {}, attributes?: LooseObject) {
@@ -182,16 +201,16 @@ export class Model<T = LooseObject> extends ModelBase<T> {
         options.received = options.received || false
 
         // Inject Options
-        _.extend(this, this.sanitizeOptions(options))
+        extend(this, this.sanitizeOptions(options))
 
         // Handle Convoy
         if (options.convoy) {
             const convoy = isJSON(options.convoy) ? JSON.parse(options.convoy) : options.convoy
-            if (_.isObject(convoy)) {
+            if (isObject(convoy)) {
                 this.meta.set((convoy as LooseObject).meta || {})
                 const payload = (convoy as LooseObject).payload
-                if (_.isObject(payload)) {
-                    _.extend(this.data, payload)
+                if (isObject(payload)) {
+                    extend(this.data, payload)
                     this.completed = true
                     options.received = true
                 } else {
@@ -205,8 +224,8 @@ export class Model<T = LooseObject> extends ModelBase<T> {
         // Handle Payload
         if (options.payload) {
             const payload = isJSON(options.payload) ? JSON.parse(options.payload) : options.payload
-            if (_.isObject(payload)) {
-                _.extend(this.data, payload)
+            if (isObject(payload)) {
+                extend(this.data, payload)
                 this.completed = true
                 options.received = true
             } else {
@@ -221,7 +240,7 @@ export class Model<T = LooseObject> extends ModelBase<T> {
         this.header = new ModelBase()
         this.meta = new ModelBase()
         this.route = new ModelBase()
-        if (!_.isEmpty(this.collection)) {
+        if (!isEmpty(this.collection)) {
             if (this.collection.target) {
                 this.target = this.collection.target
             }
@@ -233,12 +252,12 @@ export class Model<T = LooseObject> extends ModelBase<T> {
         // Handle Attributes (Typically from Collection Hydration)
         // Note: This is commented out because it doesn't differ from what happens in the ModelBase Constructor
         // if (attributes && typeof attributes === 'object') {
-        //     _.extend(this.data, attributes)
+        //     extend(this.data, attributes)
         // }
 
         // TODO: Analyze possibility for options.received to be replaced with a !this.isNew()
         // Handle Data Flagged as Received from XHR
-        this.recv = options.received ? _.cloneDeep(this.data) : {}
+        this.recv = options.received ? cloneDeep(this.data) : {}
         this.sent = {}
 
         // Handle Keys we wish to ignore in patch
@@ -250,10 +269,10 @@ export class Model<T = LooseObject> extends ModelBase<T> {
         }
 
         // TODO: Enable Auto-Save
-        // this.throttle = _.throttle(this.save, 2000)
+        // this.throttle = throttle(this.save, 2000)
 
         const that = this
-        this.initialize = _.once(this.initialize || function defaultInitializer() {
+        this.initialize = once(this.initialize || function defaultInitializer() {
             // Begin Watching if already completed
             if (that.completed && (that.watch || that.autoSave)) {
                 that.watcher()
@@ -307,12 +326,12 @@ export class Model<T = LooseObject> extends ModelBase<T> {
 
     sanitizeOptions(options: LooseObject): LooseObject {
         const sanitizedOptions = {}
-        _.forEach(ModelOptionKeys, (key) => {
-            const data = _.get(options, key)
-            if (_.isUndefined(data)) {
+        forEach(ModelOptionKeys, (key) => {
+            const data = get(options, key)
+            if (isUndefined(data)) {
                 return
             }
-            _.set(sanitizedOptions, key, data)
+            set(sanitizedOptions, key, data)
         })
         return sanitizedOptions
     }
@@ -340,8 +359,8 @@ export class Model<T = LooseObject> extends ModelBase<T> {
     }
 
     // sanitizePatch(patchData: LooseObject) {
-    //     _.forEach(_.keys(patchData), (key: any) => {
-    //         if (_.endsWith(key, '$$hashKey')) {
+    //     forEach(keys(patchData), (key: any) => {
+    //         if (endsWith(key, '$$hashKey')) {
     //             delete patchData[key]
     //         }
     //     })
@@ -351,16 +370,16 @@ export class Model<T = LooseObject> extends ModelBase<T> {
     // TODO: A simpler version should exist on the ModelBase
     handleChanges(changeSet?: LooseObject): LooseObject {
         // Generate ChangeSet for normal triggers
-        const isUserChangeSet = _.isUndefined(changeSet)
+        const isUserChangeSet = isUndefined(changeSet)
         if (isUserChangeSet) {
             changeSet = super.handleChanges()
         }
 
         // Ensure ChangeSet is valid
-        if (!changeSet || _.isEmpty(changeSet)) {
+        if (!changeSet || isEmpty(changeSet)) {
             return changeSet
         }
-        // this.changed = !_.isEqual(this.data, this.initData)
+        // this.changed = !isEqual(this.data, this.initData)
 
         // This ensures that we only save
         if (this.error && !this.completed && this.getIdentifier()) {
@@ -381,13 +400,13 @@ export class Model<T = LooseObject> extends ModelBase<T> {
         if (this.urlSync) {
             // TODO: Allow an option for using PushState here instead of hitting a page reload
             // Handle ID Changes
-            if (_.get(changeSet, 'id')) {
+            if (get(changeSet, 'id')) {
                 // if (cookie('env')) {
                 //     console.info('replace id:', this.getIdentifier())
                 // }
                 // NOTE: setUrlParams will automatically update the window (and I think that is a mistake!)
                 const newUrl = setUrlParams({
-                    id: _.get(changeSet, 'id') || this.getIdentifier()
+                    id: get(changeSet, 'id') || this.getIdentifier()
                 })
                 if (newUrl !== document.location.href) {
                     window.location.replace(newUrl)
@@ -396,8 +415,8 @@ export class Model<T = LooseObject> extends ModelBase<T> {
 
             // Handle Version ID Changes
             const version = getAnchorParams('version')
-            const versionId = !_.isEmpty(version) ? parseInt(version, 10) : 0
-            if (versionId && versionId !== _.get(changeSet, 'version.id')) {
+            const versionId = !isEmpty(version) ? parseInt(version, 10) : 0
+            if (versionId && versionId !== get(changeSet, 'version.id')) {
                 if (cookie('env')) {
                     console.warn('replacing version:', versionId)
                 }
@@ -435,7 +454,7 @@ export class Model<T = LooseObject> extends ModelBase<T> {
     }
 
     getHash() {
-        return this.getType() + (_.isNumber(this.getIdentifier()) ? this.getIdentifier().toString() : this.getIdentifier())
+        return this.getType() + (isNumber(this.getIdentifier()) ? this.getIdentifier().toString() : this.getIdentifier())
     }
 
     isNew() {
@@ -457,8 +476,8 @@ export class Model<T = LooseObject> extends ModelBase<T> {
     serialize(obj: any, chain?: any) {
         const str: any = []
         obj = obj || {}
-        _.forEach(obj, (value: any, key: any) => {
-            if (_.isObject(value)) {
+        forEach(obj, (value: any, key: any) => {
+            if (isObject(value)) {
                 if (chain) {
                     key = chain + '[' + key + ']'
                 }
@@ -496,7 +515,7 @@ export class Model<T = LooseObject> extends ModelBase<T> {
         }
 
         // Diff Information
-        this.sent = _.cloneDeep(this.data)
+        this.sent = cloneDeep(this.data)
 
         // Execute XHR
         // TODO: Get this in-line with Collection logic
@@ -509,9 +528,9 @@ export class Model<T = LooseObject> extends ModelBase<T> {
                 headers: {},
                 withCredentials: this.withCredentials,
             }
-            if (!_.isUndefined(data)) {
+            if (!isUndefined(data)) {
                 if (action === 'GET') {
-                    if (_.isObject(data) && Object.keys(data).length) {
+                    if (isObject(data) && Object.keys(data).length) {
                         request.url += request.url.includes('?') ? '&' : '?'
                         request.url += this.serialize(data)
                     }
@@ -582,7 +601,7 @@ export class Model<T = LooseObject> extends ModelBase<T> {
                 }
 
                 // Evaluate Response
-                if (!_.isObject(response) && !_.isArray(response)) {
+                if (!isObject(response) && !isArray(response)) {
                     // Build Report
                     const error = new ErrorBase({
                         payload: response,
@@ -619,9 +638,9 @@ export class Model<T = LooseObject> extends ModelBase<T> {
                     // || (!this.meta.has('success') && this.meta.has('status') && this.meta.get('status[0].code') !== 'SUCCESS')
                 ) {
                     this.error = true
-                } else if (_.isArray(payload) && payload.length) {
-                    this.recv = _.first(payload)
-                } else if (_.isObject(payload) && !_.isArray(payload)) {
+                } else if (isArray(payload) && payload.length) {
+                    this.recv = head(payload)
+                } else if (isObject(payload) && !isArray(payload)) {
                     this.recv = payload
                 } else {
                     // If we've gotten this far, it's passed the status check if one is available
@@ -652,10 +671,10 @@ export class Model<T = LooseObject> extends ModelBase<T> {
                 // Diff Settings
 
                 // This is the ChangeSet coming from alterations between what is sent and received (i.e. new version)
-                const incomingChangeSet = this.completed ? _.cloneDeep(
+                const incomingChangeSet = this.completed ? cloneDeep(
                     patch(this.recv, this.sent)
                 ) : {}
-                if (!_.isEmpty(incomingChangeSet)) {
+                if (!isEmpty(incomingChangeSet)) {
                     if (cookie('env')) {
                         console.log('Incoming ChangeSet detected:',
                             cookie('debug_change_set')
@@ -668,13 +687,13 @@ export class Model<T = LooseObject> extends ModelBase<T> {
                 }
 
                 // This is the ChangeSet generated from what has changed during the save
-                const intermediateData = _.cloneDeep(
+                const intermediateData = cloneDeep(
                     this.recv
                 )
-                const intermediateChangeSet = _.cloneDeep(
+                const intermediateChangeSet = cloneDeep(
                     patch(this.data, this.sent)
                 )
-                if (!_.isEmpty(intermediateChangeSet)) {
+                if (!isEmpty(intermediateChangeSet)) {
                     if (cookie('env')) {
                         console.log('Intermediate ChangeSet detected:',
                             cookie('debug_change_set')
@@ -682,13 +701,13 @@ export class Model<T = LooseObject> extends ModelBase<T> {
                                 : intermediateChangeSet
                         )
                     }
-                    _.forEach(intermediateChangeSet, (element: any, key: any) => {
-                        _.set(intermediateData, key, element)
+                    forEach(intermediateChangeSet, (element: any, key: any) => {
+                        set(intermediateData, key, element)
                     })
                 }
 
                 // Propagate Changes
-                this.data = _.cloneDeep(intermediateData) as T
+                this.data = cloneDeep(intermediateData) as T
                 // Before handling changes make sure we set to false
                 this.changed = false
                 this.changedExternal = false
@@ -779,12 +798,12 @@ export class Model<T = LooseObject> extends ModelBase<T> {
         this.saving = true
         // TODO: store the promise locally so if it's in the middle of saving it returns the pending promise instead of adding another...
         options = options || {}
-        if (!_.isObject(options)) {
+        if (!isObject(options)) {
             console.warn('invalid options supplied:', options)
             options = {}
         }
-        if (_.has(options, 'force') && options.force) {
-            options.patch = _.has(options, 'patch') ? options.patch : false
+        if (has(options, 'force') && options.force) {
+            options.patch = has(options, 'patch') ? options.patch : false
             return this.doSave(options)
         }
         // Sanity Checks for Persisted Entities
@@ -793,7 +812,7 @@ export class Model<T = LooseObject> extends ModelBase<T> {
                 // Ensure we have a complete model to begin with
                 !this.completed ||
                 // Avoid sending empty XHRs
-                _.isEmpty(this.toPatch())
+                isEmpty(this.toPatch())
             )
         ) {
             console.warn('Blocked attempt to save an empty payload to a persisted model.')
@@ -807,11 +826,11 @@ export class Model<T = LooseObject> extends ModelBase<T> {
 
     doSave(options?: any): Promise<any> {
         options = options || {}
-        if (!_.isObject(options)) {
+        if (!isObject(options)) {
             console.warn('invalid options supplied:', options)
             options = {}
         }
-        options.patch = _.has(options, 'patch') ? options.patch : true
+        options.patch = has(options, 'patch') ? options.patch : true
         return new Promise(async (resolve: any, reject: any) => {
             this.sync(this.getIdentifier() ? 'PUT' : 'POST',
                 this.toJSON({
@@ -847,7 +866,7 @@ export class Model<T = LooseObject> extends ModelBase<T> {
         if (this.autoSaveTimeout) {
             clearTimeout(this.autoSaveTimeout)
         }
-        if (this.pending || !this.completed || this.isNew() || _.isEmpty(this.toPatch())) {
+        if (this.pending || !this.completed || this.isNew() || isEmpty(this.toPatch())) {
             return
         }
         if (this.autoSaveHalt && !this.autoSave) {
@@ -879,7 +898,7 @@ export class Model<T = LooseObject> extends ModelBase<T> {
     toJSON(options?: any) {
         // Ensure Patch only Saves on Persistent Models
         options = options || {}
-        if (!_.isObject(options)) {
+        if (!isObject(options)) {
             options = {}
         }
         options.patch = (options.patch && !this.isNew())
@@ -896,12 +915,12 @@ export class Model<T = LooseObject> extends ModelBase<T> {
 
     buildPath(path: string): any {
         const acc: any = []
-        if (!_.isString(path)) {
+        if (!isString(path)) {
             return acc
         }
         let cur
         let search
-        _.forEach(path.split('.'), (link: any) => {
+        forEach(path.split('.'), (link: any) => {
             // handle bracket chains
             if (link.match(this.bracket.match)) {
                 // extract attribute
@@ -942,8 +961,8 @@ export class Model<T = LooseObject> extends ModelBase<T> {
         if (typeof attr !== 'string' || !this.data || typeof this.data !== 'object') {
             return undefined
         }
-        return _.get(this.data, attr)
-        // Note: This get function below has been replaced by the _.get() above
+        return get(this.data, attr)
+        // Note: This get function below has been replaced by the get() above
         /* *
         return this.buildPath(attr).reduce(
             (attrs: any, link: any) => attrs && attrs[link], this.data
@@ -958,7 +977,7 @@ export class Model<T = LooseObject> extends ModelBase<T> {
         if (typeof attr === 'string') {
             attr = this.get(attr)
         }
-        return !_.isArray(attr) ? attr : attr.find((obj: any) => obj[key] === value)
+        return !isArray(attr) ? attr : attr.find((obj: any) => obj[key] === value)
     }
 
     set(attr: string | LooseObject, value: any) {
@@ -967,7 +986,7 @@ export class Model<T = LooseObject> extends ModelBase<T> {
             return this
         }
         if (typeof attr === 'object') {
-            _.forEach(attr, (v: any, k: string) => this.setAttribute(k, v))
+            forEach(attr, (v: any, k: string) => this.setAttribute(k, v))
             return this
         }
         this.setAttribute(attr, value)
@@ -981,20 +1000,20 @@ export class Model<T = LooseObject> extends ModelBase<T> {
         }
 
         // @ts-ignore
-        _.set(this.data, attr, value)
+        set(this.data, attr, value)
 
-        // Note: This entire set has been replaced with the  _.set() above
+        // Note: This entire set has been replaced with the  set() above
         /* *
-        if (_.includes(attr, '.') || _.includes(attr, '[')) {
+        if (includes(attr, '.') || includes(attr, '[')) {
             let future
             this.buildPath(attr)
                 .reduce((attrs: any, link: any, index: any, chain: any) => {
                     future = index + 1
-                    if (!_.has(attrs, link)) {
-                        attrs[link] = _.has(chain, future) &&
-                        _.isNumber(chain[future]) ? [] : {}
+                    if (!has(attrs, link)) {
+                        attrs[link] = has(chain, future) &&
+                        isNumber(chain[future]) ? [] : {}
                     }
-                    if (!_.has(chain, future)) {
+                    if (!has(chain, future)) {
                         attrs[link] = value
                     }
                     return attrs && attrs[link]
@@ -1012,25 +1031,25 @@ export class Model<T = LooseObject> extends ModelBase<T> {
     // FIXME: This doesn't appear to work properly anymore
     toggle(attribute: any, item?: any, options?: object | any) {
         if (typeof options === 'object' &&
-            !_.isUndefined(options.multiple) &&
-            _.isUndefined(options.strict)) {
+            !isUndefined(options.multiple) &&
+            isUndefined(options.strict)) {
             options.strict = true
         }
-        options = _.extend({
+        options = extend({
             multiple: true
-        }, _.isObject(options) ? options : {})
+        }, isObject(options) ? options : {})
         /* TODO: After plucking has been tested, remove this log *
          console.log('toggle:', attribute, item, options);
          /* */
         const request = attribute.split('[].')
         let target = this.get(request.length > 1 ? request[0] : attribute)
-        if (_.isUndefined(target) ||
-            (options.strict && _.isArray(target) !==
+        if (isUndefined(target) ||
+            (options.strict && isArray(target) !==
                 options.multiple)) {
             target = options.multiple ? [] : null
             this.set(request.length > 1 ? request[0] : attribute, target)
         }
-        if (_.isArray(target)) {
+        if (isArray(target)) {
             /* This is disabled, since hydration should not be forced by default *
              const hydrate = {}
              if (request.length > 1) {
@@ -1041,12 +1060,12 @@ export class Model<T = LooseObject> extends ModelBase<T> {
              hydrate.id = item
              }
              /* */
-            if (_.isUndefined(item)) {
+            if (isUndefined(item)) {
                 this.set(attribute, null)
             } else if (!this.exists(attribute, item)) {
                 target.push(item)
             } else {
-                _.forEach(target, (element: any, key: any) => {
+                forEach(target, (element: any, key: any) => {
                     const child = (request.length > 1 &&
                         typeof element === 'object' && request[1] in element)
                         ? element[request[1]]
@@ -1058,7 +1077,7 @@ export class Model<T = LooseObject> extends ModelBase<T> {
                         ? item.id
                         : item
                     if (childId === itemId || (
-                        _.isString(childId) && _.isString(itemId) && strcmp(childId, itemId) === 0
+                        isString(childId) && isString(itemId) && strcmp(childId, itemId) === 0
                     )) {
                         target.splice(key, 1)
                     }
@@ -1067,7 +1086,7 @@ export class Model<T = LooseObject> extends ModelBase<T> {
         } else if (typeof target === 'object' || typeof target === 'number') {
             // (item && typeof item !== 'object') ? { id: item } : item
             this.set(attribute, !this.exists(attribute, item) ? item : null)
-        } else if (_.isUndefined(item)) {
+        } else if (isUndefined(item)) {
             this.set(attribute, !target)
         }
 
@@ -1083,10 +1102,10 @@ export class Model<T = LooseObject> extends ModelBase<T> {
             return undefined
         }
         attr = this.get(request[0])
-        if (!attr || !_.isArray(attr)) {
+        if (!attr || !isArray(attr)) {
             return undefined
         }
-        const list: Array<any> = _.filter(_.map(attr, (element: any) => _.get(element, request[1])))
+        const list: Array<any> = filter(map(attr, (element: any) => get(element, request[1])))
         return list.length ? list : undefined
     }
 
@@ -1097,14 +1116,14 @@ export class Model<T = LooseObject> extends ModelBase<T> {
         }
         if (typeof attribute === 'string' && item) {
             attribute = this.pluck(attribute)
-            if (_.isArray(attribute)) {
+            if (isArray(attribute)) {
                 return typeof attribute.find((element: any) => element === item || (
-                    (typeof element === 'object' && element.id && element.id === item) || _.isEqual(element, item)
+                    (typeof element === 'object' && element.id && element.id === item) || isEqual(element, item)
                 )) !== 'undefined'
             }
             return attribute === item || (
                 typeof attribute === 'object' && attribute.id && (
-                    _.isEqual(attribute, item) || attribute.id === item
+                    isEqual(attribute, item) || attribute.id === item
                 )
             )
         }
@@ -1164,13 +1183,13 @@ export class Model<T = LooseObject> extends ModelBase<T> {
     errorMessage(error: XMLHttpRequest|ErrorBase): string|null {
         if (error instanceof ErrorBase) {
             console.error(`[${error.code}] ${error.message}`, error)
-            return error.code != 'Internal' ? error.message : null
+            return error.code !== 'Internal' ? error.message : null
         }
         const digest = (error.responseText && isJSON(error.responseText)) ? JSON.parse(error.responseText) : null
         if (!digest) {
             return null
         }
-        const message = _.get(digest, 'meta.status[0].message') || _.get(digest, 'error.exception[0].message') || null
+        const message = get(digest, 'meta.status[0].message') || get(digest, 'error.exception[0].message') || null
         if (!message) {
             return null
         }

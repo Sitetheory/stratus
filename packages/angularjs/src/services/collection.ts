@@ -5,7 +5,7 @@
 import { keys } from 'ts-transformer-keys'
 
 // Runtime
-import _, {cloneDeep} from 'lodash'
+import {cloneDeep, find, forEach, get, isArray, isEmpty, isFunction, isObject, isUndefined, map, throttle, reduce} from 'lodash'
 import angular from 'angular'
 import {Stratus} from '@stratusjs/runtime/stratus'
 
@@ -118,7 +118,7 @@ export class Collection<T = LooseObject> extends EventManager {
     autoSaveInterval = 2500
 
     // Methods
-    throttle = _.throttle(this.fetch, 1000)
+    throttle = throttle(this.fetch, 1000)
 
     constructor(options: CollectionOptions = {}) {
         super()
@@ -135,10 +135,10 @@ export class Collection<T = LooseObject> extends EventManager {
         // Handle Convoy
         if (options.convoy) {
             const convoy = isJSON(options.convoy) ? JSON.parse(options.convoy) : options.convoy
-            if (_.isObject(convoy)) {
+            if (isObject(convoy)) {
                 this.meta.set((convoy as LooseObject).meta || {})
                 const models = (convoy as LooseObject).payload
-                if (_.isArray(models)) {
+                if (isArray(models)) {
                     this.inject(models)
                     this.completed = true
                 } else {
@@ -152,7 +152,7 @@ export class Collection<T = LooseObject> extends EventManager {
         // Handle Payload
         if (options.payload) {
             const models = isJSON(options.payload) ? JSON.parse(options.payload) : options.payload
-            if (_.isArray(models)) {
+            if (isArray(models)) {
                 this.inject(models)
                 this.completed = true
             } else {
@@ -211,8 +211,8 @@ export class Collection<T = LooseObject> extends EventManager {
     serialize(obj: any, chain?: any) {
         const str: string[] = []
         obj = obj || {}
-        _.forEach(obj, (value: any, key: any) => {
-            if (_.isObject(value)) {
+        forEach(obj, (value: any, key: any) => {
+            if (isObject(value)) {
                 if (chain) {
                     key = chain + '[' + key + ']'
                 }
@@ -237,7 +237,7 @@ export class Collection<T = LooseObject> extends EventManager {
     }
 
     inject(data: Array<LooseObject>, type?: string) {
-        if (!_.isArray(data)) {
+        if (!isArray(data)) {
             return
         }
         if (this.types && this.types.indexOf(type) === -1) {
@@ -274,9 +274,9 @@ export class Collection<T = LooseObject> extends EventManager {
                 url: this.url(),
                 headers: {}
             }
-            if (!_.isUndefined(data)) {
+            if (!isUndefined(data)) {
                 if (action === 'GET') {
-                    if (_.isObject(data) && Object.keys(data).length) {
+                    if (isObject(data) && Object.keys(data).length) {
                         request.url += request.url.includes('?') ? '&' : '?'
                         request.url += this.serialize(data)
                     }
@@ -310,7 +310,7 @@ export class Collection<T = LooseObject> extends EventManager {
 
             // TODO: Make this into an over-writable function
             const handler = (response: LooseObject | Array<LooseObject> | string) => {
-                if (!_.isObject(response) && !_.isArray(response)) {
+                if (!isObject(response) && !isArray(response)) {
                     // Build Report
                     const error = new ErrorBase({
                         payload: response,
@@ -373,11 +373,11 @@ export class Collection<T = LooseObject> extends EventManager {
                     this.error = true
                 } else if (this.direct) {
                     this.models = payload
-                } else if (_.isArray(payload)) {
+                } else if (isArray(payload)) {
                     this.inject(payload)
-                } else if (_.isObject(payload)) {
+                } else if (isObject(payload)) {
                     // Note: this is explicitly stated due to context binding
-                    _.forEach(payload, (value: any, key: any) => {
+                    forEach(payload, (value: any, key: any) => {
                         this.inject(value, key)
                     })
                 } else {
@@ -394,8 +394,8 @@ export class Collection<T = LooseObject> extends EventManager {
                 this.completed = true
 
                 // Action Flags
-                this.filtering = !_.isEmpty(this.meta.get('api.q'))
-                this.paginate = !_.isEmpty(this.meta.get('api.p'))
+                this.filtering = !isEmpty(this.meta.get('api.q'))
+                this.paginate = !isEmpty(this.meta.get('api.p'))
 
                 // Clear Meta Temps
                 this.meta.clearTemp()
@@ -454,14 +454,14 @@ export class Collection<T = LooseObject> extends EventManager {
     }
 
     filter(query: string) {
-        this.filtering = !_.isEmpty(query)
-        this.meta.set('api.q', !_.isUndefined(query) ? query : '')
+        this.filtering = !isEmpty(query)
+        this.meta.set('api.q', !isUndefined(query) ? query : '')
         this.meta.set('api.p', 1)
         return this.fetch()
     }
 
     throttleFilter(query: string) {
-        this.meta.set('api.q', !_.isUndefined(query) ? query : '')
+        this.meta.set('api.q', !isUndefined(query) ? query : '')
         return new Promise((resolve: any, reject: any) => {
             const request = this.throttle()
             if (cookie('env')) {
@@ -471,7 +471,7 @@ export class Collection<T = LooseObject> extends EventManager {
                 if (cookie('env')) {
                     // TODO: Finish handling throttled data
                     /* *
-                     console.log('throttled:', _.map(models, function (model: Model) {
+                     console.log('throttled:', map(models, function (model: Model) {
                      return model.domainPrimary
                      }))
                      /* */
@@ -482,7 +482,7 @@ export class Collection<T = LooseObject> extends EventManager {
     }
 
     page(page: any) {
-        this.paginate = !_.isEmpty(page)
+        this.paginate = !isEmpty(page)
         this.meta.set('api.p', page)
         this.fetch()
         delete this.meta.get('api').p
@@ -493,7 +493,7 @@ export class Collection<T = LooseObject> extends EventManager {
     }
 
     add(target?: any, options?: CollectionModelOptions): Model {
-        if (!_.isObject(target)) {
+        if (!isObject(target)) {
             console.error('collection.add: target object not set!')
             return
         }
@@ -538,32 +538,32 @@ export class Collection<T = LooseObject> extends EventManager {
     }
 
     find(predicate: string|number|LooseFunction<boolean>) {
-        return _.find(this.models, _.isFunction(predicate) ? predicate : (model: Model) => model.get('id') === predicate)
+        return find(this.models, isFunction(predicate) ? predicate : (model: Model) => model.get('id') === predicate)
     }
 
     map(predicate: string) {
-        // return _.filter(_.map(this.models, model => model instanceof Model ? model.get(predicate) : null), model => !!model)
-        return _.map(this.models, model => model instanceof Model ? model.get(predicate) : null)
+        // return filter(map(this.models, model => model instanceof Model ? model.get(predicate) : null), model => !!model)
+        return map(this.models, model => model instanceof Model ? model.get(predicate) : null)
     }
 
     pluck(attribute: string) {
-        return _.map(this.models, model => model instanceof Model ? model.pluck(attribute) : null)
+        return map(this.models, model => model instanceof Model ? model.pluck(attribute) : null)
     }
 
     exists(attribute: string) {
-        return !!_.reduce(this.pluck(attribute) || [], (memo: any, data: any) => memo || !_.isUndefined(data))
+        return !!reduce(this.pluck(attribute) || [], (memo: any, data: any) => memo || !isUndefined(data))
     }
 
     errorMessage(error: XMLHttpRequest|ErrorBase): string|null {
         if (error instanceof ErrorBase) {
             console.error(`[${error.code}] ${error.message}`, error)
-            return error.code != 'Internal' ? error.message : null
+            return error.code !== 'Internal' ? error.message : null
         }
         const digest = (error.responseText && isJSON(error.responseText)) ? JSON.parse(error.responseText) : null
         if (!digest) {
             return null
         }
-        const message = _.get(digest, 'meta.status[0].message') || _.get(digest, 'error.exception[0].message') || null
+        const message = get(digest, 'meta.status[0].message') || get(digest, 'error.exception[0].message') || null
         if (!message) {
             return null
         }

@@ -2,7 +2,7 @@
 // ----------------
 
 // Runtime
-import _ from 'lodash'
+import {forEach, get, kebabCase, isNumber, isObject, isUndefined, set, size, union} from 'lodash'
 import angular, {IScope} from 'angular'
 import {Stratus} from '@stratusjs/runtime/stratus'
 
@@ -90,12 +90,12 @@ export class Registry {
                 'decouple',
                 'fetch'
             ]
-            _.forEach(
-                _.union(ModelOptionKeys, CollectionOptionKeys, baseInputs),
-                (option: string) => _.set(inputs, option, 'data-' + _.kebabCase(option))
+            forEach(
+                union(ModelOptionKeys, CollectionOptionKeys, baseInputs),
+                (option: string) => set(inputs, option, 'data-' + kebabCase(option))
             )
             // FIXME: Sanitize function fails here in certain cases
-            const options = _.forEach(inputs, (value: string, key: string, list: any) => {
+            const options = forEach(inputs, (value: string, key: string, list: any) => {
                 list[key] = $element.attr ? $element.attr(value) : $element[key]
                 if (!isJSON(list[key])) {
                     return
@@ -112,12 +112,12 @@ export class Registry {
             //         limit: isJSON(options.limit) ? JSON.parse(options.limit) : 40
             //     }
             // }
-            // if ($scope.api && _.isObject($scope.api)) {
+            // if ($scope.api && isObject($scope.api)) {
             //     request.api = extendDeep(request.api, $scope.api)
             // }
             let completed = 0
             const verify = () => {
-                if (!_.isNumber(completed) || completed !== _.size(options)) {
+                if (!isNumber(completed) || completed !== size(options)) {
                     return
                 }
                 resolve(this.build(options, $scope))
@@ -127,7 +127,7 @@ export class Registry {
                 // tslint:disable-next-line:no-unused-variable
                 const wait = await serviceVerify()
             }
-            _.forEach(options, async (element, key) => {
+            forEach(options, async (element, key) => {
                 if (!element || typeof element !== 'string' || !$scope || !$scope.$parent) {
                     completed++
                     verify()
@@ -190,12 +190,12 @@ export class Registry {
                     const modelOptions: ModelOptions = {
                         stagger: true
                     }
-                    _.forEach(ModelOptionKeys, (element) => {
-                        const optionValue = _.get(options, element)
-                        if (_.isUndefined(optionValue)) {
+                    forEach(ModelOptionKeys, (element) => {
+                        const optionValue = get(options, element)
+                        if (isUndefined(optionValue)) {
                             return
                         }
-                        _.set(modelOptions, element, optionValue)
+                        set(modelOptions, element, optionValue)
                     })
                     data = new Model(modelOptions, {
                         id: options.id
@@ -214,12 +214,12 @@ export class Registry {
                 if (options.decouple ||
                     !Stratus[registry][options.target].collection) {
                     const collectionOptions: CollectionOptions = {}
-                    _.forEach(CollectionOptionKeys, (element) => {
-                        const optionValue = _.get(options, element)
-                        if (_.isUndefined(optionValue)) {
+                    forEach(CollectionOptionKeys, (element) => {
+                        const optionValue = get(options, element)
+                        if (isUndefined(optionValue)) {
                             return
                         }
-                        _.set(collectionOptions, element, optionValue)
+                        set(collectionOptions, element, optionValue)
                     })
                     data = new Collection(collectionOptions)
                     if (!options.decouple) {
@@ -236,8 +236,8 @@ export class Registry {
             }
 
             // Add Temp Values
-            if (options.temp && _.isObject(options.temp) && !data.completed) {
-                _.forEach(
+            if (options.temp && isObject(options.temp) && !data.completed) {
+                forEach(
                     flatten(options.temp),
                     (v: any, k: string) => {
                         console.log('setting temp:', `api.${k}`, v)
@@ -282,7 +282,7 @@ export class Registry {
             if (!data.pending
                 && !data.completed
                 && (
-                    _.isUndefined(options.fetch) || options.fetch
+                    isUndefined(options.fetch) || options.fetch
                 )
             ) {
                 data.fetch()
