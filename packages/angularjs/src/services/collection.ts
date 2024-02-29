@@ -5,7 +5,7 @@
 import { keys } from 'ts-transformer-keys'
 
 // Runtime
-import _ from 'lodash'
+import _, {cloneDeep} from 'lodash'
 import angular from 'angular'
 import {Stratus} from '@stratusjs/runtime/stratus'
 
@@ -345,7 +345,7 @@ export class Collection<T = LooseObject> extends EventManager {
                 if (this.cache && request.method === 'GET') {
                     // Cache Request
                     if (!(queryHash in this.cacheResponse)) {
-                        this.cacheResponse[queryHash] = response
+                        this.cacheResponse[queryHash] = cloneDeep(response)
                     }
                     // Cache Headers
                     if (!(queryHash in this.cacheHeaders)) {
