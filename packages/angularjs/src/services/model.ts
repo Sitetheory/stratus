@@ -72,7 +72,7 @@ let $rootScope: angular.IRootScopeService
 
 // Service Verification Function
 const serviceVerify = async () => {
-    return new Promise(async (resolve, reject) => {
+    return new Promise(async (resolve, _reject) => {
         if ($rootScope) {
             resolve(true)
             return
@@ -275,7 +275,7 @@ export class Model<T = LooseObject> extends ModelBase<T> {
         this.initialize = once(this.initialize || function defaultInitializer() {
             // Begin Watching if already completed
             if (that.completed && (that.watch || that.autoSave)) {
-                that.watcher()
+                that.watcher().then()
             }
 
             // Bubble Event + Defer
@@ -346,16 +346,14 @@ export class Model<T = LooseObject> extends ModelBase<T> {
 
         // Verify AngularJS Services
         if (!$rootScope) {
-            // TODO: Verify the whether the const is necessity
-            // tslint:disable-next-line:no-unused-variable
-            const wait = await serviceVerify()
+            await serviceVerify()
         }
 
         // FIXME: The performance here is horrendous
         // We utilize the AngularJS Watcher for now, because it forces a redraw
         // as we change values in comparison to the native setTimeout() watcher
         // in the ModelBase.
-        $rootScope.$watch(() => this.data, (newData: LooseObject, priorData: LooseObject) => this.handleChanges(), true)
+        $rootScope.$watch(() => this.data, (_newData: LooseObject, _priorData: LooseObject) => this.handleChanges(), true)
     }
 
     // sanitizePatch(patchData: LooseObject) {
@@ -816,7 +814,7 @@ export class Model<T = LooseObject> extends ModelBase<T> {
             )
         ) {
             console.warn('Blocked attempt to save an empty payload to a persisted model.')
-            return new Promise((resolve, reject) => {
+            return new Promise((resolve, _reject) => {
                 this.saving = false
                 resolve(this.data)
             })
@@ -877,7 +875,7 @@ export class Model<T = LooseObject> extends ModelBase<T> {
                 this.saveIdle()
                 return
             }
-            this.save()
+            this.save().then()
         }, this.autoSaveInterval)
     }
 
@@ -1133,7 +1131,7 @@ export class Model<T = LooseObject> extends ModelBase<T> {
     destroy(): Promise<any> {
         // TODO: Add a delete confirmation dialog option
         if (this.isNew()) {
-            return new Promise((resolve, reject) => {
+            return new Promise((resolve, _reject) => {
                 this.throttleTrigger('change')
                 if (this.collection) {
                     this.collection.remove(this)
@@ -1141,9 +1139,9 @@ export class Model<T = LooseObject> extends ModelBase<T> {
                 resolve(this.data)
             })
         }
-        return new Promise(async (resolve: any, reject: any) => {
+        return new Promise(async (_resolve: any, reject: any) => {
             this.sync('DELETE', {})
-                .then((data: any) => {
+                .then((_data: any) => {
                     // TODO: This should not need an error check in the success portion of the Promise, but I'm going to leave it here
                     //       until we are certain there isn't any code paths relying on this rejection.
                     if (this.error) {

@@ -37,7 +37,7 @@ export interface RegistryOptions extends CollectionOptions, ModelOptions {
 
 // Service Verification Function
 const serviceVerify = async () => {
-    return new Promise(async (resolve, reject) => {
+    return new Promise(async (resolve, _reject) => {
         if ($interpolate) {
             resolve(true)
             return
@@ -76,7 +76,7 @@ export class Registry {
         $element: string|object|JQLite|any,
         $scope: object|IScope|any
     ): Promise<boolean|Collection|Model> {
-        return new Promise(async (resolve, reject) => {
+        return new Promise(async (resolve, _reject) => {
             if (typeof $element === 'string') {
                 $element = {
                     target: $element
@@ -123,9 +123,7 @@ export class Registry {
                 resolve(this.build(options, $scope))
             }
             if (!$interpolate) {
-                // TODO: Verify the whether the const is necessity
-                // tslint:disable-next-line:no-unused-variable
-                const wait = await serviceVerify()
+                await serviceVerify()
             }
             forEach(options, async (element, key) => {
                 if (!element || typeof element !== 'string' || !$scope || !$scope.$parent) {
@@ -285,7 +283,7 @@ export class Registry {
                     isUndefined(options.fetch) || options.fetch
                 )
             ) {
-                data.fetch()
+                data.fetch().then()
             }
         }
         return data

@@ -484,7 +484,7 @@ export class Collection<T = LooseObject> extends EventManager {
     page(page: any) {
         this.paginate = !isEmpty(page)
         this.meta.set('api.p', page)
-        this.fetch()
+        this.fetch().then()
         delete this.meta.get('api').p
     }
 
