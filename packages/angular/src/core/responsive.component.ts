@@ -37,8 +37,9 @@ export class ResponsiveComponent implements OnDestroy, ResponsiveInterface, Base
 
     /**
      * force a redraw
+     * Increasingly delay the refresh loop timeout to avoid cases of components never finishing
      */
-    public refresh() {
+    public refresh(timeout = 100) {
         return new Promise<void>((resolve, reject) => {
             if (this.disableRefresh) {
                 resolve()
@@ -54,9 +55,9 @@ export class ResponsiveComponent implements OnDestroy, ResponsiveInterface, Base
                     console.warn('[flow control] waiting to refresh component:', this.uid)
                 }
                 setTimeout(() => {
-                    this.refresh()
+                    this.refresh(timeout*2)
                         .then(() => resolve())
-                }, 100)
+                }, timeout)
                 return
             }
             this.reloading = true
