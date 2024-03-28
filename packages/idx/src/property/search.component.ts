@@ -352,7 +352,8 @@ Stratus.Components.IdxPropertySearch = {
                 {name: 'Lowest Price', value: 'BestPrice'},
                 {name: 'Recently Updated', value: '-ModificationTimestamp'},
                 {name: 'Recently Sold', value: '-CloseDate'},
-                {name: 'Status', value: ['Status', '-BestPrice']}
+                {name: 'Status + Price', value: ['Status', '-BestPrice']},
+                {name: 'Status + Recent', value: ['Status', '-ModificationTimestamp']}
             ]
             $scope.options.selection.Status ??= {}
             $scope.options.selection.Status.default ??= {

@@ -3,6 +3,8 @@
  * @example import '@stratusjs/idx/idx'
  */
 
+const apiVersion = '3.13.0' // IDX Server Api version expected
+
 // Runtime
 import {clone, extend, get, isArray, isDate, isEmpty, isEqual, isNumber, isObject, isPlainObject, isString, uniqueId} from 'lodash'
 import {Stratus} from '@stratusjs/runtime/stratus'
@@ -38,6 +40,7 @@ import '@stratusjs/idx/listTrac'
 
 export interface IdxService {
     // Variables
+    apiVersion: string // IDX Server version requested/designed for
     sharedValues: IdxSharedValue
 
     // Fetch Methods
@@ -1150,7 +1153,7 @@ const angularJsService = (
     function tokenRefresh(keepAlive: boolean = false, cacheReset: boolean = false): IPromise<void> {
         // TODO request only certain service_ids (&service_id=0,1,9 or &service_id[]=0&service_id[]=9)
         return $q((resolve: void | any, reject: void | any) => {
-            let additionalQueries = ''
+            let additionalQueries = `&apiVersion=${apiVersion}`
             // Fetch from each service allowed
             if (idxServicesEnabled.length !== 0) {
                 idxServicesEnabled.forEach((service) => {
@@ -1446,6 +1449,10 @@ const angularJsService = (
         }
     ): Model<T> {
         // request.direct = true;
+        if (request.api && !isString(request.api)) {
+            // Ensure we are requesting the apiVersion these widgets were designed for
+            request.api.apiVersion = apiVersion
+        }
         const model = new Model(request) as Model<T>
         if (
             Object.prototype.hasOwnProperty.call(request, 'api') &&
@@ -1469,6 +1476,10 @@ const angularJsService = (
      */
     function createCollection<T>(request: any): Collection<T> {
         request.direct = true
+        if (request.api) {
+            // Ensure we are requesting the apiVersion these widgets were designed for
+            request.api.apiVersion = apiVersion
+        }
         const collection = new Collection(request) as Collection<T>
         if (request.api) {
             collection.meta.set('api', isJSON(request.api)
@@ -3543,6 +3554,7 @@ const angularJsService = (
     }
 
     return {
+        apiVersion,
         fetchMembers,
         fetchOffices,
         fetchProperties,
