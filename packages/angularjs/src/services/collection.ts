@@ -5,7 +5,22 @@
 import { keys } from 'ts-transformer-keys'
 
 // Runtime
-import {cloneDeep, find, forEach, get, isArray, isEmpty, isFunction, isObject, isUndefined, map, throttle, reduce} from 'lodash'
+import {
+    cloneDeep,
+    extend,
+    find,
+    forEach,
+    get,
+    isArray,
+    isEmpty,
+    isFunction,
+    isObject,
+    isUndefined,
+    map,
+    set,
+    throttle,
+    reduce, clone
+} from 'lodash'
 import angular from 'angular'
 import {Stratus} from '@stratusjs/runtime/stratus'
 
@@ -50,6 +65,7 @@ export interface CollectionOptions {
     watch?: boolean,
     payload?: string,
     convoy?: string,
+    headers?: LooseObject<any>,
 }
 
 export interface CollectionModelOptions extends ModelOptions {
@@ -66,7 +82,7 @@ export interface CollectionModelOptions extends ModelOptions {
 export const CollectionOptionKeys = keys<CollectionOptions>()
 
 export interface CollectionSyncOptions {
-    headers?: LooseObject<string>
+    headers?: LooseObject<any>
     nocache?: boolean
 }
 
@@ -97,6 +113,8 @@ export class Collection<T = LooseObject> extends EventManager {
     models: Model<T>[] | (Model<T>['data'])[] = []
     types: Array<string> = []
     xhr: XHR
+    withCredentials = false
+    headers: LooseObject<any> = {}
     cacheResponse: LooseObject<LooseObject|Array<LooseObject>|string> = {}
     cacheHeaders: LooseObject<LooseObject<string>> = {}
 
@@ -123,9 +141,11 @@ export class Collection<T = LooseObject> extends EventManager {
     constructor(options: CollectionOptions = {}) {
         super()
 
-        if (options && typeof options === 'object') {
-            angular.extend(this, options)
-        }
+        // Initialize required options
+        options = typeof options !== 'object' ? {} : options
+
+        // Inject Options
+        extend(this, this.sanitizeOptions(options))
 
         // Generate URL
         if (this.target) {
@@ -208,6 +228,18 @@ export class Collection<T = LooseObject> extends EventManager {
         // }
     }
 
+    sanitizeOptions(options: LooseObject): LooseObject {
+        const sanitizedOptions = {}
+        forEach(CollectionOptionKeys, (key) => {
+            const data = get(options, key)
+            if (isUndefined(data)) {
+                return
+            }
+            set(sanitizedOptions, key, data)
+        })
+        return sanitizedOptions
+    }
+
     serialize(obj: any, chain?: any) {
         const str: string[] = []
         obj = obj || {}
@@ -272,7 +304,8 @@ export class Collection<T = LooseObject> extends EventManager {
             const request: XHRRequest = {
                 method: action,
                 url: this.url(),
-                headers: {}
+                headers: clone(this.headers),
+                withCredentials: this.withCredentials,
             }
             if (!isUndefined(data)) {
                 if (action === 'GET') {

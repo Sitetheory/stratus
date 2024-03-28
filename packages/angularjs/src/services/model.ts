@@ -6,6 +6,7 @@ import {keys} from 'ts-transformer-keys'
 
 // Runtime
 import {
+    clone,
     cloneDeep,
     extend,
     filter,
@@ -126,12 +127,13 @@ export interface ModelOptions extends ModelBaseOptions {
     withCredentials?: boolean,
     payload?: string,
     convoy?: string,
+    headers?: LooseObject<any>,
 }
 
 export const ModelOptionKeys = keys<ModelOptions>()
 
 export interface ModelSyncOptions {
-    headers?: LooseObject<string>
+    headers?: LooseObject<any>
 }
 
 export class Model<T = LooseObject> extends ModelBase<T> {
@@ -147,8 +149,9 @@ export class Model<T = LooseObject> extends ModelBase<T> {
     identifier?: string | number = null
     urlRoot = '/Api'
     targetSuffix?: string = null
+
+    // Unsure usage
     serviceId?: number = null
-    withCredentials = false
 
     // Infrastructure
     header = new ModelBase()
@@ -156,6 +159,8 @@ export class Model<T = LooseObject> extends ModelBase<T> {
     route = new ModelBase()
     collection?: Collection = null
     xhr: XHR
+    withCredentials = false
+    headers: LooseObject<any> = {}
 
     // XHR Flags
     pending = false
@@ -523,7 +528,7 @@ export class Model<T = LooseObject> extends ModelBase<T> {
             const request: XHRRequest = {
                 method: action,
                 url: this.url(),
-                headers: {},
+                headers: clone(this.headers),
                 withCredentials: this.withCredentials,
             }
             if (!isUndefined(data)) {
