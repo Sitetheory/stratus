@@ -848,6 +848,7 @@ export class Model<T = LooseObject> extends ModelBase<T> {
                         reject(error)
                         return
                     }
+                    // TODO: Detect why we're getting internal messages outside of Dev Mode!
                     const errorMessage = this.errorMessage(error)
                     const formatMessage = errorMessage ? `: ${errorMessage}` : '.'
                     Toastify({
@@ -1194,6 +1195,10 @@ export class Model<T = LooseObject> extends ModelBase<T> {
         }
         const message = get(digest, 'meta.status[0].message') || get(digest, 'error.exception[0].message') || null
         if (!message) {
+            return null
+        }
+        if (!cookie('env') && has(digest, 'error.exception[0].message')) {
+            console.error('[xhr] server:', message)
             return null
         }
         return message
