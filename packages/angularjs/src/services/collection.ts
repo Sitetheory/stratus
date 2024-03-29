@@ -19,7 +19,7 @@ import {
     map,
     set,
     throttle,
-    reduce, clone
+    reduce, clone, has
 } from 'lodash'
 import angular from 'angular'
 import {Stratus} from '@stratusjs/runtime/stratus'
@@ -598,6 +598,10 @@ export class Collection<T = LooseObject> extends EventManager {
         }
         const message = get(digest, 'meta.status[0].message') || get(digest, 'error.exception[0].message') || null
         if (!message) {
+            return null
+        }
+        if (!cookie('env') && has(digest, 'error.exception[0].message')) {
+            console.error('[xhr] server:', message)
             return null
         }
         return message
