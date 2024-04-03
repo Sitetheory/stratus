@@ -252,11 +252,11 @@ export class ICalExpander {
             timeZone: e.startDate.timezone === 'Z' ? 'UTC' : e.startDate.timezone,
             title: summary,
             summary,
-            description: e.description,
+            description: entityDecode(e.description || ''),
             attendees: e.attendees,
             organizer: e.organizer,
             id: e.uid,
-            location: e.location,
+            location: e.location ? entityDecode(e.location) : null,
             url: e.url || '',
             allDay: e.allDay,
             image: e.image // Custom item
