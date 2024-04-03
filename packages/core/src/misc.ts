@@ -1,11 +1,11 @@
-import _, {extend} from 'lodash'
+import {camelCase, clone, every, extend, findKey, forEach, get, isArray, isEmpty, isObject, isString, map,  min, size, uniqueId} from 'lodash'
 
 // This function simply extracts the name of a function from code directly
 export function functionName(code: any) {
-    if (_.isEmpty(code)) {
+    if (isEmpty(code)) {
         return null
     }
-    if (!_.isString(code)) {
+    if (!isString(code)) {
         code = code.toString()
     }
     code = code.substr('function '.length)
@@ -34,8 +34,8 @@ export function converge(list: any, method: any) {
         method = 'min'
     }
     if (method === 'min') {
-        const lowest = _.min(list)
-        return _.findKey(list, (element: any) => (element === lowest))
+        const lowest = min(list)
+        return findKey(list, (element: any) => (element === lowest))
     } else if (method === 'radial') {
         // Eccentricity
         // Radians
@@ -83,8 +83,8 @@ export function hydrateString(str: string): string {
 //     if (typeof obj !== 'object') {
 //         return obj
 //     }
-//     const shallow = _.clone(obj)
-//     _.forEach(shallow, (value: any, key: any) => {
+//     const shallow = clone(obj)
+//     forEach(shallow, (value: any, key: any) => {
 //         shallow[key] = cloneDeep(value)
 //     })
 //     return shallow
@@ -92,11 +92,11 @@ export function hydrateString(str: string): string {
 
 // This function utilizes tree building to clone an object.
 export function extendDeep(target: any, merger: any) {
-    const shallow = _.clone(target)
+    const shallow = clone(target)
     if (!merger || typeof merger !== 'object') {
         return merger
     }
-    _.forEach(merger, (value: any, key: number|string) => {
+    forEach(merger, (_value: any, key: number|string) => {
         if (!shallow || typeof shallow !== 'object') {
             return
         }
@@ -109,10 +109,10 @@ export function extendDeep(target: any, merger: any) {
 
 // TODO: Move this to a new PushState Handler Class
 // Get more params which is shown after anchor '#' anchor in the url.
-export function getAnchorParams(key: any, url?: any) {
+export function getAnchorParams(key: any, _url?: any) {
     const vars: any = {}
     const tail = window.location.hash
-    if (_.isEmpty(tail)) {
+    if (isEmpty(tail)) {
         return vars
     }
     const digest = /([a-zA-Z]+)(?:\/([0-9]+))?/g
@@ -134,7 +134,7 @@ export function getUrlParams(key: any, url?: any) {
     if (anchor >= 0) {
         url = url.substring(0, anchor)
     }
-    url.replace(/[?&]+([^=&]+)=([^&]*)/gi, (m: any, keyChild: any, value: any) => {
+    url.replace(/[?&]+([^=&]+)=([^&]*)/gi, (_m: any, keyChild: any, value: any) => {
         vars[keyChild] = hydrate(value)
     })
     return (typeof key !== 'undefined' && key) ? vars[key] : vars
@@ -158,18 +158,18 @@ export function setUrlParams(params: any, url?: any) {
         tail = url.substring(anchor, url.length)
         url = url.substring(0, anchor)
     }
-    url.replace(/[?&]+([^=&]+)=([^&]*)/gi, (m: any, key: any, value: any) => {
+    url.replace(/[?&]+([^=&]+)=([^&]*)/gi, (_m: any, key: any, value: any) => {
         vars[key] = value
     })
-    vars = _.extend(vars, params)
+    vars = extend(vars, params)
     return ((glue >= 0 ? url.substring(0, glue) : url) + '?' +
-        _.map(vars, (value: any, key: any) => key + '=' + dehydrate(value))
+        map(vars, (value: any, key: any) => key + '=' + dehydrate(value))
             .reduce((memo: any, value: any) => memo + '&' + value) + tail)
 }
 
 // Ensure all values in an array or object are true
 export function allTrue(values: any) {
-    return (typeof values === 'object') ? _.every(values, (value: any) => value) : false
+    return (typeof values === 'object') ? every(values, (value: any) => value) : false
 }
 
 // Determines whether or not the string supplied is in a valid JSON format
@@ -207,7 +207,7 @@ export function flatten(data: LooseObject, flatData?: LooseObject, chain?: strin
     flatData = flatData || {}
     const delimiter = chain ? '.' : ''
     chain = chain || ''
-    _.forEach(data, (value: any, key: string|number) => {
+    forEach(data, (value: any, key: string|number) => {
         const location = `${chain}${delimiter}${key}`
         if (typeof value === 'object' && value) {
             flatten(value, flatData, location)
@@ -221,36 +221,36 @@ export function flatten(data: LooseObject, flatData?: LooseObject, chain?: strin
 // This is a new simplified Patch Function to allow Difference between Object and Nested Arrays
 // Note: We are currently using LooseObject because the tree below outputs as such
 export function patch(newData: LooseObject, priorData: LooseObject, ignoreKeys?: Array<string>): LooseObject {
-    if (!_.isObject(newData) || !_.size(newData)) {
+    if (!isObject(newData) || !size(newData)) {
         return null
     }
-    if (!_.size(newData) || !_.isObject(priorData) || !_.size(priorData)) {
+    if (!size(newData) || !isObject(priorData) || !size(priorData)) {
         return newData
     }
     // Note: once we allow the tree to be an array, we must allow LooseObject|Array<any> to the parameters above.
-    // const tree: LooseObject = _.isArray(newData) ? [] : {}
+    // const tree: LooseObject = isArray(newData) ? [] : {}
     const tree: LooseObject = {}
     function detect(value: any, key: string, list: LooseObject|Array<any>, chain?: string) {
-        if (_.includes(ignoreKeys, key)) {
+        if (ignoreKeys.includes(key)) {
             return
         }
-        const acc = (chain === null || chain === undefined) ? key : (_.isArray(list) ? `${chain}[${key}]` : `${chain}.${key}`)
-        const priorValue: LooseObject|Array<any>|any =  _.get(priorData, acc)
+        const acc = (chain === null || chain === undefined) ? key : (isArray(list) ? `${chain}[${key}]` : `${chain}.${key}`)
+        const priorValue: LooseObject|Array<any>|any =  get(priorData, acc)
         if (value === priorValue) {
             return
         }
-        if (_.isObject(value)) {
-            if (_.isArray(value)) {
-                if (!priorValue || _.size(value) !== _.size(priorValue)) {
+        if (isObject(value)) {
+            if (isArray(value)) {
+                if (!priorValue || size(value) !== size(priorValue)) {
                     tree[acc] = value
                     return
                 }
-                _.forEach(value, (v: any, k: number) => {
-                    const priorEl = _.get(priorValue, k)
+                forEach(value, (v: any, k: number) => {
+                    const priorEl = get(priorValue, k)
                     if (v === priorEl) {
                         return
                     }
-                    if (_.size(patch(v, priorEl, ignoreKeys))) {
+                    if (size(patch(v, priorEl, ignoreKeys))) {
                         // This shows only the changed cell, which would be more efficient if Sitetheory allowed persistence of array keys
                         // tree[`${acc}[${k}]`] = v
                         // Store entire array in patch and break from forEach to preserve other elements
@@ -260,13 +260,13 @@ export function patch(newData: LooseObject, priorData: LooseObject, ignoreKeys?:
                 })
                 return
             }
-            _.forEach(value, (v: any, k: string, l: LooseObject|Array<any>) => detect(v, k, l, acc))
+            forEach(value, (v: any, k: string, l: LooseObject|Array<any>) => detect(v, k, l, acc))
             return
         }
         tree[acc] = value
     }
-    _.forEach(newData, detect)
-    return (!tree || !_.size(tree)) ? null : tree
+    forEach(newData, detect)
+    return (!tree || !size(tree)) ? null : tree
 }
 
 export function poll(fn: any, timeout?: any, interval?: any) {
@@ -314,9 +314,9 @@ export function strcmp(a: string, b: string) {
  * Create a universally usable id string from various names
  */
 export function safeUniqueId(...names: string[]): string {
-    return _.uniqueId(
-        _.map(names, (name) => {
-            return _.camelCase(name) + '_'
+    return uniqueId(
+        map(names, (name) => {
+            return camelCase(name) + '_'
         }).join('')
     )
 }
