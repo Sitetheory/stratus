@@ -3,10 +3,10 @@
 
 // Runtime
 import {Stratus} from '@stratusjs/runtime/stratus'
-import {clone, forEach} from 'lodash'
+import {forEach} from 'lodash'
 import {auto} from 'angular'
 import 'ical.js' // Global ICAL variable.... not able to be sandboxed yet
-import {LooseObject} from '@stratusjs/core/misc'
+import {entityDecode, LooseObject} from '@stratusjs/core/misc'
 
 // Globals
 declare var ICAL: any
@@ -245,17 +245,18 @@ export class ICalExpander {
     // Processes an Event into Full Calendar usable format.
     // Events that were reoccurring need to use flattenRecurringEventForFullCalendar to process extra data
     flattenEventForFullCalendar(e: ICalEvent): FullCalEvent {
+        const summary = entityDecode(e.summary)
         return {
             start: e.startDate.toJSDate(),
             end: e.endDate.toJSDate(),
             timeZone: e.startDate.timezone === 'Z' ? 'UTC' : e.startDate.timezone,
-            title: e.summary,
-            summary: e.summary,
-            description: e.description,
+            title: summary,
+            summary,
+            description: entityDecode(e.description || ''),
             attendees: e.attendees,
             organizer: e.organizer,
             id: e.uid,
-            location: e.location,
+            location: e.location ? entityDecode(e.location) : null,
             url: e.url || '',
             allDay: e.allDay,
             image: e.image // Custom item

@@ -22,8 +22,9 @@ import 'moment-range' // still needed by fullcalendar
 // import 'moment-timezone'
 import {cookie} from '@stratusjs/core/environment'
 import {isJSON, safeUniqueId} from '@stratusjs/core/misc'
-import {FullCalEventExtendedProps, ICalExpander} from '@stratusjs/calendar/iCal'
+import {FullCalEventExtendedProps, ICalExpander, registerTimezones} from '@stratusjs/calendar/iCal'
 import { customViewPluginConstructor } from '@stratusjs/calendar/customView'
+import { TimezoneList } from '@stratusjs/calendar/timezones'
 
 // FullCalendar
 import {Calendar, EventApi} from '@fullcalendar/core'
@@ -273,6 +274,7 @@ Stratus.Components.Calendar = {
         }
 
         this.$onInit = () => {
+            registerTimezones(TimezoneList)
             // Compile the fullcalendar header to look usable
             prepareHeader()
 
@@ -487,6 +489,7 @@ Stratus.Components.Calendar = {
                 eventClick: $scope.handleEventClick // Handles what happens when an event is clicked
             })
             $scope.calendar.render()
+            // console.log('$scope.calendar', $scope.calendar)
             return $scope.calendar
         }
     },
