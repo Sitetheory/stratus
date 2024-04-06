@@ -220,7 +220,7 @@ export function flatten(data: LooseObject, flatData?: LooseObject, chain?: strin
 
 // This is a new simplified Patch Function to allow Difference between Object and Nested Arrays
 // Note: We are currently using LooseObject because the tree below outputs as such
-export function patch(newData: LooseObject, priorData: LooseObject, ignoreKeys?: Array<string>): LooseObject {
+export function patch(newData: LooseObject, priorData: LooseObject, ignoreKeys: Array<string> = []): LooseObject {
     if (!isObject(newData) || !size(newData)) {
         return null
     }
