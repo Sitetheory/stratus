@@ -142,10 +142,11 @@ export class Collection<T = LooseObject> extends EventManager {
         super()
 
         // Initialize required options
-        options = typeof options !== 'object' ? {} : options
+        options = (!options || typeof options !== 'object') ? {} : options
 
         // Inject Options
-        extend(this, this.sanitizeOptions(options))
+        // extend(this, this.sanitizeOptions(options))
+        extend(this, options)
 
         // Generate URL
         if (this.target) {
