@@ -31,6 +31,9 @@ const timeDifference = (from: DateTime, until: DateTime, durationUnit?: Duration
 const convertLuxon = (date: LuxonPossibleInput, unix?: boolean): DateTime => {
     let timeLuxon: DateTime
     if (unix) {
+        if (isString(date)) {
+            date = parseInt(date, 10)
+        }
         timeLuxon = DateTime.fromSeconds(date as number)
     } else if(date instanceof Date) {
         timeLuxon = DateTime.fromJSDate(date as Date)
