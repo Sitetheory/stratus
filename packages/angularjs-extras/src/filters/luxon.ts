@@ -30,10 +30,20 @@ const timeDifference = (from: DateTime, until: DateTime, durationUnit?: Duration
 
 const convertLuxon = (date: LuxonPossibleInput, unix?: boolean): DateTime => {
     let timeLuxon: DateTime
+    if ('API::NOW' === date) {
+        date = 'now'
+        unix = false
+    }
+
     if (unix) {
+        if (isString(date)) {
+            date = parseInt(date, 10)
+        }
         timeLuxon = DateTime.fromSeconds(date as number)
     } else if(date instanceof Date) {
         timeLuxon = DateTime.fromJSDate(date as Date)
+    } else if('now' === date) {
+        timeLuxon = DateTime.now()
     } else {
         timeLuxon = DateTime.fromISO(date as string)
     }
@@ -71,7 +81,7 @@ Stratus.Filters.Luxon = () => {
         if (
             isString(currentOptionsLuxon.relative) &&
             Math.round(new Date().getTime() / 1000) > (timeLuxon.toSeconds() + seconds(currentOptionsLuxon.relative))
-        )  {
+        ) {
             currentOptionsLuxon.since = false
         }
 
@@ -82,9 +92,9 @@ Stratus.Filters.Luxon = () => {
             return timeDifference(timeLuxon, until, currentOptionsLuxon.duration)
         } /*else if (currentOptions.from) {
 
-        }*/ else if(currentOptionsLuxon.since) {
+        }*/ else if (currentOptionsLuxon.since) {
             // Relative time
-            return  timeLuxon.toRelative()
+            return timeLuxon.toRelative()
         } else {
             // Default Formatted Time
             return timeLuxon.toFormat(currentOptionsLuxon.format)
