@@ -4,7 +4,7 @@
 import {
     Stratus
 } from '@stratusjs/runtime/stratus'
-import {clone, extend, isEmpty, isObject, isString} from 'lodash'
+import {clone, extend, isEmpty, isObject, isString, isUndefined} from 'lodash'
 import {DateTime, Interval} from 'luxon'
 import {seconds} from '@stratusjs/core/conversion'
 import {DurationUnit} from 'luxon/src/duration'
@@ -30,7 +30,11 @@ const timeDifference = (from: DateTime, until: DateTime, durationUnit?: Duration
 
 const convertLuxon = (date: LuxonPossibleInput, unix?: boolean): DateTime => {
     let timeLuxon: DateTime
-    if ('API::NOW' === date) {
+    if (
+        'API::NOW' === date ||
+        'now' === date ||
+        isUndefined(date)
+    ) {
         date = 'now'
         unix = false
     }
