@@ -90,6 +90,7 @@ export class SelectorComponent extends RootComponent { // implements OnInit, OnC
     uid: string
 
     // Registry Attributes
+    @Input() context: string
     @Input() target: string
     @Input() targetSuffix: string
     @Input() id: number
@@ -271,7 +272,9 @@ export class SelectorComponent extends RootComponent { // implements OnInit, OnC
             url: '/Api/Content/' + model.id,
             data: {
                 route: {},
-                meta: {},
+                meta: {
+                    forceContext: this.context
+                },
                 payload: {
                     status: model.status
                 }
