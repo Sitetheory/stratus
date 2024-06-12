@@ -36,7 +36,19 @@ import {
 
 // External
 import {Stratus} from '@stratusjs/runtime/stratus'
-import _ from 'lodash'
+import {
+    forEach,
+    get,
+    has,
+    isArray,
+    isNumber,
+    set,
+    size,
+    snakeCase,
+    sortBy,
+    toNumber,
+    uniqueId
+} from 'lodash'
 import {keys} from 'ts-transformer-keys'
 import {debounce} from '@agentepsilon/decko'
 
@@ -161,7 +173,6 @@ export class TreeComponent extends RootComponent implements OnInit, OnDestroy {
     @Input() property: string
 
     // Dependencies
-    _ = _
     Stratus = Stratus
 
     // Stratus Data Connectivity
@@ -228,7 +239,7 @@ export class TreeComponent extends RootComponent implements OnInit, OnDestroy {
 
     ngOnInit() {
         // Initialization
-        this.uid = _.uniqueId(`sa_${_.snakeCase(moduleName)}_component_`)
+        this.uid = uniqueId(`sa_${snakeCase(moduleName)}_component_`)
         Stratus.Instances[this.uid] = this
 
         // Hydrate Root App Inputs
@@ -239,18 +250,18 @@ export class TreeComponent extends RootComponent implements OnInit, OnDestroy {
         Stratus.Internals.CssLoader(`${localDir}/${moduleName}/${moduleName}.component${min}.css`)
             .then(() => {
                 this.isStyled = true
-                this.refresh()
+                this.refresh().then()
             })
             .catch((err: any) => {
                 console.warn('Issue detected in CSS Loader for Component:', this)
                 console.error(err)
                 this.isStyled = true
-                this.refresh()
+                this.refresh().then()
             })
 
         // SVG Icons
         // TODO: Make this into a single service
-        _.forEach({
+        forEach({
             tree_check: `${Stratus.BaseUrl}sitetheorycore/images/icons/check.svg`,
             tree_add: `${Stratus.BaseUrl}sitetheorycore/images/icons/actionButtons/add.svg`,
             tree_delete: `${Stratus.BaseUrl}sitetheorycore/images/icons/actionButtons/delete.svg`,
@@ -272,7 +283,7 @@ export class TreeComponent extends RootComponent implements OnInit, OnDestroy {
                         return
                     }
                     this.dataDefer(this.subscriber)
-                    this.refresh()
+                    this.refresh().then()
                 }
                 data.on('change', onDataChange)
                 onDataChange()
@@ -311,7 +322,8 @@ export class TreeComponent extends RootComponent implements OnInit, OnDestroy {
                         }
                         // Since the Node is available, create the dialog
                         // console.log('direct dialog:', model)
-                        // FIXME: This is set to ignore because it previously checked if `instanceof TreeNodeComponent`, which caused a circular reference.
+                        // FIXME: This is set to ignore because it previously checked if `instanceof TreeNodeComponent`,
+                        //  which caused a circular reference.
                         // @ts-ignore
                         node.meta.component.openDialog()
                     }
@@ -341,7 +353,7 @@ export class TreeComponent extends RootComponent implements OnInit, OnDestroy {
         this.isInitialized = true
 
         // Force UI Redraw
-        this.refresh()
+        this.refresh().then()
     }
 
     // async ngOnInit() {
@@ -357,7 +369,7 @@ export class TreeComponent extends RootComponent implements OnInit, OnDestroy {
             return new Promise<void>(resolve => resolve())
         }
         // TODO: Refresh treeNodeComponents through a map
-        _.forEach(this.metaMap, (meta: NodeMeta) => {
+        forEach(this.metaMap, (meta: NodeMeta) => {
             if (!meta.component || !('refresh' in meta.component)) {
                 return
             }
@@ -433,26 +445,26 @@ export class TreeComponent extends RootComponent implements OnInit, OnDestroy {
         }
         // TODO: Break away from the registry here...  It's not responsive enough.
         let models = this.collection.models
-        if (!models || !_.isArray(models) || !models.length) {
+        if (!models || !isArray(models) || !models.length) {
             return []
         }
-        models = _.sortBy(models, ['data.priority'])
+        models = sortBy(models, ['data.priority'])
         // Convert Collection Models to Nested Tree to optimize references
         this.metaMap = this.metaMap || {}
         this.treeMap = {}
         this.tree = []
-        _.forEach(models, (model: any) => {
-            const modelId = _.get(model, 'data.id')
-            const parentId = _.get(model, 'data.nestParent.id')
+        forEach(models, (model: any) => {
+            const modelId = get(model, 'data.id')
+            const parentId = get(model, 'data.nestParent.id')
             this.dropListIdMap[`${this.uid}_node_${modelId}_drop_list`] = true
-            if (!_.has(this.metaMap, modelId)) {
+            if (!has(this.metaMap, modelId)) {
                 this.metaMap[modelId] = {
                     id: modelId,
                     // TODO: This is the default setting for the UI and should be a component setting
                     expanded: true
                 }
             }
-            if (!_.has(this.treeMap, modelId)) {
+            if (!has(this.treeMap, modelId)) {
                 this.treeMap[modelId] = {
                     id: modelId,
                     model,
@@ -463,7 +475,7 @@ export class TreeComponent extends RootComponent implements OnInit, OnDestroy {
             this.treeMap[modelId].model = model
             this.treeMap[modelId].meta = this.metaMap[modelId]
             if (parentId) {
-                if (!_.has(this.treeMap, parentId)) {
+                if (!has(this.treeMap, parentId)) {
                     this.treeMap[parentId] = {
                         id: parentId,
                         model: null,
@@ -486,7 +498,7 @@ export class TreeComponent extends RootComponent implements OnInit, OnDestroy {
 
     private trackDropLists() {
         this.dropLists = []
-        _.forEach(this.dropListIdMap, (value: boolean, key: string) => {
+        forEach(this.dropListIdMap, (value: boolean, key: string) => {
             if (!value) {
                 return
             }
@@ -505,13 +517,13 @@ export class TreeComponent extends RootComponent implements OnInit, OnDestroy {
     }
 
     private setExpanded(expanded: boolean): void {
-        if (!this.metaMap || !_.size(this.metaMap)) {
+        if (!this.metaMap || !size(this.metaMap)) {
             return
         }
-        _.forEach(this.metaMap, (nodeMeta: NodeMeta) => {
+        forEach(this.metaMap, (nodeMeta: NodeMeta) => {
             nodeMeta.expanded = expanded
         })
-        this.refresh()
+        this.refresh().then()
     }
 
     public setExpandedClick(expanded: boolean): void {
@@ -593,12 +605,12 @@ export class TreeComponent extends RootComponent implements OnInit, OnDestroy {
         // Find Drop Node (For Comparisons)
         const targetDropNode =
             (this.dropData.targetId && this.dropData.targetId in this.treeMap) ?
-            this.treeMap[_.toNumber(this.dropData.targetId)] : null
+            this.treeMap[toNumber(this.dropData.targetId)] : null
 
         // Debug Data
         if (cookie('env') && this.isDebug) {
             console.group('onDragDrop()')
-            _.forEach(
+            forEach(
                 [
                     `model drop: ${targetNode.model.get('name')}`,
                     `list shift: ${event.container.element.nativeElement.id} -> ${event.previousContainer.element.nativeElement.id}`,
@@ -690,12 +702,12 @@ export class TreeComponent extends RootComponent implements OnInit, OnDestroy {
         }
 
         // Handle new cell placement
-        if (_.isNumber(targetDropIndex)) {
+        if (isNumber(targetDropIndex)) {
             // Move cell in array
             moveItemInArray(branch, event.previousIndex, targetDropIndex)
             // Generate new priority
             let priority = 0
-            _.forEach(branch, (node: Node) => {
+            forEach(branch, (node: Node) => {
                 if (!node.model || !node.model.set) {
                     return
                 }
@@ -755,7 +767,7 @@ export class TreeComponent extends RootComponent implements OnInit, OnDestroy {
 
     // private isNotSelfDrop(event: CdkDragDrop<any> | CdkDragEnter<any> | CdkDragExit<any>): boolean {
     //     console.log('isNotSelfDrop:', event.item.data, event.item.data)
-    //     return !_.isEqual(event.item.data, event.item.data)
+    //     return !isEqual(event.item.data, event.item.data)
     // }
 
     @debounce(50)
@@ -821,7 +833,7 @@ export class TreeComponent extends RootComponent implements OnInit, OnDestroy {
             return null
         }
         const nodePatch = {}
-        _.forEach([
+        forEach([
             'id',
             'name'
         ], (key: string) => {
@@ -829,7 +841,7 @@ export class TreeComponent extends RootComponent implements OnInit, OnDestroy {
             if (!value) {
                 return
             }
-            _.set(nodePatch, key, value)
+            set(nodePatch, key, value)
         })
         return nodePatch
     }
@@ -839,9 +851,9 @@ export class TreeComponent extends RootComponent implements OnInit, OnDestroy {
     //         return []
     //     }
     //     // TODO: Instead of a filter, like this, it would be better to search the tree
-    //     return _.filter(this.dataRef(), function (child) {
-    //         const modelId = _.get(model, 'data.id')
-    //         const parentId = _.get(child, 'data.nestParent.id')
+    //     return filter(this.dataRef(), function (child) {
+    //         const modelId = get(model, 'data.id')
+    //         const parentId = get(child, 'data.nestParent.id')
     //         return modelId && parentId && modelId === parentId
     //     })
     // }
@@ -879,7 +891,7 @@ export class TreeComponent extends RootComponent implements OnInit, OnDestroy {
         if (!options) {
             options = {}
         }
-        const uid = this.svgIcons[url] = _.uniqueId('selector_svg')
+        const uid = this.svgIcons[url] = uniqueId('selector_svg')
         this.iconRegistry.addSvgIcon(uid, this.sanitizer.bypassSecurityTrustResourceUrl(url), options)
         return uid
     }
