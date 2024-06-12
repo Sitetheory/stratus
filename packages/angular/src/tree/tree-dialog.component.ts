@@ -39,7 +39,7 @@ import {
 } from 'rxjs/operators'
 
 // External
-import _ from 'lodash'
+import _, {assignIn} from 'lodash'
 import {Stratus} from '@stratusjs/runtime/stratus'
 import {cookie} from '@stratusjs/core/environment'
 
@@ -67,6 +67,7 @@ import {
 import {
     ResponsiveComponent
 } from '../core/responsive.component'
+import {serializeUrlParams} from '@stratusjs/core/misc'
 
 // Data Types
 export interface DialogData {
@@ -80,6 +81,7 @@ export interface DialogData {
     level: string
     content: any
     url: string
+    api: object
     model: Model
     collection: Collection
     parent: any
@@ -142,7 +144,15 @@ export class TreeDialogComponent extends ResponsiveComponent implements OnInit, 
     isContentLoading = false
     isContentLoaded = false
     lastContentSelectorQuery: string
+    /*
     basicContentQueryAttributes = 'options[isContent]=null&options[isCollection]=null&options[showRoutable]=true&options[showRouting]=true'
+     */
+    basicContentQueryAttributesObject: LooseObject = {
+        isContent:true,
+        isCollection: null,
+        showRoutable: true,
+        showRouting: true
+    }
     contentEntity: ContentEntity
 
     // Normalized Data
@@ -423,9 +433,10 @@ export class TreeDialogComponent extends ResponsiveComponent implements OnInit, 
     }
 
     getQueryUrl(query?: string, id?: string|number): string {
+        const fullApiOptions = { options: assignIn(this.basicContentQueryAttributesObject, this.data.api)}
         query = (!_.isString(query) || _.isEmpty(query)) ? '' : query
         id = !_.isString(id) && !_.isNumber(id) ? '' : `/${id}`
-        return `${this.apiBase}${id}?limit=${this.limit}&${this.basicContentQueryAttributes}&q=${query}`
+        return `${this.apiBase}${id}?limit=${this.limit}&${serializeUrlParams(fullApiOptions)}&q=${query}`
     }
 
     selectedOnTop(list?: Array<ContentEntity>, selected?: ContentEntity): Array<ContentEntity> {

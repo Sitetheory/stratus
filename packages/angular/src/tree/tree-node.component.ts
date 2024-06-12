@@ -238,6 +238,7 @@ export class TreeNodeComponent extends ResponsiveComponent implements OnInit, On
                 id: this.node.model.data.id || null,
                 name: this.node.model.data.name || '',
                 target: this.node.model.data.url ? 'url' : 'content',
+                api: this.tree.api,
                 // level: this.node.model.data.nestParent === null ? 'top' : 'child',
                 content: this.node.model.data.content || null,
                 url: this.node.model.data.url || null,
