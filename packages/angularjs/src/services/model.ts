@@ -532,7 +532,7 @@ export class Model<T = LooseObject> extends ModelBase<T> {
                 withCredentials: this.withCredentials,
             }
             if (!isUndefined(data)) {
-                if (action === 'GET') {
+                if (['GET','DELETE'].includes(action)) {
                     if (isObject(data) && Object.keys(data).length) {
                         request.url += request.url.includes('?') ? '&' : '?'
                         request.url += this.serialize(data)
@@ -1146,7 +1146,11 @@ export class Model<T = LooseObject> extends ModelBase<T> {
             })
         }
         return new Promise(async (_resolve: any, reject: any) => {
-            this.sync('DELETE', {})
+            let deleteData = {}
+            if (!isEmpty(this.meta.get('api'))) {
+                deleteData = this.meta.get('api')
+            }
+            this.sync('DELETE', deleteData)
                 .then((_data: any) => {
                     // TODO: This should not need an error check in the success portion of the Promise, but I'm going to leave it here
                     //       until we are certain there isn't any code paths relying on this rejection.
