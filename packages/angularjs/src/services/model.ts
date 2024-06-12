@@ -39,6 +39,7 @@ import {
     isJSON,
     LooseObject,
     patch,
+    serializeUrlParams,
     setUrlParams,
     strcmp,
     ucfirst
@@ -476,29 +477,8 @@ export class Model<T = LooseObject> extends ModelBase<T> {
         return url
     }
 
-    serialize(obj: any, chain?: any) {
-        const str: any = []
-        obj = obj || {}
-        forEach(obj, (value: any, key: any) => {
-            if (isObject(value)) {
-                if (chain) {
-                    key = chain + '[' + key + ']'
-                }
-                str.push(this.serialize(value, key))
-            } else {
-                let encoded = ''
-                if (chain) {
-                    encoded += chain + '['
-                }
-                encoded += key
-                if (chain) {
-                    encoded += ']'
-                }
-                str.push(encoded + '=' + value)
-            }
-        })
-        return str.join('&')
-    }
+    /** @deprecated use @stratusjs/core/misc serializeUrlParams() instead */
+    serialize(obj: any, chain?: any) { return serializeUrlParams(obj, chain)}
 
     // TODO: Abstract this deeper
     sync(action?: string, data?: LooseObject, options?: ModelSyncOptions): Promise<any> {
