@@ -322,6 +322,33 @@ export function safeUniqueId(...names: string[]): string {
 }
 
 /**
+ * Convert an object or ArrayLike into a URL usable string
+ */
+export function serializeUrlParams(obj: any, chain?: any) {
+    const str: any = []
+    obj = obj || {}
+    forEach(obj, (value: any, key: any) => {
+        if (isObject(value)) {
+            if (chain) {
+                key = chain + '[' + key + ']'
+            }
+            str.push(serializeUrlParams(value, key))
+        } else {
+            let encoded = ''
+            if (chain) {
+                encoded += chain + '['
+            }
+            encoded += key
+            if (chain) {
+                encoded += ']'
+            }
+            str.push(encoded + '=' + value)
+        }
+    })
+    return str.join('&')
+}
+
+/**
  * _.truncate() is faster if target doesn't contain html
  * https://lodash.com/docs/4.17.15#truncate
  *
