@@ -31,7 +31,10 @@ import {IconOptions, MatIconRegistry} from '@angular/material/icon'
 
 // External Dependencies
 import {Stratus} from '@stratusjs/runtime/stratus'
-import _ from 'lodash'
+import _, {
+    get,
+    isUndefined
+} from 'lodash'
 import {keys} from 'ts-transformer-keys'
 import {cookie} from '@stratusjs/core/environment'
 
@@ -90,7 +93,6 @@ export class SelectorComponent extends RootComponent { // implements OnInit, OnC
     uid: string
 
     // Registry Attributes
-    @Input() context: string
     @Input() target: string
     @Input() targetSuffix: string
     @Input() id: number
@@ -264,6 +266,10 @@ export class SelectorComponent extends RootComponent { // implements OnInit, OnC
         // model is not directly a model, but just a sub entity of content.version.modules
         // so we have to create a special API call to update just this one model
         // 'Content/' + model.id
+        let meta = {}
+        if (!isUndefined(this.data)) {
+            meta = get(this.data, 'meta.data.api')
+        }
         const statusOriginal = model.status
         model.status = statusOriginal === 1 ? 0 : 1
         // Create a direct XHR
@@ -272,9 +278,7 @@ export class SelectorComponent extends RootComponent { // implements OnInit, OnC
             url: '/Api/Content/' + model.id,
             data: {
                 route: {},
-                meta: {
-                    forceContext: this.context
-                },
+                meta,
                 payload: {
                     status: model.status
                 }
@@ -289,7 +293,7 @@ export class SelectorComponent extends RootComponent { // implements OnInit, OnC
                     this.refresh()
                     return
                 }
-                console.log('success[toggleStatus]:', response)
+                // console.log('success[toggleStatus]:', response)
             })
             .catch((error: any) => {
                 console.error('error[toggleStatus]:', error)
