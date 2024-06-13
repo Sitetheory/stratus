@@ -27,13 +27,19 @@ import {
 import {DomSanitizer} from '@angular/platform-browser'
 import {IconOptions, MatIconRegistry} from '@angular/material/icon'
 
-// RXJS
-
 // External Dependencies
 import {Stratus} from '@stratusjs/runtime/stratus'
-import _, {
+import {
+    forEach,
     get,
-    isUndefined
+    has,
+    head,
+    isArray,
+    isEmpty,
+    isObject,
+    isUndefined,
+    snakeCase,
+    uniqueId
 } from 'lodash'
 import {keys} from 'ts-transformer-keys'
 import {cookie} from '@stratusjs/core/environment'
@@ -64,7 +70,7 @@ const min = !cookie('env') ? '.min' : ''
 const localDir = `${Stratus.BaseUrl}${boot.configuration.paths[`${systemDir}/*`].replace(/[^/]*$/, '').replace(/\/dist\/$/, '/src/')}`
 
 // Utility Functions
-const has = (object: object, path: string) => _.has(object, path) && !_.isEmpty(_.get(object, path))
+const hasNotEmpty = (object: object, path: string) => has(object, path) && !isEmpty(get(object, path))
 
 // export interface Model {
 //     completed: boolean;
@@ -109,8 +115,8 @@ export class SelectorComponent extends RootComponent { // implements OnInit, OnC
     @Input() ignorePriority: boolean
 
     // Dependencies
-    _ = _
-    has = has
+    get = get
+    has = hasNotEmpty
     log = console.log
     Stratus = Stratus
 
@@ -154,14 +160,14 @@ export class SelectorComponent extends RootComponent { // implements OnInit, OnC
         super()
 
         // Initialization
-        this.uid = _.uniqueId(`sa_${_.snakeCase(moduleName)}_component_`)
+        this.uid = uniqueId(`sa_${snakeCase(moduleName)}_component_`)
         Stratus.Instances[this.uid] = this
 
         // Declare Observable with Subscriber (Only Happens Once)
         this.dataSub = new Observable(subscriber => this.dataDefer(subscriber))
 
         // SVG Icons
-        _.forEach({
+        forEach({
             selector_delete: `${Stratus.BaseUrl}sitetheorycore/images/icons/actionButtons/delete.svg`,
             selector_status: `${Stratus.BaseUrl}sitetheorycore/images/icons/actionButtons/visibility.svg`,
             selector_edit: `${Stratus.BaseUrl}sitetheorycore/images/icons/actionButtons/edit.svg`
@@ -172,13 +178,13 @@ export class SelectorComponent extends RootComponent { // implements OnInit, OnC
         Stratus.Internals.CssLoader(`${localDir}${moduleName}/${moduleName}.component${min}.css`)
             .then(() => {
                 this.styled = true
-                this.refresh()
+                this.refresh().then()
             })
             .catch((err: any) => {
                 console.warn('Issue detected in CSS Loader for Component:', this)
                 console.error(err)
                 this.styled = true
-                this.refresh()
+                this.refresh().then()
             })
 
         // Hydrate Root App Inputs
@@ -200,7 +206,7 @@ export class SelectorComponent extends RootComponent { // implements OnInit, OnC
                     // this.onDataChange();
                     this.dataDefer(this.subscriber)
                     this.prioritize()
-                    this.refresh()
+                    this.refresh().then()
                 }
                 data.on('change', onDataChange)
                 onDataChange()
@@ -249,7 +255,7 @@ export class SelectorComponent extends RootComponent { // implements OnInit, OnC
         moveItemInArray(models, event.previousIndex, event.currentIndex)
         if (!this.ignorePriority) {
             let priority = 0
-            _.forEach(models, (model: any) => model.priority = priority++)
+            forEach(models, (model: any) => model.priority = priority++)
         }
         this.model.trigger('change')
     }
@@ -287,10 +293,10 @@ export class SelectorComponent extends RootComponent { // implements OnInit, OnC
         })
         xhr.send()
             .then((response: LooseObject | Array<LooseObject> | string) => {
-                if (!_.isObject(response) || _.get(response, 'meta.status[0].code') !== 'SUCCESS') {
+                if (!isObject(response) || get(response, 'meta.status[0].code') !== 'SUCCESS') {
                     console.error('error[toggleStatus]:', response)
                     model.status = statusOriginal
-                    this.refresh()
+                    this.refresh().then()
                     return
                 }
                 // console.log('success[toggleStatus]:', response)
@@ -298,7 +304,7 @@ export class SelectorComponent extends RootComponent { // implements OnInit, OnC
             .catch((error: any) => {
                 console.error('error[toggleStatus]:', error)
                 model.status = statusOriginal
-                this.refresh()
+                this.refresh().then()
             })
         return
     }
@@ -308,7 +314,7 @@ export class SelectorComponent extends RootComponent { // implements OnInit, OnC
         if (!models || !models.length) {
             console.error('unable to remove model from selection:', models)
             // Still refresh if empty
-            this.refresh()
+            this.refresh().then()
             return
         }
         let index: number = models.indexOf(model)
@@ -317,9 +323,9 @@ export class SelectorComponent extends RootComponent { // implements OnInit, OnC
             const mirrorModels = models
                 .map((m: any) => model.id === m.id ? m : null)
                 .filter((m: any) => m)
-            if (_.isArray(mirrorModels) && mirrorModels.length) {
+            if (isArray(mirrorModels) && mirrorModels.length) {
                 index = models.indexOf(
-                    _.first(mirrorModels)
+                    head(mirrorModels)
                 )
             }
         }
@@ -372,7 +378,7 @@ export class SelectorComponent extends RootComponent { // implements OnInit, OnC
             console.log('pushed models to subscriber:', models)
         }
         /* */
-        this.refresh()
+        this.refresh().then()
         // TODO: Add a returned Promise to ensure async/await can use this defer directly.
     }
 
@@ -381,7 +387,7 @@ export class SelectorComponent extends RootComponent { // implements OnInit, OnC
             return []
         }
         const models = this.model.get(this.property)
-        if (!models || !_.isArray(models)) {
+        if (!models || !isArray(models)) {
             return []
         }
         return models
@@ -429,7 +435,7 @@ export class SelectorComponent extends RootComponent { // implements OnInit, OnC
         // FIXME: This is not in use due to contextual issues.
         this.prioritize()
         this.dataDefer(this.subscriber)
-        this.refresh()
+        this.refresh().then()
     }
 
     prioritize() {
@@ -439,7 +445,7 @@ export class SelectorComponent extends RootComponent { // implements OnInit, OnC
         }
         if (!this.ignorePriority) {
             let priority = 0
-            _.forEach(models, (model) => model.priority = priority++)
+            forEach(models, (model) => model.priority = priority++)
         }
     }
 
@@ -476,20 +482,20 @@ export class SelectorComponent extends RootComponent { // implements OnInit, OnC
         if (!options) {
             options = {}
         }
-        const uid = this.svgIcons[url] = _.uniqueId('selector_svg')
+        const uid = this.svgIcons[url] = uniqueId('selector_svg')
         this.iconRegistry.addSvgIcon(uid, this.sanitizer.bypassSecurityTrustResourceUrl(url), options)
         return uid
     }
 
     // findImage(model: any): string {
-    //     const mime = _.get(model, 'version.images[0].mime');
+    //     const mime = get(model, 'version.images[0].mime');
     //     if (mime === undefined) {
     //         return '';
     //     }
     //     if (mime.indexOf('image') !== -1) {
-    //         return _.get(model, 'version.images[0].src') || _.get(model, 'version.shellImages[0].src') || '';
+    //         return get(model, 'version.images[0].src') || get(model, 'version.shellImages[0].src') || '';
     //     } else if (mime.indexOf('video') !== -1) {
-    //         return _.get(model, 'version.images[0].meta.thumbnail_small') || '';
+    //         return get(model, 'version.images[0].meta.thumbnail_small') || '';
     //     }
     //     return '';
     // }
