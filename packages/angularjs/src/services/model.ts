@@ -39,6 +39,7 @@ import {
     isJSON,
     LooseObject,
     patch,
+    serializeUrlParams,
     setUrlParams,
     strcmp,
     ucfirst
@@ -476,29 +477,8 @@ export class Model<T = LooseObject> extends ModelBase<T> {
         return url
     }
 
-    serialize(obj: any, chain?: any) {
-        const str: any = []
-        obj = obj || {}
-        forEach(obj, (value: any, key: any) => {
-            if (isObject(value)) {
-                if (chain) {
-                    key = chain + '[' + key + ']'
-                }
-                str.push(this.serialize(value, key))
-            } else {
-                let encoded = ''
-                if (chain) {
-                    encoded += chain + '['
-                }
-                encoded += key
-                if (chain) {
-                    encoded += ']'
-                }
-                str.push(encoded + '=' + value)
-            }
-        })
-        return str.join('&')
-    }
+    /** @deprecated use @stratusjs/core/misc serializeUrlParams() instead */
+    serialize(obj: any, chain?: any) { return serializeUrlParams(obj, chain)}
 
     // TODO: Abstract this deeper
     sync(action?: string, data?: LooseObject, options?: ModelSyncOptions): Promise<any> {
@@ -532,7 +512,7 @@ export class Model<T = LooseObject> extends ModelBase<T> {
                 withCredentials: this.withCredentials,
             }
             if (!isUndefined(data)) {
-                if (action === 'GET') {
+                if (['GET','DELETE'].includes(action)) {
                     if (isObject(data) && Object.keys(data).length) {
                         request.url += request.url.includes('?') ? '&' : '?'
                         request.url += this.serialize(data)
@@ -1146,7 +1126,11 @@ export class Model<T = LooseObject> extends ModelBase<T> {
             })
         }
         return new Promise(async (_resolve: any, reject: any) => {
-            this.sync('DELETE', {})
+            let deleteData = {}
+            if (!isEmpty(this.meta.get('api'))) {
+                deleteData = this.meta.get('api')
+            }
+            this.sync('DELETE', deleteData)
                 .then((_data: any) => {
                     // TODO: This should not need an error check in the success portion of the Promise, but I'm going to leave it here
                     //       until we are certain there isn't any code paths relying on this rejection.

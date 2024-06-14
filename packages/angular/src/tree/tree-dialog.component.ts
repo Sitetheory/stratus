@@ -39,7 +39,18 @@ import {
 } from 'rxjs/operators'
 
 // External
-import _ from 'lodash'
+import {
+    assignIn,
+    clone,
+    get,
+    isEmpty,
+    isObject,
+    isNumber,
+    isString,
+    isUndefined,
+    snakeCase,
+    uniqueId
+} from 'lodash'
 import {Stratus} from '@stratusjs/runtime/stratus'
 import {cookie} from '@stratusjs/core/environment'
 
@@ -67,6 +78,7 @@ import {
 import {
     ResponsiveComponent
 } from '../core/responsive.component'
+import {serializeUrlParams} from '@stratusjs/core/misc'
 
 // Data Types
 export interface DialogData {
@@ -80,6 +92,7 @@ export interface DialogData {
     level: string
     content: any
     url: string
+    api: object
     model: Model
     collection: Collection
     parent: any
@@ -116,7 +129,8 @@ export class TreeDialogComponent extends ResponsiveComponent implements OnInit, 
     isStyled = false
 
     // Dependencies
-    _ = _
+    // _ = _
+    get = get
     Stratus = Stratus
 
     // Root Component
@@ -142,7 +156,15 @@ export class TreeDialogComponent extends ResponsiveComponent implements OnInit, 
     isContentLoading = false
     isContentLoaded = false
     lastContentSelectorQuery: string
+    /*
     basicContentQueryAttributes = 'options[isContent]=null&options[isCollection]=null&options[showRoutable]=true&options[showRouting]=true'
+     */
+    basicContentQueryAttributesObject: LooseObject = {
+        isContent:true,
+        isCollection: null,
+        showRoutable: true,
+        showRouting: true
+    }
     contentEntity: ContentEntity
 
     // Normalized Data
@@ -170,7 +192,7 @@ export class TreeDialogComponent extends ResponsiveComponent implements OnInit, 
     // TODO: Consider making the Custom Link field the default
     ngOnInit() {
         // Initialization
-        this.uid = _.uniqueId(`sa_${_.snakeCase(moduleName)}_component_`)
+        this.uid = uniqueId(`sa_${snakeCase(moduleName)}_component_`)
         Stratus.Instances[this.uid] = this
 
         // TODO: Assess & Possibly Remove when the System.js ecosystem is complete
@@ -218,7 +240,7 @@ export class TreeDialogComponent extends ResponsiveComponent implements OnInit, 
                 debounceTime(300),
                 tap(() => this.isContentLoading = true),
                 switchMap((value: any) => {
-                        if (_.isString(value)) {
+                        if (isString(value)) {
                             this.lastContentSelectorQuery = this.getQueryUrl(value)
                         } else {
                             // console.log('switchMap value is not a string:', value)
@@ -264,11 +286,11 @@ export class TreeDialogComponent extends ResponsiveComponent implements OnInit, 
                     finalize(() => this.isSingleContentLoading = false),
                 )
                 .subscribe((response: HttpResponse<Convoy<ContentEntity>>) => {
-                    if (!response.ok || response.status !== 200 || _.isEmpty(response.body)) {
+                    if (!response.ok || response.status !== 200 || isEmpty(response.body)) {
                         return null
                     }
-                    const payload = _.get(response.body, 'payload') || response.body
-                    if (_.isEmpty(payload) || Array.isArray(payload) || !_.isObject(payload)) {
+                    const payload = get(response.body, 'payload') || response.body
+                    if (isEmpty(payload) || Array.isArray(payload) || !isObject(payload)) {
                         return null
                     }
                     // @ts-ignore
@@ -277,7 +299,7 @@ export class TreeDialogComponent extends ResponsiveComponent implements OnInit, 
                     this.dialogContentForm
                         .get('contentSelectorInput')
                         .patchValue(this.contentEntity)
-                    this.refresh()
+                    this.refresh().then()
                     return this.contentEntity
                 })
         }
@@ -294,7 +316,7 @@ export class TreeDialogComponent extends ResponsiveComponent implements OnInit, 
         //         debounceTime(300),
         //         tap(() => this.isParentLoading = true),
         //         switchMap(value => {
-        //                 if (_.isString(value)) {
+        //                 if (isString(value)) {
         //                     this.lastParentSelectorQuery = `/Api/MenuLink?q=${value}`
         //                 } else {
         //                     this.data.nestParent = value
@@ -307,11 +329,11 @@ export class TreeDialogComponent extends ResponsiveComponent implements OnInit, 
         //         )
         //     )
         //     .subscribe(response => {
-        //         if (!response.ok || response.status !== 200 || _.isEmpty(response.body)) {
+        //         if (!response.ok || response.status !== 200 || isEmpty(response.body)) {
         //             return this.filteredParentOptions = []
         //         }
-        //         const payload = _.get(response.body, 'payload') || response.body
-        //         if (_.isEmpty(payload) || !Array.isArray(payload)) {
+        //         const payload = get(response.body, 'payload') || response.body
+        //         if (isEmpty(payload) || !Array.isArray(payload)) {
         //             return this.filteredParentOptions = []
         //         }
         //         return this.filteredParentOptions = payload
@@ -353,31 +375,31 @@ export class TreeDialogComponent extends ResponsiveComponent implements OnInit, 
             return
         }
         // Routing Display
-        const routing = _.get(content, 'routing[0].url')
-        const routingText = !_.isUndefined(routing) ? ` (/${routing})` : ' (No route!)'
+        const routing = get(content, 'routing[0].url')
+        const routingText = !isUndefined(routing) ? ` (/${routing})` : ' (No route!)'
         // ContentId Fallback
-        const contentId = _.get(content, 'id')
-        const contentIdText = !_.isUndefined(contentId) ? `Content: ${contentId}` : null
+        const contentId = get(content, 'id')
+        const contentIdText = !isUndefined(contentId) ? `Content: ${contentId}` : null
         // Return Version Title or Fallback Text
-        return (_.get(content, 'version.title') || contentIdText) + routingText
+        return (get(content, 'version.title') || contentIdText) + routingText
     }
 
     // displayName(option: any) {
     //     if (option) {
-    //         return _.get(option, 'name')
+    //         return get(option, 'name')
     //     }
     // }
 
     private handleContent(response: HttpResponse<Convoy<ContentEntity>>) {
-        if (!response.ok || response.status !== 200 || _.isEmpty(response.body)) {
+        if (!response.ok || response.status !== 200 || isEmpty(response.body)) {
             this.filteredContent = []
             // FIXME: We have to go in this roundabout way to force changes to be detected since the
             // Dialog Sub-Components don't seem to have the right timing for ngOnInit
             // this.refresh()
             return this.filteredContent
         }
-        const payload = _.get(response.body, 'payload') || response.body
-        if (_.isEmpty(payload) || !Array.isArray(payload)) {
+        const payload = get(response.body, 'payload') || response.body
+        if (isEmpty(payload) || !Array.isArray(payload)) {
             this.filteredContent = []
             // FIXME: We have to go in this roundabout way to force changes to be detected since the
             // Dialog Sub-Components don't seem to have the right timing for ngOnInit
@@ -423,9 +445,10 @@ export class TreeDialogComponent extends ResponsiveComponent implements OnInit, 
     }
 
     getQueryUrl(query?: string, id?: string|number): string {
-        query = (!_.isString(query) || _.isEmpty(query)) ? '' : query
-        id = !_.isString(id) && !_.isNumber(id) ? '' : `/${id}`
-        return `${this.apiBase}${id}?limit=${this.limit}&${this.basicContentQueryAttributes}&q=${query}`
+        const fullApiOptions = { options: assignIn(this.basicContentQueryAttributesObject, this.data.api)}
+        query = (!isString(query) || isEmpty(query)) ? '' : query
+        id = !isString(id) && !isNumber(id) ? '' : `/${id}`
+        return `${this.apiBase}${id}?limit=${this.limit}&${serializeUrlParams(fullApiOptions)}&q=${query}`
     }
 
     selectedOnTop(list?: Array<ContentEntity>, selected?: ContentEntity): Array<ContentEntity> {
@@ -435,7 +458,7 @@ export class TreeDialogComponent extends ResponsiveComponent implements OnInit, 
         if (!selected || !selected.id) {
             return list
         }
-        const orderedList = _.clone(list)
+        const orderedList = clone(list)
         const index = list.findIndex((v) => v.id === selected.id)
         if (index === -1) {
             // If Selected is not present, inject as first element

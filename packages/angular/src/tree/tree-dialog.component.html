@@ -94,8 +94,8 @@
 
                         <!-- Content Type Icon -->
                         <mat-icon aria-hidden="true"
-                                  *ngIf="_.get(model, 'contentType.iconResourcePath')"
-                                  [svgIcon]="getSvg(Stratus.BaseUrl + _.get(model, 'contentType.iconResourcePath')) | async">
+                                  *ngIf="get(model, 'contentType.iconResourcePath')"
+                                  [svgIcon]="getSvg(Stratus.BaseUrl + get(model, 'contentType.iconResourcePath')) | async">
                             Icon
                         </mat-icon>
 

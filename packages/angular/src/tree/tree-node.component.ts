@@ -16,6 +16,7 @@ import {
 
 // Components
 // TODO: We may want to move these imports to interface files to avoid circular references
+// being a bundled import, circular references are generally not an issue
 import {
     Node,
     TreeComponent
@@ -34,7 +35,14 @@ import {
 } from '@stratusjs/angularjs/services/model'
 
 // External
-import _ from 'lodash'
+import {
+    get,
+    has,
+    isEmpty,
+    max,
+    snakeCase,
+    uniqueId
+} from 'lodash'
 import {Stratus} from '@stratusjs/runtime/stratus'
 import {cookie} from '@stratusjs/core/environment'
 import {IconOptions} from '@angular/material/icon'
@@ -74,7 +82,6 @@ export class TreeNodeComponent extends ResponsiveComponent implements OnInit, On
     isStyled = false
 
     // Dependencies
-    _ = _
     Stratus = Stratus
 
     // Inputs
@@ -105,7 +112,7 @@ export class TreeNodeComponent extends ResponsiveComponent implements OnInit, On
 
     ngOnInit() {
         // Initialization
-        this.uid = _.uniqueId(`sa_${_.snakeCase(moduleName)}_component_`)
+        this.uid = uniqueId(`sa_${snakeCase(moduleName)}_component_`)
         Stratus.Instances[this.uid] = this
 
         // TODO: Assess & Possibly Remove when the System.js ecosystem is complete
@@ -113,13 +120,13 @@ export class TreeNodeComponent extends ResponsiveComponent implements OnInit, On
         Stratus.Internals.CssLoader(`${localDir}/${parentModuleName}/${moduleName}.component${min}.css`)
             .then(() => {
                 this.isStyled = true
-                this.refresh()
+                this.refresh().then()
             })
             .catch((err: any) => {
                 console.warn('Issue detected in CSS Loader for Component:', this)
                 console.error(err)
                 this.isStyled = true
-                this.refresh()
+                this.refresh().then()
             })
 
         // Attach Component to Node Meta
@@ -129,7 +136,7 @@ export class TreeNodeComponent extends ResponsiveComponent implements OnInit, On
         this.isInitialized = true
 
         // Force UI Redraw
-        this.refresh()
+        this.refresh().then()
 
         // Handle Post-Persist
         this.onPostPersist()
@@ -180,7 +187,7 @@ export class TreeNodeComponent extends ResponsiveComponent implements OnInit, On
                 if (!this.node || !this.node.model) {
                     return
                 }
-                this.node.model.destroy()
+                this.node.model.destroy().then()
             })
         return dialog
     }
@@ -202,7 +209,7 @@ export class TreeNodeComponent extends ResponsiveComponent implements OnInit, On
             return
         }
         this.node.meta.expanded = !this.node.meta.expanded
-        this.refresh()
+        this.refresh().then()
     }
 
     public toggleExpandedClick(): void {
@@ -222,7 +229,7 @@ export class TreeNodeComponent extends ResponsiveComponent implements OnInit, On
 
     // TODO: Move things like toggle to this TreeNodeComponent, so it can be used in the template as well as the Dialog
     public openDialog(): void {
-        if (!this.node.model || !_.has(this.node.model, 'data')) {
+        if (!this.node.model || !has(this.node.model, 'data')) {
             return
         }
         const dialogRef = this.dialog.open(TreeDialogComponent, {
@@ -238,6 +245,7 @@ export class TreeNodeComponent extends ResponsiveComponent implements OnInit, On
                 id: this.node.model.data.id || null,
                 name: this.node.model.data.name || '',
                 target: this.node.model.data.url ? 'url' : 'content',
+                api: this.tree.api,
                 // level: this.node.model.data.nestParent === null ? 'top' : 'child',
                 content: this.node.model.data.content || null,
                 url: this.node.model.data.url || null,
@@ -249,11 +257,11 @@ export class TreeNodeComponent extends ResponsiveComponent implements OnInit, On
                 nestParent: this.node.model.data.nestParent || null,
             }
         })
-        this.refresh()
+        this.refresh().then()
 
         const that = this
         dialogRef.afterClosed().subscribe((result: DialogData) => {
-            if (!result || _.isEmpty(result)) {
+            if (!result || isEmpty(result)) {
                 return
             }
             // Disable Listeners
@@ -268,23 +276,23 @@ export class TreeNodeComponent extends ResponsiveComponent implements OnInit, On
             ]
             // Persist to Model
             attrs.forEach(attr => {
-                if (!_.has(result, attr)) {
+                if (!has(result, attr)) {
                     return
                 }
                 // Normalize Content
                 if ('content' === attr) {
-                    const value = _.get(result, attr)
-                    this.node.model.set(attr, !value ? null : {id: _.get(value, 'id')})
+                    const value = get(result, attr)
+                    this.node.model.set(attr, !value ? null : {id: get(value, 'id')})
                     return
                 }
-                this.node.model.set(attr, _.get(result, attr))
+                this.node.model.set(attr, get(result, attr))
             })
             // Refresh Component
-            that.refresh()
+            that.refresh().then()
             // Refresh Parent Tree
-            that.tree.refresh()
+            that.tree.refresh().then()
             // Start XHR
-            this.node.model.save()
+            this.node.model.save().then()
             // Enable Listeners
             this.tree.unsettled = false
         })
@@ -315,13 +323,13 @@ export class TreeNodeComponent extends ResponsiveComponent implements OnInit, On
         }
         const model = this.node.model
         model.set('status', model.get('status') ? 0 : 1)
-        model.save()
+        model.save().then()
     }
 
     // TODO: Have this spawn off a new Tree Dialog with a new function addChild() on the TreeDialogComponent Class
     // TODO: Use the tree map to call node.openDialog after creating the new item
     public addChild(): void {
-        let priority = _.max(
+        let priority = max(
             this.tree.collection.models.filter(
                 (model: Model) => {
                     const nestParent = model.get('nestParent')
