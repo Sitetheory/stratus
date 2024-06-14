@@ -160,7 +160,7 @@ export class TreeDialogComponent extends ResponsiveComponent implements OnInit, 
     basicContentQueryAttributes = 'options[isContent]=null&options[isCollection]=null&options[showRoutable]=true&options[showRouting]=true'
      */
     basicContentQueryAttributesObject: LooseObject = {
-        isContent:true,
+        isContent: true,
         isCollection: null,
         showRoutable: true,
         showRouting: true
