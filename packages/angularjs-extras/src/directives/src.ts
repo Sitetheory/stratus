@@ -54,10 +54,13 @@ Stratus.Directives.Src = (
         Stratus.Instances[safeUniqueId(packageName, moduleName, directiveName)] = $scope
 
         $scope.whitelist = [
+            'apng',
+            'avif',
+            'gif',
             'jpg',
             'jpeg',
             'png',
-            'gif'
+            'webp'
         ]
         $scope.filter = null
 

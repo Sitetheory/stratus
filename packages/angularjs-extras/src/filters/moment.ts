@@ -23,6 +23,7 @@ type MomentOptions = {
 }
 
 /**
+ * @deprecated for Luxon https://github.com/Sitetheory/stratus/wiki/AngularJS-Extras-Package-Filters-Usage#user-content-luxon
  * @author https://github.com/petebacondarwin/angular-toArrayFilter
  */
 Stratus.Filters.Moment = () => {
