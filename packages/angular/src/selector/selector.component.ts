@@ -37,6 +37,7 @@ import {
     isArray,
     isEmpty,
     isObject,
+    isString,
     isUndefined,
     snakeCase,
     uniqueId
@@ -391,6 +392,17 @@ export class SelectorComponent extends RootComponent { // implements OnInit, OnC
             return []
         }
         return models
+    }
+
+    getString(object: unknown, property: string): string|null {
+        if (!isObject(object)) {
+            return null
+        }
+        const variable = get(object, property)
+        if (!isString(variable)) {
+            return null
+        }
+        return variable
     }
 
     // selectedModel (observer: any) : any {
