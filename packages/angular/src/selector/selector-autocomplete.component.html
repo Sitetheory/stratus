@@ -6,7 +6,7 @@
 
 <!-- data-ng-disabled="itemDisabled = isSelected(model)" -->
 <div class="autocomplete-option"
-     [class]="model.contentType.class"
+     [class]="getString(model, 'contentType.class')"
      [class.selected]="isSelected(model)">
     <div class="autocomplete-row clearfix">
         <div class="column-image st-grid column20">
@@ -36,11 +36,11 @@
                 <!-- Icon for items with no image -->
                 <div class="no-image-icon position-all"
                      *ngIf="!model.version.images.length && !model.version.videos.length && !model.version.shellImages.length"
-                     [class]="[model.contentType.class + '-background-color', model.version.meta.backgroundColor]">
+                     [class]="[getString(model, 'contentType.class') + '-background-color', getString(model, 'version.meta.backgroundColor')]">
                     <div *ngIf="!isSelected(model) && model.contentType.iconResource">
                         <mat-icon class="content-type-icon position-center"
                                   aria-hidden="true"
-                                  [svgIcon]="getSvg(Stratus.BaseUrl + model.contentType.iconResourcePath) | async">
+                                  [svgIcon]="getSvg(Stratus.BaseUrl + getString(model, 'contentType.iconResourcePath')) | async">
                             ContentType Icon
                         </mat-icon>
                     </div>
@@ -62,7 +62,7 @@
             </div>
             -->
             <h3 class="title">
-                {{model.version.title || (model.contentType.class === 'sitetheory-core-bundle-content-module' ? model.version.bestIdentifier : ('Untitled ' + model.contentType.name + ' (' + model.id + ')'))}}
+                {{getString(model, 'version.title') || (getString(model, 'contentType.class') === 'sitetheory-core-bundle-content-module' ? getString(model, 'version.bestIdentifier') : ('Untitled ' + getString(model, 'contentType.name') + ' (' + model.id + ')'))}}
             </h3>
             <div>
                 <div class="routing" *ngIf="model.routing.length">

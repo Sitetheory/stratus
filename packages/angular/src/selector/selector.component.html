@@ -1,6 +1,6 @@
  <!--
 <mat-form-field class="full-width">
-    <input matInput [placeholder]="'Add ' + (get(selectedModel, 'contentType.name') || get(selectedModel, 'name')) + ': Not Connected Yet!'" aria-label="Selector AutoComplete" [matAutocomplete]="auto" [formControl]="selectCtrl">
+    <input matInput [placeholder]="'Add ' + (getString(selectedModel, 'contentType.name') || getString(selectedModel, 'name')) + ': Not Connected Yet!'" aria-label="Selector AutoComplete" [matAutocomplete]="auto" [formControl]="selectCtrl">
     <mat-autocomplete #auto="matAutocomplete">
         <mat-option *ngFor="let selectModel of filteredModels | async" [value]="selectModel">
             {{ selectModel.version.title }}
@@ -52,16 +52,16 @@
                     <div class="image position-all"
                          *ngIf="has(selectedModel, 'version.bestImage._thumbnailUrl')"
                          [attr.data-stratus-src]="!get(selectedModel, 'version.bestImage.service') ? true : false"
-                         [ngStyle]="{'background': 'url(' + get(selectedModel, 'version.bestImage._thumbnailUrl') + ') no-repeat center center', 'background-size': 'cover'}">
+                         [ngStyle]="{'background': 'url(' + getString(selectedModel, 'version.bestImage._thumbnailUrl') + ') no-repeat center center', 'background-size': 'cover'}">
                     </div>
 
                     <!-- Icon for items with no image -->
                     <div class="no-image-icon position-all"
                          *ngIf="!has(selectedModel, 'version.bestImage._thumbnailUrl')"
-                         [ngClass]="get(selectedModel, 'contentType.class') + '-background-color'">
+                         [ngClass]="getString(selectedModel, 'contentType.class') + '-background-color'">
 
                         <mat-icon class="content-type-icon position-center"
-                                  [svgIcon]="getSvg(Stratus.BaseUrl + (get(selectedModel, 'contentType.iconResourcePath') || get(selectedModel, 'iconResourcePath'))) | async">
+                                  [svgIcon]="getSvg(Stratus.BaseUrl + (getString(selectedModel, 'contentType.iconResourcePath') || getString(selectedModel, 'iconResourcePath'))) | async">
                             Icon
                         </mat-icon>
                     </div>
@@ -78,32 +78,32 @@
                         to break away from the div and float to the top of the selector container
                         -->
                         <mat-icon class="content-type-icon"
-                                  [svgIcon]="getSvg(Stratus.BaseUrl + get(selectedModel, 'contentType.iconResourcePath')) | async">
+                                  [svgIcon]="getSvg(Stratus.BaseUrl + getString(selectedModel, 'contentType.iconResourcePath')) | async">
                             ContentType Icon
                         </mat-icon>
                         <span class="comment content-type-name font-body"
-                              [ngClass]="((get(selectedModel, 'contentType.name') || get(selectedModel, 'name')) | lowercase) + '-color'"
-                              [textContent]="(get(selectedModel, 'contentType.name') || get(selectedModel, 'name')) + ((get(selectedModel, 'status') !== 1) ? ' (hidden)' : '') + ((get(selectedModel, 'version.published') !== 1) ? ' (unpublished)' : '')">
+                              [ngClass]="((getString(selectedModel, 'contentType.name') || getString(selectedModel, 'name')) | lowercase) + '-color'"
+                              [textContent]="(getString(selectedModel, 'contentType.name') || getString(selectedModel, 'name')) + ((get(selectedModel, 'status') !== 1) ? ' (hidden)' : '') + ((get(selectedModel, 'version.published') !== 1) ? ' (unpublished)' : '')">
                         </span>
                     </div>
 
                     <!-- This include fallbacks in case a version is not present -->
-                    <h3 [innerHTML]="get(selectedModel, 'version.bestIdentifier') || get(selectedModel, 'name') || (get(selectedModel, 'contentType.controller') === 'Content\\Module' ? get(selectedModel, 'version.internalIdentifier') : 'Untitled ' + get(selectedModel, 'contentType.name') + ' (' + get(selectedModel, 'id') + ')')"></h3>
+                    <h3 [innerHTML]="getString(selectedModel, 'version.bestIdentifier') || getString(selectedModel, 'name') || (get(selectedModel, 'contentType.controller') === 'Content\\Module' ? getString(selectedModel, 'version.internalIdentifier') : 'Untitled ' + getString(selectedModel, 'contentType.name') + ' (' + get(selectedModel, 'id') + ')')"></h3>
                     <!-- TODO: make this clickable in new window -->
                     <span class="routing"
-                          [textContent]="(has(selectedModel, 'routing') ? '/' + get(selectedModel, 'routing[0].url') : null) || get(selectedModel, 'description') || ''">
+                          [textContent]="(has(selectedModel, 'routing') ? '/' + getString(selectedModel, 'routing[0].url') : null) || getString(selectedModel, 'description') || ''">
                     </span>
                 </div>
                 <div class="column-action">
                     <a mat-button
-                            [matTooltip]="'Delete ' + (get(selectedModel, 'contentType.name') || get(selectedModel, 'name')) + ' [THIS COLLECTION ONLY]'"
+                            [matTooltip]="'Delete ' + (getString(selectedModel, 'contentType.name') || getString(selectedModel, 'name')) + ' [THIS COLLECTION ONLY]'"
                             aria-label="Delete Item"
                             class="btn btn-delete"
                             (click)="remove(selectedModel)">
                         <mat-icon svgIcon="selector_delete" aria-hidden="false" aria-label="Delete Item">Delete</mat-icon>
                     </a>
                     <a mat-button
-                       [matTooltip]="'Toggle ' + (get(selectedModel, 'contentType.name') || get(selectedModel, 'name')) + ' Status ' + (get(selectedModel, 'status') ? 'Off' : 'On') + ' [ALL CONTEXTS]'"
+                       [matTooltip]="'Toggle ' + (getString(selectedModel, 'contentType.name') || getString(selectedModel, 'name')) + ' Status ' + (get(selectedModel, 'status') ? 'Off' : 'On') + ' [ALL CONTEXTS]'"
                        aria-label="Toggle Status"
                        class="btn btn-status"
                        (click)="toggleStatus(selectedModel)">
@@ -111,7 +111,7 @@
                     </a>
                     <a mat-button
                             *ngIf="has(selectedModel, 'contentType.editUrl')"
-                            [matTooltip]="'Edit ' + (get(selectedModel, 'contentType.name') || get(selectedModel, 'name'))"
+                            [matTooltip]="'Edit ' + (getString(selectedModel, 'contentType.name') || getString(selectedModel, 'name'))"
                             aria-label="Edit Item in New Window"
                             class="btn btn-edit"
                             (click)="goToUrl(selectedModel, '_blank');">
