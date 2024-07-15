@@ -115,13 +115,13 @@
              [class.display-none]="!isExpanded(node)">
         -->
         <!-- display children -->
-        <sa-tree-node cdkDrag
+        <sa-internal-tree-node cdkDrag
                       *ngFor="let child of node.children"
                       (cdkDragMoved)="tree.onDragMove($event)"
                       [cdkDragData]="child"
                       [tree]="tree"
                       [parent]="node"
                       [node]="child"
-                      class="tree-node"></sa-tree-node>
+                      class="tree-node"></sa-internal-tree-node>
     </div>
 </div>
