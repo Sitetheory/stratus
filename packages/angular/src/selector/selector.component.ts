@@ -83,7 +83,7 @@ const hasNotEmpty = (object: object, path: string) => has(object, path) && !isEm
  */
 @Component({
     // selector: 'sa-selector-component',
-    selector: `sa-${moduleName}`,
+    selector: `sa-internal-${moduleName}`,
     templateUrl: `${localDir}/${moduleName}/${moduleName}.component${min}.html`,
     // FIXME: This doesn't work, as it seems Angular attempts to use a System.js import instead of their own, so it will
     // require the steal-css module
