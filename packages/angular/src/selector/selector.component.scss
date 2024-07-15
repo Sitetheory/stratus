@@ -4,6 +4,7 @@
 .admin-select-content,
 .autocomplete-option,
 .sa-selector,
+.sa-internal-selector,
 .selected-box.cdk-drag-preview {
   .content-type {
     margin-bottom: 2px;
@@ -159,6 +160,7 @@ md-autocomplete,
 
 
 sa-selector,
+sa-internal-selector,
 .selected-box.cdk-drag-preview {
   .column-image,
   .column-title,
@@ -167,7 +169,8 @@ sa-selector,
   }
 }
 
-sa-selector {
+sa-selector,
+sa-internal-selector {
   .column-image {
     width: 15%;
     padding-right: 10px;
@@ -203,7 +206,8 @@ sa-selector {
 
 
 
-sa-selector {
+sa-selector,
+sa-internal-selector {
   margin: 0 auto;
   .routing {
     color: #333;
