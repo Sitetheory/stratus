@@ -2,6 +2,7 @@
 /* Styles for Both Media Selector and Media Selected Areas */
 
 sa-media-selector,
+sa-internal-media-selector,
 .media-selected-box.cdk-drag-preview {
   .content-type {
     margin-bottom: 2px;
@@ -205,6 +206,7 @@ sa-media-selector,
 /* Selected List Custom */
 
 sa-media-selector,
+sa-internal-media-selector,
 .media-selected-box.cdk-drag-preview {
   .column-image,
   .column-title,

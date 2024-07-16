@@ -39,9 +39,7 @@ import {
     get,
     has,
     isEmpty,
-    max,
-    snakeCase,
-    uniqueId
+    max
 } from 'lodash'
 import {Stratus} from '@stratusjs/runtime/stratus'
 import {cookie} from '@stratusjs/core/environment'
@@ -52,6 +50,7 @@ import {Observable} from 'rxjs'
 import {
     ResponsiveComponent
 } from '../core/responsive.component'
+import {safeUniqueId} from '@stratusjs/core/misc'
 
 // Local Setup
 const systemDir = '@stratusjs/angular'
@@ -66,7 +65,7 @@ const localDir = `${Stratus.BaseUrl}${boot.configuration.paths[`${systemDir}/*`]
  * @title Node for Nested Tree
  */
 @Component({
-    selector: `sa-${moduleName}`,
+    selector: `sa-internal-${moduleName}`,
     templateUrl: `${localDir}/${parentModuleName}/${moduleName}.component${min}.html`,
     // changeDetection: ChangeDetectionStrategy.OnPush
 })
@@ -112,7 +111,7 @@ export class TreeNodeComponent extends ResponsiveComponent implements OnInit, On
 
     ngOnInit() {
         // Initialization
-        this.uid = uniqueId(`sa_${snakeCase(moduleName)}_component_`)
+        this.uid = safeUniqueId('sa', moduleName, 'component')
         Stratus.Instances[this.uid] = this
 
         // TODO: Assess & Possibly Remove when the System.js ecosystem is complete
@@ -250,6 +249,9 @@ export class TreeNodeComponent extends ResponsiveComponent implements OnInit, On
                 content: this.node.model.data.content || null,
                 url: this.node.model.data.url || null,
                 browserTarget: this.node.model.data.browserTarget || null,
+                accessHide: this.node.model.data.accessHide || false,
+                linkHtml: this.node.model.data.linkHtml || '',
+                iconHtml: this.node.model.data.iconHtml || '',
                 // priority: this.node.model.data.priority || 0,
                 model: this.node.model || null,
                 collection: this.tree.collection || null,
@@ -272,7 +274,10 @@ export class TreeNodeComponent extends ResponsiveComponent implements OnInit, On
                 'content',
                 'url',
                 'priority',
-                'browserTarget'
+                'browserTarget',
+                'accessHide',
+                'linkHtml',
+                'iconHtml'
             ]
             // Persist to Model
             attrs.forEach(attr => {

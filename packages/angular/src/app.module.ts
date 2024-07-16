@@ -5,20 +5,7 @@
 
 import {forEach, extend, isNumber, uniqueId} from 'lodash'
 import {Stratus} from '@stratusjs/runtime/stratus'
-
-// Angular Core
-import {HttpClientModule} from '@angular/common/http'
-import {
-    ApplicationRef,
-    NgModule
-} from '@angular/core'
-import {
-    FormsModule,
-    ReactiveFormsModule
-} from '@angular/forms'
-import {MatNativeDateModule} from '@angular/material/core'
-import {BrowserModule} from '@angular/platform-browser'
-import {BrowserAnimationsModule} from '@angular/platform-browser/animations'
+import {ApplicationRef, NgModule} from '@angular/core'
 
 // Angular Locales
 // import localeFr from '@angular/common/locales/fr'
@@ -28,47 +15,13 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations'
 // registerLocaleData(localeFr, 'fr-FR')
 // registerLocaleData(localeEs, 'es-ES')
 
-// Material Modules
-import {MaterialModules} from './material'
-
-// Angular Packages
-import {FlexLayoutModule} from '@angular/flex-layout'
-
-// Base Components
-import {BaseComponent} from './base/base.component'
-
-// Stratus Custom Directives/Components
-import {ConfirmDialogComponent} from './confirm-dialog/confirm-dialog.component'
-import {EditorComponent} from './editor/editor.component'
-import {MediaSelectorComponent} from './media-selector/media-selector.component'
-import {SelectorComponent} from './selector/selector.component'
-import {TimezoneSelectorComponent} from './timezone-selector/timezone-selector.component'
-import {TreeComponent} from './tree/tree.component'
-import {TreeDialogComponent} from './tree/tree-dialog.component'
-import {TreeNodeComponent} from './tree/tree-node.component'
-
 // Custom Angular StratusPackages
 // import {FormPackage} from '../../form/src/form.module'
+import {AngularPackage} from './angular.module'
 import {MapPackage} from '../../map/src/map.module'
 import {StripePackage} from '../../stripe/src/stripe.module'
 
-// Froala Modules (Required by Editor)
-import {
-    FroalaEditorModule,
-    FroalaViewModule
-} from 'angular-froala-wysiwyg'
 
-// Editor Dialogs
-import {CitationDialogComponent} from './editor/citation-dialog.component'
-import {
-    CodeViewDialogComponent
-} from './editor/code-view-dialog.component'
-import {
-    MediaDialogComponent
-} from './editor/media-dialog.component'
-import {
-    LinkDialogComponent
-} from './editor/link-dialog.component'
 
 export type StratusPackage = {
     stratusModule: any
@@ -99,68 +52,14 @@ export type StratusPackage = {
 //     .map((element) => get(roster, element) || null)
 //     .filter((item) => !!item);
 
-// These are for external libraries (or Angular)
-const ngModuleImports: any[] = [
-    // AngularModules,
-    BrowserModule,
-    BrowserAnimationsModule,
-    // CodeEditorModule.forRoot(),
-    FlexLayoutModule,
-    FormsModule,
-    FroalaEditorModule.forRoot(),
-    FroalaViewModule.forRoot(),
-    HttpClientModule,
-    MaterialModules,
-    MatNativeDateModule,
-    ReactiveFormsModule,
-    // SelectorComponent.forRoot()
-]
-
-// These determine what exists as a component within Angular system.
-const ngDeclarations: any[] = [
-    BaseComponent,
-    CitationDialogComponent,
-    CodeViewDialogComponent,
-    ConfirmDialogComponent,
-    EditorComponent,
-    LinkDialogComponent,
-    MediaDialogComponent,
-    MediaSelectorComponent,
-    SelectorComponent,
-    TimezoneSelectorComponent,
-    TreeComponent,
-    TreeDialogComponent,
-    TreeNodeComponent,
-]
-
-// This determines what is accessible via DOM as a component. These must be listed in `ngDeclarations`.
-const ngEntryComponents: any[] = [
-    BaseComponent, // FIXME shouldn't be needed as doesn't load on DOM
-    CitationDialogComponent,
-    CodeViewDialogComponent,
-    ConfirmDialogComponent,
-    EditorComponent,
-    LinkDialogComponent,
-    MediaDialogComponent,
-    MediaSelectorComponent,
-    SelectorComponent,
-    TimezoneSelectorComponent,
-    TreeComponent,
-    TreeDialogComponent,
-    TreeNodeComponent,
-]
-
-const appModuleComponents = {
-    'sa-base': BaseComponent,
-    'sa-editor': EditorComponent,
-    'sa-media-selector': MediaSelectorComponent,
-    'sa-selector': SelectorComponent,
-    'sa-timezone-selector': TimezoneSelectorComponent,
-    'sa-tree': TreeComponent
-}
+// Compiled stratus modules
+const ngModuleImports: any[] = []
+// Compiled component declarations
+const appModuleComponents = {}
 
 // This determines what custom Stratus Packages we want loaded in and will handle it's own declarations
 const stratusPackages: StratusPackage[] = [
+    AngularPackage, // @stratusjs/angular
     MapPackage, // @stratusjs/map
     StripePackage // @stratusjs/stripe
 ]
@@ -172,12 +71,8 @@ stratusPackages.forEach((stratusPackage) => {
 })
 
 @NgModule({
-    // These are for external libraries (or Angular)
+    // All Stratus Modules loaded
     imports: ngModuleImports,
-    // This determines what is accessible via DOM as a component. These must be listed in `declarations`.
-    entryComponents: ngEntryComponents,
-    // These determine what exists as a component within Angular system.
-    declarations: ngDeclarations,
     // bootstrap,
     providers: [
         {provide: Window, useValue: window}

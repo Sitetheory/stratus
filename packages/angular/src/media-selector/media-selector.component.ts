@@ -67,7 +67,7 @@ const has = (object: object, path: string) => _.has(object, path) && !_.isEmpty(
  * @title Media Selector with Drag & Drop Uploads and Sorting
  */
 @Component({
-    selector: `sa-${moduleName}`,
+    selector: `sa-internal-${moduleName}`,
     // TODO: Add the ability to change the templateUrl to others, based on a cookie.
     templateUrl: `${localDir}/${moduleName}/${moduleName}.component${min}.html`,
     // FIXME: This doesn't work, as it seems Angular attempts to use a System.js import instead of their own, so it will

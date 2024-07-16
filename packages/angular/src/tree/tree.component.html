@@ -39,13 +39,13 @@
             <div *ngIf='!rootNodes || rootNodes.length === 0'>
                 Add links to start building a Menu.
             </div>
-            <sa-tree-node cdkDrag
+            <sa-internal-tree-node cdkDrag
                           *ngFor="let rootNode of rootNodes"
                           (cdkDragMoved)="onDragMove($event)"
                           [cdkDragData]="rootNode"
                           [tree]="this"
                           [node]="rootNode"
-                          class="tree-node"></sa-tree-node>
+                          class="tree-node"></sa-internal-tree-node>
         </ng-container>
 
         <!-- Debug Info -->

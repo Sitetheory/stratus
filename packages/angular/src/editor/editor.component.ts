@@ -43,7 +43,7 @@ import {
 import {
     Stratus
 } from '@stratusjs/runtime/stratus'
-import _ from 'lodash'
+import _,{clone} from 'lodash'
 
 // Angular Editor Dependencies
 /* *
@@ -213,7 +213,7 @@ const has = (object: object, path: string) => _.has(object, path) && !_.isEmpty(
  */
 @Component({
     // selector: 'sa-selector-component',
-    selector: `sa-${moduleName}`,
+    selector: `sa-internal-${moduleName}`,
     templateUrl: `${localDir}/${moduleName}/${moduleName}.component${min}.html`,
     // FIXME: This doesn't work, as it seems Angular attempts to use a System.js import instead of their own, so it will
     // require the steal-css module
@@ -254,11 +254,11 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
 
     // Stratus Data Connectivity
     registry = new Registry()
-    fetched: Promise<boolean|Collection|Model>
+    fetched: boolean|Collection|Model
     data: any
     collection?: EventBase
     // @Output() model: any;
-    model?: Model
+    model?: Model // @Input()
 
     // Observable Connection
     dataSub: Observable<[]>
@@ -1136,6 +1136,7 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             .then(data => {
                 if (!data || !(data instanceof EventManager)) {
                     console.warn('Unable to bind data from Registry!')
+                    // console.warn(this.title, 'Unable to bind data from Registry!', clone(this), data, typeof data)
                     return
                 }
                 // Manually render upon model change
@@ -1244,6 +1245,10 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
     }
 
     modelSave(value: string) {
+        if (!this.model) {
+            console.warn('There is no model for sa-editor to save to', this)
+            return
+        }
         // Avoid saving until the Model is truly available
         if (!this.model.completed) {
             return
@@ -1418,11 +1423,11 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
     }
 
     // Data Connections
-    fetchData() {
+    async fetchData() {
         if (this.fetched) {
             return this.fetched
         }
-        return this.fetched = this.registry.fetch(
+        return this.fetched = await this.registry.fetch(
             Stratus.Select(this.elementRef.nativeElement),
             this
         )
@@ -1552,6 +1557,7 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
         this.modelSave(this.outgoingData)
     }
 
+    // tslint:disable-next-line:no-shadowed-variable
     bypassHTML(html: string) {
         return this.sanitizer.bypassSecurityTrustHtml(html)
     }

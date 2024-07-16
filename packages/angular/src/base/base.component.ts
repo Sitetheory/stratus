@@ -48,7 +48,7 @@ const localDir = `${Stratus.BaseUrl}${boot.configuration.paths[`${systemDir}/*`]
  * @title Basic Load
  */
 @Component({
-    selector: 'sa-base',
+    selector: 'sa-internal-base',
     // template: '<ng-content></ng-content>',
     templateUrl: `${localDir}/${moduleName}/${moduleName}.component${min}.html`,
     // styleUrls: [`${localDir}/base/base.component${min}.css`],

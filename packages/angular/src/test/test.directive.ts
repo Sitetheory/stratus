@@ -17,7 +17,7 @@ import _ from 'lodash'
 const moduleName = 'test'
 
 @Directive({
-    selector: `[sa-${moduleName}]`
+    selector: `[sa-internal-${moduleName}]`
 })
 
 export class TestDirective { // implements OnInit, OnChanges {

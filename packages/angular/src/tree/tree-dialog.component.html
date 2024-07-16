@@ -8,221 +8,303 @@
 <div class="tree-dialog-content"
      *ngIf="isInitialized"
      mat-dialog-content>
-    <mat-form-field class="form-field">
-        <input #nameInput
-               matInput
-               type="text"
-               placeholder="Name"
-               [(ngModel)]="data.name">
-        <!--
-        <a mat-button
-                mat-icon-button
-                matSuffix
-                aria-label="Clear"
-                *ngIf="data.name"
-                (click)="data.name=''">
-            <mat-icon>close</mat-icon>
-        </a>
-        -->
-    </mat-form-field>
 
-    <!-- Target Selector -->
-    <h4>
-        <label id="link-type-label">Link Type:</label>
-    </h4>
-    <mat-radio-group class="radio-group"
-                     aria-labelledby="link-type-label"
-                     [(ngModel)]="data.target">
-        <mat-radio-button class="radio-button" value="content">
-            Website Page
-        </mat-radio-button>
-        <mat-radio-button class="radio-button" value="url">
-            Custom Link
-        </mat-radio-button>
-    </mat-radio-group>
+    <mat-tab-group (selectedIndexChange)="tabIndexChange($event)">
+        <mat-tab label="Main">
 
-    <!-- Target Editor -->
-    <form class="dialog-form"
-          [formGroup]='dialogContentForm'>
-        <ng-container *ngIf="data.target == 'content'">
             <mat-form-field class="form-field">
-                <input matInput
-                       placeholder="Link Content"
-                       aria-label="Link Content"
-                       [matAutocomplete]="auto"
-                       formControlName='contentSelectorInput'>
+                <input #nameInput
+                       matInput
+                       type="text"
+                       placeholder="Name"
+                       [(ngModel)]="data.name">
+                <!--
+                <a mat-button
+                        mat-icon-button
+                        matSuffix
+                        aria-label="Clear"
+                        *ngIf="data.name"
+                        (click)="data.name=''">
+                    <mat-icon>close</mat-icon>
+                </a>
+                -->
             </mat-form-field>
-            <mat-autocomplete autoActiveFirstOption
-                              #auto="matAutocomplete"
-                              [displayWith]="displayContentText">
-                <mat-option *ngIf="isContentLoading" class="is-loading">
-                    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
-                </mat-option>
-                <ng-container *ngIf="!isContentLoading">
-                    <!-- TODO: Modify to filteredContentModels|async which should improve responsiveness -->
-                    <mat-option *ngFor="let model of filteredContent"
-                                [value]="model">
-                        <!-- Item image, video or header image -->
-                        <!--
-                        <span class="image position-all"
-                             style="background-size: cover"
-                             *ngIf="model.version.images.length || model.version.shellImages.length"
-                             [style.background]="'url(' + (model.version.images.length ? model.version.images[0].src : model.version.shellImages.length ? model.version.shellImages[0].src : '') + ') no-repeat center center'">
-                        </span>
-                        <span class="image position-all"
-                             style="background-size: cover"
-                             *ngIf="!model.version.images.length && !model.version.shellImages.length && model.version.videos.length"
-                             [style.background]="'url(' + (model.version.videos[0].src) + ') no-repeat center center'">
-                        </span>
-                        -->
 
-                        <!-- Icon for items with no image -->
-                        <!-- FIXME: Re-enable the ngIf once the other options above are functional -->
-                        <!--*ngIf="!model.version.images.length && !model.version.videos.length && !model.version.shellImages.length"-->
-                        <!-- FIXME: The background class makes a weird rectangle that covers the SVG -->
-                        <!--[class]="model.contentType.class + '-background-color'"-->
-                        <!--model.version.meta.backgroundColor-->
-                        <!--
-                        <span class="no-image-icon position-all"
-                              *ngIf="model.contentType.iconResource">
-                            <mat-icon aria-hidden="true"
-                                      [svgIcon]="getSvg(Stratus.BaseUrl + model.contentType.iconResourcePath) | async">
-                                Icon
-                            </mat-icon>
-                        </span>
-                        -->
+            <!-- Target Selector -->
+            <h4>
+                <label id="link-type-label">Link Type:</label>
+            </h4>
+            <mat-radio-group class="radio-group"
+                             aria-labelledby="link-type-label"
+                             [(ngModel)]="data.target">
+                <mat-radio-button class="radio-button" value="content">
+                    Website Page
+                </mat-radio-button>
+                <mat-radio-button class="radio-button" value="url">
+                    Custom Link
+                </mat-radio-button>
+            </mat-radio-group>
 
-                        <!-- Content Type Icon -->
-                        <mat-icon aria-hidden="true"
-                                  *ngIf="get(model, 'contentType.iconResourcePath')"
-                                  [svgIcon]="getSvg(Stratus.BaseUrl + get(model, 'contentType.iconResourcePath')) | async">
-                            Icon
-                        </mat-icon>
+            <!-- Target Editor -->
+            <form class="dialog-form"
+                  [formGroup]='dialogContentForm'>
+                <ng-container *ngIf="data.target == 'content'">
+                    <mat-form-field class="form-field">
+                        <input matInput
+                               placeholder="Link Content"
+                               aria-label="Link Content"
+                               [matAutocomplete]="auto"
+                               formControlName='contentSelectorInput'>
+                    </mat-form-field>
+                    <mat-autocomplete autoActiveFirstOption
+                                      #auto="matAutocomplete"
+                                      [displayWith]="displayContentText">
+                        <mat-option *ngIf="isContentLoading" class="is-loading">
+                            <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+                        </mat-option>
+                        <ng-container *ngIf="!isContentLoading">
+                            <!-- TODO: Modify to filteredContentModels|async which should improve responsiveness -->
+                            <mat-option *ngFor="let model of filteredContent"
+                                        [value]="model">
+                                <!-- Item image, video or header image -->
+                                <!--
+                                <span class="image position-all"
+                                     style="background-size: cover"
+                                     *ngIf="model.version.images.length || model.version.shellImages.length"
+                                     [style.background]="'url(' + (model.version.images.length ? model.version.images[0].src : model.version.shellImages.length ? model.version.shellImages[0].src : '') + ') no-repeat center center'">
+                                </span>
+                                <span class="image position-all"
+                                     style="background-size: cover"
+                                     *ngIf="!model.version.images.length && !model.version.shellImages.length && model.version.videos.length"
+                                     [style.background]="'url(' + (model.version.videos[0].src) + ') no-repeat center center'">
+                                </span>
+                                -->
 
-                        <!-- Title & Route Display -->
-                        <!--<span [class.selected-item]="isSelected(model)">-->
-                        {{(model && model.version) ? model.version.title : 'Untitled'}}
-                        <small *ngIf="model.routing && model.routing.length">
-                            {{'/' + model.routing[0].url}}
-                        </small>
-                    </mat-option>
+                                <!-- Icon for items with no image -->
+                                <!-- FIXME: Re-enable the ngIf once the other options above are functional -->
+                                <!--*ngIf="!model.version.images.length && !model.version.videos.length && !model.version.shellImages.length"-->
+                                <!-- FIXME: The background class makes a weird rectangle that covers the SVG -->
+                                <!--[class]="model.contentType.class + '-background-color'"-->
+                                <!--model.version.meta.backgroundColor-->
+                                <!--
+                                <span class="no-image-icon position-all"
+                                      *ngIf="model.contentType.iconResource">
+                                    <mat-icon aria-hidden="true"
+                                              [svgIcon]="getSvg(Stratus.BaseUrl + model.contentType.iconResourcePath) | async">
+                                        Icon
+                                    </mat-icon>
+                                </span>
+                                -->
+
+                                <!-- Content Type Icon -->
+                                <mat-icon aria-hidden="true"
+                                          *ngIf="get(model, 'contentType.iconResourcePath')"
+                                          [svgIcon]="getSvg(Stratus.BaseUrl + get(model, 'contentType.iconResourcePath')) | async">
+                                    Icon
+                                </mat-icon>
+
+                                <!-- Title & Route Display -->
+                                <!--<span [class.selected-item]="isSelected(model)">-->
+                                {{(model && model.version) ? model.version.title : 'Untitled'}}
+                                <small *ngIf="model.routing && model.routing.length">
+                                    {{'/' + model.routing[0].url}}
+                                </small>
+                            </mat-option>
+                        </ng-container>
+                    </mat-autocomplete>
                 </ng-container>
-            </mat-autocomplete>
-        </ng-container>
-    </form>
+            </form>
 
-    <mat-form-field class="form-field"
-                    [style.width.px]=320
-                    *ngIf="data.target == 'url'">
-        <input matInput type="text" placeholder="URL" [(ngModel)]="data.url">
-        <a mat-button *ngIf="data.url" matSuffix mat-icon-button aria-label="Clear" (click)="data.url=''">
-            <mat-icon>close</mat-icon>
-        </a>
-    </mat-form-field>
+            <mat-form-field class="form-field"
+                            [style.width.px]=320
+                            *ngIf="data.target == 'url'">
+                <input matInput type="text" placeholder="URL" [(ngModel)]="data.url">
+                <a mat-button *ngIf="data.url" matSuffix mat-icon-button aria-label="Clear" (click)="data.url=''">
+                    <mat-icon>close</mat-icon>
+                </a>
+            </mat-form-field>
 
-    <mat-checkbox [(ngModel)]="browserTarget"
-                  (change)="onBrowserTargetChange($event)">
-        Open in new window
-    </mat-checkbox>
+            <mat-checkbox [(ngModel)]="browserTarget"
+                          (change)="onBrowserTargetChange($event)">
+                Open in new window
+            </mat-checkbox>
 
-    <!-- Target Display -->
-    <!--
-    <h4>Linked To:</h4>
+            <!-- Target Display -->
+            <!--
+            <h4>Linked To:</h4>
 
-    <span *ngIf="data.target == 'content'" [textContent]="data.content && data.content.routing ? ('/' + data.content.routing[0].url) : 'Nothing yet!'"></span>
-    <span *ngIf="data.target == 'url'" [textContent]="data.url || 'Nothing yet!'"></span>
-    -->
+            <span *ngIf="data.target == 'content'" [textContent]="data.content && data.content.routing ? ('/' + data.content.routing[0].url) : 'Nothing yet!'"></span>
+            <span *ngIf="data.target == 'url'" [textContent]="data.url || 'Nothing yet!'"></span>
+            -->
 
-    <!-- Priority Control - deprecated once we have proper DnD for child links -->
-    <!--
-    <h4 *ngIf="data.nestParent !== null">
-        Priority:
-    </h4>
-    -->
-    <!--
-    <mat-form-field class="form-field"
-                    *ngIf="data.nestParent !== null">
-        <input matInput type="number" placeholder="Priority" [(ngModel)]="data.priority">
-    -->
-<!--        <span [textContent]="data.priority || 'None set!'"></span>-->
-<!--        <a mat-button matSuffix mat-icon-button aria-label="Increase Priority"-->
-<!--                (click)="data.priority = data.priority + 1">-->
-<!--            <mat-icon>expand_less</mat-icon>-->
-<!--        </a>-->
-<!--        <a mat-button matSuffix mat-icon-button aria-label="Decrease Priority"-->
-<!--                (click)="data.priority = data.priority - 1">-->
-<!--            <mat-icon>expand_more</mat-icon>-->
-<!--        </a>-->
-    <!--
-    </mat-form-field>
-    -->
+            <!-- Priority Control - deprecated once we have proper DnD for child links -->
+            <!--
+            <h4 *ngIf="data.nestParent !== null">
+                Priority:
+            </h4>
+            -->
+            <!--
+            <mat-form-field class="form-field"
+                            *ngIf="data.nestParent !== null">
+                <input matInput type="number" placeholder="Priority" [(ngModel)]="data.priority">
+            -->
+        <!--        <span [textContent]="data.priority || 'None set!'"></span>-->
+        <!--        <a mat-button matSuffix mat-icon-button aria-label="Increase Priority"-->
+        <!--                (click)="data.priority = data.priority + 1">-->
+        <!--            <mat-icon>expand_less</mat-icon>-->
+        <!--        </a>-->
+        <!--        <a mat-button matSuffix mat-icon-button aria-label="Decrease Priority"-->
+        <!--                (click)="data.priority = data.priority - 1">-->
+        <!--            <mat-icon>expand_more</mat-icon>-->
+        <!--        </a>-->
+            <!--
+            </mat-form-field>
+            -->
 
-    <!-- Level Selector -->
-<!--    <h4><label id="link-level-label">Link Level:</label></h4>-->
-<!--    <mat-radio-group class="radio-group"-->
-<!--                     aria-labelledby="link-level-label"-->
-<!--                     [(ngModel)]="data.level">-->
-<!--        <mat-radio-button class="radio-button" value="top">-->
-<!--            Top-Level-->
-<!--        </mat-radio-button>-->
-<!--        <mat-radio-button class="radio-button" value="child">-->
-<!--            Child-->
-<!--        </mat-radio-button>-->
-<!--    </mat-radio-group>-->
+            <!-- Level Selector -->
+        <!--    <h4><label id="link-level-label">Link Level:</label></h4>-->
+        <!--    <mat-radio-group class="radio-group"-->
+        <!--                     aria-labelledby="link-level-label"-->
+        <!--                     [(ngModel)]="data.level">-->
+        <!--        <mat-radio-button class="radio-button" value="top">-->
+        <!--            Top-Level-->
+        <!--        </mat-radio-button>-->
+        <!--        <mat-radio-button class="radio-button" value="child">-->
+        <!--            Child-->
+        <!--        </mat-radio-button>-->
+        <!--    </mat-radio-group>-->
 
-    <!-- Parent Editor -->
-    <!--<form class="dialog-form dialog-parent-form" [formGroup]='dialogParentForm'>
-        <ng-container *ngIf="data.level == 'child'">
+            <!-- Parent Editor -->
+            <!--<form class="dialog-form dialog-parent-form" [formGroup]='dialogParentForm'>
+                <ng-container *ngIf="data.level == 'child'">
+                    <mat-form-field class="form-field">
+                        <input matInput placeholder="Parent Link" aria-label="Parent Link" [matAutocomplete]="auto" formControlName='parentSelectorInput'>
+                    </mat-form-field>
+                    <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayName">
+                        <mat-option *ngIf="isParentLoading" class="is-loading">
+                            <mat-spinner diameter="50"></mat-spinner>
+                        </mat-option>
+                        <ng-container *ngIf="!isParentLoading">
+                            <mat-option *ngFor="let option of filteredParentOptions" [value]="option" [innerHTML]="option.name"></mat-option>
+                        </ng-container>
+                    </mat-autocomplete>
+                </ng-container>
+            </form>-->
+
+            <!-- Parent Display -->
+        <!--    <h4 *ngIf="data.nestParent !== null">-->
+        <!--        Nested Under:-->
+        <!--    </h4>-->
+
+        <!--    <span *ngIf="data.nestParent !== null"-->
+        <!--          [textContent]="data.nestParent.name || 'Untitled Parent'"></span>-->
+
+
+
+            <!-- Misc Buttons -->
+            <h4>
+                Actions:
+            </h4>
+
+            <a mat-button
+               class="svg-grey"
+               (click)="destroy()">
+               <mat-icon svgIcon="tree_delete" aria-hidden="false" aria-label="Delete Item">
+                    Delete
+                </mat-icon>
+            </a>
+            <a mat-button
+               class="svg-grey"
+               [class.visibility-off]="data.model.get('status') === 0"
+               (click)="toggleStatus()">
+                <mat-icon svgIcon="tree_visibility" aria-hidden="false" aria-label="Toggle Visibility">
+                    Visibility
+                </mat-icon>
+            </a>
+            <a mat-button
+               class="svg-grey"
+               [disabled]="!data.id"
+               (click)="addChild()">
+                <mat-icon svgIcon="tree_add" aria-hidden="false" aria-label="Add Child">
+                    Add Child
+                </mat-icon>
+            </a>
+        </mat-tab>
+        <mat-tab label="Advanced Options">
+            <div *ngIf="selectedTabIndex">
+                <!-- texts go here -->
+                <!-- #linkHtmlInput -->
+                <!-- [(ngModel)]="data.linkHtml" -->
+                <!-- placeholder='"Big Menu" Dropdown Content' -->
+                <!-- sa-internal-editor
+                        data-target="MenuLink"
+                        data-id="{{data.id}}"
+                        data-property="linkHtml"
+                        data-auto-save="false"
+                ></sa-internal-editor -->
+                <!-- #iconHtmlInput -->
+                <!-- [(ngModel)]="data.iconHtml" -->
+                <!-- placeholder="Link Icon" -->
+                <!-- sa-internal-editor
+                        [model]="data.model"
+                        data-property="iconHtml"
+                        data-auto-save="false"
+                ></sa-internal-editor -->
+            </div>
+
             <mat-form-field class="form-field">
-                <input matInput placeholder="Parent Link" aria-label="Parent Link" [matAutocomplete]="auto" formControlName='parentSelectorInput'>
+                <mat-label>Link HTML</mat-label>
+                <textarea #linkHtmlInput
+                       matInput
+                       type="text"
+                       placeholder='"Big Menu" Dropdown Content'
+                       [(ngModel)]="data.linkHtml">
+                </textarea>
             </mat-form-field>
-            <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayName">
-                <mat-option *ngIf="isParentLoading" class="is-loading">
-                    <mat-spinner diameter="50"></mat-spinner>
-                </mat-option>
-                <ng-container *ngIf="!isParentLoading">
-                    <mat-option *ngFor="let option of filteredParentOptions" [value]="option" [innerHTML]="option.name"></mat-option>
-                </ng-container>
-            </mat-autocomplete>
-        </ng-container>
-    </form>-->
 
-    <!-- Parent Display -->
-<!--    <h4 *ngIf="data.nestParent !== null">-->
-<!--        Nested Under:-->
-<!--    </h4>-->
+            <mat-form-field class="form-field">
+                <mat-label>Icon HTML</mat-label>
+                <textarea #iconHtmlInput
+                          matInput
+                          type="text"
+                          placeholder="Icon HTML"
+                          [(ngModel)]="data.iconHtml">
+                </textarea>
+            </mat-form-field>
 
-<!--    <span *ngIf="data.nestParent !== null"-->
-<!--          [textContent]="data.nestParent.name || 'Untitled Parent'"></span>-->
+            <mat-checkbox [(ngModel)]="data.accessHide">
+                Hide Link for Private Page
+            </mat-checkbox>
 
-    <!-- Misc Buttons -->
-    <h4>
-        Actions:
-    </h4>
-
-    <a mat-button
-       class="svg-grey"
-       (click)="destroy()">
-       <mat-icon svgIcon="tree_delete" aria-hidden="false" aria-label="Delete Item">
-            Delete
-        </mat-icon>
-    </a>
-    <a mat-button
-       class="svg-grey"
-       [class.visibility-off]="data.model.get('status') === 0"
-       (click)="toggleStatus()">
-        <mat-icon svgIcon="tree_visibility" aria-hidden="false" aria-label="Toggle Visibility">
-            Visibility
-        </mat-icon>
-    </a>
-    <a mat-button
-       class="svg-grey"
-       [disabled]="!data.id"
-       (click)="addChild()">
-        <mat-icon svgIcon="tree_add" aria-hidden="false" aria-label="Add Child">
-            Add Child
-        </mat-icon>
-    </a>
+            <!-- For now Actions is duplicated here to fix the scroll issue caused by checkbox being last -->
+            <h4>
+                Actions:
+            </h4>
+            <a mat-button
+               class="svg-grey"
+               (click)="destroy()">
+                <mat-icon svgIcon="tree_delete" aria-hidden="false" aria-label="Delete Item">
+                    Delete
+                </mat-icon>
+            </a>
+            <a mat-button
+               class="svg-grey"
+               [class.visibility-off]="data.model.get('status') === 0"
+               (click)="toggleStatus()">
+                <mat-icon svgIcon="tree_visibility" aria-hidden="false" aria-label="Toggle Visibility">
+                    Visibility
+                </mat-icon>
+            </a>
+            <a mat-button
+               class="svg-grey"
+               [disabled]="!data.id"
+               (click)="addChild()">
+                <mat-icon svgIcon="tree_add" aria-hidden="false" aria-label="Add Child">
+                    Add Child
+                </mat-icon>
+            </a>
+        </mat-tab>
+    </mat-tab-group>
 
     <mat-divider></mat-divider>
 </div>

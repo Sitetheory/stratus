@@ -47,9 +47,7 @@ import {
     isObject,
     isNumber,
     isString,
-    isUndefined,
-    snakeCase,
-    uniqueId
+    isUndefined
 } from 'lodash'
 import {Stratus} from '@stratusjs/runtime/stratus'
 import {cookie} from '@stratusjs/core/environment'
@@ -78,7 +76,7 @@ import {
 import {
     ResponsiveComponent
 } from '../core/responsive.component'
-import {serializeUrlParams} from '@stratusjs/core/misc'
+import {safeUniqueId, serializeUrlParams} from '@stratusjs/core/misc'
 
 // Data Types
 export interface DialogData {
@@ -98,6 +96,9 @@ export interface DialogData {
     parent: any
     nestParent: any
     browserTarget: string // '_blank' or null
+    accessHide: boolean
+    linkHtml: string
+    iconHtml: string
 }
 
 // Local Setup
@@ -113,7 +114,7 @@ const localDir = `${Stratus.BaseUrl}${boot.configuration.paths[`${systemDir}/*`]
  * @title Dialog for Nested Tree
  */
 @Component({
-    selector: `sa-${moduleName}`,
+    selector: `sa-internal-${moduleName}`,
     templateUrl: `${localDir}/${parentModuleName}/${moduleName}.component${min}.html`,
     // changeDetection: ChangeDetectionStrategy.OnPush
 })
@@ -127,6 +128,7 @@ export class TreeDialogComponent extends ResponsiveComponent implements OnInit, 
     isInitialized = false
     isDestroyed = false
     isStyled = false
+    selectedTabIndex = 0
 
     // Dependencies
     // _ = _
@@ -192,7 +194,7 @@ export class TreeDialogComponent extends ResponsiveComponent implements OnInit, 
     // TODO: Consider making the Custom Link field the default
     ngOnInit() {
         // Initialization
-        this.uid = uniqueId(`sa_${snakeCase(moduleName)}_component_`)
+        this.uid = safeUniqueId('sa', moduleName, 'component')
         Stratus.Instances[this.uid] = this
 
         // TODO: Assess & Possibly Remove when the System.js ecosystem is complete
@@ -467,5 +469,9 @@ export class TreeDialogComponent extends ResponsiveComponent implements OnInit, 
         }
         moveItemInArray(orderedList, index, 0)
         return orderedList
+    }
+
+    tabIndexChange(index: number) {
+        this.selectedTabIndex = index
     }
 }
