@@ -44,7 +44,6 @@ import {
     isNumber,
     set,
     size,
-    snakeCase,
     sortBy,
     toNumber,
     uniqueId
@@ -66,7 +65,7 @@ import {Registry} from '@stratusjs/angularjs/services/registry'
 import {EventManager} from '@stratusjs/core/events/eventManager'
 import {EventBase} from '@stratusjs/core/events/eventBase'
 import {cookie} from '@stratusjs/core/environment'
-import {isJSON} from '@stratusjs/core/misc'
+import {isJSON, safeUniqueId} from '@stratusjs/core/misc'
 
 // AngularJS Classes
 import {
@@ -239,7 +238,7 @@ export class TreeComponent extends RootComponent implements OnInit, OnDestroy {
 
     ngOnInit() {
         // Initialization
-        this.uid = uniqueId(`sa_${snakeCase(moduleName)}_component_`)
+        this.uid = safeUniqueId('sa', moduleName, 'component')
         Stratus.Instances[this.uid] = this
 
         // Hydrate Root App Inputs

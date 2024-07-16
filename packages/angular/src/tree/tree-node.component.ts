@@ -39,9 +39,7 @@ import {
     get,
     has,
     isEmpty,
-    max,
-    snakeCase,
-    uniqueId
+    max
 } from 'lodash'
 import {Stratus} from '@stratusjs/runtime/stratus'
 import {cookie} from '@stratusjs/core/environment'
@@ -52,6 +50,7 @@ import {Observable} from 'rxjs'
 import {
     ResponsiveComponent
 } from '../core/responsive.component'
+import {safeUniqueId} from '@stratusjs/core/misc'
 
 // Local Setup
 const systemDir = '@stratusjs/angular'
@@ -112,7 +111,7 @@ export class TreeNodeComponent extends ResponsiveComponent implements OnInit, On
 
     ngOnInit() {
         // Initialization
-        this.uid = uniqueId(`sa_${snakeCase(moduleName)}_component_`)
+        this.uid = safeUniqueId('sa', moduleName, 'component')
         Stratus.Instances[this.uid] = this
 
         // TODO: Assess & Possibly Remove when the System.js ecosystem is complete

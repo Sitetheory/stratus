@@ -47,9 +47,7 @@ import {
     isObject,
     isNumber,
     isString,
-    isUndefined,
-    snakeCase,
-    uniqueId
+    isUndefined
 } from 'lodash'
 import {Stratus} from '@stratusjs/runtime/stratus'
 import {cookie} from '@stratusjs/core/environment'
@@ -78,7 +76,7 @@ import {
 import {
     ResponsiveComponent
 } from '../core/responsive.component'
-import {serializeUrlParams} from '@stratusjs/core/misc'
+import {safeUniqueId, serializeUrlParams} from '@stratusjs/core/misc'
 
 // Data Types
 export interface DialogData {
@@ -196,7 +194,7 @@ export class TreeDialogComponent extends ResponsiveComponent implements OnInit, 
     // TODO: Consider making the Custom Link field the default
     ngOnInit() {
         // Initialization
-        this.uid = uniqueId(`sa_${snakeCase(moduleName)}_component_`)
+        this.uid = safeUniqueId('sa', moduleName, 'component')
         Stratus.Instances[this.uid] = this
 
         // TODO: Assess & Possibly Remove when the System.js ecosystem is complete
