@@ -4,7 +4,7 @@ import {NgModule} from '@angular/core'
 
 // Material Modules
 import {MatNativeDateModule} from '@angular/material/core'
-import {MaterialModules} from './material'
+import {MaterialModules} from './material.module'
 
 // Angular Libraries
 import {HttpClientModule} from '@angular/common/http'

@@ -3,7 +3,7 @@ import {NgModule} from '@angular/core'
 import {BrowserModule} from '@angular/platform-browser'
 import {CommonModule} from '@angular/common'
 import {GoogleMapsModule} from '@angular/google-maps'
-import {MaterialModules} from '../../angular/src/material'
+import {MaterialModules} from '../../angular/src/material.module'
 import {MapComponent} from './map.component'
 
 @NgModule({
