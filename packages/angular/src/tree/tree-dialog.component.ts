@@ -98,6 +98,9 @@ export interface DialogData {
     parent: any
     nestParent: any
     browserTarget: string // '_blank' or null
+    accessHide: boolean
+    linkHtml: string
+    iconHtml: string
 }
 
 // Local Setup

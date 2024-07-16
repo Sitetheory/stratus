@@ -250,6 +250,9 @@ export class TreeNodeComponent extends ResponsiveComponent implements OnInit, On
                 content: this.node.model.data.content || null,
                 url: this.node.model.data.url || null,
                 browserTarget: this.node.model.data.browserTarget || null,
+                accessHide: this.node.model.data.accessHide || false,
+                linkHtml: this.node.model.data.linkHtml || '',
+                iconHtml: this.node.model.data.iconHtml || '',
                 // priority: this.node.model.data.priority || 0,
                 model: this.node.model || null,
                 collection: this.tree.collection || null,
@@ -272,7 +275,10 @@ export class TreeNodeComponent extends ResponsiveComponent implements OnInit, On
                 'content',
                 'url',
                 'priority',
-                'browserTarget'
+                'browserTarget',
+                'accessHide',
+                'linkHtml',
+                'iconHtml'
             ]
             // Persist to Model
             attrs.forEach(attr => {
