@@ -136,7 +136,7 @@ const localDir = `${Stratus.BaseUrl}${boot.configuration.paths[`${systemDir}/*`]
  * @title Tree with Nested Drag & Drop
  */
 @Component({
-    selector: `sa-${moduleName}`,
+    selector: `sa-internal-${moduleName}`,
     templateUrl: `${localDir}/${moduleName}/${moduleName}.component${min}.html`,
     // templateUrl: `${systemDir}/${moduleName}/${moduleName}.component.html`,
     // FIXME: This doesn't work, as it seems Angular attempts to use a System.js import instead of their own, so it will
@@ -288,7 +288,7 @@ export class TreeComponent extends RootComponent implements OnInit, OnDestroy {
                 data.on('change', onDataChange)
                 onDataChange()
                 // Handle Additions to Collection
-                data.on('add', (event: EventBase, model: Model) => {
+                data.on('add', (_event: EventBase, model: Model) => {
                     // TODO: This should hook into the collection, so that every collection.add results in a Dialog Opening.
                     let modelCompleted = false
                     const onModelChange = () => {
@@ -379,7 +379,7 @@ export class TreeComponent extends RootComponent implements OnInit, OnDestroy {
         return super.refresh()
     }
 
-    public remove(model: any) {
+    public remove(_model: any) {
         // const models = this.dataRef()
         // if (!models || !models.length) {
         //     return

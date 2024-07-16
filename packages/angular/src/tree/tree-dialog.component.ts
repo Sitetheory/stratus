@@ -113,7 +113,7 @@ const localDir = `${Stratus.BaseUrl}${boot.configuration.paths[`${systemDir}/*`]
  * @title Dialog for Nested Tree
  */
 @Component({
-    selector: `sa-${moduleName}`,
+    selector: `sa-internal-${moduleName}`,
     templateUrl: `${localDir}/${parentModuleName}/${moduleName}.component${min}.html`,
     // changeDetection: ChangeDetectionStrategy.OnPush
 })
@@ -127,6 +127,7 @@ export class TreeDialogComponent extends ResponsiveComponent implements OnInit, 
     isInitialized = false
     isDestroyed = false
     isStyled = false
+    selectedTabIndex = 0
 
     // Dependencies
     // _ = _
@@ -467,5 +468,9 @@ export class TreeDialogComponent extends ResponsiveComponent implements OnInit, 
         }
         moveItemInArray(orderedList, index, 0)
         return orderedList
+    }
+
+    tabIndexChange(index: number) {
+        this.selectedTabIndex = index
     }
 }
