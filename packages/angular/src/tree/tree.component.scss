@@ -319,28 +319,37 @@
 }
 
 // Tree Dialog
-.tree-dialog-content {
-  .form-field {
-    width: 320px;
+sa-tree-dialog,
+sa-internal-tree-dialog {
+  .mat-dialog-title {
+    margin-bottom: 0;
   }
-  .dialog-form {
+  .mat-tab-body {
     margin-top: 20px;
   }
-  .radio {
-    &-group {
-      //display: flex;
-      //flex-direction: column;
-      //margin: 15px 0;
+  .tree-dialog-content {
+    .form-field {
+      width: 320px;
     }
-    &-button {
-      //margin: 5px;
-      padding: 0 5px;
+    .dialog-form {
+      margin-top: 20px;
     }
-  }
-  // SVG Colors
-  .svg-grey {
-    svg g {
-      fill: #666666;
+    .radio {
+      &-group {
+        //display: flex;
+        //flex-direction: column;
+        //margin: 15px 0;
+      }
+      &-button {
+        //margin: 5px;
+        padding: 0 5px;
+      }
+    }
+    // SVG Colors
+    .svg-grey {
+      svg g {
+        fill: #666666;
+      }
     }
   }
 }
