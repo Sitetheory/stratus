@@ -12,6 +12,7 @@ import {StripePaymentMethodSelectorComponent} from './payment-method-selector.co
 import {StripeSetupIntentComponent} from './setup-intent.component'
 
 @NgModule({
+    // These are for external libraries (or Angular)
     imports: [
         BrowserModule,
         CommonModule,

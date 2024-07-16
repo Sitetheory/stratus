@@ -7,6 +7,7 @@ import {MaterialModules} from '../../angular/src/material'
 import {MapComponent} from './map.component'
 
 @NgModule({
+    // These are for external libraries (or Angular)
     imports: [
         BrowserModule,
         CommonModule,
