@@ -151,7 +151,6 @@ const ngEntryComponents: any[] = [
 ]
 
 const appModuleComponents = {
-    'sa-base': BaseComponent,
     'sa-editor': EditorComponent,
     'sa-media-selector': MediaSelectorComponent,
     'sa-selector': SelectorComponent,
