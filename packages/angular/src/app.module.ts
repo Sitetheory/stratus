@@ -59,7 +59,7 @@ const appModuleComponents = {}
 
 // This determines what custom Stratus Packages we want loaded in and will handle it's own declarations
 const stratusPackages: StratusPackage[] = [
-    AngularPackage, // $stratusjs/angular
+    AngularPackage, // @stratusjs/angular
     MapPackage, // @stratusjs/map
     StripePackage // @stratusjs/stripe
 ]
@@ -70,7 +70,6 @@ stratusPackages.forEach((stratusPackage) => {
     }
 })
 
-// FIXME add the definations to angular.module.ts as seen like Map and Stripe
 @NgModule({
     // All Stratus Modules loaded
     imports: ngModuleImports,
