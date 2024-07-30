@@ -4,12 +4,18 @@ import {isEmpty, isNil, isString, uniqueId} from 'lodash'
 import {Stratus} from '@stratusjs/runtime/stratus'
 import {Collection} from '@stratusjs/angularjs/services/collection'
 import {LooseObject, safeUniqueId} from '@stratusjs/core/misc'
+import {
+    Stripe, SetupIntent, ConfirmCardSetupData, StripeElements, StripeElement, StripeElementsOptionsClientSecret, StripeElementsOptionsMode,
+    PaymentMethodCreateParams, ConfirmCardSetupOptions, StripeElementBase, StripePaymentElement, ConfirmSetupData, StripeCardElement,
+    SetupIntentResult, StripeError, StripePaymentElementOptions, StripePaymentElementChangeEvent
+} from '@stripe/stripe-js'
+import {loadStripe} from '@stripe/stripe-js/pure'
 import Toastify from 'toastify-js'
 
-interface StripeVariables {
+/*interface StripeVariables {
     stripe?: stripe.Stripe
     stripeElements?: stripe.elements.Elements
-}
+}*/
 
 export class StripeComponent extends RootComponent {
     title: string
@@ -25,18 +31,24 @@ export type StripeEmitter = (source: StripeComponent, ...variables: any) => any
 export type StripeEmitterInit = StripeEmitter & ((source: StripeComponent) => any)
 export type StripeEmitterCollectionUpdated = StripeEmitter & ((source: StripeListComponent, ...collection: [Collection]) => any)
 export type StripeEmitterPMCreated =
-    StripeEmitter & ((source: StripeListComponent, ...details: [stripe.BillingDetails & {type:'card'|'ach'}]) => any)
+    StripeEmitter & ((source: StripeListComponent, ...details: [PaymentMethodCreateParams.BillingDetails & {type:'card'|'ach'}]) => any)
+
+export type StripePaymentElementEvent =
+    StripePaymentElementChangeEvent & {error: any} | {elementType: 'payment'} | {elementType: 'payment'; error: StripeError}
 
 @Injectable({
     providedIn: 'root'
 })
 export class StripeService {
     private publishKey = ''
-    private Stripe: StripeVariables = {}
+    // private Stripe: StripeVariables = {}
+    private stripe: Stripe
     private currentElement: {
         id: string
-        paymentMethodType: stripe.elements.elementsType
-        element: stripe.elements.Element
+        // paymentMethodType: stripe.elements.elementsType
+        // element: stripe.elements.Element
+        element: StripePaymentElement
+        elements: StripeElements
     }
     private instanceOnEmitters: {
         [emitterUid: string]: {
@@ -80,54 +92,57 @@ export class StripeService {
         Stratus.Services.Stripe = this
     }
 
-    async initialize(): Promise<void> {
-        if (!this.initialized && !this.initializing) {
-            this.initializing = true
-            try {
-                await Stratus.Internals.JsLoader('https://js.stripe.com/v3/')
-                if (!Object.prototype.hasOwnProperty.call(window, 'Stripe')) {
-                    console.warn('Stripe Api was not initialized yet, waiting...')
-                    await this.delay(3000)
-                    if (!Object.prototype.hasOwnProperty.call(window, 'Stripe')) {
-                        const error = 'Stripe Api was not initialized, payment widgets cannot load.'
-                        console.error(error)
-                        this.initializing = false
-                        Toastify({
-                            text: error,
-                            duration: 3000,
-                            close: true,
-                            stopOnFocus: true,
-                            style: {
-                                background: '#E14D45',
-                            }
-                        }).showToast()
-                        return
-                    }
-                }
-            } catch (e) {
-                const error = 'Stripe Api could not be fetched, payment widgets cannot load.'
-                console.error(error)
-                this.initializing = false
-                Toastify({
-                    text: error,
-                    duration: 3000,
-                    close: true,
-                    stopOnFocus: true,
-                    style: {
-                        background: '#E14D45',
-                    }
-                }).showToast()
-                return
-            }
-            this.Stripe.stripe = (window.Stripe as stripe.StripeStatic)(this.publishKey)
-            this.Stripe.stripeElements = this.Stripe.stripe.elements()
-
-            this.initialized = true
-            this.initializing = false
-        } else if (this.initializing) {
+    async initialize(key: string): Promise<void> {
+        this.publishKey = key
+        if (this.initialized || this.initializing) {
             // wait for completion
             return await this.waitForInitialization()
         }
+        this.initializing = true
+        try {
+            await Stratus.Internals.JsLoader('https://js.stripe.com/v3/')
+            const stripe = await loadStripe(key)
+            if (!Object.prototype.hasOwnProperty.call(window, 'Stripe')) {
+                // FIXME find other checks for stripe here
+                console.warn('Stripe Api was not initialized yet, waiting...')
+                await this.delay(3000)
+                if (!Object.prototype.hasOwnProperty.call(window, 'Stripe')) {
+                    const error = 'Stripe Api was not initialized, payment widgets cannot load.'
+                    console.error(error)
+                    this.initializing = false
+                    Toastify({
+                        text: error,
+                        duration: 3000,
+                        close: true,
+                        stopOnFocus: true,
+                        style: {
+                            background: '#E14D45',
+                        }
+                    }).showToast()
+                    return
+                }
+            }
+            this.stripe = stripe
+        } catch (e) {
+            const error = 'Stripe Api could not be fetched, payment widgets cannot load.'
+            console.error(error)
+            this.initializing = false
+            Toastify({
+                text: error,
+                duration: 3000,
+                close: true,
+                stopOnFocus: true,
+                style: {
+                    background: '#E14D45',
+                }
+            }).showToast()
+            return
+        }
+        // this.Stripe.stripe = (window.Stripe as stripe.StripeStatic)(this.publishKey)
+        // this.Stripe.stripeElements = this.Stripe.stripe.elements() // TODO do we need a client secret here now?
+
+        this.initialized = true
+        this.initializing = false
     }
 
     async delay(ms: number): Promise<ReturnType<typeof setTimeout>> {
@@ -153,38 +168,42 @@ export class StripeService {
         return
     }
 
-    private async elements(key: string): Promise<stripe.elements.Elements> {
-        this.publishKey = key
-        await this.initialize()
+    // private async elements(key: string): Promise<stripe.elements.Elements> {
+    private async getElements(key: string) {
+        await this.initialize(key)
 
-        return this.Stripe.stripeElements
+        // return this.Stripe.stripeElements
+        return this.stripe.elements
     }
 
-    async confirmCardSetup(
+    /*async confirmCardSetup(
         id: string,
         clientSecret: string,
         data?: {
             payment_method?: {
-                billing_details?: stripe.BillingDetails
+                billing_details?: PaymentMethodCreateParams.BillingDetails
             }
         },
-        options?: stripe.ConfirmCardSetupOptions,
-    ): Promise<stripe.SetupIntentResponse> {
+        options?: ConfirmCardSetupOptions,
+    // ): Promise<SetupIntentResponse> {
+    ): Promise<SetupIntentResult> {
         if (
             isEmpty(this.currentElement) ||
             this.currentElement.id !== id
         ) {
             // TODO throw
-            const error: stripe.Error = {
+            // const error: stripe.Error = {
+            const error: StripeError = {
                 type: 'invalid_request_error',
                 charge: null,
                 message: 'The Element for ' + id + 'no longer exists. Cannot attach confirmCardSetup'
             }
             return {error}
         }
-        const stripeData: stripe.ConfirmCardSetupData = {
+        // const stripeData: stripe.ConfirmCardSetupData = {
+        const stripeData: ConfirmCardSetupData = {
             payment_method: {
-                card: this.currentElement.element
+                card: this.currentElement.element as unknown as StripeCardElement
             }
         }
         if (
@@ -196,7 +215,60 @@ export class StripeService {
         ) {
             stripeData.payment_method.billing_details = data.payment_method.billing_details
         }
-        return this.Stripe.stripe.confirmCardSetup(clientSecret, stripeData, options)
+        // setupIntents.ConfirmCardSetupData
+        return this.stripe.confirmCardSetup(clientSecret, stripeData, options)
+    }*/
+
+    async confirmSetup(
+        id: string,
+        clientSecret: string,
+        confirmParams: ConfirmSetupData, // FIXME the card gets injected here?
+        /*data?: {
+            payment_method?: {
+                billing_details?: PaymentMethodCreateParams.BillingDetails
+            }
+        },*/
+        // options?: ConfirmSetupOptions, // FIXME there is no ConfirmSetupOptions, which doesnt look to have been used at all
+        // ): Promise<SetupIntentResponse> {
+    ): Promise<SetupIntentResult> {
+        if (
+            isEmpty(this.currentElement) ||
+            this.currentElement.id !== id
+        ) {
+            // TODO throw
+            // const error: stripe.Error = {
+            const error: StripeError = {
+                type: 'invalid_request_error',
+                charge: null,
+                message: 'The Element for ' + id + 'no longer exists. Cannot attach confirmSetup'
+            }
+            return {error}
+        }
+        const elements = this.currentElement.elements
+        // Submit is required first
+        const possibleError = await elements.submit()
+        if (possibleError.error) {
+            console.warn('submit error', possibleError.error)
+            return {setupIntent: null, error: possibleError.error}
+        }
+        // const stripeData: stripe.ConfirmCardSetupData = {
+        /*const stripeData: ConfirmSetupData = {
+            payment_method_data: {
+                card: this.currentElement.element
+            }
+        }
+        if (
+            data
+            && !isEmpty(data.payment_method_data)
+            && !isString(data.payment_method_data)
+            && !isEmpty(data.payment_method_data.billing_details)
+            && !isString(stripeData.payment_method_data)
+        ) {
+            stripeData.payment_method_data.billing_details = data.payment_method.billing_details
+        }*/
+        // FIXME need to add the element to confirmParams??
+        // setupIntents.ConfirmCardSetupData
+        return this.stripe.confirmSetup({elements, clientSecret, confirmParams, redirect: 'if_required'})
     }
 
     registerCollection(component: StripeComponent, collection: Collection) {
@@ -238,8 +310,12 @@ export class StripeService {
     async createElement(
         id: string,
         publishKey: string,
-        paymentMethodType: stripe.elements.elementsType,
-        options: stripe.elements.ElementsOptions,
+        clientSecret: string,
+        // TODO stripe.elements.elementsType also includes "payment", but is not yet Typed
+        // paymentMethodType: stripe.elements.elementsType,
+        // options: stripe.elements.ElementsOptions,
+        options: StripePaymentElementOptions,
+        // options: StripeElementsOptionsMode,
         mountElement?: any
     ) {
         if (!isEmpty(this.currentElement)) {
@@ -247,11 +323,18 @@ export class StripeService {
             this.destroyElement()
         }
         // This will wait until Stripe API is inited before running
-        const element = (await this.elements(publishKey)).create(paymentMethodType, options)
+        const elementType = 'payment'
+        const elements = await this.getElements(publishKey)
+        // const stripeElements = elements({mode: elementType})
+        const stripeElements = elements({clientSecret})
+        const element = stripeElements.create(elementType, options)
+
+        // const element = (await this.elements(publishKey)).create(paymentMethodType, options)
         this.currentElement = {
             id: safeUniqueId(id),
-            paymentMethodType,
-            element
+            // paymentMethodType,
+            element,
+            elements: stripeElements
         }
 
         if (mountElement) {
@@ -285,9 +368,11 @@ export class StripeService {
 
     elementAddEventListener(
         id: string,
-        event: stripe.elements.eventTypes,
-        handler: stripe.elements.handler
-    ) {
+        // event: stripe.elements.eventTypes,
+        event: 'change' | 'ready' | 'focus' | 'blur' | 'escape' | 'loaderror' | 'loadstart',
+        // handler: StripePaymentElementEvent
+        handler: (event: StripePaymentElementEvent) => any
+    ): StripePaymentElement | void {
         if (
             isEmpty(this.currentElement) ||
             this.currentElement.id !== id
@@ -305,7 +390,9 @@ export class StripeService {
             }).showToast()
             return
         }
-        return this.currentElement.element.addEventListener(event, handler)
+        // return this.currentElement.element.addEventListener(event, handler)
+        // @ts-ignore
+        return this.currentElement.element.on(event, handler)
     }
 
     destroyElement(id?: string) {

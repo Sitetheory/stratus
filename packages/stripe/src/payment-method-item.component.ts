@@ -89,6 +89,7 @@ export class StripePaymentMethodItemComponent extends StripeComponent implements
 
     isExpired() {
         if (this.model.pending) {return false}
+        if (this.model.data.type !== 'card') {return false} // only cards expire
         const d = new Date()
         const month = d.getMonth()+1
         const year = d.getFullYear()
@@ -100,6 +101,7 @@ export class StripePaymentMethodItemComponent extends StripeComponent implements
 
     isExpiring() {
         if (this.model.pending) {return false}
+        if (this.model.data.type !== 'card') {return false} // only cards expire
         const d = new Date()
         const month = d.getMonth()+1
         const year = d.getFullYear()
@@ -107,6 +109,12 @@ export class StripePaymentMethodItemComponent extends StripeComponent implements
         if (this.model.data.exp_year < year) {return true}
         if (this.model.data.exp_year > year) {return false}
         return this.model.data.exp_month <= month
+    }
+
+    isUnverified() {
+        if (this.model.pending) {return false}
+        if (this.model.data.type !== 'us_bank_account') {return false} // only banks are unverified
+        return this.model.data.status === 0
     }
 
     /*ngAfterViewInit() {

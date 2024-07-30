@@ -18,6 +18,7 @@ import {Collection, CollectionOptions} from '@stratusjs/angularjs/services/colle
 import {cookie} from '@stratusjs/core/environment'
 import {safeUniqueId} from '@stratusjs/core/misc'
 import {StripeListComponent, StripeService} from './stripe.service'
+import {PaymentMethodCreateParams} from '@stripe/stripe-js'
 
 
 
@@ -58,7 +59,7 @@ export class StripePaymentMethodListComponent extends StripeListComponent implem
     @Input() defaultBillingCity?: string
     @Input() defaultBillingAddress1?: string
     @Input() defaultBillingAddress2?: string
-    defaultBillingInfo: stripe.BillingDetails = {address: {}}
+    defaultBillingInfo: PaymentMethodCreateParams.BillingDetails = {address: {}}
 
     // Stratus Data Connectivity
     // registry = new Registry()

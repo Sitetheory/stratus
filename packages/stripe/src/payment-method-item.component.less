@@ -27,6 +27,23 @@ sa-stripe-payment-method-item {
         transform: rotate(-13deg);
       }
     }
+    &.unverified {
+      background-color: @medium-grey-color;
+      &::before {
+        overflow: hidden;
+        position: absolute;
+        top: 30px;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        content: "UNVERIFIED";
+        color: #eeeeee63;
+        font-size: 40px;
+        text-align: center;
+        line-height: 1.8;
+        transform: rotate(-26deg);
+      }
+    }
     mat-card-content {
       display: block;
       animation: background-color 2s ease-out both;

@@ -45,12 +45,24 @@
         </div>
         <div [attr.id]="elementId+'-mount'" class="card-element" [class.no-pointer-event]="!isEditable()"></div>
         <div [attr.id]="elementId+'-errors'" class="card-errors" role="alert"></div>
-        <button (click)="saveCard()" [disabled]="!isSubmittable()">Save Payment Method</button>
+        <button (click)="saveCard()" [disabled]="!isSubmittable()">Confirm Payment Method</button>
         <mat-spinner *ngIf="formPending"></mat-spinner>
     </mat-card-content>
     <mat-card-content data-layout-padding [hidden]="!cardSaved">
         <p>
             Payment Method Saved
         </p>
+        <div *ngIf="cardNextAction">
+            However additional actions are needed for this Payment Method to be usable.
+            <div *ngIf="cardNextAction.type === 'verify_with_microdeposits'">
+                <p>
+                    To ensure that you have access to this account, we've made a deposited of $0.01 to it. To verify this
+                    account, please enter the 6-digit code starting with "SM" from that deposit. This deposit may not be
+                    immediately available to you, so you will have to option to return to your Payment Method List and
+                    verify this later.
+                </p>
+                <p>Until verified, this Payment Method will not be available for use.</p>
+            </div>
+        </div>
     </mat-card-content>
 </mat-card>

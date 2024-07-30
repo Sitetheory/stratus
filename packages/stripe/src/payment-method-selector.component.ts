@@ -27,6 +27,7 @@ import {Observable, ObservableInput, Subscriber, timer} from 'rxjs'
 import {catchError, debounce} from 'rxjs/operators'
 import {FormBuilder, FormControl, FormGroup} from '@angular/forms'
 import Toastify from 'toastify-js'
+import {PaymentMethodCreateParams} from '@stripe/stripe-js'
 
 // Local Setup
 const min = !cookie('env') ? '.min' : ''
@@ -73,7 +74,7 @@ export class StripePaymentMethodSelectorComponent extends StripeListComponent im
     @Input() defaultBillingCity?: string
     @Input() defaultBillingAddress1?: string
     @Input() defaultBillingAddress2?: string
-    defaultBillingInfo: stripe.BillingDetails = {address: {}}
+    defaultBillingInfo: PaymentMethodCreateParams.BillingDetails = {address: {}}
     fieldName = 'paymentSelection'
     fieldNameId = 'paymentSelectionId'
 
@@ -268,7 +269,7 @@ export class StripePaymentMethodSelectorComponent extends StripeListComponent im
         this.Stripe.on(
             'Stripe',
             'paymentMethodCreated',
-            (_source, details: [stripe.BillingDetails & {type:'card'|'ach'}]) =>
+            (_source, details: [PaymentMethodCreateParams.BillingDetails & {type:'card'|'ach'}]) =>
             {
                 // The Stripe components are saying there is a new card added, lets find and select it!
                 const newCardDetails = details[0]
