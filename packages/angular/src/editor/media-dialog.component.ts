@@ -89,6 +89,7 @@ export class MediaDialogComponent extends ResponsiveComponent implements OnInit 
     // TODO: Move this to its own AutoComplete Component
     // AutoComplete Data
     apiBase = '/Api/Media'
+    apiParams = 'forceContext=context'
     mediaEntities: any[] = []
     dialogMediaForm: FormGroup
     isMediaLoading = true
@@ -197,7 +198,7 @@ export class MediaDialogComponent extends ResponsiveComponent implements OnInit 
             paging = this.pageEvent.pageIndex + 1
         }
         query = (_.isString(query) && !_.isEmpty(query)) ? `"${query}"` : ''
-        return `${this.apiBase}?limit=${limit}&p=${paging}&q=${query}`
+        return `${this.apiBase}?limit=${limit}&p=${paging}&q=${query}&${this.apiParams}`
     }
 
     getQuery(query?: string): Observable<HttpResponse<any>> {
