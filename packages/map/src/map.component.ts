@@ -190,7 +190,6 @@ export class MapComponent extends RootComponent implements OnInit, AfterViewInit
 
     // Basic Component Settings
     title = moduleName + '_component'
-    uid: string
 
     // UI Flags
     initializing = false
