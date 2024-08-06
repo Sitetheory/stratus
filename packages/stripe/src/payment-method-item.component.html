@@ -46,7 +46,7 @@
                     </span>
                 </div>
                 <div class="aligned-tile" [style.justifyContent]="'flex-end'" *ngIf="isUnverified()">
-                    <button>Verify</button>
+                    <button (click)="verifyPaymentMethod($event)">Verify</button>
                 </div>
             </mat-grid-tile>
         </mat-grid-list>

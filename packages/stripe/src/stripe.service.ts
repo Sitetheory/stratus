@@ -19,7 +19,6 @@ import Toastify from 'toastify-js'
 
 export class StripeComponent extends RootComponent {
     title: string
-    uid: string
     @Input() elementId: string
     styled = false
     initialized = false
@@ -34,7 +33,8 @@ export type StripeEmitterPMCreated =
     StripeEmitter & ((source: StripeListComponent, ...details: [PaymentMethodCreateParams.BillingDetails & {type:'card'|'ach'}]) => any)
 
 export type StripePaymentElementEvent =
-    StripePaymentElementChangeEvent & {error: any} | {elementType: 'payment'} | {elementType: 'payment'; error: StripeError}
+    StripePaymentElementChangeEvent & {error: any} |
+        StripePaymentElement | {elementType: 'payment'} | {elementType: 'payment'; error: StripeError}
 
 @Injectable({
     providedIn: 'root'
@@ -318,7 +318,7 @@ export class StripeService {
         // options: StripeElementsOptionsMode,
         mountElement?: any
     ) {
-        if (!isEmpty(this.currentElement)) {
+        if (this.currentElement) {
             console.warn('StripeElement for', this.currentElement.id, 'already exists. Destroying existing (consider cleaning up first)')
             this.destroyElement()
         }
@@ -397,7 +397,7 @@ export class StripeService {
 
     destroyElement(id?: string) {
         if (
-            !isEmpty(this.currentElement) &&
+            this.currentElement &&
             (
                 isNil(id) ||
                 (isString(id) && this.currentElement.id === id)

@@ -13,7 +13,7 @@ import {
     MAT_DIALOG_DATA,
     MatDialogRef
 } from '@angular/material/dialog'
-import {assignIn, clone, includes, isEmpty, isObject, isString, set, snakeCase} from 'lodash'
+import {assignIn, clone, includes, isEmpty, isNumber, isObject, isString, set, snakeCase} from 'lodash'
 import {keys} from 'ts-transformer-keys'
 import {
     Stratus
@@ -22,7 +22,12 @@ import {Model, ModelOptions} from '@stratusjs/angularjs/services/model'
 import {cookie} from '@stratusjs/core/environment'
 import {safeUniqueId} from '@stratusjs/core/misc'
 import {StripeComponent, StripeService} from './stripe.service'
-import {PaymentMethodCreateParams, StripePaymentElementOptions, StripePaymentElementChangeEvent} from '@stripe/stripe-js'
+import {
+    PaymentMethodCreateParams,
+    StripePaymentElementOptions,
+    StripePaymentElementChangeEvent,
+    StripePaymentElement
+} from '@stripe/stripe-js'
 import {SetupIntent} from '@stripe/stripe-js/dist/api/setup-intents'
 
 // Local Setup
@@ -45,9 +50,6 @@ export class StripePaymentMethodComponent extends StripeComponent implements OnD
     // Basic Component Settings
     title = `${packageName}_${componentName}_component`
 
-    // Dependencies
-    _: any
-
     // Registry Attributes
     @Input() urlRoot: string = '/Api'
     @Input() paymentMethodApiPath: string = 'PaymentMethod'
@@ -55,7 +57,7 @@ export class StripePaymentMethodComponent extends StripeComponent implements OnD
     // States
     cardComplete = false
     cardSaved = false
-    cardNotReady = false
+    @Input() pmNotVerified = false
     cardNextAction?: SetupIntent.NextAction = null
     formPending = false
 
@@ -68,6 +70,9 @@ export class StripePaymentMethodComponent extends StripeComponent implements OnD
     billingInfo: PaymentMethodCreateParams.BillingDetails = { // fixme should copy stripe.BillingDetails // PaymentBillingInfo
         address: {}
     }
+    @Input() paymentMethodId: string
+    verifyCode: string  = 'SM'
+
     // card: stripe.elements.Element
     private cardId?: string
 
@@ -111,6 +116,21 @@ export class StripePaymentMethodComponent extends StripeComponent implements OnD
         }
 
         if (isObject(this.defaultBillingInfo)) {
+            if (
+                Object.hasOwn(this.defaultBillingInfo, 'phone') &&
+                isNumber(this.defaultBillingInfo.phone) &&
+                this.defaultBillingInfo.phone
+            ) {
+                this.defaultBillingInfo.phone = (this.defaultBillingInfo.phone as number).toString()
+            }
+            if (
+                Object.hasOwn(this.defaultBillingInfo, 'address') &&
+                Object.hasOwn(this.defaultBillingInfo.address, 'postal_code') &&
+                isNumber(this.defaultBillingInfo.address.postal_code) &&
+                this.defaultBillingInfo.address.postal_code
+            ) {
+                this.defaultBillingInfo.address.postal_code = (this.defaultBillingInfo.address.postal_code as number).toString()
+            }
             // Adds any of this extra data to the payment model
             assignIn(this.billingInfo, this.defaultBillingInfo)
         }
@@ -120,43 +140,64 @@ export class StripePaymentMethodComponent extends StripeComponent implements OnD
         // noinspection RedundantConditionalExpressionJS - dont simplify detailedBillingInfo. needs to be converted to boolean
         const options: StripePaymentElementOptions = {
             // {} // style options
-            // hidePostalCode: this.detailedBillingInfo ? true : false // option can remove postal
+            defaultValues: {
+                billingDetails: this.billingInfo
+            },
+            // All is auto by default. There is no 'always' option
+            /*fields: {
+                billingDetails: {
+                    name: 'auto',
+                    address: {
+                        postal_code: 'never'
+                    }
+                }
+            }*/
         }
-        this.cardId = await this.Stripe.createElement(
-            this.uid,
-            this.publishKey,
-            this.clientSecret,
-            // 'card',
-            options,
-            `#${this.elementId}-mount`
-        )
-        // console.log('PaymentMethod loading', options, this)
-        // Render the Card
-        // this.card.mount(`#${this.elementId}-mount`)
-        // Provide possible Stripe errors
-        // this.card.addEventListener('change', (event) => {
-        this.Stripe.elementAddEventListener(this.cardId, 'change', (event: StripePaymentElementChangeEvent & {error: any}) => {
-            const displayError = document.getElementById(`${this.elementId}-errors`)
-            // console.log('event', event) // Can get postal code from here
-            // need to track if button is able to save
-            if (
-                Object.prototype.hasOwnProperty.call(event, 'complete') &&
-                this.cardComplete !== event.complete
-            ) {
-                // this.$applyAsync(() => {
-                this.cardComplete = event.complete
-                // })
-            }
-            // Ensure we display any errors
-            if (event.error) {
-                displayError.textContent = event.error.message
-            } else {
-                displayError.textContent = ''
-            }
-        })
+        if (this.publishKey && this.clientSecret) {
+            this.cardId = await this.Stripe.createElement(
+                this.uid,
+                this.publishKey,
+                this.clientSecret,
+                // 'card',
+                options,
+                `#${this.elementId}-mount`
+            )
+            this.Stripe.elementAddEventListener(this.cardId, 'ready', (event: StripePaymentElement) => {
+                this.initialized = true
+            })
+            // console.log('PaymentMethod loading', options, this)
+            // Render the Card
+            // this.card.mount(`#${this.elementId}-mount`)
+            // Provide possible Stripe errors
+            // this.card.addEventListener('change', (event) => {
+            this.Stripe.elementAddEventListener(this.cardId, 'change', (event: StripePaymentElementChangeEvent & { error: any }) => {
+                const displayError = document.getElementById(`${this.elementId}-errors`)
+                // console.log('event', event) // Can get postal code from here
+                // need to track if button is able to save
+                if (
+                    Object.prototype.hasOwnProperty.call(event, 'complete') &&
+                    this.cardComplete !== event.complete
+                ) {
+                    // this.$applyAsync(() => {
+                    this.cardComplete = event.complete
+                    // })
+                }
+                // Ensure we display any errors
+                if (event.error) {
+                    displayError.textContent = event.error.message
+                } else {
+                    displayError.textContent = ''
+                }
+            })
+            // this.initialized = true
+        } else if (this.paymentMethodId) {
+            this.initialized = true
+        } else {
+            console.warn('PaymentMethodComponent is missing required fields')
+        }
 
         // $scope.$applyAsync(() => {
-        this.initialized = true
+        // this.initialized = true
         // })
 
     }
@@ -169,7 +210,7 @@ export class StripePaymentMethodComponent extends StripeComponent implements OnD
     /**
      * If all text fields are filled out (other than card details)
      */
-    isBillingDetailsFilled() {
+    /*isBillingDetailsFilled() {
         if (
             !isEmpty(this.billingInfo.name) &&
             !isEmpty(this.billingInfo.email) &&
@@ -181,10 +222,10 @@ export class StripePaymentMethodComponent extends StripeComponent implements OnD
             // TODO not checking this yet
         }
         return this.isEditable()
-    }
+    }*/
 
     isSubmittable() {
-        return this.cardComplete && this.isEditable() && this.isBillingDetailsFilled()
+        return this.cardComplete && this.isEditable() //  && this.isBillingDetailsFilled() // TODO not sure how to check Stripe items filled
     }
 
     /**
@@ -219,11 +260,12 @@ export class StripePaymentMethodComponent extends StripeComponent implements OnD
             this.clientSecret,
             {
                 return_url: '', // FIXME we dont redirect
-                payment_method_data: {
+                // payment_method_data now supplied completely by the form,
+                /*payment_method_data: {
                     billing_details: this.billingInfo
                     //    name: 'Test'
                     // }
-                }
+                }*/
             }
         )
 
@@ -302,11 +344,12 @@ export class StripePaymentMethodComponent extends StripeComponent implements OnD
                 payment_method: setupIntent.payment_method,
                 setup_intent: setupIntent.id,
             }
+            this.paymentMethodId = setupIntent.payment_method
             // Submit what we have so far
             await model.save()
             // hide form and Display a success message
             this.cardSaved = true
-            this.cardNotReady = true // Note that there are more actions to take/await
+            this.pmNotVerified = true // Note that there are more actions to take/await
             this.formPending = false // no more form
             this.cardNextAction = clone(setupIntent.next_action)
             // Reload any collections listing PMs
@@ -329,6 +372,45 @@ export class StripePaymentMethodComponent extends StripeComponent implements OnD
         displayError.textContent = 'An unknown Error has occurred'
     }
 
+    async verifyPM(ev?: any) {
+        if (ev) {
+            ev.preventDefault()
+            // ev.stopPropagation()
+        }
+        // if (!this.isSubmittable()) {
+        if (
+            this.formPending ||
+            !this.paymentMethodId ||
+            this.verifyCode.length !== 6
+        ) {
+            // prevent trying to submit when not needed
+            return
+        }
+        // TODO need to freeze all input fields as this could take a moment and changes will do nothing
+        // TODO add loading bar to show something is being worked on
+        this.formPending = true
+
+        const apiOptions: ModelOptions = {
+            target: this.paymentMethodApiPath
+        }
+        if (this.urlRoot) {
+            apiOptions.urlRoot = this.urlRoot
+        }
+
+        // Send setupIntent.payment_method to your server to save the card to a Customer as default
+        const model = new Model(apiOptions)
+        model.data = {
+            payment_method: this.paymentMethodId,
+            verify_value: this.verifyCode
+        }
+        await model.save()
+        // hide form and Display a success message
+        this.cardSaved = true
+        this.formPending = false // no more form
+        // Reload any collections listing PMs
+        await this.Stripe.fetchCollections()
+    }
+
     dialogClose(): void {
         if (this.dialogRef) {
             this.dialogRef.close()
@@ -347,11 +429,13 @@ export class StripePaymentMethodComponent extends StripeComponent implements OnD
 }
 
 export interface StripePaymentMethodDialogData {
-    clientSecret: string
-    publishKey: string
-    formMessage: string
+    clientSecret?: string
+    publishKey?: string
+    formMessage?: string
     urlRoot?: string,
     paymentMethodApiPath?: string,
     detailedBillingInfo?: boolean
     defaultBillingInfo?: PaymentMethodCreateParams.BillingDetails
+    pmNotVerified?: boolean
+    paymentMethodId?: string
 }

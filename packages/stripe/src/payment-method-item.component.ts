@@ -5,7 +5,7 @@ import {
     OnInit
 } from '@angular/core'
 import {DomSanitizer} from '@angular/platform-browser'
-import {snakeCase} from 'lodash'
+import {isEmpty, snakeCase} from 'lodash'
 import {keys} from 'ts-transformer-keys'
 import {
     Stratus
@@ -19,6 +19,10 @@ import {
     MatDialogRef
 } from '@angular/material/dialog'
 import {StripeComponent, StripeService} from './stripe.service'
+import {
+    StripePaymentMethodComponent,
+    StripePaymentMethodDialogData
+} from './payment-method.component'
 
 // Local Setup
 const min = !cookie('env') ? '.min' : ''
@@ -43,9 +47,10 @@ export class StripePaymentMethodItemComponent extends StripeComponent implements
 
     // Registry Attributes
     @Input() urlRoot = '/Api'
+    @Input() paymentMethodApiPath = 'PaymentMethod'
 
     constructor(
-        private dialog: MatDialog,
+        public dialog: MatDialog,
         private elementRef: ElementRef,
         private sanitizer: DomSanitizer,
         private Stripe: StripeService,
@@ -128,6 +133,38 @@ export class StripePaymentMethodItemComponent extends StripeComponent implements
         // Event will be empty
         this.deletePMConfirmation()
         return false
+    }
+
+    verifyPaymentMethod(ev?: any) {
+        if (ev) {
+            ev.preventDefault()
+            // ev.stopPropagation()
+        }
+
+        const dialogRef = this.dialog.open(StripePaymentMethodComponent, {
+            width: '1000px',
+            data: {
+                urlRoot: this.urlRoot,
+                paymentMethodApiPath: this.paymentMethodApiPath,
+                paymentMethodId: this.model.data.paymentMethodId,
+                pmNotVerified: true
+            } as StripePaymentMethodDialogData
+        })
+
+        dialogRef.afterClosed().subscribe((result: StripePaymentMethodDialogData) => {
+            // this.newPaymentMethodPrompt = false
+            if (!result || isEmpty(result)) {
+                return
+            }
+
+            // Display output if one exists
+            if (
+                // this.dev &&
+                result
+            ) {
+                // console.log('payment dialog result:', result)
+            }
+        })
     }
 
     public deletePMConfirmation(): MatDialogRef<ConfirmDialogComponent, any> {

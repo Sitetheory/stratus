@@ -1,67 +1,32 @@
 <mat-card [attr.id]="elementId">
-    <mat-card-content data-layout-padding [hidden]="cardSaved">
+    <mat-card-content data-layout-padding [hidden]="pmNotVerified && !cardSaved">
         <div *ngIf="formMessage" class="billing-message" [innerHTML]="formMessage"></div>
-        <!-- TODO add a form to collect Billing info for the card as an option -->
-        <div *ngIf="detailedBillingInfo" class="billing-info">
-            <div data-layout-gt-sm="row">
-                <mat-form-field class="md-block" flex-gt-sm>
-                    <mat-label>Name</mat-label>
-                    <input matInput [(ngModel)]="billingInfo.name" [disabled]="!isEditable()">
-                </mat-form-field>
-                <mat-form-field class="md-block" flex-gt-sm>
-                    <mat-label>Email</mat-label>
-                    <input matInput [(ngModel)]="billingInfo.email" [disabled]="!isEditable()">
-                </mat-form-field>
-                <mat-form-field class="md-block" flex-gt-sm>
-                    <mat-label>Phone</mat-label>
-                    <input matInput [(ngModel)]="billingInfo.phone" [disabled]="!isEditable()">
-                </mat-form-field>
-            </div>
-            <div data-layout-gt-sm="row">
-                <mat-form-field class="md-block" flex-gt-sm>
-                    <mat-label>Address</mat-label>
-                    <input matInput [(ngModel)]="billingInfo.address.line1" [disabled]="!isEditable()">
-                </mat-form-field>
-                <mat-form-field class="md-block" flex-gt-sm>
-                    <mat-label>Address 2</mat-label>
-                    <input matInput [(ngModel)]="billingInfo.address.line2" [disabled]="!isEditable()">
-                </mat-form-field>
-            </div>
-            <div data-layout-gt-sm="row">
-                <mat-form-field class="md-block" flex-gt-sm>
-                    <mat-label>City</mat-label>
-                    <input matInput [(ngModel)]="billingInfo.address.city" [disabled]="!isEditable()">
-                </mat-form-field>
-                <mat-form-field class="md-block" flex-gt-sm>
-                    <mat-label>State</mat-label>
-                    <input matInput [(ngModel)]="billingInfo.address.state" [disabled]="!isEditable()">
-                </mat-form-field>
-                <mat-form-field class="md-block" flex-gt-sm>
-                    <mat-label>Zip</mat-label>
-                    <input matInput name="postalCode" [(ngModel)]="billingInfo.address.postal_code"
-                           pattern="[0-9]{5}" maxlength="5" [disabled]="!isEditable()">
-                </mat-form-field>
-            </div>
-        </div>
         <div [attr.id]="elementId+'-mount'" class="card-element" [class.no-pointer-event]="!isEditable()"></div>
         <div [attr.id]="elementId+'-errors'" class="card-errors" role="alert"></div>
-        <button (click)="saveCard()" [disabled]="!isSubmittable()">Confirm Payment Method</button>
-        <mat-spinner *ngIf="formPending"></mat-spinner>
+        <button mat-flat-button (click)="saveCard()" [disabled]="!isSubmittable()" *ngIf="initialized">Confirm Payment Method</button>
+        <mat-spinner *ngIf="formPending || !initialized"></mat-spinner>
     </mat-card-content>
-    <mat-card-content data-layout-padding [hidden]="!cardSaved">
-        <p>
+    <mat-card-content data-layout-padding [hidden]="!cardSaved && !pmNotVerified">
+        <p [hidden]="!cardSaved">
             Payment Method Saved
         </p>
-        <div *ngIf="cardNextAction">
-            However additional actions are needed for this Payment Method to be usable.
-            <div *ngIf="cardNextAction.type === 'verify_with_microdeposits'">
+        <div [hidden]="!pmNotVerified">
+            Additional actions are needed for this Payment Method to be usable.
+            <div>
                 <p>
                     To ensure that you have access to this account, we've made a deposited of $0.01 to it. To verify this
-                    account, please enter the 6-digit code starting with "SM" from that deposit. This deposit may not be
+                    account, please enter the 6-digit code starting with "<b>SM</b>" from that deposit. This deposit may not be
                     immediately available to you, so you will have to option to return to your Payment Method List and
                     verify this later.
                 </p>
                 <p>Until verified, this Payment Method will not be available for use.</p>
+                <mat-form-field class="md-block one-time-code">
+                    <mat-label>Descriptor Code</mat-label>
+                    <input matInput name="verifyCode" [(ngModel)]="verifyCode"
+                           pattern="SM[0-9]{4}" maxlength="6">
+                </mat-form-field>
+                <button mat-flat-button (click)="verifyPM()" [disabled]="formPending ||  verifyCode.length < 6">Verify Payment Method</button>
+                <mat-spinner *ngIf="formPending"></mat-spinner>
             </div>
         </div>
     </mat-card-content>

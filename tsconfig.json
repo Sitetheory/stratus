@@ -4,7 +4,7 @@
 //    "target": "es6",
 //    "module": "ES2020",
     // SystemJS Compilation
-    "target": "es2019",
+    "target": "es2022",
     "module": "system",
     "moduleResolution": "node",
 //    "outDir": "dist",
@@ -22,7 +22,7 @@
       "node_modules/@types"
     ],
     "lib": [
-      "es2019",
+      "es2022",
       "dom"
     ],
     "paths": {
