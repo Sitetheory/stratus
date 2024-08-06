@@ -67,7 +67,6 @@ export class CodeViewDialogComponent extends ResponsiveComponent implements OnIn
 
     // Basic Component Settings
     title = moduleName + '_component'
-    uid: string
 
     // Dependencies
     _ = _

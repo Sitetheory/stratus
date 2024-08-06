@@ -123,7 +123,7 @@ FroalaEditor.RegisterCommand('linkManager', {
     undo: false,
     focus: true,
     modal: true,
-    //refreshAfterCallback: false,
+    // refreshAfterCallback: false,
     refreshOnCallback: false,
     callback() {
         // console.log('linkManager callback initiated!', this.link)

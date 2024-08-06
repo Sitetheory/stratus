@@ -85,7 +85,6 @@ export class LinkDialogComponent extends ResponsiveComponent implements OnInit, 
 
     // Basic Component Settings
     title = moduleName + '_component'
-    uid: string
 
     // Dependencies
     _ = _

@@ -71,7 +71,6 @@ export class CitationDialogComponent extends ResponsiveComponent implements OnIn
 
     // Basic Component Settings
     title = moduleName + '_component'
-    uid: string
 
     // Dependencies
     Stratus = Stratus

@@ -60,7 +60,6 @@ export class BaseComponent extends RootComponent implements OnInit, OnChanges {
 
     // Basic Component Settings
     title = moduleName + '_component'
-    uid: string
 
     // Registry Attributes
     @Input() target: string
