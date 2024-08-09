@@ -1674,6 +1674,26 @@ Stratus.Internals.TrackLocation = () => {
     const envData: any = {}
     // if (!Stratus.Environment.has('timezone'))
     envData.timezone = new Date().toString().match(/\((.*)\)/)[1]
+    envData.referrer = document.referrer
+    envData.host = document.location.host
+    envData.page = document.location.pathname
+    envData.hash = document.location.hash
+    envData.parameters = {}
+    if (document.location.search) {
+        const params = new URLSearchParams(document.location.search)
+        // @ts-ignore
+        for (const [key, value] of params) {
+            if (envData.parameters.hasOwnProperty(key)) {
+                if (Array.isArray(envData.parameters[key])) {
+                    envData.parameters[key].push(value)
+                } else {
+                    envData.parameters[key] = [envData.parameters[key], value]
+                }
+            } else {
+                envData.parameters[key] = value
+            }
+        }
+    }
     if (Stratus.Environment.get('trackLocation')) {
         if (Stratus.Environment.get('trackLocationConsent')) {
             Stratus.Internals.Location().then((pos: any) => {
