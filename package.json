@@ -155,7 +155,7 @@
     "jsdom": "^16.4.0",
     "jsonminify": "^0.4.2",
     "less": "^3.9.0",
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.21",
     "luxon": "^3.4.4",
     "mini-css-extract-plugin": "^2.6.1",
     "moment": "^2.29.4",

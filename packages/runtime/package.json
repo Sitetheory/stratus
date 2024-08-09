@@ -1,6 +1,6 @@
 {
   "name": "@stratusjs/runtime",
-  "version": "0.12.1",
+  "version": "0.12.2",
   "description": "This is the runtime package for StratusJS.",
   "scripts": {},
   "repository": {
@@ -16,7 +16,6 @@
   "keywords": [
     "sitetheory",
     "stratus",
-    "underscore",
     "lodash",
     "javascript",
     "typescript",
@@ -26,10 +25,10 @@
     "npm": ">= 8.19.3"
   },
   "dependencies": {
-    "@stratusjs/core": "^0.5.0",
+    "@stratusjs/core": "^0.8.0",
     "bowser-legacy": "npm:bowser@^1.9.4",
     "jquery": "^3.4.1",
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.21",
     "tslib": "^2.4.0"
   }
 }
