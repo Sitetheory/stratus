@@ -77,7 +77,7 @@ interface StratusRuntime {
     }
     History: {} | any
     Apps: {} | any
-    RegisterGroup: {} | any
+    RegisterGroup: {} | any // FIXME this seems to be both ModelBase and LooseObject in different cases
     Components: {} | any
     Filters: {} | any
     LocalStorage: {} | any
@@ -135,6 +135,8 @@ interface StratusRuntime {
         CssLoader?: (url: any) => Promise<void>
         JsLoader?: (url: any) => Promise<void>
         LoadCss?: (urls?: string|string[]|LooseObject) => Promise<void>
+        LoadImage?: (obj: {el?: any, spy?: any, size?: any, ignoreSpy?: boolean}) => void
+        OnScroll?: () => void
         XHR: (request?: XHRRequest) => any
     }
     Settings: {
@@ -1124,7 +1126,7 @@ Stratus.Internals.LoadEnvironment = () => {
 
 // Lazy Load Image
 // ---------------
-Stratus.Internals.LoadImage = (obj: any) => {
+Stratus.Internals.LoadImage = (obj: {el?: any, spy?: any, size?: any, ignoreSpy?: boolean}) => {
     if (!obj.el) {
         setTimeout(() => {
             Stratus.Internals.LoadImage(obj)
@@ -1168,7 +1170,7 @@ Stratus.Internals.LoadImage = (obj: any) => {
         // }
         return
     }
-    if (!Stratus.Internals.IsOnScreen(obj.spy || el)) {
+    if (!obj.ignoreSpy && !Stratus.Internals.IsOnScreen(obj.spy || el)) {
         // if (cookie('env')) {
         //     console.log('not on screen:', head(el))
         // }
@@ -1526,7 +1528,7 @@ Stratus.Internals.Location = (options: any) => {
 // them and then execute them all at once Each element must include: method:
 // the function to callback options: an object of options that the function
 // uses TODO: Move this somewhere.
-Stratus.Internals.OnScroll = once((_elements: any) => {
+Stratus.Internals.OnScroll = once(() => {
     // Reset Elements:
     // if (!elements || elements.length === 0) return false;
 

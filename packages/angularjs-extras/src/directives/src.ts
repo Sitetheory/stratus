@@ -12,7 +12,7 @@ import {
     IWindowService
 } from 'angular'
 import {StratusDirective} from './baseNew'
-import {safeUniqueId} from '@stratusjs/core/misc'
+import {isJSON, safeUniqueId} from '@stratusjs/core/misc'
 
 // Environment
 const packageName = 'angularjs-extras'
@@ -24,11 +24,13 @@ export type SrcScope = IScope & {
     filter?: string[]
     registered?: boolean
     group: {
-        method: CallableFunction,
-        el: IAugmentedJQuery,
+        method: CallableFunction
+        el: IAugmentedJQuery
         spy: string | IAugmentedJQuery
+        ignoreSpy?: boolean
     }
 
+    loadImage(): void
     register(): void
     setSrc(tagType: string, src: string): void
 }
@@ -43,7 +45,8 @@ Stratus.Directives.Src = (
         stratusSrc: '@stratusSrc',
         // stratusSrcSizes: '@stratusSrcSizes', // Unused at this time
         stratusSrcVersion: '@stratusSrcVersion',
-        style: '@style'
+        style: '@style',
+        initNow: '=initNow'
     },
     link: (
         $scope: SrcScope,
@@ -173,9 +176,33 @@ Stratus.Directives.Src = (
                 spy: $element.data('spy') ? element($window.document.querySelector($element.data('spy'))) : $element
                 // spy: $element.data('spy') ? Stratus.Select($element.data('spy')) : $element
             }
+
+            // Extra logic if we need to forcibly load an image and ignore scroll spy
+            if (Object.prototype.hasOwnProperty.call($attrs.$attr, 'initNow')) {
+                $scope.group.ignoreSpy = true
+                // If data-init-now was set, scroll spy logic will be ignored and skipped
+                const initNow = isJSON($attrs.initNow) ? JSON.parse($attrs.initNow) : false
+                if (!initNow) {
+                    const stopWatchingInitNow = $scope.$watch('initNow', (initNowCtrl: boolean) => {
+                        if (initNowCtrl !== true) {
+                            return
+                        }
+                        $scope.loadImage()
+                        stopWatchingInitNow()
+                    })
+                } else {
+                    $scope.loadImage()
+                }
+                return
+            }
+
             Stratus.RegisterGroup.add('OnScroll', $scope.group) // TODO Stratus.RegisterGroup typings needed
-            Stratus.Internals.LoadImage($scope.group) // TODO Stratus.Internals.LoadImage typings needed
-            Stratus.Internals.OnScroll() // TODO Stratus.Internals.OnScroll typings needed
+            Stratus.Internals.LoadImage($scope.group)
+            Stratus.Internals.OnScroll()
+        }
+
+        $scope.loadImage = () => {
+            Stratus.Internals.LoadImage($scope.group)
         }
 
         // Source Interpolation
