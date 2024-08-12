@@ -1,6 +1,6 @@
 {
   "name": "@stratusjs/idx",
-  "version": "0.23.0",
+  "version": "0.23.1",
   "description": "AngularJS idx/property Service and Components bundle to be used as an add on to StratusJS",
   "main": "./dist/idx.bundle.js",
   "scripts": {
@@ -30,12 +30,12 @@
     "npm": ">= 8.19.3"
   },
   "dependencies": {
-    "@stratusjs/angular": "^0.9.3",
-    "@stratusjs/angularjs": "^0.9.1",
-    "@stratusjs/angularjs-extras": "^0.14.3",
+    "@stratusjs/angular": "^0.12.0",
+    "@stratusjs/angularjs": "^0.10.",
+    "@stratusjs/angularjs-extras": "^0.15.3",
     "@stratusjs/boot": "^1.2.0",
-    "@stratusjs/map": "^0.6.5",
-    "@stratusjs/runtime": "^0.12.1",
+    "@stratusjs/map": "^0.6.6",
+    "@stratusjs/runtime": "^0.12.3",
     "@stratusjs/swiper": "^1.2.3"
   }
 }
