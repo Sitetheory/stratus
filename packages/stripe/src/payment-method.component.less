@@ -6,7 +6,7 @@ sa-stripe-payment-method {
   input,
   .billing-info .input,
   .StripeElement {
-    /*box-sizing: border-box;
+    /* box-sizing: border-box;
     height: 40px;
     padding: 10px 12px;
     border: 1px solid transparent;
@@ -14,7 +14,7 @@ sa-stripe-payment-method {
     background-color: white;
     box-shadow: 0 1px 3px 0 #e6ebf1;
     -webkit-transition: box-shadow 150ms ease;
-    transition: box-shadow 150ms ease;*/
+    transition: box-shadow 150ms ease; */
   }
   input:focus,
   .StripeElement--focus {
@@ -32,6 +32,7 @@ sa-stripe-payment-method {
   .no-pointer-event {
     pointer-events: none;
   }
+
   /** @source https://codepen.io/stoumann/pen/bGQdgpw */
   .one-time-code {
     .mat-form-field-infix {
@@ -41,20 +42,21 @@ sa-stripe-payment-method {
       --otp-digits: 6;
       --otp-ls: 2ch;
       --otp-gap: 1.25;
-      --_otp-bgsz: calc(var(--otp-ls) + 1ch);
+      --otp-bgsz: calc(var(--otp-ls) + 1ch);
+
       all: unset;
       background: linear-gradient(90deg,
           var(--otp-bg, #EEE) calc(var(--otp-gap) * var(--otp-ls)),
           transparent 0) linear-gradient(90deg,
           var(--otp-bg, #EEE) calc(var(--otp-gap) * var(--otp-ls)),
           transparent 0) no-repeat, repeat-x;
-      background-size: var(--_otp-bgsz) 100%;
+      background-size: var(--otp-bgsz) 100%;
       caret-color: var(--otp-cc, #222);
       caret-shape: block;
       clip-path: inset(0% calc(var(--otp-ls) / 2) 0% 0%);
       font-family: ui-monospace, monospace;
       font-size: var(--otp-fz, 2.5em);
-      inline-size: calc(var(--otp-digits) * var(--_otp-bgsz));
+      inline-size: calc(var(--otp-digits) * var(--otp-bgsz));
       letter-spacing: var(--otp-ls);
       padding-block: var(--otp-pb, 1ch);
       padding-inline-start: calc(((var(--otp-ls) - 1ch) / 2) * var(--otp-gap));
