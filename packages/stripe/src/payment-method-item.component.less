@@ -15,16 +15,33 @@ sa-stripe-payment-method-item {
       &::before {
         overflow: hidden;
         position: absolute;
-        top: 0;
+        top: 10px;
         left: 0;
         right: 0;
         bottom: 0;
         content: "EXPIRED";
         color: #eeeeee63;
-        font-size: 76px;
+        font-size: 57px;
         text-align: center;
         line-height: 1.8;
-        transform: rotate(-13deg);
+        transform: rotate(-20deg);
+      }
+    }
+    &.unverified {
+      background-color: @medium-grey-color;
+      &::before {
+        overflow: hidden;
+        position: absolute;
+        top: 30px;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        content: "UNVERIFIED";
+        color: #eeeeee63;
+        font-size: 40px;
+        text-align: center;
+        line-height: 1.8;
+        transform: rotate(-26deg);
       }
     }
     mat-card-content {

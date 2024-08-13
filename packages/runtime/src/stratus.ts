@@ -2,7 +2,10 @@
 // ----------
 
 // Runtime
-import _ from 'lodash'
+import {
+    camelCase,every,extend,filter,find,findKey,flowRight,forEach,get,has,head,includes,isArray,isEmpty,isUndefined,
+    isString,kebabCase,keyBy,map,mapValues,max,mixin,once,size,snakeCase,some,startsWith,toPairs,uniq,uniqueId,union,zipObject
+} from 'lodash'
 import jQuery from 'jquery'
 import bowser from 'bowser-legacy'
 
@@ -74,7 +77,7 @@ interface StratusRuntime {
     }
     History: {} | any
     Apps: {} | any
-    RegisterGroup: {} | any
+    RegisterGroup: {} | any // FIXME this seems to be both ModelBase and LooseObject in different cases
     Components: {} | any
     Filters: {} | any
     LocalStorage: {} | any
@@ -132,6 +135,8 @@ interface StratusRuntime {
         CssLoader?: (url: any) => Promise<void>
         JsLoader?: (url: any) => Promise<void>
         LoadCss?: (urls?: string|string[]|LooseObject) => Promise<void>
+        LoadImage?: (obj: {el?: any, spy?: any, size?: any, ignoreSpy?: boolean}) => void
+        OnScroll?: () => void
         XHR: (request?: XHRRequest) => any
     }
     Settings: {
@@ -217,9 +222,9 @@ export const Stratus: StratusRuntime = {
     Select: DOM.Select,
 
     /* Boot */
-    BaseUrl: (boot && _.has(boot, 'configuration') ? boot.configuration.baseUrl : null) || '/',
-    BundlePath: (boot && _.has(boot, 'configuration') ? boot.configuration.bundlePath : '') || '',
-    DeploymentPath: (boot && _.has(boot, 'configuration') ? boot.configuration.deploymentPath : '') || '',
+    BaseUrl: (boot && has(boot, 'configuration') ? boot.configuration.baseUrl : null) || '/',
+    BundlePath: (boot && has(boot, 'configuration') ? boot.configuration.bundlePath : '') || '',
+    DeploymentPath: (boot && has(boot, 'configuration') ? boot.configuration.deploymentPath : '') || '',
 
     /* This is used internally for triggering events */
     Events: new EventManager(),
@@ -378,7 +383,7 @@ if (cookie('env')) {
 // variables inside for use with String Interpolation.  The '{# #}' tag
 // Interpolates any variables and HTML Escapes the output for use with HTML
 // Escaped String Interpolation.
-// _.templateSettings = {
+// templateSettings = {
 //     evaluate: /\{%(.+?)%\}/g,
 //     interpolate: /\{\{(.+?)\}\}/g,
 //     escape: /\{#(.+?)#\}/g
@@ -387,21 +392,21 @@ if (cookie('env')) {
 // Underscore Mixins
 // ------------------
 
-_.mixin({
+mixin({
 
     // Underscore Compatibility References: https://github.com/lodash/lodash/wiki/Migrating
     // TODO: Remove once phased out completely
-    any: _.some,
-    all: _.every,
-    compose: _.flowRight,
-    contains: _.includes,
-    findWhere: _.find,
-    indexBy: _.keyBy,
-    mapObject: _.mapValues,
-    object: _.zipObject,
-    pairs: _.toPairs,
-    pluck: _.map,
-    where: _.filter,
+    any: some,
+    all: every,
+    compose: flowRight,
+    contains: includes,
+    findWhere: find,
+    indexBy: keyBy,
+    mapObject: mapValues,
+    object: zipObject,
+    pairs: toPairs,
+    pluck: map,
+    where: filter,
 
     // This function simply extracts the name of a function from code directly
     functionName,
@@ -413,7 +418,7 @@ _.mixin({
     lcfirst,
 
     // This function allows creation, edit, retrieval and deletion of cookies.
-    // Note: Delete with `_.cookie(name, '', -1)`
+    // Note: Delete with `cookie(name, '', -1)`
     cookie,
 
     // Converge a list and return the prime key through specified method.
@@ -465,10 +470,10 @@ _.mixin({
     titleCase,
 
     // Legacy Case Switchers
-    camelToKebab: _.kebabCase,
-    kebabToCamel: _.camelCase,
-    camelToSnake: _.snakeCase,
-    snakeToCamel: _.camelCase,
+    camelToKebab: kebabCase,
+    kebabToCamel: camelCase,
+    camelToSnake: snakeCase,
+    snakeToCamel: camelCase,
 
     patch,
     poll,
@@ -484,7 +489,7 @@ _.mixin({
 
 // TODO: Remove the following hack
 /* eslint no-global-assign: "off" */
-// Stratus = _.extend((selector: any, context: any) => {
+// Stratus = extend((selector: any, context: any) => {
 //     // The function is a basic shortcut to the Stratus.Select
 //     // function for native jQuery-like chaining and plugins.
 //     return Stratus.Select(selector, context)
@@ -522,7 +527,7 @@ Stratus.Prototypes.Sentinel = class Sentinel {
     }
 
     zero() {
-        _.extend(this, {
+        extend(this, {
             view: false,
             create: false,
             edit: false,
@@ -536,7 +541,7 @@ Stratus.Prototypes.Sentinel = class Sentinel {
 
     permissions(value: any) {
         if (!isNaN(value)) {
-            _.forEach(value.toString(2).split('').reverse(), (bit: any, key: any) => {
+            forEach(value.toString(2).split('').reverse(), (bit: any, key: any) => {
                 if (bit === '1') {
                     switch (key) {
                         case 0:
@@ -589,7 +594,7 @@ Stratus.Prototypes.Sentinel = class Sentinel {
 
     summary() {
         const output: any = []
-        _.forEach(this, (value: any, key: any) => {
+        forEach(this, (value: any, key: any) => {
             if (typeof value === 'boolean' && value) {
                 output.push(ucfirst(key))
             }
@@ -610,7 +615,7 @@ Stratus.Prototypes.Toast = class Toast {
 
     constructor(message?: any, title?: any, priority?: any, settings?: any) {
         if (message && typeof message === 'object') {
-            _.extend(this, message)
+            extend(this, message)
             this.message = this.message || 'Message'
         } else {
             this.message = message || 'Message'
@@ -656,8 +661,8 @@ Stratus.Prototypes.Toast = class Toast {
 //           event.currentTarget.pathname.replace(/^\//, '') &&
 //           window.location.hostname === event.currentTarget.hostname) {
 //           let reserved = ['new', 'filter', 'page', 'version']
-//           let valid = _.every(reserved, function (keyword) {
-//             return !_.startsWith(event.currentTarget.hash, '#' + keyword)
+//           let valid = every(reserved, function (keyword) {
+//             return !startsWith(event.currentTarget.hash, '#' + keyword)
 //           }, this)
 //           if (valid) {
 //             if (typeof jQuery === 'function' && jQuery.fn && typeof Backbone === 'object') {
@@ -699,7 +704,7 @@ Stratus.Internals.Api = (route: any, meta: any, payload: any) => {
     if (typeof meta !== 'object') {
         meta = {method: meta}
     }
-    if (!_.has(meta, 'method')) {
+    if (!has(meta, 'method')) {
         meta.method = 'GET'
     }
 
@@ -789,7 +794,7 @@ Stratus.Internals.Convoy = (convoy: any, query: any) => new Promise((resolve: an
             data: {
                 convoy: JSON.stringify(convoy)
             },
-            dataType: (_.has(convoy, 'meta') && _.has(convoy.meta, 'dataType'))
+            dataType: (has(convoy, 'meta') && has(convoy.meta, 'dataType'))
                       ? convoy.meta.dataType
                       : 'json',
             xhrFields: {
@@ -817,7 +822,7 @@ Stratus.Internals.Convoy = (convoy: any, query: any) => new Promise((resolve: an
             data: {
                 convoy: JSON.stringify(convoy)
             },
-            type: (_.has(convoy, 'meta') && _.has(convoy.meta, 'dataType'))
+            type: (has(convoy, 'meta') && has(convoy.meta, 'dataType'))
                   ? convoy.meta.dataType
                   : 'application/json',
             success(response: any) {
@@ -837,7 +842,7 @@ Stratus.Internals.Convoy = (convoy: any, query: any) => new Promise((resolve: an
 })
 
 Stratus.Internals.CssLoader = (url: any) => {
-    return new Promise((resolve: any, reject: any) => {
+    return new Promise((resolve: any, _reject: any) => {
         /* Digest Extension */
         /*
          FIXME: Less files won't load correctly due to less.js not being able to parse new stylesheets after runtime
@@ -889,7 +894,7 @@ Stratus.Internals.CssLoader = (url: any) => {
 }
 
 Stratus.Internals.JsLoader = (url: any) => {
-    return new Promise((resolve: any, reject: any) => {
+    return new Promise((resolve: any, _reject: any) => {
         /* Digest Extension */
         /*
          let extension: any = /\.([0-9a-z]+)$/i;
@@ -1055,27 +1060,27 @@ Stratus.Internals.LoadCss = (urls?: string|string[]|LooseObject) => {
             reject(new ErrorBase({code: 'LoadCSS', message: 'No CSS Resource URLs found!'}, this))
             return
         }
-        _.forEach(urls.reverse(), (url: string) => {
+        forEach(urls.reverse(), (url: string) => {
             cssEntries.iteration++
-            const cssEntry: string = _.uniqueId('css_')
+            const cssEntry: string = uniqueId('css_')
             cssEntries[cssEntry] = false
             if (typeof url === 'undefined' || !url) {
                 cssEntries[cssEntry] = true
                 if (cssEntries.total !== cssEntries.iteration) {
                     return
                 }
-                if (!_.every(cssEntries)) {
+                if (!every(cssEntries)) {
                     return
                 }
                 resolve(cssEntries)
                 return
             }
-            Stratus.Internals.CssLoader(url).then((entry: any) => {
+            Stratus.Internals.CssLoader(url).then((_entry: any) => {
                 cssEntries[cssEntry] = true
                 if (cssEntries.total !== cssEntries.iteration) {
                     return
                 }
-                if (!_.every(cssEntries)) {
+                if (!every(cssEntries)) {
                     return
                 }
                 resolve(cssEntries)
@@ -1090,7 +1095,7 @@ Stratus.Internals.LoadCss = (urls?: string|string[]|LooseObject) => {
 // This needs to run after the jQuery library is configured.
 Stratus.Internals.LoadEnvironment = () => {
     const initialLoad: any = Stratus.Select('body').attr('data-environment')
-    if (initialLoad && typeof initialLoad === 'object' && _.size(initialLoad)) {
+    if (initialLoad && typeof initialLoad === 'object' && size(initialLoad)) {
         Stratus.Environment.set(initialLoad)
     }
     if (Stratus.Client.mobile) {
@@ -1121,7 +1126,7 @@ Stratus.Internals.LoadEnvironment = () => {
 
 // Lazy Load Image
 // ---------------
-Stratus.Internals.LoadImage = (obj: any) => {
+Stratus.Internals.LoadImage = (obj: {el?: any, spy?: any, size?: any, ignoreSpy?: boolean}) => {
     if (!obj.el) {
         setTimeout(() => {
             Stratus.Internals.LoadImage(obj)
@@ -1142,7 +1147,7 @@ Stratus.Internals.LoadImage = (obj: any) => {
     // TODO: Try and use this NativeEl or a Stratus.Select option in any case
     // we are able to.  We need to slowly phase out the previous jQuery logic
     // for something more Stable and lightweight.
-    const nativeEl: any = _.first(el)
+    const nativeEl: any = head(el)
     // This ensures the image is sizable before we attempt any sizing.
     if (!(nativeEl.offsetHeight || nativeEl.clientHeight)) {
         setTimeout(() => {
@@ -1161,13 +1166,13 @@ Stratus.Internals.LoadImage = (obj: any) => {
     // TODO: Convert to Native or Stratus.Select options
     if (hydrate(el.attr('data-loading'))) {
         // if (cookie('env')) {
-        //     console.log('loading:', _.first(el))
+        //     console.log('loading:', head(el))
         // }
         return
     }
-    if (!Stratus.Internals.IsOnScreen(obj.spy || el)) {
+    if (!obj.ignoreSpy && !Stratus.Internals.IsOnScreen(obj.spy || el)) {
         // if (cookie('env')) {
-        //     console.log('not on screen:', _.first(el))
+        //     console.log('not on screen:', head(el))
         // }
         return
     }
@@ -1191,30 +1196,30 @@ Stratus.Internals.LoadImage = (obj: any) => {
 
         // Handle precedence
         // TODO: @deprecated - we don't need to support "lazy" since that is the same as empty
-        if (type === 'img' && (src === 'lazy' || _.isEmpty(src))) {
+        if (type === 'img' && (src === 'lazy' || isEmpty(src))) {
             src = el.attr('src')
         }
-        if (_.isEmpty(src)) {
+        if (isEmpty(src)) {
             el.attr('data-loading', dehydrate(false))
             return
         }
 
         // FIXME: This needs to still check for an upsize
-        let size: any = hydrate(el.attr('data-size')) || obj.size || null
+        let dataSize: any = hydrate(el.attr('data-size')) || obj.size || null
 
         // Detect Optimistic Lock
         const resizeOptimisticLock = hydrate(el.attr('data-resize-optimistic-lock')) || 0
 
         // if a specific valid size is requested, use that
-        if (!size || resizeOptimisticLock !== Stratus.Environment.get('resizeOptimisticLock')) {
+        if (!dataSize || resizeOptimisticLock !== Stratus.Environment.get('resizeOptimisticLock')) {
             let width: any = null
-            let unit: any = null
-            let percentage: any = null
+            // let unit: any = null
+            // let percentage: any = null
 
             // Allow specifying an alternative element to reference the best size. Useful in cases like before/after images
-            // or carousels where the element is going to be in a collapsed diplay non container
+            // or carousels where the element is going to be in a collapsed display non container
             const spyReference: any = hydrate(el.attr('data-stratus-src-spy')) || null
-            const $referenceElement = spyReference ? (_.first(el.parents(spyReference)) || nativeEl) : nativeEl
+            const $referenceElement = spyReference ? (head(el.parents(spyReference)) || nativeEl) : nativeEl
 
             // if (el.width()) {
             const nativeWidth = $referenceElement.offsetWidth || $referenceElement.clientWidth || null
@@ -1231,11 +1236,11 @@ Stratus.Internals.LoadImage = (obj: any) => {
             if (width) {
                 const digest = /([\d]+)(.*)/
                 width = digest.exec(width)
-                unit = width[2]
+                // unit = width[2]
                 // make sure width only refers to the number (not 'px' or '%')
                 width = parseInt(width[1], 10)
                 // TODO: getting percentage is useless  unless we know the parent
-                percentage = unit === '%' ? (width / 100) : null
+                // percentage = unit === '%' ? (width / 100) : null
             }
             // FIXME: This should only happen if the CSS has completely loaded.
             // TODO: This may be able to be removed as it doesn't appear to be used (no reference to
@@ -1258,7 +1263,7 @@ Stratus.Internals.LoadImage = (obj: any) => {
             //     // TODO: jQuery() turns this into an array so we have to get first
             //     // TODO: why do we search for parents with the CSS selector from 'data-ignore-visibility', that's a stupid
             //     // name when we are in fact NOT ignoring them, we are using the first that matches
-            //     const $visibleParent = _.first(jQuery($referenceElement).parents(visibilitySelector))
+            //     const $visibleParent = head(jQuery($referenceElement).parents(visibilitySelector))
             //     // let $visibleParent = obj.spy || el.parent()
             //     width = $visibleParent ? ($visibleParent.offsetWidth || $visibleParent.clientWidth || 0) : 0
             //     // if (cookie('env')) {
@@ -1316,11 +1321,11 @@ Stratus.Internals.LoadImage = (obj: any) => {
 
             // Retrieve greatest width
             let greatestWidth = el.attr('data-greatest-width') || 0
-            if (_.isString(greatestWidth)) {
+            if (isString(greatestWidth)) {
                 greatestWidth = hydrate(greatestWidth)
             }
             // Find greatest width
-            width = _.max([width, greatestWidth])
+            width = max([width, greatestWidth])
             // Set greatest width for future reference
             el.attr('data-greatest-width', width)
             el.attr('data-current-width', width)
@@ -1330,7 +1335,7 @@ Stratus.Internals.LoadImage = (obj: any) => {
                 width = width * Stratus.Environment.get('devicePixelRatio')
             }
             // Return the first size that is bigger than container width
-            size = _.findKey(Stratus.Settings.image.size, (s: any) => {
+            dataSize = findKey(Stratus.Settings.image.size, (s: any) => {
                 // The old logic doubled the width and used this hardcoded ratio
                 // instead of the multiplying by the devicePixelRatio for a more
                 // precise width determined by the client screen.
@@ -1340,11 +1345,11 @@ Stratus.Internals.LoadImage = (obj: any) => {
             })
             // default to largest size if the container is larger and it didn't
             // find a size
-            size = size || 'hq'
+            dataSize = dataSize || 'hq'
 
             // if (cookie('env')) {
             //     console.log(
-            //         'size:', size,
+            //         'size:', dataSize,
             //         // 'greatest width:', greatestWidth,
             //         'width:', width,
             //         'hd:', hd,
@@ -1355,15 +1360,14 @@ Stratus.Internals.LoadImage = (obj: any) => {
         }
 
         // Fail-safe for images that are sized too early
-        if (size === 'xs') {
+        if (dataSize === 'xs') {
             setTimeout(() => {
                 el.attr('data-loading', dehydrate(false))
                 Stratus.Internals.LoadImage(obj)
             }, 500)
         }
 
-        // Change Source to right size (get the base and extension and ignore
-        // size)
+        // Change Source to right size (get the base and extension and ignore size)
         const srcOrigin: string = src
         // FIXME: This regex has targeting issues if the url has an extension after a ?, like ?v=100.jpg
         const srcRegex: RegExp = /^(.+?)(-[A-Z]{2})?\.(?=[^.]*$)(.+)/gi
@@ -1371,7 +1375,7 @@ Stratus.Internals.LoadImage = (obj: any) => {
         if (srcMatch !== null) {
             // if (cookie('env')
             //     // @ts-ignore
-            //     && _.contains(src, 'BM-33IrvingAve-SitePlan-Print-R1%20copy')
+            //     && includes(src, 'BM-33IrvingAve-SitePlan-Print-R1%20copy')
             // ) {
             //     console.log(
             //         'el:', el,
@@ -1379,13 +1383,13 @@ Stratus.Internals.LoadImage = (obj: any) => {
             //         'srcMatch:', srcMatch
             //     )
             // }
-            src = `${srcMatch[1]}-${size}.${srcMatch[3]}`
+            src = `${srcMatch[1]}-${dataSize}.${srcMatch[3]}`
         } else {
             console.error('Unable to find file name for image src:', el)
         }
 
         // Stop repeat checks
-        if (size === hydrate(el.attr('data-size'))) {
+        if (dataSize === hydrate(el.attr('data-size'))) {
             el.attr('data-loading', dehydrate(false))
             return
         }
@@ -1416,7 +1420,7 @@ Stratus.Internals.LoadImage = (obj: any) => {
                 el.attr('data-loading', dehydrate(false))
                 // el.attr('src', srcOriginProtocol)
                 if (cookie('env')) {
-                    console.log('LoadImage() Unable to load', size.toUpperCase(), 'size.', srcOriginProtocol)
+                    console.log('LoadImage() Unable to load', dataSize.toUpperCase(), 'size.', srcOriginProtocol)
                 }
                 jQuery(this).remove() // prevent memory leaks
             })
@@ -1434,7 +1438,7 @@ Stratus.Internals.LoadImage = (obj: any) => {
                 // This is the smallest size, so there is nothing to fallback to. Let's hope a bigger size below fixes the image
                 el.attr('data-loading', dehydrate(false))
                 if (cookie('env')) {
-                    console.warn('LoadImage() Unable to load', size.toUpperCase(), 'size at ', srcOriginProtocol)
+                    console.warn('LoadImage() Unable to load', dataSize.toUpperCase(), 'size at ', srcOriginProtocol)
                 }
                 jQuery(this).remove() // prevent memory leaks
             })
@@ -1445,7 +1449,7 @@ Stratus.Internals.LoadImage = (obj: any) => {
         // Change the Source to be the desired path (for image or background)
         const srcProtocol: any = src.startsWith('//') ? window.location.protocol + src : src
         el.attr('data-loading', dehydrate(false))
-        el.attr('data-size', dehydrate(size))
+        el.attr('data-size', dehydrate(dataSize))
 
         // if (cookie('env')) {
         //     console.log('LoadImage() srcProtocol:', srcProtocol)
@@ -1467,7 +1471,7 @@ Stratus.Internals.LoadImage = (obj: any) => {
             // Image failed, dont try to use this url
             // TODO: Go down in sizes before reaching the origin
             if (cookie('env')) {
-                console.warn('LoadImage() Unable to load', size.toUpperCase(), 'size at', srcProtocol)
+                console.warn('LoadImage() Unable to load', dataSize.toUpperCase(), 'size at', srcProtocol)
             }
             jQuery(this).remove() // prevent memory leaks
         })
@@ -1490,7 +1494,7 @@ Stratus.Internals.LoadImage = (obj: any) => {
         // scroll triggers is not absolutely ridiculous.
 
         // Remove from registration if already the highest size
-        if (size === 'hq') {
+        if (dataSize === 'hq') {
             Stratus.RegisterGroup.remove('OnScroll', obj)
         }
         // if (cookie('env')) {
@@ -1507,7 +1511,7 @@ Stratus.Internals.Location = (options: any) => {
                 message: 'HTML5 Geo-Location isn\'t supported on this browser.'
             }, this))
         } else {
-            options = _.extend({
+            options = extend({
                 enableHighAccuracy: true,
                 timeout: 20000,
                 maximumAge: 50000
@@ -1524,13 +1528,13 @@ Stratus.Internals.Location = (options: any) => {
 // them and then execute them all at once Each element must include: method:
 // the function to callback options: an object of options that the function
 // uses TODO: Move this somewhere.
-Stratus.Internals.OnScroll = _.once((elements: any) => {
+Stratus.Internals.OnScroll = once(() => {
     // Reset Elements:
     // if (!elements || elements.length === 0) return false;
 
     // Execute the methods for every registered object ONLY when there is a
     // change to the viewPort
-    Stratus.Environment.on('change:viewPortChange', (event: any, model: any) => {
+    Stratus.Environment.on('change:viewPortChange', (_event: any, model: any) => {
         if (!model.get('viewPortChange')) {
             return
         }
@@ -1542,17 +1546,17 @@ Stratus.Internals.OnScroll = _.once((elements: any) => {
         // TODO: remove logic of RegisterGroup
         const scrollElements: any = Stratus.RegisterGroup.get('OnScroll')
 
-        _.forEach(scrollElements, (obj: any) => {
+        forEach(scrollElements, (obj: any) => {
             if (typeof obj === 'undefined') {
                 return
             }
             // TODO: This feature draft would allow more control between the
             // dynamic request and these event triggers, but would require a
             // change in format for all locations accessing this group.
-            // if (!_.get(obj, 'enabled')) {
+            // if (!get(obj, 'enabled')) {
             //     return
             // }
-            if (_.has(obj, 'method')) {
+            if (has(obj, 'method')) {
                 obj.method(obj)
             }
         })
@@ -1608,7 +1612,7 @@ Stratus.Internals.OnScroll = _.once((elements: any) => {
 /* *
  Stratus.Internals.Rebase = (target: any, base: any) => {
  // TODO: Sanitize functions
- window[target] = _.extend(base, target)
+ window[target] = extend(base, target)
  return target
  }
  /* */
@@ -1626,7 +1630,7 @@ Stratus.Internals.Resource = (path: any, elementId: any) => {
                 message: 'Resource path is not defined.'
             }, this))
         }
-        if (_.has(Stratus.Resources, path)) {
+        if (has(Stratus.Resources, path)) {
             if (Stratus.Resources[path].success) {
                 resolve(Stratus.Resources[path].data)
             } else {
@@ -1674,6 +1678,26 @@ Stratus.Internals.TrackLocation = () => {
     const envData: any = {}
     // if (!Stratus.Environment.has('timezone'))
     envData.timezone = new Date().toString().match(/\((.*)\)/)[1]
+    envData.referrer = document.referrer
+    envData.host = document.location.host
+    envData.page = document.location.pathname
+    envData.hash = document.location.hash
+    envData.parameters = {}
+    if (document.location.search) {
+        const params = new URLSearchParams(document.location.search)
+        // @ts-ignore
+        for (const [key, value] of params) {
+            if (envData.parameters.hasOwnProperty(key)) {
+                if (Array.isArray(envData.parameters[key])) {
+                    envData.parameters[key].push(value)
+                } else {
+                    envData.parameters[key] = [envData.parameters[key], value]
+                }
+            } else {
+                envData.parameters[key] = value
+            }
+        }
+    }
     if (Stratus.Environment.get('trackLocation')) {
         if (Stratus.Environment.get('trackLocationConsent')) {
             Stratus.Internals.Location().then((pos: any) => {
@@ -1732,7 +1756,7 @@ Stratus.Internals.UpdateEnvironment = (request: any) => {
             success(response: any) {
                 const settings: any = response.payload || response
                 if (typeof settings === 'object') {
-                    _.forEach(Object.keys(settings), (key: any) => {
+                    forEach(Object.keys(settings), (key: any) => {
                         Stratus.Environment.set(key, settings[key])
                     })
                 }
@@ -1785,10 +1809,10 @@ Stratus.Loaders.Angular = function AngularLoader() {
     // TODO: Add references to this prototype in the tree builder, accordingly
     const injector: any = (injectable: any) => {
         injectable = injectable || {}
-        _.forEach(injectable, (element: any, attribute: any) => {
+        forEach(injectable, (element: any, attribute: any) => {
             container[attribute] = container[attribute] || []
-            if (_.isArray(element)) {
-                _.forEach(element, (value: any) => {
+            if (isArray(element)) {
+                forEach(element, (value: any) => {
                     container[attribute].push(value)
                 })
                 return
@@ -1797,21 +1821,21 @@ Stratus.Loaders.Angular = function AngularLoader() {
         })
     }
 
-    _.forEach(Stratus.Roster, (element: any, key: any) => {
+    forEach(Stratus.Roster, (element: any, _key: any) => {
         if (typeof element !== 'object' || !element) {
             return
         }
         // sanitize roster fields without selector attribute
-        if (_.isUndefined(element.selector) && element.namespace) {
-            element.selector = _.filter(
-                _.map(boot.configuration.paths, (path: any, pathKey: any) => {
-                    // if (_.isString(pathKey) && cookie('env')) {
+        if (isUndefined(element.selector) && element.namespace) {
+            element.selector = filter(
+                map(boot.configuration.paths, (_path: any, pathKey: any) => {
+                    // if (isString(pathKey) && cookie('env')) {
                     //     console.log(pathKey.match(/([a-zA-Z]+)/g))
                     // }
-                    if (!_.startsWith(pathKey, element.namespace)) {
+                    if (!startsWith(pathKey, element.namespace)) {
                         return null
                     }
-                    const selector = _.kebabCase(pathKey.replace(element.namespace, 'stratus-'))
+                    const selector = kebabCase(pathKey.replace(element.namespace, 'stratus-'))
                     if (element.type === 'attribute') {
                         return `[${selector}]`
                     }
@@ -1824,30 +1848,30 @@ Stratus.Loaders.Angular = function AngularLoader() {
         }
 
         // digest roster
-        if (_.isArray(element.selector)) {
+        if (isArray(element.selector)) {
             element.length = 0
-            _.forEach(element.selector, (selector: any) => {
+            forEach(element.selector, (selector: any) => {
                 nodes = document.querySelectorAll(selector)
                 element.length += nodes.length
                 if (!nodes.length) {
                     return
                 }
                 const name: any = selector.replace(/^\[/, '').replace(/]$/, '')
-                requirement = element.namespace + lcfirst(_.camelCase(
+                requirement = element.namespace + lcfirst(camelCase(
                     name.replace(/^stratus/, '').replace(/^data-stratus/, '').replace(/^ng/, '')
                 ))
-                if (_.has(boot.configuration.paths, requirement)) {
+                if (has(boot.configuration.paths, requirement)) {
                     injection = {
                         requirement
                     }
                     if (element.module) {
-                        injection.module = _.isString(element.module) ? element.module
-                                                                      : lcfirst(_.camelCase(name + (element.suffix || '')))
+                        injection.module = isString(element.module) ? element.module
+                                                                      : lcfirst(camelCase(name + (element.suffix || '')))
                     }
                     injector(injection)
                 }
             })
-        } else if (_.isString(element.selector)) {
+        } else if (isString(element.selector)) {
             nodes = document.querySelectorAll(element.selector)
             element.length = nodes.length
             if (!nodes.length) {
@@ -1855,13 +1879,13 @@ Stratus.Loaders.Angular = function AngularLoader() {
             }
             const attribute: string = element.selector.replace(/^\[/, '').replace(/]$/, '')
             if (attribute && element.namespace) {
-                _.forEach(nodes, (node: any) => {
+                forEach(nodes, (node: any) => {
                     const name: string = node.getAttribute(attribute)
                     if (!name) {
                         return
                     }
-                    requirement = element.namespace + lcfirst(_.camelCase(name.replace('Stratus', '')))
-                    if (!_.has(boot.configuration.paths, requirement)) {
+                    requirement = element.namespace + lcfirst(camelCase(name.replace('Stratus', '')))
+                    if (!has(boot.configuration.paths, requirement)) {
                         return
                     }
                     injector({
@@ -1870,11 +1894,11 @@ Stratus.Loaders.Angular = function AngularLoader() {
                 })
             } else if (element.require) {
                 // TODO: add an injector to the container
-                container.requirement = _.union(container.requirement, element.require)
+                container.requirement = union(container.requirement, element.require)
                 injection = {}
                 if (element.module) {
-                    injection.module = _.isString(element.module) ? element.module
-                                                                  : lcfirst(_.camelCase(`${attribute}${element.suffix||''}`))
+                    injection.module = isString(element.module) ? element.module
+                                                                  : lcfirst(camelCase(`${attribute}${element.suffix||''}`))
                 }
                 if (element.stylesheet) {
                     injection.stylesheet = element.stylesheet
@@ -1886,14 +1910,14 @@ Stratus.Loaders.Angular = function AngularLoader() {
 
     // Ensure Modules enabled are in the requirements
     container.requirement.push('angular-material')
-    _.forEach(container, (element: any, key: any) => {
-        container[key] = _.uniq(element)
+    forEach(container, (element: any, key: any) => {
+        container[key] = uniq(element)
     })
 
     // Angular Injector
     // if (container.requirement.length) {
     //     // Deprecated the use of the 'froala' directive for stratus-froala
-    //     if (_.includes(container.requirement, 'angular-froala')) {
+    //     if (includes(container.requirement, 'angular-froala')) {
     //         [
     //             'codemirror/mode/htmlmixed/htmlmixed',
     //             'codemirror/addon/edit/matchbrackets',
@@ -1927,7 +1951,7 @@ Stratus.Loaders.Angular = function AngularLoader() {
 
     // We are currently forcing all filters to load because we don't have a selector to find them on the DOM, yet.
     Object.keys(boot.configuration.paths).filter((path: any) => {
-        return _.startsWith(path, 'stratus.filters.')
+        return startsWith(path, 'stratus.filters.')
     }).forEach((value) => {
         container.requirement.push(value)
     })
@@ -1938,7 +1962,7 @@ Stratus.Loaders.Angular = function AngularLoader() {
 
     require(container.requirement, () => {
         // App Reference
-        angular.module('stratusApp', _.union(Object.keys(Stratus.Modules), container.module)).config([
+        angular.module('stratusApp', union(Object.keys(Stratus.Modules), container.module)).config([
             '$sceDelegateProvider', ($sceDelegateProvider: any) => {
                 const whitelist: any = [
                     'self',
@@ -1946,8 +1970,8 @@ Stratus.Loaders.Angular = function AngularLoader() {
                     'https://*.sitetheory.io/**'
                 ]
                 if (boot.host) {
-                    if (_.startsWith(boot.host, '//')) {
-                        _.forEach(['https:', 'http:'], (proto: any) => {
+                    if (startsWith(boot.host, '//')) {
+                        forEach(['https:', 'http:'], (proto: any) => {
                             whitelist.push(proto + boot.host + '/**')
                         })
                     } else {
@@ -2019,27 +2043,27 @@ Stratus.Loaders.Angular = function AngularLoader() {
         }
 
         // Services
-        _.forEach(Stratus.Services, (service: any) => {
+        forEach(Stratus.Services, (service: any) => {
             angular.module('stratusApp').config(service)
         })
 
         // Components
-        _.forEach(Stratus.Components, (component: any, name: any) => {
+        forEach(Stratus.Components, (component: any, name: any) => {
             angular.module('stratusApp').component('stratus' + ucfirst(name), component)
         })
 
         // Directives
-        _.forEach(Stratus.Directives, (directive: any, name: any) => {
+        forEach(Stratus.Directives, (directive: any, name: any) => {
             angular.module('stratusApp').directive('stratus' + ucfirst(name), directive)
         })
 
         // Filters
-        _.forEach(Stratus.Filters, (filter: any, name: any) => {
-            angular.module('stratusApp').filter(lcfirst(name), filter)
+        forEach(Stratus.Filters, (filterLogic: any, name: any) => {
+            angular.module('stratusApp').filter(lcfirst(name), filterLogic)
         })
 
         // Controllers
-        _.forEach(Stratus.Controllers, (controller: any, name: any) => {
+        forEach(Stratus.Controllers, (controller: any, name: any) => {
             angular.module('stratusApp').controller(name, controller)
         })
 
@@ -2047,7 +2071,7 @@ Stratus.Loaders.Angular = function AngularLoader() {
         // TODO: Move this reference to the stylesheets block above
         const css: any = container.stylesheet
         const cssLoaded: any = Stratus.Select('link[satisfies]').map((node: Element) => node.getAttribute('satisfies'))
-        if (!_.includes(cssLoaded, 'angular-material.css')) {
+        if (!includes(cssLoaded, 'angular-material.css')) {
             if ('angular-material-css' in boot.configuration.paths) {
                 css.push(
                     `${Stratus.BaseUrl}${boot.configuration.paths['angular-material-css']}`
@@ -2060,7 +2084,7 @@ Stratus.Loaders.Angular = function AngularLoader() {
         }
         if (Stratus.Directives.Froala || Stratus.Select('[froala]').length) {
             const froalaPath: any = boot.configuration.paths.froala.replace(/\/[^/]+\/?[^/]+\/?$/, '')
-            _.forEach([
+            forEach([
                     // FIXME this is sitetheory only
                     `${Stratus.BaseUrl}sitetheorycore/css/sitetheory.codemirror.css`,
                     `${Stratus.BaseUrl}${boot.configuration.paths.codemirror.replace(/\/([^/]+)\/?$/, '')}/codemirror.css`,
@@ -2116,8 +2140,8 @@ Stratus.Instances.Clean = (instances: any) => {
     }
 
     if (typeof instances === 'object' && Array.isArray(instances)) {
-        _.forEach(instances, (value: any) => {
-            if (_.has(Stratus.Instances, value)) {
+        forEach(instances, (value: any) => {
+            if (has(Stratus.Instances, value)) {
                 if (typeof Stratus.Instances[value].remove === 'function') {
                     Stratus.Instances[value].remove()
                 }
@@ -2158,7 +2182,7 @@ Stratus.Internals.Auth = (convoy: any) => {
     if (!convoy) {
         return
     }
-    const session = _.get(convoy, 'meta.session')
+    const session = get(convoy, 'meta.session')
     if (!session) {
         return
     }
@@ -2244,7 +2268,7 @@ Stratus.LocalStorage.Listen = (key: any, fn: any) => {
 
 // When an event arrives from any source, we will handle it
 // appropriately.
-Stratus.LocalStorage.Listen('stratus-core', (data: any) => {
+Stratus.LocalStorage.Listen('stratus-core', (_data: any) => {
     // if (cookie('env')) {
     //     console.log('LocalStorage:', data)
     // }
@@ -2320,7 +2344,7 @@ Stratus.Events.once('finalize', () => {
         Stratus.RegisterGroup.each((objs: any, key: any) => {
             // for each different type of registered plugin, pass all the registered
             // elements
-            if (_.has(Stratus.Internals, key)) {
+            if (has(Stratus.Internals, key)) {
                 Stratus.Internals[key](objs)
                 // TODO: remove
                 if (cookie('env')) {
@@ -2339,7 +2363,7 @@ Stratus.Events.once('terminate', () => {
 
 // This event supports both Native and Bootbox styling to generate
 // an alert box with an optional message and handler callback.
-Stratus.Events.on('alert', (event: any, message: any, handler: any) => {
+Stratus.Events.on('alert', (_event: any, message: any, handler: any) => {
     if (!(message instanceof Stratus.Prototypes.Bootbox)) {
         message = new Stratus.Prototypes.Bootbox(message, handler)
     }
@@ -2354,7 +2378,7 @@ Stratus.Events.on('alert', (event: any, message: any, handler: any) => {
 
 // This event supports both Native and Bootbox styling to generate
 // a confirmation box with an optional message and handler callback.
-Stratus.Events.on('confirm', (event: any, message: any, handler: any) => {
+Stratus.Events.on('confirm', (_event: any, message: any, handler: any) => {
     if (!(message instanceof Stratus.Prototypes.Bootbox)) {
         message = new Stratus.Prototypes.Bootbox(message, handler)
     }
@@ -2367,10 +2391,10 @@ Stratus.Events.on('confirm', (event: any, message: any, handler: any) => {
 })
 
 // This event allows a Notification to reach the browser.
-Stratus.Events.on('notification', (event: any, message: any, title: any) => {
+Stratus.Events.on('notification', (_event: any, message: any, title: any) => {
     const options: any = {}
     if (message && typeof message === 'object') {
-        _.extend(options, message)
+        extend(options, message)
         options.message = options.message || 'Message'
     } else {
         options.message = message || 'Message'
@@ -2399,13 +2423,13 @@ Stratus.Events.on('notification', (event: any, message: any, title: any) => {
                     console.log(notification)
                 }
             }
-        })
+        }).then()
     }
 })
 
 // This event only supports Toaster styling to generate a message
 // with either a Bootbox or Native Alert as a fallback, respectively.
-Stratus.Events.on('toast', (event: any, message: any, title: any, priority: any, settings: any) => {
+Stratus.Events.on('toast', (_event: any, message: any, title: any, priority: any, settings: any) => {
     if (!(message instanceof Stratus.Prototypes.Toast)) {
         message = new Stratus.Prototypes.Toast(message, title, priority, settings)
     }
@@ -2461,8 +2485,8 @@ Stratus.DOM.complete(() => {
     quality = (
                   (renderer.vendor && qualified.vendors.indexOf(renderer.vendor) >= 0) ||
                   (renderer.renderer &&
-                      _.map(qualified.renderers,
-                          (r: string) => _.startsWith(r, renderer.renderer)
+                      map(qualified.renderers,
+                          (r: string) => startsWith(r, renderer.renderer)
                       )
                   )
               ) ? 'high' : 'low'
@@ -2472,7 +2496,7 @@ Stratus.DOM.complete(() => {
     // Handle Classes (for Design Timing)
     Stratus.Select('body').removeClass('loading unloaded').addClass(`loaded quality-${quality}`)
 
-    // Load Angular 8+
+    // Load Angular 12+
     if (!hamlet.isUndefined('System')) {
         require([
             // 'quill',

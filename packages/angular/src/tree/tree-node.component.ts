@@ -73,7 +73,6 @@ export class TreeNodeComponent extends ResponsiveComponent implements OnInit, On
 
     // Basic Component Settings
     title = moduleName + '_component'
-    uid: string
 
     // Timing Flags
     isInitialized = false

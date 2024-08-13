@@ -97,7 +97,6 @@ export class SelectorComponent extends RootComponent { // implements OnInit, OnC
 
     // Basic Component Settings
     title = moduleName + '_component'
-    uid: string
 
     // Registry Attributes
     @Input() target: string

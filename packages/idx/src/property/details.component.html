@@ -302,6 +302,7 @@
                  data-ng-if="model.data.Images && model.data.Images[0]"
                  data-stratus-src-version="{{::(model.data.Images[0].Lazy == 'stratus-src' ? 'best' : 'false')}}"
                  data-stratus-src="{{::model.data.Images[0].MediaURL}}"
+                 data-init-now="model.completed"
                  aria-label="Background Image of Listing"
             >
                 <img data-ng-if="model.data.Images && model.data.Images.length > 0" data-ng-src="{{::localDir}}images/stratus-property-shapeholder.png" alt="Image Shapeholder" aria-hidden="true"/>

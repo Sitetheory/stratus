@@ -150,7 +150,6 @@ export class TreeComponent extends RootComponent implements OnInit, OnDestroy {
 
     // Basic Component Settings
     title = moduleName + '_component'
-    uid: string
 
     // Timing Flags
     isInitialized = false

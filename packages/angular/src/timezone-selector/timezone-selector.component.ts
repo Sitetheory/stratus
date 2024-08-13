@@ -57,7 +57,6 @@ export class TimezoneSelectorComponent extends RootComponent implements OnInit {
 
     // Basic Component Settings
     title = moduleName + '_component'
-    uid: string
 
     // Registry Attributes
     @Input() target: string

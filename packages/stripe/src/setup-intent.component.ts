@@ -16,7 +16,6 @@ import {keys} from 'ts-transformer-keys'
 import {
     Stratus
 } from '@stratusjs/runtime/stratus'
-import {RootComponent} from '../../angular/src/core/root.component'
 import {Model, ModelOptions} from '@stratusjs/angularjs/services/model'
 // import {cookie} from '@stratusjs/core/environment'
 import {safeUniqueId} from '@stratusjs/core/misc'
@@ -25,6 +24,7 @@ import {
     StripePaymentMethodDialogData
 } from './payment-method.component'
 import {StripeComponent} from './stripe.service'
+import {PaymentMethodCreateParams} from '@stripe/stripe-js'
 
 // Local Setup
 // const min = !cookie('env') ? '.min' : ''
@@ -55,7 +55,7 @@ export class StripeSetupIntentComponent extends StripeComponent implements OnIni
     // Component Attributes
     @Input() addCardButtonText: string = 'Add Payment Method'
     @Input() detailedBillingInfo?: boolean
-    @Input() defaultBillingInfo?: stripe.BillingDetails
+    @Input() defaultBillingInfo?: PaymentMethodCreateParams.BillingDetails
 
     constructor(
         private elementRef: ElementRef,

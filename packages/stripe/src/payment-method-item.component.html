@@ -4,6 +4,7 @@
         [class.model-changed]="model.changed"
         [class.model-pending]="model.pending"
         [class.expired]="isExpired() || model.data.status < 1"
+        [class.unverified]="isUnverified()"
 >
     <button
             tabindex="-1"
@@ -26,20 +27,26 @@
             <mat-grid-tile colspan="3">
                 <span [innerHTML]="model.data.name" class="aligned-tile name" [style.justifyContent]="'flex-start'"></span>
             </mat-grid-tile>
-            <mat-grid-tile colspan="1" [style.justifyContent]="'flex-start'">
+            <mat-grid-tile colspan="2" [style.justifyContent]="'flex-start'">
                 <!--span [innerHTML]="model.data.brand" class="aligned-tile brand" [style.justifyContent]="'flex-start'"></span-->
-                <div class="aligned-tile">
+                <div class="aligned-tile" *ngIf="model.data.brand">
                     <img [src]="getCardLogoUrl(model.data.brand)" [alt]="model.data.brand" class="brand"/>
                 </div>
+                <div class="aligned-tile" *ngIf="model.data.bank_name">
+                    <span [innerHTML]="model.data.bank_name" [style.justifyContent]="'flex-start'"></span>
+                </div>
             </mat-grid-tile>
-            <mat-grid-tile colspan="2">
+            <mat-grid-tile colspan="1">
                 <span class="aligned-tile last-four" [style.justifyContent]="'flex-end'">...<span [innerHTML]="model.data.last4"></span></span>
             </mat-grid-tile>
             <mat-grid-tile colspan="3">
-                <div class="aligned-tile" [style.justifyContent]="'flex-end'">
+                <div class="aligned-tile" [style.justifyContent]="'flex-end'" *ngIf="model.data.exp_month && model.data.exp_year">
                     <span class="expiration" [class.expiring]="isExpiring()">
                         Expires <span [innerHTML]="model.data.exp_month"></span>/<span [innerHTML]="model.data.exp_year"></span>
                     </span>
+                </div>
+                <div class="aligned-tile" [style.justifyContent]="'flex-end'" *ngIf="isUnverified()">
+                    <button (click)="verifyPaymentMethod($event)">Verify</button>
                 </div>
             </mat-grid-tile>
         </mat-grid-list>

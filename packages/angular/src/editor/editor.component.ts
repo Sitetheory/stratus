@@ -227,7 +227,6 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
 
     // Basic Component Settings
     title = `${moduleName}_component`
-    uid: string
     dev = !!cookie('env')
     debug = !!cookie(`debug_${moduleName}`)
     editor: 'froala'|'angular-editor'|'quill' = 'froala'
