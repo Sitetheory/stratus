@@ -36,7 +36,9 @@ interface SubSectionOptionItem {
     false?: string, // Only used for booleans. If true, display this text. Defaults to 'No'
     // Only used for booleans. If value is false text is empty (''), hide the element. Enabled by default
     hideEmpty?: false
-    hide?: true // Only to be used by this component to forcible hide this element at all times (set with hideEmpty)
+    hide?: true, // Only to be used by this component to forcible hide this element at all times (set with hideEmpty)
+    hideName?: boolean, // Hide the field name from view
+    html?: boolean // Process the field as html (DANGEROUS)
 }
 
 interface SubSectionOptionItems {

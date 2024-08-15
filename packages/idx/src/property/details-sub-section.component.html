@@ -18,8 +18,11 @@
 				</span>
 			</div>
 			<div data-ng-switch-default data-ng-if="model.data[itemVariable] !== '' && model.data[itemVariable] !== '0'">
-				<span data-ng-if="::item.name" data-ng-bind="::item.name + ':'" class="item-label"></span>
-				<span data-ng-bind="::item.prepend + (model.data[itemVariable]) + item.append"></span>
+				<span data-ng-if="::item.name && !item.hideName" data-ng-bind="::item.name + ':'" class="item-label"></span>
+                <span data-ng-switch="::item.html">
+				    <span data-ng-switch-when="true" data-ng-bind-html="::item.prepend + (model.data[itemVariable]) + item.append"></span>
+				    <span data-ng-switch-default data-ng-bind="::item.prepend + (model.data[itemVariable]) + item.append"></span>
+                </span>
 			</div>
 		</div>
 	</div>
