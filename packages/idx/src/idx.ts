@@ -1767,7 +1767,7 @@ const angularJsService = (
                         whereQuery[searchObject.apiField] = {
                             between: [
                                 parseInt(value, 10),
-                                parseInt(get(whereQuery[searchObject.apiField], 'lte'), 10)
+                                parseInt(get(whereQuery[searchObject.apiField], 'lte') as string, 10)
                             ]
                         }
                     } else {
@@ -1784,7 +1784,7 @@ const angularJsService = (
                         // If a Greater than already is being searched
                         whereQuery[searchObject.apiField] = {
                             between: [
-                                parseInt(get(whereQuery[searchObject.apiField], 'gte'), 10),
+                                parseInt(get(whereQuery[searchObject.apiField], 'gte') as string, 10),
                                 parseInt(value, 10)
                             ]
                         }
