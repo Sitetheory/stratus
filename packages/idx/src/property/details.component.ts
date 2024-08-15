@@ -471,13 +471,10 @@ Stratus.Components.IdxPropertyDetails = {
                         Showing Group // see openhouses
 
                         BuyerFinancing
-                        ConcessionsAmount
-                        ConcessionsComments Field
-                        Concessions Field
                         Possession
                         CurrentFinancing
 
-                        CancelationDate Field
+                        CancellationDate Field
                         CloseDate Field
                         ContingentDate Field
                         ContractStatusChangeDate Field
@@ -581,6 +578,9 @@ Stratus.Components.IdxPropertyDetails = {
                         TaxBookNumber
                         TaxMapNumber
                          */
+                        ConcessionsAmount: {name: 'Seller Concessions', prepend: '$', comma: true},
+                        ConcessionsPercent: {name: 'Seller Concessions', append: '%'}, // Custom non-reso value
+                        ConcessionsComments: {name: 'Seller Concessions', html: true, hideName: true},
                         RentControlYN: {name: 'Rent Control', false: ''},
                         TenantPays: 'Tenant Pays',
                         OwnerPays: 'Owner Pays',
