@@ -1576,15 +1576,12 @@ const angularJsService = (
     /**
      * Fetch the results of one Model, then merge those results together into a single existing Model
      * These resulting Model may not be properly set up to perform their usual action and are only intended to hold Model data
-     * @param originalModel - {Model}
-     * @param newModel - {Model}
-     * @param modelName - {string}
      */
-    function fetchReplaceModel<T>(
+    async function fetchReplaceModel<T>(
         originalModel: Model<T>,
         newModel: Model<T>,
         modelName: 'Property' | 'Member' | 'Office' | 'OpenHouse'
-    ): IPromise<Model<T>> {
+    ): Promise<Model<T>> {
         // The Model is now doing something. Let's label it as such.
         originalModel.pending = true
         originalModel.completed = false
@@ -1608,25 +1605,19 @@ const angularJsService = (
                 resolve(newModel.data)
             })
         )
-        return $q.all(fetchPromises)
-            .then(
-                async (fetchedData: T[]): Promise<Model<T>> => {
-                    // Once all the Results are returned, shove them into the original Model
-                    await $q.all(fetchedData.map((data) => {
-                        originalModel.data = data
-                    }))
-                    return originalModel
-                }
-            )
-            .then(() => {
-                originalModel.meta.set('fetchDate', new Date())
+        const fetchedData: T[] = await $q.all(fetchPromises) as T[]
 
-                // The Model is now ready, let's make sure we label it as such
-                originalModel.pending = false
-                originalModel.completed = true
+        // Once all the Results are returned, shove them into the original Model
+        await $q.all(fetchedData.map((data) => {
+            originalModel.data = data
+        }))
+        originalModel.meta.set('fetchDate', new Date())
 
-                return originalModel
-            })
+        // The Model is now ready, let's make sure we label it as such
+        originalModel.pending = false
+        originalModel.completed = true
+
+        return originalModel
     }
 
     /**
