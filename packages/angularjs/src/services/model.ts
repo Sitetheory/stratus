@@ -790,15 +790,8 @@ export class Model<T = LooseObject> extends ModelBase<T> {
             return this.doSave(options)
         }
         // Sanity Checks for Persisted Entities
-        if (this.getIdentifier() &&
-            (
-                // Ensure we have a complete model to begin with
-                !this.completed ||
-                // Avoid sending empty XHRs
-                isEmpty(this.toPatch())
-            )
-        ) {
-            console.warn('Blocked attempt to save an empty payload to a persisted model.')
+        if (!this.isNew() && (this.pending || !this.completed || isEmpty(this.toPatch()))) {
+            console.warn(`Blocked attempt to save ${isEmpty(this.toPatch()) ? 'an empty payload' : 'a duplicate XHR'} to a persisted model.`)
             return new Promise((resolve, _reject) => {
                 this.saving = false
                 resolve(this.data)
