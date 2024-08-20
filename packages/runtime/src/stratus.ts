@@ -378,9 +378,7 @@ if (cookie('env')) {
 // ------------------
 
 mixin({
-
-    // Underscore Compatibility References: https://github.com/lodash/lodash/wiki/Migrating
-    // TODO: Remove once phased out completely
+    // FIXME: mixins are no longer accessible Remove at later version
 
     // This function allows creation, edit, retrieval and deletion of cookies.
     // Note: Delete with `cookie(name, '', -1)`
