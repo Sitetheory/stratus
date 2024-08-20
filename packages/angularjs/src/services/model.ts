@@ -26,7 +26,7 @@ import {
     set,
     throttle
 } from 'lodash'
-import angular from 'angular'
+import {IRootScopeService} from 'angular'
 import {Stratus} from '@stratusjs/runtime/stratus'
 
 // Stratus Core
@@ -69,8 +69,8 @@ import Toastify from 'toastify-js'
 let injector = getInjector()
 
 // Angular Services
-// let $rootScope: angular.IRootScopeService = injector ? injector.get('$rootScope') : null
-let $rootScope: angular.IRootScopeService
+// let $rootScope: IRootScopeService = injector ? injector.get('$rootScope') : null
+let $rootScope: IRootScopeService
 
 // Service Verification Function
 const serviceVerify = async () => {
@@ -791,7 +791,9 @@ export class Model<T = LooseObject> extends ModelBase<T> {
         }
         // Sanity Checks for Persisted Entities
         if (!this.isNew() && (this.pending || !this.completed || isEmpty(this.toPatch()))) {
-            console.warn(`Blocked attempt to save ${isEmpty(this.toPatch()) ? 'an empty payload' : 'a duplicate XHR'} to a persisted model.`)
+            console.warn(
+                `Blocked attempt to save ${isEmpty(this.toPatch()) ? 'an empty payload' : 'a duplicate XHR'} to a persisted model.`
+            )
             return new Promise((resolve, _reject) => {
                 this.saving = false
                 resolve(this.data)
@@ -1189,7 +1191,7 @@ Stratus.Services.Model = [
         $provide.factory('Model', [
             // '$rootScope',
             (
-                // $r: angular.IRootScopeService
+                // $r: IRootScopeService
             ) => {
                 // $rootScope = $r
                 return Model
