@@ -2,7 +2,6 @@
 // --------------
 
 // Runtime
-import _ from 'lodash'
 import {Stratus} from '@stratusjs/runtime/stratus'
 import {IAttributes, IScope} from 'angular'
 
@@ -11,6 +10,7 @@ import 'angular-material'
 
 // Stratus Dependencies
 import {cookie} from '@stratusjs/core/environment'
+import {safeUniqueId} from '@stratusjs/core/misc'
 
 // Environment
 const min = !cookie('env') ? '.min' : ''
@@ -28,12 +28,12 @@ Stratus.Directives.Base = function () {
         link: ($scope: IScope|any, $element: JQLite|any, $attrs: IAttributes|any) => {
             // Initialize
             const $ctrl: any = this
-            $scope.uid = _.uniqueId(_.snakeCase(name) + '_')
+            $scope.uid = safeUniqueId(name)
             Stratus.Instances[$scope.uid] = $scope
             $scope.elementId = $element.elementId || $scope.uid
             Stratus.Internals.CssLoader(
                 Stratus.BaseUrl + Stratus.BundlePath + localPath + name + min + '.css'
-            )
+            ).then()
             $scope.initialized = false
 
             // Begin
