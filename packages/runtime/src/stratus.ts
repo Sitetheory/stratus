@@ -21,9 +21,6 @@ import {
     ucfirst
 } from '@stratusjs/core/misc'
 import {
-    titleCase,
-} from '@stratusjs/core/conversion'
-import {
     DOM,
     DOMType
 } from '@stratusjs/core/dom'
@@ -383,16 +380,9 @@ mixin({
     // Underscore Compatibility References: https://github.com/lodash/lodash/wiki/Migrating
     // TODO: Remove once phased out completely
 
-    // This function simply changes the first letter of a string to a lower case.
-    lcfirst,
-
     // This function allows creation, edit, retrieval and deletion of cookies.
     // Note: Delete with `cookie(name, '', -1)`
     cookie,
-
-    // Case Switchers
-    titleCase, // _.startCase
-
 })
 
 // Client Information
