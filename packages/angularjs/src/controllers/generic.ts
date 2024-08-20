@@ -5,6 +5,7 @@
 import _ from 'lodash'
 import {Stratus} from '@stratusjs/runtime/stratus'
 import * as angular from 'angular'
+import {cookie} from '@stratusjs/core/environment'
 
 // Forced Runtime Load
 import 'angular'
@@ -20,7 +21,6 @@ import {Collection} from '../services/collection'
 // Stratus Dependencies
 import {
     isJSON,
-    getUrlParams,
     setUrlParams
 } from '@stratusjs/core/misc'
 
@@ -65,6 +65,7 @@ Stratus.Controllers.Generic = [
         $scope.ctrlParent = $scope.$parent
         $scope.Stratus = Stratus
         $scope._ = _
+        $scope.cookie = cookie
         $scope.$window = $window
         $scope.setUrlParams = setUrlParams
         $scope.$log = $log
@@ -103,9 +104,12 @@ Stratus.Controllers.Generic = [
             return url.substring(anchor + 1, url.length)
         }
         /**
-         * @param anchor - The anchor you'd like to smooth scroll to.  You can use the getAnchor() function if you'd like to point to the anchor in the URL.
-         * @param inUrl  - This flags whether the anchor needs to be present in the URL to continue.  If you're using the getAnchor() call above, this isn't necessary.
-         * @param delay  - This gives a delay of only 1ms, but is enough to lower the priority of this calculation, since javascript runs concurrently.
+         * @param anchor - The anchor you'd like to smooth scroll to.  You can use the getAnchor() function if you'd like to point to the
+         * anchor in the URL.
+         * @param inUrl  - This flags whether the anchor needs to be present in the URL to continue.  If you're using the getAnchor() call
+         * above, this isn't necessary.
+         * @param delay  - This gives a delay of only 1ms, but is enough to lower the priority of this calculation, since javascript runs
+         * concurrently.
          */
         $scope.scrollToAnchor = (anchor?: string, inUrl?: boolean, delay?: number) => {
             if (!anchor || _.isEmpty(anchor)) {
