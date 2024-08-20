@@ -2,12 +2,13 @@
 // ------------------
 
 // Runtime
-import _ from 'lodash'
+import _, {forEach, head, isArray, isDate, isElement, isEmpty, isFunction, isNumber, isObject, isString, isUndefined} from 'lodash'
 import {Stratus} from '@stratusjs/runtime/stratus'
-import * as angular from 'angular'
+import {ICompiledExpression, ILogService, IParseService, ISCEService, IScope, IWindowService} from 'angular'
 import {cookie} from '@stratusjs/core/environment'
 
 // Forced Runtime Load
+// tslint:disable-next-line:no-duplicate-imports
 import 'angular'
 
 // Modules
@@ -21,6 +22,7 @@ import {Collection} from '../services/collection'
 // Stratus Dependencies
 import {
     isJSON,
+    safeUniqueId,
     setUrlParams
 } from '@stratusjs/core/misc'
 
@@ -38,16 +40,16 @@ Stratus.Controllers.Generic = [
     '$window',
     'Registry',
     async (
-        $scope: angular.IScope|any,
+        $scope: IScope|any,
         $element: JQLite,
-        $log: angular.ILogService,
-        $sce: angular.ISCEService,
-        $parse: angular.IParseService,
-        $window: angular.IWindowService,
+        $log: ILogService,
+        $sce: ISCEService,
+        $parse: IParseService,
+        $window: IWindowService,
         R: Registry
     ) => {
         // Store Instance
-        $scope.uid = _.uniqueId('controller_generic_')
+        $scope.uid = safeUniqueId('controller_generic_')
         Stratus.Instances[$scope.uid] = $scope
 
         // Registry
@@ -74,15 +76,15 @@ Stratus.Controllers.Generic = [
         $scope.Math = Math
 
         // Type Checks
-        $scope.isArray = _.isArray
-        $scope.isDate = _.isDate
-        $scope.isDefined = (value: any) => !_.isUndefined(value)
-        $scope.isElement = _.isElement
-        $scope.isFunction = _.isFunction
-        $scope.isNumber = _.isNumber
-        $scope.isObject = _.isObject
-        $scope.isString = _.isString
-        $scope.isUndefined = _.isUndefined
+        $scope.isArray = isArray
+        $scope.isDate = isDate
+        $scope.isDefined = (value: any) => !isUndefined(value)
+        $scope.isElement = isElement
+        $scope.isFunction = isFunction
+        $scope.isNumber = isNumber
+        $scope.isObject = isObject
+        $scope.isString = isString
+        $scope.isUndefined = isUndefined
 
         // Angular Wrappers
         $scope.getHTML = $sce.trustAsHtml
@@ -112,11 +114,11 @@ Stratus.Controllers.Generic = [
          * concurrently.
          */
         $scope.scrollToAnchor = (anchor?: string, inUrl?: boolean, delay?: number) => {
-            if (!anchor || _.isEmpty(anchor)) {
+            if (!anchor || isEmpty(anchor)) {
                 $log.warn('anchor id not set!')
                 return false
             }
-            if (_.isUndefined(inUrl)) {
+            if (isUndefined(inUrl)) {
                 inUrl = false
             }
             if (inUrl && anchor !== $scope.getAnchor()) {
@@ -153,7 +155,7 @@ Stratus.Controllers.Generic = [
         // TODO: Consider moving the R.fetch() here
 
         // Bind Redraw to all Change Events
-        if ($scope.data && _.isFunction($scope.data.on)) {
+        if ($scope.data && isFunction($scope.data.on)) {
             $scope.data.on('change', () => $scope.$applyAsync())
         }
 
@@ -164,13 +166,13 @@ Stratus.Controllers.Generic = [
         const selected: {
             raw: string;
             id: string,
-            model?: Model|angular.ICompiledExpression,
+            model?: Model|ICompiledExpression,
             value?: any
         } = {
             id: $element.attr('data-selected'),
             raw: $element.attr('data-raw')
         }
-        if (!selected.id || !_.isString(selected.id)) {
+        if (!selected.id || !isString(selected.id)) {
             return
         }
         if (isJSON(selected.id)) {
@@ -179,7 +181,7 @@ Stratus.Controllers.Generic = [
                 if ($scope.selected || $scope.selectedInit) {
                     return
                 }
-                _.forEach(models, (model: Model) => {
+                forEach(models, (model: Model) => {
                     if (selected.id !== model.getIdentifier()) {
                         return
                     }
@@ -190,14 +192,14 @@ Stratus.Controllers.Generic = [
         } else {
             selected.model = $parse(selected.id)
             selected.value = selected.model($scope.$parent)
-            if (!_.isArray(selected.value)) {
+            if (!isArray(selected.value)) {
                 return
             }
             selected.value = selected.value.filter((n: any) => n)
             if (selected.value.length) {
                 return
             }
-            $scope.selected = _.first(selected.value)
+            $scope.selected = head(selected.value)
         }
     }
 ]
