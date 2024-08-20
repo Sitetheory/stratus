@@ -115,6 +115,7 @@ interface StratusRuntime {
     Client: bowser.IBowser | any
     Internals: {
         [key: string]: any
+        Cookie: (name: any, value?: any, expires?: any, path?: any, domain?: any, secure?: any, sameSite?: any) => string|null
         CssLoader?: (url: any) => Promise<void>
         JsLoader?: (url: any) => Promise<void>
         LoadCss?: (urls?: string|string[]|LooseObject) => Promise<void>
@@ -267,6 +268,7 @@ export const Stratus: StratusRuntime = {
     History: {},
     Instances: {},
     Internals: {
+        Cookie: cookie,
         XHR: (request?: XHRRequest) => (new XHR(request)).send()
     },
     Loaders: {},
