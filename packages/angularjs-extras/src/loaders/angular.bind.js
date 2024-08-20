@@ -1,7 +1,5 @@
 /* global Stratus, _, jQuery, angular, boot */
 
-import { camelCase, kebabCase } from 'lodash'
-
 /**
  * @constructor
  */
