@@ -390,14 +390,6 @@ mixin({
     // Note: Delete with `cookie(name, '', -1)`
     cookie,
 
-    // This function digests URLs into an object containing their respective
-    // values, which will be merged with requested parameters and formulated
-    // into a new URL.
-    setUrlParams, // 1 reference in menu autocomplete
-
-    // Determines whether or not the string supplied is in a valid JSON format
-    isJSON,
-
     // Case Switchers
     titleCase, // _.startCase
 

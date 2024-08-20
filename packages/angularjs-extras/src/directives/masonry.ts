@@ -87,7 +87,7 @@ Stratus.Directives.Masonry = (): StratusDirective => ({
         // let initNow = true
         // if (Object.prototype.hasOwnProperty.call($attrs.$attr, 'initNow')) {
         //   // TODO: This needs better logic to determine what is acceptably initialized
-        //   initNow = _.isJSON($attrs.initNow) ? JSON.parse($attrs.initNow) : false
+        //   initNow = isJSON($attrs.initNow) ? JSON.parse($attrs.initNow) : false
         // }
         //
         // if (initNow) {
