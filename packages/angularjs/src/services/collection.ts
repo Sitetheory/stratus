@@ -21,7 +21,7 @@ import {
     throttle,
     reduce, clone, has
 } from 'lodash'
-import angular from 'angular'
+import {auto} from 'angular'
 import {Stratus} from '@stratusjs/runtime/stratus'
 
 // Stratus Core
@@ -614,7 +614,7 @@ export class Collection<T = LooseObject> extends EventManager {
 // registered collections and models
 Stratus.Services.Collection = [
     '$provide',
-    ($provide: angular.auto.IProvideService) => {
+    ($provide: auto.IProvideService) => {
         $provide.factory('Collection', [() => Collection])
     }
 ]
