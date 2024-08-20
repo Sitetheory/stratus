@@ -3,7 +3,7 @@
 
 // Runtime
 import {forEach, get, kebabCase, isNumber, isObject, isUndefined, set, size, union} from 'lodash'
-import angular, {IScope} from 'angular'
+import {auto, IInterpolateService, IScope} from 'angular'
 import {Stratus} from '@stratusjs/runtime/stratus'
 
 // Stratus Core
@@ -23,8 +23,8 @@ import {EventManager} from '@stratusjs/core/events/eventManager'
 let injector = getInjector()
 
 // Angular Services
-// let $interpolate: angular.IInterpolateService = injector ? injector.get('$interpolate') : null
-let $interpolate: angular.IInterpolateService
+// let $interpolate: IInterpolateService = injector ? injector.get('$interpolate') : null
+let $interpolate: IInterpolateService
 
 // Interfaces
 export interface RegistryOptions extends CollectionOptions, ModelOptions {
@@ -293,13 +293,13 @@ export class Registry {
 // This Registry Service handles data binding for an element
 Stratus.Services.Registry = [
     '$provide',
-    ($provide: angular.auto.IProvideService) => {
+    ($provide: auto.IProvideService) => {
         $provide.factory('Registry', [
             // '$interpolate',
             // 'Collection',
             // 'Model',
             (
-                // $i: angular.IInterpolateService,
+                // $i: IInterpolateService,
                 // C: Collection,
                 // M: Model
             ) => {
