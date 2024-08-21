@@ -1,6 +1,6 @@
 {
   "name": "@stratusjs/angularjs",
-  "version": "0.10.1",
+  "version": "0.11.0",
   "description": "This is the AngularJS package for StratusJS.",
   "scripts": {},
   "repository": {
@@ -25,8 +25,8 @@
     "npm": ">= 8.19.3"
   },
   "dependencies": {
-    "@stratusjs/core": "^0.8.0",
-    "@stratusjs/runtime": "^0.12.1",
+    "@stratusjs/core": "^0.8.1",
+    "@stratusjs/runtime": "^0.13.0",
     "@types/toastify-js": "^1.12.3",
     "angular": "1.8.3",
     "angular-animate": "1.7.9",

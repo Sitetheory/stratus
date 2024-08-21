@@ -2,7 +2,7 @@
 import {seconds} from './conversion'
 
 // External
-import _ from 'lodash'
+import {extend} from 'lodash'
 
 // Cookie Getter & Setter
 export function cookie(name: any, value?: any, expires?: any, path?: any, domain?: any, secure?: any, sameSite?: any): string|null {
@@ -16,7 +16,7 @@ export function cookie(name: any, value?: any, expires?: any, path?: any, domain
         sameSite
     }
     if (name && typeof name === 'object') {
-        _.extend(request, name)
+        extend(request, name)
     }
     let data
     if (typeof request.value === 'undefined') {

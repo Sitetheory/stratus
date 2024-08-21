@@ -3,8 +3,8 @@
 
 // Runtime
 import {
-    camelCase,every,extend,filter,find,findKey,flowRight,forEach,get,has,head,includes,isArray,isEmpty,isUndefined,
-    isString,kebabCase,keyBy,map,mapValues,max,mixin,once,size,snakeCase,some,startsWith,toPairs,uniq,uniqueId,union,zipObject
+    camelCase,every,extend,filter,findKey,forEach,get,has,head,includes,isArray,isEmpty,isUndefined,
+    isString,kebabCase,map,max,mixin,once,size,startsWith,uniq,uniqueId,union
 } from 'lodash'
 import jQuery from 'jquery'
 import bowser from 'bowser-legacy'
@@ -12,31 +12,14 @@ import bowser from 'bowser-legacy'
 // Stratus Core
 import {cookie} from '@stratusjs/core/environment'
 import {
-    allTrue,
-    converge,
     dehydrate,
-    extendDeep,
-    functionName,
-    getAnchorParams,
-    getUrlParams,
     hydrate,
-    hydrateString,
-    isAngular,
-    isjQuery,
     isJSON,
     lcfirst,
     LooseObject,
-    patch,
-    poll,
-    repeat,
     setUrlParams,
-    strcmp,
     ucfirst
 } from '@stratusjs/core/misc'
-import {
-    seconds,
-    titleCase,
-} from '@stratusjs/core/conversion'
 import {
     DOM,
     DOMType
@@ -132,6 +115,7 @@ interface StratusRuntime {
     Client: bowser.IBowser | any
     Internals: {
         [key: string]: any
+        Cookie: (name: any, value?: any, expires?: any, path?: any, domain?: any, secure?: any, sameSite?: any) => string|null
         CssLoader?: (url: any) => Promise<void>
         JsLoader?: (url: any) => Promise<void>
         LoadCss?: (urls?: string|string[]|LooseObject) => Promise<void>
@@ -284,6 +268,7 @@ export const Stratus: StratusRuntime = {
     History: {},
     Instances: {},
     Internals: {
+        Cookie: cookie,
         XHR: (request?: XHRRequest) => (new XHR(request)).send()
     },
     Loaders: {},
@@ -393,91 +378,11 @@ if (cookie('env')) {
 // ------------------
 
 mixin({
-
-    // Underscore Compatibility References: https://github.com/lodash/lodash/wiki/Migrating
-    // TODO: Remove once phased out completely
-    any: some,
-    all: every,
-    compose: flowRight,
-    contains: includes,
-    findWhere: find,
-    indexBy: keyBy,
-    mapObject: mapValues,
-    object: zipObject,
-    pairs: toPairs,
-    pluck: map,
-    where: filter,
-
-    // This function simply extracts the name of a function from code directly
-    functionName,
-
-    // This function simply capitalizes the first letter of a string.
-    ucfirst,
-
-    // This function simply changes the first letter of a string to a lower case.
-    lcfirst,
+    // FIXME: mixins are no longer accessible Remove at later version
 
     // This function allows creation, edit, retrieval and deletion of cookies.
     // Note: Delete with `cookie(name, '', -1)`
     cookie,
-
-    // Converge a list and return the prime key through specified method.
-    converge,
-
-    // This synchronously repeats a function a certain number of times
-    // FIXME: This overwrites the core one
-    repeat,
-
-    // This function dehydrates an Object, Boolean, or Null value, to a string.
-    dehydrate,
-
-    // This function hydrates a string into an Object, Boolean, or Null value, if
-    // applicable.
-    hydrate,
-
-    // This is an alias to the hydrate function for backwards compatibility.
-    hydrateString,
-
-    // This function utilizes tree building to clone an object.
-    extendDeep,
-
-    // Get more params which is shown after anchor '#' anchor in the url.
-    getAnchorParams,
-
-    // Get a specific value or all values located in the URL
-    getUrlParams,
-
-    // This function digests URLs into an object containing their respective
-    // values, which will be merged with requested parameters and formulated
-    // into a new URL.
-    setUrlParams,
-
-    // Ensure all values in an array or object are true
-    allTrue,
-
-    // Determines whether or not the string supplied is in a valid JSON format
-    isJSON,
-
-    // Determines whether or not the element was selected from Angular
-    isAngular,
-
-    // Determines whether or not the element was selected from Angular
-    isjQuery,
-
-    seconds,
-
-    // Case Switchers
-    titleCase,
-
-    // Legacy Case Switchers
-    camelToKebab: kebabCase,
-    kebabToCamel: camelCase,
-    camelToSnake: snakeCase,
-    snakeToCamel: camelCase,
-
-    patch,
-    poll,
-    strcmp,
 })
 
 // Client Information

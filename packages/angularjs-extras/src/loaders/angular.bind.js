@@ -18,10 +18,10 @@ Stratus.Loaders.Angular = () => {
   // TODO: Add references to this prototype in the tree builder, accordingly
   const injector = function (injection) {
     injection = injection || {}
-    _.each(injection, function (element, attribute) {
+    _.forEach(injection, function (element, attribute) {
       container[attribute] = container[attribute] || []
       if (_.isArray(element)) {
-        _.each(element, function (value) {
+        _.forEach(element, function (value) {
           container[attribute].push(value)
         })
       } else {
@@ -30,14 +30,14 @@ Stratus.Loaders.Angular = () => {
     })
   }
 
-  _.each(Stratus.Roster, function (element, key) {
+  _.forEach(Stratus.Roster, function (element, key) {
     if (typeof element === 'object' && element) {
       // sanitize roster fields without selector attribute
       if (_.isUndefined(element.selector) && element.namespace) {
         element.selector = _.filter(
           _.map(boot.configuration.paths, function (path, key) {
             // if (_.isString(key)) console.log(key.match(/([a-zA-Z]+)/g));
-            return _.startsWith(key, element.namespace) ? (element.type === 'attribute' ? '[' : '') + _.camelToKebab(key.replace(element.namespace, 'stratus-')) + (element.type === 'attribute' ? ']' : '') : null
+            return _.startsWith(key, element.namespace) ? (element.type === 'attribute' ? '[' : '') + _.kebabCase(key.replace(element.namespace, 'stratus-')) + (element.type === 'attribute' ? ']' : '') : null
           })
         )
       }
@@ -45,18 +45,18 @@ Stratus.Loaders.Angular = () => {
       // digest roster
       if (_.isArray(element.selector)) {
         element.length = 0
-        _.each(element.selector, function (selector) {
+        _.forEach(element.selector, function (selector) {
           nodes = document.querySelectorAll(selector)
           element.length += nodes.length
           if (nodes.length) {
             const name = selector.replace(/^\[/, '').replace(/]$/, '')
-            requirement = element.namespace + _.lcfirst(_.kebabToCamel(name.replace(/^stratus/, '').replace(/^ng/, '')))
+            requirement = element.namespace + _.lowerFirst(_.camelCase(name.replace(/^stratus/, '').replace(/^ng/, '')))
             if (_.has(boot.configuration.paths, requirement)) {
               injection = {
                 requirement: requirement
               }
               if (element.module) {
-                injection.module = _.isString(element.module) ? element.module : _.lcfirst(_.kebabToCamel(name + (element.suffix || '')))
+                injection.module = _.isString(element.module) ? element.module : _.lowerFirst(_.camelCase(name + (element.suffix || '')))
               }
               injector(injection)
             }
@@ -68,10 +68,10 @@ Stratus.Loaders.Angular = () => {
         if (nodes.length) {
           const attribute = element.selector.replace(/^\[/, '').replace(/]$/, '')
           if (attribute && element.namespace) {
-            _.each(nodes, function (node) {
+            _.forEach(nodes, function (node) {
               const name = node.getAttribute(attribute)
               if (name) {
-                requirement = element.namespace + _.lcfirst(_.kebabToCamel(name.replace('Stratus', '')))
+                requirement = element.namespace + _.lowerFirst(_.camelCase(name.replace('Stratus', '')))
                 if (_.has(boot.configuration.paths, requirement)) {
                   injector({
                     requirement: requirement
@@ -84,7 +84,7 @@ Stratus.Loaders.Angular = () => {
             container.requirement = _.union(container.requirement, element.require)
             injection = {}
             if (element.module) {
-              injection.module = _.isString(element.module) ? element.module : _.lcfirst(_.kebabToCamel(attribute + (element.suffix || '')))
+              injection.module = _.isString(element.module) ? element.module : _.lowerFirst(_.camelCase(attribute + (element.suffix || '')))
             }
             if (element.stylesheet) {
               injection.stylesheet = element.stylesheet
@@ -98,7 +98,7 @@ Stratus.Loaders.Angular = () => {
 
   // Ensure Modules enabled are in the requirements
   container.requirement.push('angular-material')
-  _.each(container, function (element, key) {
+  _.forEach(container, function (element, key) {
     container[key] = _.uniq(element)
   })
   window.container = container
@@ -107,7 +107,7 @@ Stratus.Loaders.Angular = () => {
   if (container.requirement.length) {
     // Deprecated the use of the 'froala' directive for stratus-froala
     /* *
-    if (_.contains(container.requirement, 'angular-froala')) {
+    if (_.includes(container.requirement, 'angular-froala')) {
       [
         'codemirror/mode/htmlmixed/htmlmixed',
         'codemirror/addon/edit/matchbrackets',
@@ -159,7 +159,7 @@ Stratus.Loaders.Angular = () => {
         ]
         if (boot.host) {
           if (_.startsWith(boot.host, '//')) {
-            _.each(['https:', 'http:'], function (proto) {
+            _.forEach(['https:', 'http:'], function (proto) {
               whitelist.push(proto + boot.host + '/**')
             })
           } else {
@@ -200,7 +200,7 @@ Stratus.Loaders.Angular = () => {
             tabMode: 'space',
             tabSize: 4
           },
-          fileUploadURL: 'https://app.sitetheory.io:3000/?session=' + _.cookie('SITETHEORY'),
+          fileUploadURL: 'https://app.sitetheory.io:3000/?session=' + Stratus.Internals.Cookie('SITETHEORY'),
           htmlAllowedAttrs: ['.*'],
           htmlAllowedEmptyTags: [
             'textarea', 'a', '.fa',
@@ -228,27 +228,27 @@ Stratus.Loaders.Angular = () => {
       }
 
       // Services
-      _.each(Stratus.Services, function (service) {
+      _.forEach(Stratus.Services, function (service) {
         angular.module('stratusApp').config(service)
       })
 
       // Components
-      _.each(Stratus.Components, function (component, name) {
-        angular.module('stratusApp').component('stratus' + _.ucfirst(name), component)
+      _.forEach(Stratus.Components, function (component, name) {
+        angular.module('stratusApp').component('stratus' + _.upperFirst(name), component)
       })
 
       // Directives
-      _.each(Stratus.Directives, function (directive, name) {
-        angular.module('stratusApp').directive('stratus' + _.ucfirst(name), directive)
+      _.forEach(Stratus.Directives, function (directive, name) {
+        angular.module('stratusApp').directive('stratus' + _.upperFirst(name), directive)
       })
 
       // Filters
-      _.each(Stratus.Filters, function (filter, name) {
-        angular.module('stratusApp').filter(_.lcfirst(name), filter)
+      _.forEach(Stratus.Filters, function (filter, name) {
+        angular.module('stratusApp').filter(_.lowerFirst(name), filter)
       })
 
       // Controllers
-      _.each(Stratus.Controllers, function (controller, name) {
+      _.forEach(Stratus.Controllers, function (controller, name) {
         angular.module('stratusApp').controller(name, controller)
       })
 
@@ -258,7 +258,7 @@ Stratus.Loaders.Angular = () => {
       const cssLoaded = Stratus('link[satisfies]').map(function (node) {
         return node.getAttribute('satisfies')
       })
-      if (!_.contains(cssLoaded, 'angular-material.css') && 'angular-material' in boot.configuration.paths) {
+      if (!_.includes(cssLoaded, 'angular-material.css') && 'angular-material' in boot.configuration.paths) {
         css.push(
           Stratus.BaseUrl + boot.configuration.paths['angular-material'].replace(/\.[^.]+$/, '.css')
         )
@@ -266,7 +266,7 @@ Stratus.Loaders.Angular = () => {
       if (Stratus.Directives.Froala || Stratus('[froala]').length) {
         // eslint-disable-next-line dot-notation
         const froalaPath = boot.configuration.paths['froala'].replace(/\/[^/]+\/?[^/]+\/?$/, '')
-        _.each([
+        _.forEach([
         // FIXME this is sitetheory only
           Stratus.BaseUrl + 'sitetheorycore/css/sitetheory.codemirror.css',
           // eslint-disable-next-line dot-notation

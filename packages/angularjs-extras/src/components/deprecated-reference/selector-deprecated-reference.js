@@ -55,8 +55,17 @@
       Stratus.Instances[$scope.uid] = $scope
       $scope.elementId = $attrs.elementId || $scope.uid
 
+      const isJSON = function (str) {
+        try {
+          JSON.parse(str)
+        } catch (e) {
+          return false
+        }
+        return true
+      }
+
       // Hydrate Settings
-      $scope.api = _.isJSON($attrs.api) ? JSON.parse($attrs.api) : false
+      $scope.api = isJSON($attrs.api) ? JSON.parse($attrs.api) : false
       $scope.property = $attrs.property || null
       $scope.model = null
       $scope.collection = null
@@ -68,7 +77,7 @@
           decouple: true,
           api: {
             options: this.options ? this.options : {},
-            limit: _.isJSON($attrs.limit) ? JSON.parse($attrs.limit) : 40
+            limit: isJSON($attrs.limit) ? JSON.parse($attrs.limit) : 40
           }
         }
         if ($scope.api && angular.isObject($scope.api)) {
@@ -79,7 +88,7 @@
 
       // Store Toggle Options for Custom Actions
       $scope.toggleOptions = {
-        multiple: _.isJSON($attrs.multiple)
+        multiple: isJSON($attrs.multiple)
           ? JSON.parse($attrs.multiple)
           : true
       }

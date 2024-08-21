@@ -5,8 +5,8 @@
 import {Stratus} from '@stratusjs/runtime/stratus'
 
 // Libraries
-import _ from 'lodash'
-import * as angular from 'angular'
+import {isEqual} from 'lodash'
+import {IAttributes, IScope} from 'angular'
 
 // Angular 1 Modules
 import 'angular-material'
@@ -25,7 +25,7 @@ import {Registry} from '../services/registry'
 // Stratus Utilities
 import {
     LooseFunction,
-    LooseObject
+    LooseObject, safeUniqueId
 } from '@stratusjs/core/misc'
 import {cookie} from '@stratusjs/core/environment'
 
@@ -35,7 +35,7 @@ const name = 'base'
 const localPath = '@stratusjs/angularjs/src/components'
 
 // This is a typed scope for the component below
-export type BaseScope = angular.IScope & LooseObject<LooseFunction> & {
+export type BaseScope = IScope & LooseObject<LooseFunction> & {
     initialized: boolean
     uid: string
     model: Model
@@ -82,16 +82,16 @@ Stratus.Components.Base = {
     },
     controller(
         $scope: BaseScope,
-        $attrs: angular.IAttributes
+        $attrs: IAttributes
     ) {
         // Initialize
         // const $ctrl = this
-        $scope.uid = _.uniqueId(_.snakeCase(name) + '_')
+        $scope.uid = safeUniqueId(name)
         Stratus.Instances[$scope.uid] = $scope
         $scope.elementId = $attrs.elementId || $scope.uid
         Stratus.Internals.CssLoader(
             `${Stratus.BaseUrl + Stratus.BundlePath + localPath}/${name}${min}.css`
-        )
+        ).then()
         $scope.initialized = false
 
         // Hoist Attributes
@@ -105,7 +105,7 @@ Stratus.Components.Base = {
         // Registry Connectivity
         if ($attrs.target) {
             $scope.registry = $scope.registry || new Registry()
-            $scope.registry.fetch($attrs, $scope)
+            $scope.registry.fetch($attrs, $scope).then()
         }
 
         // Symbiotic Data Connectivity
@@ -136,7 +136,7 @@ Stratus.Components.Base = {
 
         // Model Watcher
         $scope.$watch('$scope.model.completed', (newVal: any, oldVal: any) => {
-            if (!newVal || _.isEqual(newVal, oldVal)) {
+            if (!newVal || isEqual(newVal, oldVal)) {
                 return
             }
             $scope.initialize()
@@ -144,7 +144,7 @@ Stratus.Components.Base = {
 
         // Collection Watcher
         $scope.$watch('$scope.collection.completed', (newVal: any, oldVal: any) => {
-            if (!newVal || _.isEqual(newVal, oldVal)) {
+            if (!newVal || isEqual(newVal, oldVal)) {
                 return
             }
             $scope.initialize()
