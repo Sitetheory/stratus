@@ -2079,7 +2079,7 @@ Stratus.Internals.Auth = (convoy: any) => {
     const ssoRedirect = false
     // Single Sign On Toggle
     let ssoEnabled: any = cookie('sso')
-    ssoEnabled = ssoEnabled === null ? true : (isJSON(ssoEnabled) ? JSON.parse(ssoEnabled) : false)
+    ssoEnabled = (ssoEnabled === null) ? false : (isJSON(ssoEnabled) ? JSON.parse(ssoEnabled) : false)
     if (!ssoEnabled) {
         return
     }
