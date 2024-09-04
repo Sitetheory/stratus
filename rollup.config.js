@@ -22,14 +22,13 @@ export default [
       '@stratusjs'
     ],
     output: {
-      // file: 'packages/core/dist/core.bundle.js',
-      dir: 'packages/core/dist/',
-      format: 'system'
+      file: 'packages/core/dist/core.bundle.js',
+      format: 'system',
+      sourcemap: true
     },
     plugins: [
       multi({
-        exports: true,
-        entryFileName: 'core.bundle.js'
+        exports: true
       }),
       nodeResolve()
     ]
@@ -66,14 +65,13 @@ export default [
       '@agentepsilon/decko'
     ],
     output: {
-      // file: 'packages/angular/dist/angular.bundle.js',
-      dir: 'packages/angular/dist/',
-      format: 'system'
+      file: 'packages/angular/dist/angular.bundle.js',
+      format: 'system',
+      sourcemap: true
     },
     plugins: [
       multi({
-        exports: true,
-        entryFileName: 'angular.bundle.js'
+        exports: true
       }),
       nodeResolve()
     ]
@@ -99,14 +97,13 @@ export default [
       'angular-sanitize'
     ],
     output: {
-      // file: 'packages/angularjs/dist/angularjs.bundle.js',
-      dir: 'packages/angularjs/dist/',
-      format: 'system'
+      file: 'packages/angularjs/dist/angularjs.bundle.js',
+      format: 'system',
+      sourcemap: true
     },
     plugins: [
       multi({
-        exports: true,
-        entryFileName: 'angularjs.bundle.js'
+        exports: true
       }),
       nodeResolve({
         // browser: true
@@ -158,14 +155,13 @@ export default [
       '@stratusjs'
     ],
     output: {
-      // file: 'packages/angularjs-extras/dist/angularjs-extras.bundle.js',
-      dir: 'packages/angularjs-extras/dist/',
-      format: 'system'
+      file: 'packages/angularjs-extras/dist/angularjs-extras.bundle.js',
+      format: 'system',
+      sourcemap: true
     },
     plugins: [
       multi({
-        exports: true,
-        entryFileName: 'angularjs-extras.bundle.js'
+        exports: true
       }),
       nodeResolve()
     ]
@@ -190,14 +186,13 @@ export default [
       '@stratusjs'
     ],
     output: {
-      // file: 'packages/calendar/dist/calendar.bundle.js',
-      dir: 'packages/calendar/dist/',
-      format: 'system'
+      file: 'packages/calendar/dist/calendar.bundle.js',
+      format: 'system',
+      sourcemap: true
     },
     plugins: [
       multi({
-        exports: true,
-        entryFileName: 'calendar.bundle.js'
+        exports: true
       }),
       nodeResolve({
         // browser: true
@@ -226,14 +221,13 @@ export default [
       '@stratusjs'
     ],
     output: {
-      // file: 'packages/idx/dist/idx.bundle.js',
-      dir: 'packages/idx/dist/',
-      format: 'system'
+      file: 'packages/idx/dist/idx.bundle.js',
+      format: 'system',
+      sourcemap: true
     },
     plugins: [
       multi({
-        exports: true,
-        entryFileName: 'idx.bundle.js'
+        exports: true
       }),
       nodeResolve({
         // browser: true
@@ -305,14 +299,13 @@ export default [
       '@stratusjs'
     ],
     output: {
-      // file: 'packages/swiper/dist/swiper.bundle.js',
-      dir: 'packages/swiper/dist/',
-      format: 'system'
+      file: 'packages/swiper/dist/swiper.bundle.js',
+      format: 'system',
+      sourcemap: true
     },
     plugins: [
       multi({
         exports: true,
-        entryFileName: 'swiper.bundle.js'
       }),
       nodeResolve({
         // browser: true
