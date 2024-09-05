@@ -5,11 +5,11 @@
 import {Stratus} from '@stratusjs/runtime/stratus'
 import {forEach} from 'lodash'
 import {auto} from 'angular'
-import 'ical.js' // Global ICAL variable.... not able to be sandboxed yet
-import {entityDecode, LooseObject} from '@stratusjs/core/misc'
+// import 'ical.js' // Global ICAL variable.... not able to be sandboxed yet
+// @ts-ignore defined in 'ical.js.d.ts' ... lint shouldn't be complaining
+import ICALmodule from 'ical.js'
 
-// Globals
-declare var ICAL: any
+import {entityDecode, LooseObject} from '@stratusjs/core/misc'
 
 // original author: Mikael Finstad https://github.com/mifi/ical-expander
 // licence: MIT https://github.com/mifi/ical-expander/blob/master/LICENSE
@@ -33,10 +33,10 @@ export class ICalExpander {
             this[key] = value
         })
 
-        this.jCalData = ICAL.parse(icsData)
-        this.component = new ICAL.Component(this.jCalData)
+        this.jCalData = ICALmodule.parse(icsData)
+        this.component = new ICALmodule.Component(this.jCalData)
         this.events = this.component.getAllSubcomponents('vevent').map(
-            (vevent) => new ICAL.Event(vevent)
+            (vevent) => new ICALmodule.Event(vevent)
         )
 
         if (this.skipInvalidDates) {
@@ -374,11 +374,11 @@ interface ICalTime {
 export function registerTimezones(tzData: LooseObject<string>) {
     Object.keys(tzData).forEach((key) => {
         const icsData = tzData[key]
-        const parsed = ICAL.parse(`BEGIN:VCALENDAR\nPRODID:-//tzurl.org//NONSGML Olson 2012h//EN\nVERSION:2.0\n${icsData}\nEND:VCALENDAR`)
-        const comp: ICalComponent = new ICAL.Component(parsed)
+        const parsed = ICALmodule.parse(`BEGIN:VCALENDAR\nPRODID:-//tzurl.org//NONSGML Olson 2012h//EN\nVERSION:2.0\n${icsData}\nEND:VCALENDAR`)
+        const comp: ICalComponent = new ICALmodule.Component(parsed)
         const vTimezone = comp.getFirstSubcomponent('vtimezone')
 
-        ICAL.TimezoneService.register(vTimezone)
+        ICALmodule.TimezoneService.register(vTimezone)
     })
 }
 
