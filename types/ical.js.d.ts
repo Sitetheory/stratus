@@ -1,7 +1,12 @@
-// ical still working on releasing a typing
+// ical still working on releasing a typing. Phpstorm can't properly read the types here so don't expand
 declare module 'ical.js' {
+    /** @see ical.js/lib/ical/compponent.js */
     class Component {}
-    class Event {}
+    /** @see ical.js/lib/ical/event.js */
+    class Event {
+        constructor(component: Component, options?: unknown)
+    }
+    /** @see ical.js/lib/ical/timezone_service.js */
     const TimezoneService: {
         get count(): number
         reset(): void
@@ -11,11 +16,11 @@ declare module 'ical.js' {
         remove(tzid: string): unknown
     }
     function parse(input: string): Component // Object/ Component
-    let ICALmodule = {
+    const ICALmodule = {
         Component,
         Event,
         TimezoneService,
         parse
     }
-    export { ICALmodule as default }
+    export default ICALmodule
 }
