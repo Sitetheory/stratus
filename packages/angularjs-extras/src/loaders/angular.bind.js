@@ -1,4 +1,5 @@
 /* global Stratus, _, jQuery, angular, boot */
+// FIXME this file is no logner in use and can be removed
 
 /**
  * @constructor
