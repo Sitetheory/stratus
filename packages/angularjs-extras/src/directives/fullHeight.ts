@@ -8,7 +8,7 @@
 // Runtime
 import {isArray, isString} from 'lodash'
 import {Stratus} from '@stratusjs/runtime/stratus'
-import {IAttributes, IAugmentedJQuery, ITimeoutService, IWindowService} from 'angular'
+import {IAttributes, IAugmentedJQuery, IScope, ITimeoutService, IWindowService} from 'angular'
 
 // Angular 1 Modules
 import {isJSON, safeUniqueId} from '@stratusjs/core/misc'
@@ -20,7 +20,7 @@ const packageName = 'angularjs-extras'
 const moduleName = 'directives'
 const directiveName = 'fullHeight'
 
-export type FullHeightScope = angular.IScope & { // & LooseObject<LooseFunction>
+export type FullHeightScope = IScope & { // & LooseObject<LooseFunction>
     initialized: boolean
     uid: string
 

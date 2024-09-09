@@ -6,14 +6,13 @@ import {Stratus} from '@stratusjs/runtime/stratus'
 import {
     IAugmentedJQuery,
     IAttributes,
-    ILogService,
     IParseService,
     IScope
 } from 'angular'
 import {StratusDirective} from './baseNew'
 
 Stratus.Directives.SingleClick = (
-    $log: ILogService,
+    // $log: ILogService,
     $parse: IParseService
 ): StratusDirective => ({
     restrict: 'A',

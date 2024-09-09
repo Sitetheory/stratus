@@ -3,9 +3,6 @@
 
 // Runtime
 import {
-    uniqueId
-} from 'lodash'
-import {
     Stratus
 } from '@stratusjs/runtime/stratus'
 import {
@@ -15,7 +12,7 @@ import {
 import {
     StratusDirective
 } from './baseNew'
-import {safeUniqueId} from "@stratusjs/core/misc";
+import {safeUniqueId} from '@stratusjs/core/misc'
 
 
 // Environment
@@ -23,10 +20,7 @@ const packageName = 'angularjs-extras'
 const moduleName = 'directives'
 const directiveName = 'drag'
 
-Stratus.Directives.Drag = (
-    // $log: ILogService,,
-    // $parse: IParseService
-): StratusDirective => ({
+Stratus.Directives.Drag = (): StratusDirective => ({
     restrict: 'A',
     scope: {
         ngModel: '=ngModel'

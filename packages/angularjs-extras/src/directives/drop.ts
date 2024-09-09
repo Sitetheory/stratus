@@ -18,8 +18,7 @@ const moduleName = 'directives'
 const directiveName = 'drop'
 
 Stratus.Directives.Drop = (
-    $log: ILogService,
-    // $parse: IParseService
+    $log: ILogService
 ): StratusDirective => ({
     restrict: 'A',
     scope: {

@@ -45,7 +45,7 @@ Stratus.Directives.Redactor = (
             `${Stratus.BaseUrl}sitetheorycore/dist/redactor/redactor-clips.css`,
             `${Stratus.BaseUrl}${Stratus.BundlePath}node_modules/codemirror/lib/codemirror.css`
         ], (url) => {
-            Stratus.Internals.CssLoader(url)
+            Stratus.Internals.CssLoader(url).then()
         })
 
         // Expose scope let with loaded state of Redactor
