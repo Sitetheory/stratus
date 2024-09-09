@@ -3,12 +3,12 @@
 // FIXME FB obejct does not get imported
 
 // Runtime
-import {camelCase, uniqueId} from 'lodash'
 import {Stratus} from '@stratusjs/runtime/stratus'
 import {IAttributes, IScope, IWindowService} from 'angular'
 
 // Stratus Dependencies
 import {cookie} from '@stratusjs/core/environment'
+import {safeUniqueId} from '@stratusjs/core/misc'
 
 // Environment
 const min = !cookie('env') ? '.min' : ''
@@ -36,10 +36,10 @@ Stratus.Components.Facebook = {
         $window: IWindowService
     ) {
         // Initialize
-        // $scope.uid = safeUniqueId(packageName, moduleName, componentName)
-        $scope.uid = uniqueId(camelCase(packageName) + '_' + camelCase(moduleName) + '_' + camelCase(componentName) + '_')
+        // $scope.uid = uniqueId(camelCase(packageName) + '_' + camelCase(moduleName) + '_' + camelCase(componentName) + '_')
+        $scope.uid = safeUniqueId(packageName, moduleName, componentName)
         Stratus.Instances[$scope.uid] = $scope
-        Stratus.Internals.CssLoader(`${localDir}${componentName}${min}.css`)
+        Stratus.Internals.CssLoader(`${localDir}${componentName}${min}.css`).then()
         $scope.elementId = $attrs.elementId || $scope.uid
         $scope.initialized = false
 
@@ -56,7 +56,7 @@ Stratus.Components.Facebook = {
 
         // Functions
         // tslint:disable-next-line:no-unused-variable
-        const resizePlugin = () => {
+        /*const resizePlugin = () => {
             // Manually resize Facebook Plugin's span and iframe to be 100%
             const plugin = document.querySelector('.fb-page')
             const containerSpan = plugin.querySelector('span')
@@ -73,7 +73,7 @@ Stratus.Components.Facebook = {
                 iframe.style.transform = 'scale(' + scale + ')'
                 iframe.style.transformOrigin = '0 0'
             }
-        }
+        }*/
 
         const loadPlugin = () => {
             // Get height of the related Container (e.g. in another column)

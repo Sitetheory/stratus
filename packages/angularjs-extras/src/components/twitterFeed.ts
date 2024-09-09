@@ -2,9 +2,8 @@
 // ----------------------
 
 // Runtime
-import _ from 'lodash'
+import {forEach, get, isEmpty, set} from 'lodash'
 import {Stratus} from '@stratusjs/runtime/stratus'
-import 'angular'
 
 // Third Party Libraries
 import 'twitter'
@@ -15,10 +14,14 @@ import 'angular-material'
 // Stratus Dependencies
 import {sanitize} from '@stratusjs/core/conversion'
 import {cookie} from '@stratusjs/core/environment'
+import {safeUniqueId} from '@stratusjs/core/misc'
 
 // Environment
 // const min = !cookie('env') ? '.min' : ''
-const name = 'twitterFeed'
+// const name = 'twitterFeed'
+const packageName = 'angularjs-extras'
+const moduleName = 'components'
+const componentName = 'twitterFeed'
 // const localPath = '@stratusjs/angularjs-extras/src/components'
 
 // This component is just a simple twitter feed.
@@ -48,7 +51,8 @@ Stratus.Components.TwitterFeed = {
     ) {
         // Initialize
         const $ctrl = this
-        $scope.uid = _.uniqueId(_.snakeCase(name) + '_')
+        // $scope.uid = uniqueId(snakeCase(name) + '_')
+        $scope.uid = safeUniqueId(packageName, moduleName, componentName)
         Stratus.Instances[$scope.uid] = $scope
         $scope.elementId = $attrs.elementId || $scope.uid
         $scope.initialized = false
@@ -62,8 +66,8 @@ Stratus.Components.TwitterFeed = {
                 return
             }
             $scope.initialized = true
-            _.forEach(Stratus.Components.TwitterFeed.bindings, (value, key) => {
-                _.set($scope.feedOptions, key, _.get($ctrl, key) || _.get($attrs, key))
+            forEach(Stratus.Components.TwitterFeed.bindings, (_value, key) => {
+                set($scope.feedOptions, key, get($ctrl, key) || get($attrs, key))
             })
             if (cookie('env')) {
                 console.log('feedOptions:', sanitize($scope.feedOptions))
@@ -80,13 +84,13 @@ Stratus.Components.TwitterFeed = {
         }
 
         // Initialize if hydrated
-        if (!_.isEmpty($ctrl.screenName || $attrs.screenName)) {
+        if (!isEmpty($ctrl.screenName || $attrs.screenName)) {
             $scope.initialize()
             return
         }
 
         // Screen Name Watcher
-        $scope.$watch('$ctrl.screenName', (newVal: any, oldVal: any) => {
+        $scope.$watch('$ctrl.screenName', (newVal: any, _oldVal: any) => {
             if (!newVal) {
                 return
             }
