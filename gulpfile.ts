@@ -246,6 +246,7 @@ function lintJS() {
         '!packages/runtime/node_modules/**/*.js',
         // TypeScript Supersedes
         '!packages/angularjs-extras/src/components/*.js',
+        '!packages/angularjs-extras/src/controllers/*.js',
         '!packages/angularjs-extras/src/directives/*.js',
         '!packages/angularjs-extras/src/filters/*.js',
         '!packages/angularjs-extras/src/services/*.js',
