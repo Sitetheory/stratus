@@ -2,9 +2,10 @@
 // --------------
 
 // Runtime
-import {camelCase, isEqual, uniqueId} from 'lodash'
+import {isEqual} from 'lodash'
 import {Stratus} from '@stratusjs/runtime/stratus'
 import {IAttributes, IScope, ITranscludeFunction} from 'angular'
+import {safeUniqueId} from '@stratusjs/core/misc'
 
 // Stratus Dependencies
 import {cookie} from '@stratusjs/core/environment'
@@ -74,8 +75,8 @@ Stratus.Components.Base = {
         $attrs: IAttributes
     ) {
         // Initialize
-        // $scope.uid = safeUniqueId(packageName, moduleName, componentName)
-        $scope.uid = uniqueId(camelCase(packageName) + '_' + camelCase(moduleName) + '_' + camelCase(componentName) + '_')
+        // $scope.uid = uniqueId(camelCase(packageName) + '_' + camelCase(moduleName) + '_' + camelCase(componentName) + '_')
+        $scope.uid = safeUniqueId(packageName, moduleName, componentName)
         Stratus.Instances[$scope.uid] = $scope
         $scope.elementId = $attrs.elementId || $scope.uid
         Stratus.Internals.CssLoader(`${localDir}${componentName}${min}.css`)
@@ -93,7 +94,7 @@ Stratus.Components.Base = {
 
         // Registry Connectivity
         if ($attrs.target) {
-            $scope.registry.fetch($attrs, $scope)
+            $scope.registry.fetch($attrs, $scope).then()
         }
 
         // Symbiotic Data Connectivity

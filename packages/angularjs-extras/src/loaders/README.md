@@ -1,1 +1,0 @@
-This will contain loaders for Angular and anything else that we need, which will be loaded depending on what is found on the DOM.

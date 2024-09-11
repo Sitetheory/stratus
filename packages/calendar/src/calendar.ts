@@ -7,7 +7,7 @@
 
 // credit to https://github.com/leonaard/icalendar2fullcalendar for ics conversion
 import {Stratus} from '@stratusjs/runtime/stratus'
-import {clone, extend, isArray} from 'lodash'
+import {extend, isArray} from 'lodash'
 import {
     IAttributes,
     ICompileService,
@@ -427,17 +427,27 @@ Stratus.Components.Calendar = {
                             dialog.eventData.descriptionHTML = $sce.trustAsHtml(dialog.eventData.extendedProps.description)
                         }
 
-                        const millisecondsInDay = 86400000
-                        const millisecondsInInstance =
-                            dialog.eventData._instance.range.end.getTime() - dialog.eventData._instance.range.start.getTime()
-                        const NumDaysSpanned = millisecondsInInstance / millisecondsInDay
                         dialog.eventData.spanMultiDay = false
-                        if (NumDaysSpanned > 0.9) {
-                            dialog.eventData.spanMultiDay = true
+                        if (dialog.eventData.allDay) {
+                            if(
+                                Object.prototype.hasOwnProperty.call(dialog.eventData.constructor.prototype, 'extendedProps') &&
+                                Object.prototype.hasOwnProperty.call(dialog.eventData.extendedProps, 'allDayMultiDay') &&
+                                dialog.eventData.extendedProps.allDayMultiDay
+                            ) {
+                                dialog.eventData.spanMultiDay = true
+                            }
+                        } else {
+                            const millisecondsInDay = 86400000
+                            const millisecondsInInstance =
+                                dialog.eventData._instance.range.end.getTime() - dialog.eventData._instance.range.start.getTime()
+                            const NumDaysSpanned = millisecondsInInstance / millisecondsInDay
+                            if (NumDaysSpanned > 0.9) {
+                                dialog.eventData.spanMultiDay = true
+                            }
                         }
 
                         // dialog.close = close
-                        console.log(clone(this))
+                        // console.log(clone(this))
                     }
 
                     dialog.close = () => {

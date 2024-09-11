@@ -79,7 +79,7 @@ Stratus.Directives.Src = (
 
         /** Sets the image src/css background on a tag */
         $scope.setSrc = (tagType: string, src: string) => {
-            if (src && isString(src) && src.length > 0) {
+            if (src && isString(src) && src.length > 0 && src !== 'false') {
                 if (tagType === 'img') {
                     $element.attr('src', src)
                 } else {

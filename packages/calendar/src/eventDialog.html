@@ -12,10 +12,24 @@
                 </button>
 
                 <header class="title-container">
-                    <h1 class="event-date" data-ng-bind="::ctrl.eventData.start | luxon:{unix:false, format:'LLLL d', tz:ctrl.eventData.eventTimeZone}"></h1>
+                    <h1 class="event-date"
+                        data-ng-if="::!ctrl.eventData.allDay"
+                        data-ng-bind="::ctrl.eventData.start | luxon:{unix:false, format:'LLLL d', tz:ctrl.eventData.eventTimeZone}"
+                    ></h1>
+                    <h1 class="event-date"
+                        data-ng-if="::ctrl.eventData.allDay"
+                        data-ng-bind="::ctrl.eventData.extendedProps.startDateDisplay | luxon:{unix:false, format:'LLLL d'}"
+                    ></h1>
                     <div data-ng-if="::ctrl.eventData.spanMultiDay">
                         <h3>through</h3>
-                        <h1 class="event-date" data-ng-bind="::ctrl.eventData.end | luxon:{unix:false, format:'LLLL d', tz:ctrl.eventData.eventTimeZone}"></h1>
+                        <h1 class="event-date"
+                            data-ng-if="::!ctrl.eventData.allDay"
+                            data-ng-bind="::ctrl.eventData.end | luxon:{unix:false, format:'LLLL d', tz:ctrl.eventData.eventTimeZone}"
+                        ></h1>
+                        <h1 class="event-date"
+                            data-ng-if="::ctrl.eventData.allDay"
+                            data-ng-bind="::ctrl.eventData.extendedProps.endDateDisplay | luxon:{unix:false, format:'LLLL d'}"
+                        ></h1>
                     </div>
 
                     <div class="title-table div-table" role="text">
@@ -41,15 +55,41 @@
                             <p class="event-time" role="text">
                                 <strong data-ng-if="::ctrl.eventData.spanMultiDay">
                                     <span class="accent-font-color event-time-label label">Time: </span>
-                                    <br><time class="event-time-start" data-ng-bind="::ctrl.eventData.start | luxon:{unix:false, format:'LLL d h:mm a ZZZZ', tz:ctrl.eventData.eventTimeZone}" datetime="{{::ctrl.eventData.start}}"></time>
+                                    <br><time class="event-time-start"
+                                              data-ng-if="::!ctrl.eventData.allDay"
+                                              data-ng-bind="::ctrl.eventData.start | luxon:{unix:false, format:'LLL d h:mm a ZZZZ', tz:ctrl.eventData.eventTimeZone}"
+                                              datetime="{{::ctrl.eventData.start}}"
+                                    ></time>
+                                    <time class="event-time-start"
+                                          data-ng-if="::ctrl.eventData.allDay"
+                                          data-ng-bind="::ctrl.eventData.extendedProps.startDateDisplay | luxon:{unix:false, format:'LLLL d'}"
+                                          datetime="{{::ctrl.eventData.extendedProps.startDateDisplay}}"
+                                    ></time>
                                     <br>through
-                                    <br><time data-ng-bind="::ctrl.eventData.end | luxon:{unix:false,format:'LLL d h:mm a ZZZZ', tz:ctrl.eventData.eventTimeZone}" datetime="{{::ctrl.eventData.end}}"></time>
+                                    <br><time class="event-time-end"
+                                              data-ng-if="::!ctrl.eventData.allDay"
+                                              data-ng-bind="::ctrl.eventData.end | luxon:{unix:false,format:'LLL d h:mm a ZZZZ', tz:ctrl.eventData.eventTimeZone}"
+                                              datetime="{{::ctrl.eventData.end}}"
+                                    ></time>
+                                    <time class="event-time-end"
+                                          data-ng-if="::ctrl.eventData.allDay"
+                                          data-ng-bind="::ctrl.eventData.extendedProps.endDateDisplay | luxon:{unix:false,format:'LLLL d'}"
+                                          datetime="{{::ctrl.eventData.extendedProps.endDateDisplay}}"
+                                    ></time>
                                 </strong>
                                 <strong data-ng-if="::!ctrl.eventData.spanMultiDay">
                                     <span class="accent-font-color event-time-label label">Time: </span>
-                                    <!-- TODO if AllDay, remove time stamps and show day only? -->
-                                    <time class="event-time-start" data-ng-bind="::ctrl.eventData.start | luxon:{unix:false, format:'h:mm a', tz:ctrl.eventData.eventTimeZone}" datetime="{{::ctrl.eventData.start}}"></time>
-                                    <span class="event-time-end" data-ng-if="::ctrl.eventData.end != null">
+                                    <time class="event-time-start"
+                                          data-ng-if="::!ctrl.eventData.allDay"
+                                          data-ng-bind="::ctrl.eventData.start | luxon:{unix:false, format:'h:mm a', tz:ctrl.eventData.eventTimeZone}"
+                                          datetime="{{::ctrl.eventData.start}}"
+                                    ></time>
+                                    <time class="event-time-start"
+                                          data-ng-if="::ctrl.eventData.allDay"
+                                          data-ng-bind="::ctrl.eventData.extendedProps.startDateDisplay | luxon:{unix:false, format:'LLLL d'}"
+                                          datetime="{{::ctrl.eventData.extendedProps.startDateDisplay}}"
+                                    ></time>
+                                    <span class="event-time-end" data-ng-if="::ctrl.eventData.end != null && !ctrl.eventData.allDay">
                                     - <time data-ng-bind="::ctrl.eventData.end | luxon:{unix:false,format:'h:mm a ZZZZ', tz:ctrl.eventData.eventTimeZone}" datetime="{{::ctrl.eventData.end}}"></time>
                                     </span>
                                 </strong>
@@ -73,9 +113,22 @@
                                 <strong>
                                     <span class="accent-font-color event-time-label label">Time: </span>
                                     <!-- TODO if AllDay, remove time stamps and show day only? -->
-                                    <time class="event-time-start" data-ng-bind="::ctrl.eventData.start | luxon:{unix:false, format:'h:mm a', tz:ctrl.eventData.eventTimeZone}" datetime="{{::ctrl.eventData.start}}"></time>
-                                    <span class="event-time-end" data-ng-if="::ctrl.eventData.end != null">
+                                    <time class="event-time-start"
+                                          data-ng-if="::!ctrl.eventData.allDay"
+                                          data-ng-bind="::ctrl.eventData.start | luxon:{unix:false, format:'h:mm a', tz:ctrl.eventData.eventTimeZone}"
+                                          datetime="{{::ctrl.eventData.start}}"
+                                    ></time>
+                                    <time class="event-time-start"
+                                          data-ng-if="::ctrl.eventData.allDay"
+                                          data-ng-bind="::ctrl.eventData.extendedProps.startDateDisplay | luxon:{unix:false, format:'LLLL d'}"
+                                          datetime="{{::ctrl.eventData.extendedProps.startDateDisplay}}"
+                                    ></time>
+                                    <span class="event-time-end" data-ng-if="::!ctrl.eventData.allDay && ctrl.eventData.end != null">
                                         - <time data-ng-bind="::ctrl.eventData.end | luxon:{unix:false,format:'h:mm a ZZZZ', tz:ctrl.eventData.eventTimeZone}" datetime="{{::ctrl.eventData.end}}"></time>
+                                        <!-- TODO detect if it's not in the same day to add the day to the end time again -->
+                                    </span>
+                                    <span class="event-time-end" data-ng-if="::ctrl.eventData.allDay && ctrl.eventData.end != null">
+                                        - <time data-ng-bind="::ctrl.eventData.extendedProps.startDateDisplay | luxon:{unix:false,format:'LLLL d'}" datetime="{{::ctrl.eventData.extendedProps.endDateDisplay}}"></time>
                                         <!-- TODO detect if it's not in the same day to add the day to the end time again -->
                                     </span>
                                 </strong>

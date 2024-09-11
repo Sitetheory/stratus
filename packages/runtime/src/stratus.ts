@@ -39,6 +39,17 @@ declare var hamlet: any
 declare var require: any
 declare var angular: any
 
+export type StratusRoster = {
+    module?: string | boolean // seems inconsistent, should always be string
+    namespace?: string
+    require?: string[]
+    selector?: string | string[]
+    suffix?: string
+    type?: string,
+    length?: number
+    stylesheet?: string
+}
+
 // Stratus Layer Prototype
 // -----------------------
 
@@ -65,6 +76,7 @@ interface StratusRuntime {
     Filters: {} | any
     LocalStorage: {} | any
     Roster: {
+        [key: string]: StratusRoster
         controller: {
             namespace: string
             selector: string
@@ -90,19 +102,19 @@ interface StratusRuntime {
             require: string[]
         }
         chart: {
-            module: boolean
+            module: boolean // FIXME should always be string
             selector: string
             require: string[]
             suffix: string
         }
         countUp: {
-            module: boolean
+            module: boolean // FIXME should always be string
             namespace: string
             selector: string[]
             suffix: string
         }
         modules: {
-            module: boolean
+            module: boolean // FIXME should always be string
             namespace: string
             selector: string[]
         }

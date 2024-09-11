@@ -7,7 +7,7 @@ import {
 import {
     LooseObject
 } from '@stratusjs/core/misc'
-import * as angular from 'angular'
+import {isObject} from 'angular'
 
 /**
  * @author https://github.com/petebacondarwin/angular-toArrayFilter
@@ -15,7 +15,7 @@ import * as angular from 'angular'
 Stratus.Filters.ToArray = () => (
     obj: LooseObject, addKey?: boolean
 ) => {
-    if (!angular.isObject(obj)) return obj
+    if (!isObject(obj)) return obj
     if (addKey === false) {
         return Object.keys(obj).map((key) => {
             return (obj as LooseObject)[key]
@@ -23,7 +23,7 @@ Stratus.Filters.ToArray = () => (
     } else {
         return Object.keys(obj).map((key) => {
             const value = (obj as LooseObject)[key]
-            return angular.isObject(value) ?
+            return isObject(value) ?
                 Object.defineProperty(value, '$key', { enumerable: false, value: key }) :
                 { $key: key, $value: value }
         })

@@ -4,7 +4,6 @@
 // FIXME requires twttr loaded
 
 // Runtime
-import {camelCase, uniqueId} from 'lodash'
 import {Stratus} from '@stratusjs/runtime/stratus'
 import {IAttributes, IAugmentedJQuery, IParseService, IScope, IWindowService} from 'angular'
 // import 'https://platform.twitter.com/widgets.js'
@@ -12,6 +11,7 @@ import {IAttributes, IAugmentedJQuery, IParseService, IScope, IWindowService} fr
 // Stratus Dependencies
 import {cookie} from '@stratusjs/core/environment'
 import {Model} from '@stratusjs/angularjs/services/model'
+import {safeUniqueId} from '@stratusjs/core/misc'
 
 // Environment
 const min = !cookie('env') ? '.min' : ''
@@ -43,8 +43,8 @@ Stratus.Components.Tweet = {
         $window: IWindowService
     ) {
         // Initialize
-        // $scope.uid = safeUniqueId(packageName, moduleName, componentName)
-        $scope.uid = uniqueId(camelCase(packageName) + '_' + camelCase(moduleName) + '_' + camelCase(componentName) + '_')
+        // $scope.uid = uniqueId(camelCase(packageName) + '_' + camelCase(moduleName) + '_' + camelCase(componentName) + '_')
+        $scope.uid = safeUniqueId(packageName, moduleName, componentName)
         Stratus.Instances[$scope.uid] = $scope
         $scope.model = $parse($attrs.ngModel) as unknown as Model
         // $scope.tweet = $scope.model($scope.$parent) // FIXME I don't understand this logic. commenting out

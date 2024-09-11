@@ -2,13 +2,12 @@
 // --------------
 
 // Runtime
-import {camelCase, uniqueId} from 'lodash'
 import {Stratus} from '@stratusjs/runtime/stratus'
 import {IAttributes, IScope} from 'angular'
 
 // Stratus Dependencies
 import {cookie} from '@stratusjs/core/environment'
-import {isJSON} from '@stratusjs/core/misc'
+import {isJSON, safeUniqueId} from '@stratusjs/core/misc'
 
 // Environment
 const min = !cookie('env') ? '.min' : ''
@@ -46,11 +45,11 @@ Stratus.Components.JsonEditor = {
         $attrs: IAttributes
     ) {
         // Initialize
-        // $scope.uid = safeUniqueId(packageName, moduleName, componentName)
-        $scope.uid = uniqueId(camelCase(packageName) + '_' + camelCase(moduleName) + '_' + camelCase(componentName) + '_')
+        // $scope.uid = uniqueId(camelCase(packageName) + '_' + camelCase(moduleName) + '_' + camelCase(componentName) + '_')
+        $scope.uid = safeUniqueId(packageName, moduleName, componentName)
         Stratus.Instances[$scope.uid] = $scope
         $scope.elementId = $attrs.elementId || $scope.uid
-        Stratus.Internals.CssLoader(`${localDir}${componentName}${min}.css`)
+        Stratus.Internals.CssLoader(`${localDir}${componentName}${min}.css`).then()
         $scope.initialized = false
 
         // Localized Value for the editor data
