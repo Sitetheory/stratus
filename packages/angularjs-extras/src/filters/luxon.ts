@@ -1,5 +1,7 @@
 // Luxon Filter
 // -----------------
+// TODO add locale to change locale
+// FIXME does not auto localize language currently (auto timezone, does but not language)
 
 import {
     Stratus
