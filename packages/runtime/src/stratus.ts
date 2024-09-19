@@ -622,6 +622,7 @@ Stratus.Internals.Api = (route: any, meta: any, payload: any) => {
         meta = {method: meta}
     }
     if (!has(meta, 'method')) {
+        // @ts-ignore
         meta.method = 'GET'
     }
 
@@ -1554,6 +1555,7 @@ Stratus.Internals.Resource = (path: any, elementId: any) => {
                 Stratus.Events.once('resource:' + path, resolve)
             }
         } else {
+            // @ts-ignore
             Stratus.Resources[path] = {
                 success: false,
                 data: null
@@ -2165,7 +2167,8 @@ Stratus.Internals.SessionSync = () => {
             console.error('error[SessionSync]:', error)
         })
 }
-Stratus.Internals.SessionSync()
+// This has been removed in all future versions.
+// Stratus.Internals.SessionSync()
 
 // Local Storage Handling
 // ----------------------
