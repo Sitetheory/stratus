@@ -357,7 +357,7 @@ export class LinkDialogComponent extends ResponsiveComponent implements OnInit, 
     getQueryUrl(query?: string, id?: string|number): string {
         query = (!_.isString(query) || _.isEmpty(query)) ? '' : `"${query}"`
         id = _.isEmpty(id) ? '' : `/${id}`
-        return `${this.apiBase}${id}?limit=${this.limit}&options[isContent]=null&options[isCollection]=null&options[showRoutable]=true&options[showRouting]=true&q=${query}`
+        return `${this.apiBase}${id}?limit=${this.limit}&options[isContent]=null&options[isCollection]=null&options[showRoutable]=true&options[showRouting]=true&forceContext=context&q=${query}`
     }
 
     getQuery(query?: string): Observable<HttpResponse<any>> {
