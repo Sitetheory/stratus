@@ -43,7 +43,7 @@ import {
 import {
     Stratus
 } from '@stratusjs/runtime/stratus'
-import _,{clone} from 'lodash'
+import _, {clone, forEach, isString} from 'lodash'
 
 // Angular Editor Dependencies
 /* *
@@ -187,6 +187,7 @@ import {
 import {Extension} from '@codemirror/state'
 import {html} from '@codemirror/lang-html'
 import {oneDarkTheme} from '@codemirror/theme-one-dark'
+import {XHR} from '@stratusjs/core/datastore/xhr'
 
 // Local Setup
 const systemPackage = '@stratusjs/angular'
@@ -481,6 +482,7 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             initialized: (froalaEditorDirective: FroalaEditorDirective) => {
                 // console.log('initialized:', editor.html.get(), editor, froalaEditorDirective)
                 this.froalaEditorDirective = froalaEditorDirective
+                this.onFroalaInit()
             },
             // blur: this.onBlur,
             blur: (event: FocusEvent) => this.onBlur(event),
@@ -545,7 +547,7 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             // '|',
             // 'mediaManager'
         ],
-        fileUploadURL: 'https://app.sitetheory.io/?session=' + cookie('SITETHEORY'),
+        fileUploadURL: '//app.sitetheory.io/?apiToken=',
         fontFamily: {
             'Arial,Helvetica,sans-serif': 'Arial',
             'Georgia,serif': 'Georgia',
@@ -864,7 +866,7 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
         // imageDefaultDisplay: false, // Default: 'block'
         imageUpload: true,
         imageUploadRemoteUrls: true,
-        imageUploadURL: 'https://app.sitetheory.io/?session=' + cookie('SITETHEORY'),
+        imageUploadURL: '//app.sitetheory.io/?apiToken=',
         imageManagerPageSize: 20,
         imageManagerScrollOffset: 10,
         imageManagerLoadMethod: 'GET',
@@ -1066,7 +1068,7 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             'videoUpload',
         ],
         videoUpload: true,
-        videoUploadURL: 'https://app.sitetheory.io/?session=' + cookie('SITETHEORY')
+        videoUploadURL: '//app.sitetheory.io/?apiToken='
     }
 
     constructor(
@@ -1329,6 +1331,77 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
         }
         return this.changeImgSize(data, 'xs')
     }
+
+    onFroalaInit() {
+        // Set Token via Cookie if present
+        // Stratus.Environment.set('token', cookie('apiToken') || null)
+
+        // Define Dynamic Upload URLs
+        const uploadURLs = [
+            'fileUploadURL',
+            'imageUploadURL',
+            'videoUploadURL'
+        ]
+
+        // Declare Token Fetch
+        const fetchToken = async function (): Promise<string> {
+            return new Promise((resolve, reject) => {
+                const xhr = new XHR({
+                    method: 'GET',
+                    url: '/token/create',
+                    withCredentials: true,
+                    data: {},
+                    type: 'application/json'
+                })
+                xhr.send()
+                    .then((response: LooseObject) => {
+                        if (has(response, 'error') && isString(response.error)) {
+                            console.error('error[fetchToken()]:', response.error)
+                            reject(response.error)
+                            return
+                        }
+                        if (has(response, 'token') && isString(response.token)) {
+                            resolve(response.token)
+                            return
+                        }
+                        console.error('incompatible_response[fetchToken()]:', response)
+                        reject()
+                    })
+                    .catch((error: any) => {
+                        console.error('error[fetchToken()]:', error)
+                        reject(error)
+                    })
+            })
+        }
+
+        // @ts-ignore
+        const updateToken = (token: string) => uploadURLs.forEach((k: string) => this.froalaEditorDirective.getEditor().opts[k] = `//app.sitetheory.io/?apiToken=${token}`)
+
+        // Declare Token Setter
+        const setToken = async function () {
+            try {
+                updateToken(encodeURIComponent(await fetchToken()))
+                // console.log('new_token[setToken()]:', token)
+            } catch (e) {
+                console.error('error[setToken()]:', e)
+                // TODO: Add a Toast for this!
+            }
+        }
+
+        // TODO: Move this to a universal location where tokens can be registered and accessed on demand.  At the moment, there we could
+        //       use Stratus.Environment to hold a token for all connections, but I'd rather not make XHRs on every page unless required.
+        // For Example: Stratus.Environment.set('token', token)
+
+        // Fetch Token (blocking)
+        // await setToken()
+
+        // Fetch Token (in the background)
+        setTimeout(setToken, 1)
+
+        // Add Interval
+        setInterval(setToken, 1000 * 60 * 29)
+    }
+
     changeImgSize(data?: string, size?: string): string {
         if (!data || !_.isString(data)) {
             return data
