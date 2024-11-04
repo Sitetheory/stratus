@@ -6,7 +6,7 @@
 import {
     Stratus
 } from '@stratusjs/runtime/stratus'
-import {clone, extend, isEmpty, isObject, isString, isUndefined} from 'lodash'
+import {clone, extend, isEmpty, isObject, isNull, isString, isUndefined} from 'lodash'
 import {DateTime, Interval} from 'luxon'
 import {seconds} from '@stratusjs/core/conversion'
 import {DurationUnit} from 'luxon/src/duration'
@@ -61,6 +61,10 @@ const convertLuxon = (date: LuxonPossibleInput, unix?: boolean): DateTime => {
  */
 Stratus.Filters.Luxon = () => {
     return (input: LuxonPossibleInput, options?: LuxonOptions) => {
+        if (isNull(input)) {
+            // There is nothing we can process if this input is null... just return it
+            return input
+        }
         // Setup defaults
         const currentOptionsLuxon: LuxonOptions = {
             unix: true,
