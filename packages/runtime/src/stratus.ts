@@ -1667,9 +1667,10 @@ Stratus.Internals.UpdateEnvironment = (request: any) => {
     if (typeof request === 'object' && Object.keys(request).length) {
         // TODO: Create a better URL, switching between relative APIs based on
         // environment
+        // sent XHR request with info from javascript to store in current session, e.g. referrer, language, etc
         Stratus.Internals.XHR({
             method: 'PUT',
-            url: '/Api/Session', // auth.sitetheory.io
+            url: '/Api/Session', // sends to current domain (not auth.sitetheory.io)
             data: request,
             type: 'application/json',
             success(response: any) {
