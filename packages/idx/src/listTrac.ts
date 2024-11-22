@@ -5,7 +5,7 @@
 
 // Runtime
 import {Stratus} from '@stratusjs/runtime/stratus'
-import {auto, IHttpService, IQService, IWindowService} from 'angular'
+import {auto, IQService, IWindowService} from 'angular'
 import {DOMComplete} from '@stratusjs/core/dom'
 
 // Stratus Preload
@@ -15,11 +15,11 @@ import '@stratusjs/angularjs/services/collection' // Needed as $provider
 Stratus.Services.ListTrac = [
     '$provide',
     ($provide: auto.IProvideService) => {
-        $provide.factory('ListTrac', (
-            $injector: auto.IInjectorService,
-            $http: IHttpService,
-            $q: IQService,
-            $window: IWindowService,
+        $provide.factory(
+            'ListTrac',
+            (
+                $q: IQService,
+                $window: IWindowService,
             ) => {
                 const eventQueue: Array<() => void> = []
                 let listTracLoaded = false

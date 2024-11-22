@@ -177,7 +177,6 @@ Stratus.Components.IdxMap = {
         template: '@',
     },
     controller(
-        // $anchorScroll: angular.IAnchorScrollService,
         $attrs: IAttributes,
         $scope: IdxMapScope,
         Idx: IdxService,

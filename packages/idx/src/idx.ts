@@ -14,7 +14,6 @@ import {
     material,
     IFilterOrderBy,
     IHttpService,
-    ILocationService,
     IPromise,
     IRootScopeService,
     IScope,
@@ -24,9 +23,11 @@ import {
 import {Model, ModelOptions, ModelSyncOptions} from '@stratusjs/angularjs/services/model'
 import {Collection, CollectionSyncOptions} from '@stratusjs/angularjs/services/collection'
 import {
+    getHashBangParam,
     isJSON,
     LooseFunction,
-    LooseObject
+    LooseObject,
+    setHashBangParam
 } from '@stratusjs/core/misc'
 import {cookie} from '@stratusjs/core/environment'
 import {IdxDisclaimerScope} from '@stratusjs/idx/disclaimer/disclaimer.component'
@@ -631,9 +632,7 @@ export type IdxEmitterSearched = IdxEmitter & ((source: IdxComponentScope, query
 
 // All Service functionality
 const angularJsService = (
-    // $injector: auto.IInjectorService,
     $http: IHttpService,
-    $location: ILocationService,
     $mdToast: material.IToastService,
     $q: IQService,
     $rootScope: IRootScopeService,
@@ -2346,11 +2345,10 @@ const angularJsService = (
      * returns {Object}
      */
     function getOptionsFromUrl(): UrlsOptionsObject {
-        // console.log('running getOptionsFromUrl')
-        let path = $location.path()
+        let hash = getHashBangParam('#!')
 
-        path = getListingOptionsFromUrlString(path)
-        getSearchOptionsFromUrlString(path)
+        hash = getListingOptionsFromUrlString(hash)
+        getSearchOptionsFromUrlString(hash)
 
         return urlOptions
     }
@@ -2519,6 +2517,9 @@ const angularJsService = (
                 path += urlOptions.Listing.address.replace(/ /g, '-') + '/'
             }
         }
+        if (path.length) {
+            path = '/'+path
+        }
         return path
     }
 
@@ -2562,10 +2563,10 @@ const angularJsService = (
      * @param path - {String}
      */
     function setLocationPath(path: string): void {
-        // console.log('setLocationPath', path)
         $rootScope.$applyAsync(() => {
-            $location.path(path).replace()
-            // $location.path(path);
+            setHashBangParam(path, '#!')
+            // Normally this would be controlled with the angular framework $location
+            // However, there's suspect this is causing issues with rewriting the anchor hashes
         })
     }
 

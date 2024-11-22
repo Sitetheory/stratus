@@ -8,7 +8,7 @@
 import {assignIn, head} from 'lodash'
 import {element, IAttributes, IAugmentedJQuery, ILocationService, IRootScopeService, IScope} from 'angular'
 import {Stratus} from '@stratusjs/runtime/stratus'
-import {safeUniqueId} from '@stratusjs/core/misc'
+import {getHashBangParam, safeUniqueId, setHashBangParam} from '@stratusjs/core/misc'
 import 'angular-material'
 
 export type TabRoutingScope = IScope & {
@@ -73,7 +73,6 @@ const moduleName = 'directives'
 const directiveName = 'tabRouting'
 
 Stratus.Directives.TabRouting = (
-    $location: ILocationService,
     $rootScope: IRootScopeService
 ) => {
     return {
@@ -156,7 +155,7 @@ Stratus.Directives.TabRouting = (
             $scope.getTabNameOnUrl = (): string | null => {
                 // must end and begin with a / (or some other symbol) to delimiter variables
                 // /Tab/billing/
-                const path = $location.path() || ''
+                const path = getHashBangParam('#!')
                 const regex = new RegExp(`\/${$scope.options.urlLabel}\/(.*?)\/`)
                 const matches = regex.exec(path)
                 let tabName
@@ -183,7 +182,7 @@ Stratus.Directives.TabRouting = (
 
             $scope.setTabNameOnUrl = (tabName: string) => {
                 // grab the full url path
-                let path = $location.path() || ''
+                let path = getHashBangParam('#!')
                 const regex = new RegExp(`\/${$scope.options.urlLabel}\/(.*?)\/`)
                 // Only get the Tab option if it even exists
                 const matches = regex.exec(path)
@@ -199,11 +198,11 @@ Stratus.Directives.TabRouting = (
                     // Ensure we always start with a / for delimiting.
                     path += '/'
                 }
-                path += `${$scope.options.urlLabel}/${tabName}/`
+                path += `/${$scope.options.urlLabel}/${tabName}/`
 
                 // Set the new url options
                 $rootScope.$applyAsync(() => {
-                    $location.path(path).replace()
+                    setHashBangParam(path, '#!')
                 })
             }
 

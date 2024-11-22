@@ -291,7 +291,6 @@ Stratus.Components.IdxPropertyList = {
         $scope: IdxPropertyListScope,
         $timeout: ITimeoutService,
         $window: IWindowService,
-        // $sce: ISCEService,
         Idx: IdxService,
     ) {
         // Initialize

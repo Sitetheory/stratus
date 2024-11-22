@@ -124,6 +124,19 @@ export function getAnchorParams(key: any, _url?: any) {
     return (typeof key !== 'undefined' && key) ? vars[key] : vars
 }
 
+export function getHashBangParam(hashPrefix = '#') {
+    const hashFull = decodeURI(window.location.hash)
+    return hashFull.substring(hashFull.indexOf(hashPrefix) + hashPrefix.length)
+}
+
+export function setHashBangParam(hashParam: string, hashPrefix = '#') {
+    if (hashPrefix.substring(0, 1) === '#') {
+        // If the prefix equals or starts with #, we need to remove it, as the browser will add this automatically
+        hashPrefix = hashPrefix.substring(1) || ''
+    }
+    window.location.hash = !hashParam.length ? '' : (hashPrefix + hashParam)
+}
+
 // Get a specific value or all values located in the URL
 export function getUrlParams(key: any, url?: any) {
     const vars: any = {}

@@ -11,11 +11,7 @@ import './search.group-selector.component.less'
 import {isArray, isEmpty, isNumber, isString, trim} from 'lodash'
 import {Stratus} from '@stratusjs/runtime/stratus'
 import {
-    material,
     IAttributes,
-    ITimeoutService,
-    IQService,
-    IWindowService
 } from 'angular'
 import {
     IdxEmitter,
@@ -82,12 +78,7 @@ Stratus.Components.IdxOfficeSearch = {
     },
     controller(
         $attrs: IAttributes,
-        $q: IQService,
-        $mdDialog: material.IDialogService,
-        $mdPanel: material.IPanelService,
         $scope: IdxOfficeSearchScope,
-        $timeout: ITimeoutService,
-        $window: IWindowService,
         Idx: IdxService,
     ) {
         // Initialize

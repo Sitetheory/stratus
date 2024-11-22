@@ -6,10 +6,10 @@ import {Stratus} from '@stratusjs/runtime/stratus'
 import {
     IAugmentedJQuery,
     IAttributes,
-    ILocationService,
     ILogService,
     IScope,
-    IParseService
+    IParseService,
+    IWindowService
 } from 'angular'
 import {StratusDirective} from './baseNew'
 import {safeUniqueId} from '@stratusjs/core/misc'
@@ -25,9 +25,9 @@ export type HrefScope = IScope & {
 
 // This directive intends to handle binding of a dynamic variable to
 Stratus.Directives.Href = (
-    $location: ILocationService,
     $log: ILogService,
-    $parse: IParseService
+    $parse: IParseService,
+    $window: IWindowService,
 ): StratusDirective => ({
     restrict: 'A',
     link: (
@@ -50,7 +50,7 @@ Stratus.Directives.Href = (
             $element.bind('click', () => {
                 $scope.$applyAsync(() => {
                     if ($scope.href) {
-                        $location.path($scope.href)
+                        $window.location.href = $scope.href
                     }
                 })
             })
