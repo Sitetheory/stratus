@@ -75,7 +75,6 @@ export type IdxPropertyDetailsScope = IdxDetailsScope<Property> & {
 
 }
 
-
 Stratus.Components.IdxPropertyDetails = {
     bindings: {
         elementId: '@',
@@ -100,12 +99,9 @@ Stratus.Components.IdxPropertyDetails = {
     },
     controller(
         $attrs: IAttributes,
-        // $location: ILocationService,
         $sce: ISCEService,
         $scope: IdxPropertyDetailsScope,
         ListTrac: any,
-        // tslint:disable-next-line:no-shadowed-variable
-        // Model: any,
         Idx: IdxService,
     ) {
         // Initialize

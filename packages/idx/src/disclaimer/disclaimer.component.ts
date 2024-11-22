@@ -11,17 +11,17 @@ import {isArray, isEmpty, isNumber, isString, isUndefined} from 'lodash'
 import {Stratus} from '@stratusjs/runtime/stratus'
 import {IAttributes, ISCEService} from 'angular'
 import {isJSON, safeUniqueId} from '@stratusjs/core/misc'
-import {cookie} from '@stratusjs/core/environment'
+// import {cookie} from '@stratusjs/core/environment'
 import {IdxComponentScope, IdxEmitter, IdxService, MLSService} from '@stratusjs/idx/idx'
 import moment from 'moment'
 
 // Environment
-const min = !cookie('env') ? '.min' : ''
+// const min = !cookie('env') ? '.min' : ''
 const packageName = 'idx'
 const moduleName = 'disclaimer'
 const componentName = 'disclaimer'
 // There is not a very consistent way of pathing in Stratus at the moment
-const localDir = `${Stratus.BaseUrl}${Stratus.DeploymentPath}@stratusjs/${packageName}/src/${moduleName}/`
+// const localDir = `${Stratus.BaseUrl}${Stratus.DeploymentPath}@stratusjs/${packageName}/src/${moduleName}/`
 const localDistStyle = `${Stratus.BaseUrl}${Stratus.DeploymentPath}@stratusjs/${packageName}/dist/${packageName}.bundle.min.css`
 
 export interface CleanService extends MLSService {

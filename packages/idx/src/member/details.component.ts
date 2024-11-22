@@ -9,7 +9,7 @@ import './details.component.less'
 // Runtime
 import {extend, isArray} from 'lodash'
 import {Stratus} from '@stratusjs/runtime/stratus'
-import {IAttributes, ISCEService, IQService} from 'angular'
+import {IAttributes, IQService} from 'angular'
 import 'angular-material'
 import 'angular-sanitize'
 import {CompileFilterOptions, IdxDetailsScope, IdxEmitter, IdxService, Member} from '@stratusjs/idx/idx'
@@ -53,10 +53,7 @@ Stratus.Components.IdxMemberDetails = {
     controller(
         $attrs: IAttributes,
         $q: IQService,
-        $sce: ISCEService,
         $scope: IdxMemberDetailsScope,
-        // tslint:disable-next-line:no-shadowed-variable
-        Model: any,
         Idx: IdxService,
     ) {
         // Initialize

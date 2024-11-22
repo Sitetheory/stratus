@@ -12,7 +12,6 @@ import {
     material,
     IAnchorScrollService,
     IAttributes,
-    ISCEService,
     ITimeoutService,
     IQService,
     IWindowService
@@ -80,7 +79,6 @@ Stratus.Components.IdxOfficeList = {
         $q: IQService,
         $mdDialog: material.IDialogService,
         $timeout: ITimeoutService,
-        $sce: ISCEService,
         $scope: IdxOfficeListScope,
         $window: IWindowService,
         Idx: IdxService,

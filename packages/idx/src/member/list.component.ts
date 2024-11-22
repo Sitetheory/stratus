@@ -11,7 +11,7 @@ import './list.component.less'
 import {clone, forEach, isString} from 'lodash'
 import {Stratus} from '@stratusjs/runtime/stratus'
 import {
-    element, material, IAnchorScrollService, IAttributes, IQService, IRootScopeService, ISCEService, ITimeoutService, IWindowService
+    element, material, IAnchorScrollService, IAttributes, IQService, IRootScopeService, ITimeoutService, IWindowService
 } from 'angular'
 import 'angular-material'
 import 'angular-sanitize'
@@ -70,7 +70,6 @@ Stratus.Components.IdxMemberList = {
         $q: IQService,
         $mdDialog: material.IDialogService,
         $rootScope: IRootScopeService,
-        $sce: ISCEService,
         $scope: IdxMemberListScope,
         $timeout: ITimeoutService,
         $window: IWindowService,

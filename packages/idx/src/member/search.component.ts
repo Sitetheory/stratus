@@ -52,10 +52,7 @@ Stratus.Components.IdxMemberSearch = {
         $attrs: IAttributes,
         $q: IQService,
         $mdDialog: material.IDialogService,
-        // $mdPanel: material.IPanelService,
         $scope: IdxMemberSearchScope,
-        // $timeout: ITimeoutService,
-        // $window: IWindowService,
         Idx: IdxService,
     ) {
         // Initialize
