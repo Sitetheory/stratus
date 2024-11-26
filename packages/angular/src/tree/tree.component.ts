@@ -579,8 +579,6 @@ export class TreeComponent extends RootComponent implements OnInit, OnDestroy {
         //     return
         // }
 
-        // console.log('onDragDrop:', event)
-
         // Gather Target (Dropped) Node
         const targetNode: Node | null = event.item.data
         if (!targetNode) {
@@ -658,6 +656,11 @@ export class TreeComponent extends RootComponent implements OnInit, OnDestroy {
                         if (this.dropData.action === 'after') {
                             targetIndex++
                         }
+                        /* *
+                        if (cookie('env') && this.isDebug) {
+                            console.log(`target index (${this.dropData.action}):`, targetIndex)
+                        }
+                        /* */
                         parentNode.children.splice(targetIndex, 0, targetNode)
                         break
                     case 'inside':
@@ -680,6 +683,15 @@ export class TreeComponent extends RootComponent implements OnInit, OnDestroy {
         // Define tree branch
         const branch = parentNode ? parentNode.children : tree
 
+        // Search for targetNodeIndex via targetNode and branch
+        const targetNodeIdentifier = targetNode.model ? targetNode.model.get('id') : null
+        const targetNodeIndex =
+            (targetNodeIdentifier !== null && this.nodeIsEqual(parentNode, pastParentNode)) ?
+            branch.findIndex((n: Node) => n.id === targetNodeIdentifier) : event.previousIndex
+        if (cookie('env') && this.isDebug && targetNodeIndex !== event.previousIndex) {
+            console.log('target index correction:', targetNodeIndex)
+        }
+
         // Initial Target Index
         let targetDropIndex = event.currentIndex
         if (this.cdkDropListSortingDisabled) {
@@ -689,20 +701,43 @@ export class TreeComponent extends RootComponent implements OnInit, OnDestroy {
                 case 'before':
                 case 'after':
                     targetDropIndex = branch.findIndex((n: Node) => n.id === targetDropNode.id)
+                    /* *
+                    if (cookie('env') && this.isDebug) {
+                        console.log(`target drop index (${this.dropData.action}):`, targetDropIndex)
+                    }
+                    /* */
                     if (this.dropData.action === 'after') {
                         targetDropIndex++
                     }
                     if (cookie('env') && this.isDebug) {
-                        console.log('index change (drop node):', `${event.previousIndex} -> ${targetDropIndex}`)
+                        console.log('index change (drop node):', `${targetNodeIndex} -> ${targetDropIndex}`)
                     }
                     break
             }
         }
 
+        /* *
+        if (cookie('env') && this.isDebug) {
+            forEach(branch, (node: Node) => {
+                if (!node.model || !node.model.get) {
+                    return
+                }
+                console.log(`current priority for ${node.model.get('name')}:`, node.model.get('priority'))
+            })
+        }
+        /* */
+
         // Handle new cell placement
         if (isNumber(targetDropIndex)) {
             // Move cell in array
-            moveItemInArray(branch, event.previousIndex, targetDropIndex)
+            /* *
+            if (cookie('env') && this.isDebug) {
+                console.log('moveItemInArray:', targetNodeIndex, '->', targetDropIndex)
+            }
+            /* */
+            if (this.nodeIsEqual(parentNode, pastParentNode)) {
+                moveItemInArray(branch, targetNodeIndex, targetDropIndex)
+            }
             // Generate new priority
             let priority = 0
             forEach(branch, (node: Node) => {
@@ -710,6 +745,11 @@ export class TreeComponent extends RootComponent implements OnInit, OnDestroy {
                     return
                 }
                 node.model.set('priority', priority++)
+                /* *
+                if (cookie('env') && this.isDebug) {
+                    console.log(`new priority for ${node.model.get('name')}: ${node.model.get('priority')}`)
+                }
+                /* */
             })
             // Display debug data
             if (cookie('env') && this.isDebug) {
