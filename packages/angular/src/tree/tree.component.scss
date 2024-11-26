@@ -303,6 +303,7 @@
     // Dragging Placeholder
     &-placeholder {
       opacity: 50%;
+      display: none !important;
       // Hide Hover Buttons
       .hover-show {
         display: none !important;
