@@ -334,7 +334,6 @@ Stratus.Components.IdxPropertyDetails = {
 
                         ContinentRegion Field
                         CountryRegion Field
-                        MLSAreaMinor Field
 
                         CrossStreet Field
                         Directions Field
@@ -349,6 +348,7 @@ Stratus.Components.IdxPropertyDetails = {
                         CrossStreet: 'Cross Street',
                         UnitNumber: 'Unit',
                         MLSAreaMajor: 'Area',
+                        MLSAreaMinor: 'Area Minor',
                         Township: 'Township',
                         SubdivisionName: 'Subdivision',
                         City: 'City',
@@ -666,7 +666,6 @@ Stratus.Components.IdxPropertyDetails = {
 
                         ContinentRegion Field
                         CountryRegion Field
-                        MLSAreaMinor Field
 
                         CrossStreet Field
                         Directions Field
@@ -684,6 +683,7 @@ Stratus.Components.IdxPropertyDetails = {
                         Township: 'Township',
                         CountyOrParish: 'County',
                         MLSAreaMajor: 'Area',
+                        MLSAreaMinor: 'Area Minor',
                         SubdivisionName: 'Subdivision',
                         StateOrProvince: 'State',
                         StateRegion: 'State Region',

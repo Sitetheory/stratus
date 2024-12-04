@@ -270,8 +270,10 @@ export interface WhereOptions extends LooseObject {
     eCityRegion?: string[] | string,
     CountyOrParish?: string[] | string,
     eCountyOrParish?: string[] | string,
-    MLSAreaMajor?: string[] | string, // DEPRECATED
-    eMLSAreaMajor?: string[] | string, // DEPRECATED
+    MLSAreaMajor?: string[] | string,
+    eMLSAreaMajor?: string[] | string,
+    MLSAreaMinor?: string[] | string,
+    eMLSAreaMinor?: string[] | string,
     SubdivisionName?: string[] | string,
     eSubdivisionName?: string[] | string,
     ListPriceMin?: number | any,
@@ -661,8 +663,10 @@ const angularJsService = (
         ListingType: [],
         CountyOrParish: [],
         eCountyOrParish: [],
-        MLSAreaMajor: [], // DEPRECATED
-        eMLSAreaMajor: [], // DEPRECATED
+        MLSAreaMajor: [],
+        eMLSAreaMajor: [],
+        MLSAreaMinor: [],
+        eMLSAreaMinor: [],
         SubdivisionName: [],
         eSubdivisionName: [],
         Neighborhood: [],
@@ -1959,12 +1963,20 @@ const angularJsService = (
                     apiField: 'SubdivisionName',
                     type: 'stringIncludesArray'
                 },
-                MLSAreaMajor: { // DEPRECATED
+                MLSAreaMajor: {
                     // Note: only 'in' seems to work as a replacement for inq when nested in another object
                     type: 'stringLikeArray'
                 },
-                eMLSAreaMajor: { // DEPRECATED
+                eMLSAreaMajor: {
                     apiField: 'MLSAreaMajor',
+                    type: 'stringIncludesArray'
+                },
+                MLSAreaMinor: {
+                    // Note: only 'in' seems to work as a replacement for inq when nested in another object
+                    type: 'stringLikeArray'
+                },
+                eMLSAreaMinor: {
+                    apiField: 'MLSAreaMinor',
                     type: 'stringIncludesArray'
                 },
                 CityRegion: {
@@ -1982,7 +1994,8 @@ const angularJsService = (
                         {apiField: 'CityRegion', type: 'stringLikeArray'},
                         {apiField: 'CountyOrParish', type: 'stringLikeArray'},
                         {apiField: 'SubdivisionName', type: 'stringLikeArray'},
-                        {apiField: 'MLSAreaMajor', type: 'stringLikeArray'}, // DEPRECATED
+                        {apiField: 'MLSAreaMajor', type: 'stringLikeArray'},
+                        {apiField: 'MLSAreaMinor', type: 'stringLikeArray'},
                         {apiField: 'PostalCode', type: 'stringLikeArray'},
                         // TODO: in the future we should pass in a new defined field like Address (that will
                         // TODO: search UnparsedAddress if it exists for the service, OR the API will parse
@@ -1999,7 +2012,8 @@ const angularJsService = (
                         {apiField: 'CityRegion', type: 'stringIncludesArray'},
                         {apiField: 'CountyOrParish', type: 'stringIncludesArray'},
                         {apiField: 'SubdivisionName', type: 'stringIncludesArray'},
-                        {apiField: 'MLSAreaMajor', type: 'stringIncludesArray'}, // DEPRECATED
+                        {apiField: 'MLSAreaMajor', type: 'stringIncludesArray'},
+                        {apiField: 'MLSAreaMinor', type: 'stringIncludesArray'},
                         {apiField: 'PostalCode', type: 'stringIncludesArray'},
                         // TODO: in the future we should pass in a new defined field like Address (that will
                         // TODO: search UnparsedAddress if it exists for the service, OR the API will parse
@@ -2015,7 +2029,8 @@ const angularJsService = (
                     andOr: [
                         {apiField: 'CityRegion', type: 'stringLikeArray'},
                         {apiField: 'SubdivisionName', type: 'stringLikeArray'},
-                        {apiField: 'MLSAreaMajor', type: 'stringLikeArray'} // DEPRECATED
+                        {apiField: 'MLSAreaMajor', type: 'stringLikeArray'},
+                        {apiField: 'MLSAreaMinor', type: 'stringLikeArray'}
                     ]
                 },
                 eNeighborhood: {
@@ -2023,7 +2038,8 @@ const angularJsService = (
                     andOr: [
                         {apiField: 'CityRegion', type: 'stringIncludesArray'},
                         {apiField: 'SubdivisionName', type: 'stringIncludesArray'},
-                        {apiField: 'MLSAreaMajor', type: 'stringIncludesArray'} // DEPRECATED
+                        {apiField: 'MLSAreaMajor', type: 'stringIncludesArray'},
+                        {apiField: 'MLSAreaMinor', type: 'stringIncludesArray'}
                     ]
                 }
             }
@@ -2962,7 +2978,8 @@ const angularJsService = (
             'UnitNumber',
             'City',
             'CityRegion',
-            'MLSAreaMajor', // DEPRECATED
+            'MLSAreaMajor',
+            'MLSAreaMinor',
             'CountyOrParish',
             'StateOrProvince',
             'Latitude',
@@ -3007,8 +3024,10 @@ const angularJsService = (
             isEmpty(options.where.eCityRegion) &&
             isEmpty(options.where.CountyOrParish) &&
             isEmpty(options.where.eCountyOrParish) &&
-            isEmpty(options.where.MLSAreaMajor) && // DEPRECATED
-            isEmpty(options.where.eMLSAreaMajor) && // DEPRECATED
+            isEmpty(options.where.MLSAreaMajor) &&
+            isEmpty(options.where.eMLSAreaMajor) &&
+            isEmpty(options.where.MLSAreaMinor) &&
+            isEmpty(options.where.eMLSAreaMinor) &&
             isEmpty(options.where.PostalCode) &&
             isEmpty(options.where.UnparsedAddress)
         ) {
