@@ -685,9 +685,7 @@ export class TreeComponent extends RootComponent implements OnInit, OnDestroy {
 
         // Search for targetNodeIndex via targetNode and branch
         const targetNodeIdentifier = targetNode.model ? targetNode.model.get('id') : null
-        const targetNodeIndex =
-            (targetNodeIdentifier !== null && this.nodeIsEqual(parentNode, pastParentNode)) ?
-            branch.findIndex((n: Node) => n.id === targetNodeIdentifier) : event.previousIndex
+        let targetNodeIndex = (targetNodeIdentifier !== null) ? branch.findIndex((n: Node) => n.id === targetNodeIdentifier) : event.previousIndex
         if (cookie('env') && this.isDebug && targetNodeIndex !== event.previousIndex) {
             console.log('target index correction:', targetNodeIndex)
         }
@@ -716,44 +714,78 @@ export class TreeComponent extends RootComponent implements OnInit, OnDestroy {
             }
         }
 
-        /* *
-        if (cookie('env') && this.isDebug) {
-            forEach(branch, (node: Node) => {
-                if (!node.model || !node.model.get) {
-                    return
-                }
-                console.log(`current priority for ${node.model.get('name')}:`, node.model.get('priority'))
-            })
-        }
-        /* */
-
-        // Handle new cell placement
-        if (isNumber(targetDropIndex)) {
-            // Move cell in array
-            /* *
-            if (cookie('env') && this.isDebug) {
-                console.log('moveItemInArray:', targetNodeIndex, '->', targetDropIndex)
-            }
-            /* */
-            if (this.nodeIsEqual(parentNode, pastParentNode)) {
-                moveItemInArray(branch, targetNodeIndex, targetDropIndex)
-            }
-            // Generate new priority
+        // Menu Changes
+        const setPriority = (branch: Node[]) => {
             let priority = 0
-            forEach(branch, (node: Node) => {
+            return forEach(branch, (node: Node) => {
                 if (!node.model || !node.model.set) {
                     return
                 }
                 node.model.set('priority', priority++)
-                /* *
+            })
+        }
+
+        // Display Priorities for Debug
+        const displayPriorities = (node: Node, index: number) => {
+            if (!node.model || !node.model.get) {
+                return
+            }
+            console.log(`[branch] index ${index}:`, node.model.get('id'), node.model.get('name'))
+        }
+
+        // Handle new cell placement
+        if (isNumber(targetDropIndex)) {
+            // Move cell in array
+            if (!this.nodeIsEqual(parentNode, pastParentNode)) {
+                // Target Node Index Correction
+                if (!targetNodeIndex || targetNodeIndex < 0) {
+                    if (cookie('env') && this.isDebug) {
+                        console.log('[branch] parent change injection:', targetNode.model.get('id'), targetNode.model.get('name'))
+                    }
+                    branch.push(targetNode)
+                }
+                targetNodeIndex = branch.findIndex((n: Node) => n.id === targetNodeIdentifier)
+                /* */
                 if (cookie('env') && this.isDebug) {
-                    console.log(`new priority for ${node.model.get('name')}: ${node.model.get('priority')}`)
+                    console.log('[branch] priorities:')
+                    forEach(branch, displayPriorities)
+                    console.log('[parent] target index correction:', targetNodeIndex, targetNodeIdentifier)
                 }
                 /* */
-            })
+            }
+            if (cookie('env') && this.isDebug) {
+                console.log('moveItemInArray:', targetNodeIndex, '->', targetDropIndex)
+            }
+            moveItemInArray(branch, targetNodeIndex, targetDropIndex)
+            // Generate new priority
+            setPriority(branch)
             // Display debug data
             if (cookie('env') && this.isDebug) {
                 console.log('new priority:', targetNode.model.get('priority'))
+            }
+        }
+
+        // Generate new priorities for previous branch
+        if (!this.nodeIsEqual(parentNode, pastParentNode)) {
+            // Define Past Branch
+            const pastBranch: Node[] = pastParentNode ? pastParentNode.children : this.dataRef()
+            const pastIndex = pastBranch.findIndex((n: Node) => n.id === targetNodeIdentifier)
+            // Past Branch Correction
+            if (pastIndex !== -1) {
+                if (cookie('env') && this.isDebug) {
+                    console.log('[pastBranch] current priorities:')
+                    forEach(pastBranch, displayPriorities)
+                }
+                this.removeNode(pastBranch, targetNode)
+                if (cookie('env') && this.isDebug) {
+                    console.log('[pastBranch] removed element:', pastIndex)
+                }
+            }
+            // Reset Priorities
+            setPriority(pastBranch)
+            if (cookie('env') && this.isDebug) {
+                console.log('[pastParent] new priorities:')
+                forEach(pastBranch, displayPriorities)
             }
         }
 
@@ -780,6 +812,11 @@ export class TreeComponent extends RootComponent implements OnInit, OnDestroy {
 
         // Start XHR
         await targetNode.model.save()
+
+        // (API Debug) Save Last Child of Past Parent
+        // if (pastParentLastChild) {
+        //     await pastParentLastChild.model.save()
+        // }
 
         // Enable Listeners
         this.unsettled = false
