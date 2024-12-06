@@ -665,7 +665,7 @@ export class TreeComponent extends RootComponent implements OnInit, OnDestroy {
                 switch (this.dropData.action) {
                     case 'before':
                     case 'after':
-                        let targetIndex = parentNode.children.findIndex((n: Node) => n.id === targetNode.id)
+                        let targetIndex = parentNode.children.findIndex((n: Node) => n.id === targetDropNode.id)
                         if (this.dropData.action === 'after') {
                             targetIndex++
                         }
@@ -712,9 +712,6 @@ export class TreeComponent extends RootComponent implements OnInit, OnDestroy {
                 case 'before':
                 case 'after':
                     targetDropIndex = branch.findIndex((n: Node) => n.id === targetDropNode.id)
-                    if (this.dropData.action === 'before' && this.nodeIsEqual(parentNode, pastParentNode) && parentNode) {
-                        targetDropIndex--
-                    }
                     if (this.dropData.action === 'after') {
                         targetDropIndex++
                     }
