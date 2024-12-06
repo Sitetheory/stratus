@@ -618,6 +618,19 @@ export class TreeComponent extends RootComponent implements OnInit, OnDestroy {
             )
         }
 
+        // Ensure Changes are Present
+        /* *
+        if (this.nodeIsEqual(parentNode, pastParentNode) && parentNode && event.previousIndex === event.currentIndex) {
+            this.unsettled = false
+            if (cookie('env') && this.isDebug) {
+                console.log('target dropped to same location. halting prioritization calculations.')
+                console.log('event:', event)
+                console.groupEnd()
+            }
+            return
+        }
+        /* */
+
         // Handle Drop Node Correction
         // ---------------------------
         // Sometimes the Drop List gets an incorrect parent to associated
@@ -699,11 +712,9 @@ export class TreeComponent extends RootComponent implements OnInit, OnDestroy {
                 case 'before':
                 case 'after':
                     targetDropIndex = branch.findIndex((n: Node) => n.id === targetDropNode.id)
-                    /* *
-                    if (cookie('env') && this.isDebug) {
-                        console.log(`target drop index (${this.dropData.action}):`, targetDropIndex)
+                    if (this.dropData.action === 'before' && this.nodeIsEqual(parentNode, pastParentNode) && parentNode) {
+                        targetDropIndex--
                     }
-                    /* */
                     if (this.dropData.action === 'after') {
                         targetDropIndex++
                     }
