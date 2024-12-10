@@ -753,13 +753,19 @@ export class TreeComponent extends RootComponent implements OnInit, OnDestroy {
                     branch.push(targetNode)
                 }
                 targetNodeIndex = branch.findIndex((n: Node) => n.id === targetNodeIdentifier)
-                /* */
+                /* *
                 if (cookie('env') && this.isDebug) {
                     console.log('[branch] priorities:')
                     forEach(branch, displayPriorities)
                     console.log('[parent] target index correction:', targetNodeIndex, targetNodeIdentifier)
                 }
                 /* */
+            }
+            if (this.nodeIsEqual(parentNode, pastParentNode) && targetNodeIndex < targetDropIndex) {
+                targetDropIndex--
+                if (cookie('env') && this.isDebug) {
+                    console.log('[decrement] targetDropIndex correction:', targetDropIndex)
+                }
             }
             if (cookie('env') && this.isDebug) {
                 console.log('moveItemInArray:', targetNodeIndex, '->', targetDropIndex)
