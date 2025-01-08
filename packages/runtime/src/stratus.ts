@@ -793,14 +793,12 @@ Stratus.Internals.CssLoader = (url: any) => {
             resolve()
         })
 
-        /* Capture OnLoad or Fallback */
-        if ('onload' in link && !Stratus.Client.android) {
-            link.onload = () => {
-                Stratus.Events.trigger(`onload:${url}`)
-            }
-        } else {
-            Stratus.CSS[url] = true
+        /* Resolve Promise OnLoad */
+        link.onload = () => {
             Stratus.Events.trigger(`onload:${url}`)
+        }
+        link.onerror = () => {
+            _reject(new Error('Failed to load script: ' + url))
         }
 
         /* Inject Link into Head */
@@ -844,14 +842,16 @@ Stratus.Internals.JsLoader = (url: any) => {
             resolve()
         })
 
-        /* Capture OnLoad or Fallback */
-        if ('onload' in script && !Stratus.Client.android) {
-            script.onload = () => {
-                Stratus.Events.trigger('onload:' + url)
-            }
-        } else {
-            Stratus.JS[url] = true
+        /* Resolve Promise OnLoad */
+        // NOTE 2025-01-08: this previously had an fallback from 2018 for Stratus.Client.android
+        // But that bug has long since been fixed in modern browsers and it causes fatal errors
+        // because it would resolve before the file was fully loaded. We could add a fallback for
+        // older browsers that just resolved after 5 seconds, but that is not reliable
+        script.onload = () => {
             Stratus.Events.trigger('onload:' + url)
+        }
+        script.onerror = () => {
+            _reject(new Error('Failed to load script: ' + url))
         }
 
         /* Inject Link into Head */
