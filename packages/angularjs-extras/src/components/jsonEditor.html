@@ -3,10 +3,10 @@
     <div class="error" data-ng-show="$ctrl.formFieldCtrl.$error.validJson">
         <b>WARNING:</b> This field has not been saved because there is a formatting problem with the JSON.
     </div>
-    <textarea name="{{ $ctrl.name }}"
+    <textarea name="{{ name }}"
               data-ng-model="jsonString"
-              rows="{{ $ctrl.rows}}"
-              aria-label="{{ $ctrl.ariaLabel}}"
+              rows="{{ rows }}"
+              aria-label="{{ ariaLabel }}"
               class="code-editor"
               data-ng-class='{"invalid-jsonEncode": $ctrl.formFieldCtrl.$error.validJson}'
     ></textarea>

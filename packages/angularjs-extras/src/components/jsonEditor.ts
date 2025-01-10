@@ -21,9 +21,13 @@ export type JsonEditorScope = IScope &  {
     elementId: string
     initialized: boolean
 
+    name: string
+    ariaLabel: string
+    rows: number
     jsonString: string
 
     initialize(): void
+    setDefaultValues(): void
 }
 
 Stratus.Components.JsonEditor = {
@@ -37,6 +41,7 @@ Stratus.Components.JsonEditor = {
         formFieldCtrl: '=',
         // this is the name of the field (must match formFieldCtrl form name)
         name: '@',
+        // This is an odd value... it would apply aria bale twice
         ariaLabel: '@',
         rows: '@'
     },
@@ -72,6 +77,7 @@ Stratus.Components.JsonEditor = {
                 if (!jsonObject) {
                     return
                 }
+                $scope.setDefaultValues()
                 // This will prettify the results
                 const jsonString = JSON.stringify(jsonObject, null, 2)
                 if ($scope.jsonString === jsonString) {
@@ -97,6 +103,15 @@ Stratus.Components.JsonEditor = {
                 this.ngModel = JSON.parse(newString)
             })
         }
+
+        $scope.setDefaultValues = () => {
+            $scope.name = $attrs.name || ''
+            $scope.ariaLabel = $attrs.ariaLabel || ''
+            $scope.rows = $attrs.rows || 4
+            $scope.$applyAsync()
+        }
+
+        $scope.setDefaultValues()
 
         /**
          * Don't do anything until the $ctrl.formFieldCtrl exists (which is the form.fieldName controller that gets the
