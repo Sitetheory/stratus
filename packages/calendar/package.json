@@ -39,7 +39,7 @@
     "@stratusjs/boot": "^1.2.0",
     "@stratusjs/core": "^0.8.1",
     "@stratusjs/runtime": "^0.13.0",
-    "ical.js": "^2.0.1",
+    "ical.js": "2.1.0",
     "tslib": "^2.4.0"
   }
 }
