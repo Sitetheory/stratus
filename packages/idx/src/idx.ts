@@ -1761,7 +1761,7 @@ const angularJsService = (
                         whereQuery[searchObject.apiField] = {
                             between: [
                                 parseInt(value, 10),
-                                parseInt(get(whereQuery[searchObject.apiField], 'lte') as string, 10)
+                                parseInt(get(whereQuery[searchObject.apiField], 'lte') as unknown as string, 10)
                             ]
                         }
                     } else {
@@ -1778,7 +1778,7 @@ const angularJsService = (
                         // If a Greater than already is being searched
                         whereQuery[searchObject.apiField] = {
                             between: [
-                                parseInt(get(whereQuery[searchObject.apiField], 'gte') as string, 10),
+                                parseInt(get(whereQuery[searchObject.apiField], 'gte') as unknown as string, 10),
                                 parseInt(value, 10)
                             ]
                         }
@@ -2755,7 +2755,7 @@ const angularJsService = (
                 if (Object.prototype.hasOwnProperty.call(session.services, serviceId)) {
                     const filterQueryCustom = clone(filterQuery)
                     if (!refresh) {
-                        filterQueryCustom.skip = (get(collection.meta, `data.recordCounts[${serviceId}]`) ?? 0) as number
+                        filterQueryCustom.skip = (get(collection.meta, `data.recordCounts[${serviceId}]`) ?? 0) as unknown as number
                     }
                     const request = {
                         serviceId,

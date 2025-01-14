@@ -150,7 +150,7 @@
     "gulp-tslint": "^8.1.4",
     "gulp-typescript": "^6.0.0-alpha.1",
     "highlight.js": "^9.18.3",
-    "ical.js": "^2.0.1",
+    "ical.js": "2.1.0",
     "js-md5": "^0.7.3",
     "jsdom": "^16.4.0",
     "jsonminify": "^0.4.2",
