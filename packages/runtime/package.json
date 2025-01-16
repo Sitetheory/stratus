@@ -1,6 +1,6 @@
 {
   "name": "@stratusjs/runtime",
-  "version": "0.14.1",
+  "version": "0.14.2",
   "description": "This is the runtime package for StratusJS.",
   "scripts": {},
   "repository": {
@@ -25,7 +25,7 @@
     "npm": ">= 8.19.3"
   },
   "dependencies": {
-    "@stratusjs/core": "^0.8.1",
+    "@stratusjs/core": "^0.9.0",
     "bowser-legacy": "npm:bowser@^1.9.4",
     "jquery": "^3.4.1",
     "lodash": "^4.17.21",
