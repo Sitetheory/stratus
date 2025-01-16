@@ -5,19 +5,24 @@
 import {Stratus} from '@stratusjs/runtime/stratus'
 import {forEach, padStart} from 'lodash'
 import {auto} from 'angular'
+import {entityDecode, LooseObject} from '@stratusjs/core/misc'
+
 // import 'ical.js' // Global ICAL variable.... not able to be sandboxed yet
 // @ts-ignore defined in 'ical.js.d.ts' ... lint shouldn't be complaining
 import ICALmodule from 'ical.js'
+import Component from 'ical.js/dist/types/component'
+import Time from 'ical.js/dist/types/time'
+import Event from 'ical.js/dist/types/event'
+import {occurrenceDetails} from 'ical.js/dist/types/types'
 
-import {entityDecode, LooseObject} from '@stratusjs/core/misc'
 
 // original author: Mikael Finstad https://github.com/mifi/ical-expander
 // licence: MIT https://github.com/mifi/ical-expander/blob/master/LICENSE
 export class ICalExpander {
     maxIterations = 1000
     skipInvalidDates = false
-    jCalData: unknown
-    component: ICalComponent
+    jCalData: any[] // unknown
+    component: Component // : ICalComponent
     events: ICalEvent[]
 
     [key: string]: any
@@ -118,7 +123,7 @@ export class ICalExpander {
             .forEach((event) => {
                 const exDates: number[] = []
                 event.component.getAllProperties('exdate').forEach((exDateProp) => {
-                    const exDate: ICalTime = exDateProp.getFirstValue()
+                    const exDate: Time = exDateProp.getFirstValue() as Time // : ICalTime
                     exDates.push(exDate.toJSDate().getTime())
                 })
 
@@ -222,7 +227,8 @@ export class ICalExpander {
         }
         if (!e.allDay) {
             // If AllDay cannot use timezone
-            event.timeZone = e.startDate.timezone === 'Z' ? 'UTC' : e.startDate.timezone
+            // event.timeZone = e.startDate.timezone === 'Z' ? 'UTC' : e.startDate.timezone
+            event.timeZone = e.startDate.zone.tzid === 'Z' ? 'UTC' : e.startDate.zone.tzid
         }
         if (e.allDay) {
             // AllDay needs to not provide a time, date only
@@ -262,7 +268,7 @@ export class ICalExpander {
         return event
     }
 
-    getDateString(date: ICalTime): string {
+    getDateString(date: Time): string {
         return date.year+'-'+padStart(date.month.toString(), 2, '0')+'-'+padStart(date.day.toString(), 2, '0')
     }
 
@@ -286,7 +292,8 @@ export class ICalExpander {
         }
         if (!e.allDay) {
             // If AllDay cannot use timezone
-            event.timeZone = e.startDate.timezone === 'Z' ? 'UTC' : e.startDate.timezone
+            // event.timeZone = e.startDate.timezone === 'Z' ? 'UTC' : e.startDate.timezone
+            event.timeZone = e.startDate.zone.tzid === 'Z' ? 'UTC' : e.startDate.zone.tzid
         }
         if (e.allDay) {
             // AllDay needs to not provide a time, date only
@@ -359,61 +366,16 @@ interface ICalEventCleaned extends FullCalEventExtendedProps {
     url?: string
 }
 
-/** @see ical.js/lib/ical/component.js */
-interface ICalComponent {
-    getAllProperties(name: string): LooseObject[]
-    getAllSubcomponents(name: string): ICalComponent[]
-    getFirstSubcomponent(name: string): ICalComponent
-}
-
 /** @see ical.js/lib/ical/event.js occurrenceDetails */
-interface ICalOccurrence {
-    recurrenceId: ICalTime
+interface ICalOccurrence extends occurrenceDetails {
     item: ICalEvent
-    startDate: ICalTime
-    endDate: ICalTime
 }
 
 /** @see ical.js/lib/ical/event.js */
-interface ICalEvent {
-    component: ICalComponent
-    uid: string
-    recurrenceId?: ICalTime
-    sequence: number
-    startDate: ICalTime
-    endDate: ICalTime
-    summary: string
-    description: string
-    attendees: unknown[]
-    organizer: string
-    location: string
+interface ICalEvent extends Event {
     url?: string // Custom item
     allDay?: boolean // Custom item
     image?: string // Custom item
-    getOccurrenceDetails(occurrence: ICalTime): ICalOccurrence
-    iterator(startTime?: ICalTime): ICalRecurExpansion
-    /** Checks if the event describes a recurrence exception */
-    isRecurrenceException(): boolean
-    /** Checks if the event is recurring */
-    isRecurring(): boolean
-}
-
-/** @see ical.js/lib/ical/recur_expansion.js */
-interface ICalRecurExpansion {
-    next(): ICalTime
-}
-
-/** @see ical.js/lib/ical/time.js */
-interface ICalTime {
-    readonly year: number
-    readonly month: number
-    readonly day: number
-    readonly timezone: string
-    readonly isDate: boolean
-    adjust(aExtraDays: number, aExtraHours: number, aExtraMinutes: number, aExtraSeconds: number): this
-    clone(): ICalTime
-    toJSDate(): Date
-    toUnixTime(): number
 }
 
 // To process timezones and recurrence properly, Dates need to be converted by registering all timezones. This is a quick manual setup
@@ -422,7 +384,7 @@ export function registerTimezones(tzData: LooseObject<string>) {
     Object.keys(tzData).forEach((key) => {
         const icsData = tzData[key]
         const parsed = ICALmodule.parse(`BEGIN:VCALENDAR\nPRODID:-//tzurl.org//NONSGML Olson 2012h//EN\nVERSION:2.0\n${icsData}\nEND:VCALENDAR`)
-        const comp: ICalComponent = new ICALmodule.Component(parsed)
+        const comp = new ICALmodule.Component(parsed) // : ICalComponent
         const vTimezone = comp.getFirstSubcomponent('vtimezone')
 
         ICALmodule.TimezoneService.register(vTimezone)
