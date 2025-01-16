@@ -153,7 +153,7 @@ export class TreeDialogComponent extends ResponsiveComponent implements OnInit, 
     // API Data
     apiBase = '/Api/Content'
     isSingleContentLoading = false
-    limit = 20
+    limit = 100
     isContentLoading = false
     isContentLoaded = false
     lastContentSelectorQuery: string
