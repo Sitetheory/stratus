@@ -270,7 +270,7 @@
                 >
                     Sold
                 </md-button>
-                <div data-ng-show="!options.forRent && (_.includes(options.query.where.Status, 'Active') || _.includes(options.query.where.Status, 'Contract'))"
+                <div data-ng-show="!options.forRent || _.includes(options.query.where.Status, 'Contract')"
                      data-layout="row"
                      data-layout-align="left">
                     <md-checkbox

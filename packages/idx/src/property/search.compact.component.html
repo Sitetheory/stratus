@@ -151,7 +151,7 @@
                         </md-button>
                     </div>
 
-                    <div data-ng-show="!options.forRent && (_.includes(options.query.where.Status, 'Active') || _.includes(options.query.where.Status, 'Contract'))">
+                    <div data-ng-show="!options.forRent || _.includes(options.query.where.Status, 'Contract')">
                         <md-checkbox
                                 class="show-under-contract font-secondary"
                                 data-ng-checked="_.includes(options.query.where.Status, 'Contract')"
