@@ -760,7 +760,7 @@ Stratus.Internals.Convoy = (convoy: any, query: any) => new Promise((resolve: an
 })
 
 Stratus.Internals.CssLoader = (url: any) => {
-    return new Promise((resolve: any, _reject: any) => {
+    return new Promise((resolve: any, reject: any) => {
         /* Digest Extension */
         /*
          FIXME: Less files won't load correctly due to less.js not being able to parse new stylesheets after runtime
@@ -792,13 +792,16 @@ Stratus.Internals.CssLoader = (url: any) => {
             Stratus.CSS[url] = true
             resolve()
         })
+        Stratus.Events.once(`onerror:${url}`, () => {
+            reject(new Error('Failed to load script: ' + url))
+        })
 
         /* Resolve Promise OnLoad */
         link.onload = () => {
             Stratus.Events.trigger(`onload:${url}`)
         }
         link.onerror = () => {
-            _reject(new Error('Failed to load script: ' + url))
+            Stratus.Events.trigger(`onerror:${url}`)
         }
 
         /* Inject Link into Head */
@@ -810,7 +813,7 @@ Stratus.Internals.CssLoader = (url: any) => {
 }
 
 Stratus.Internals.JsLoader = (url: any) => {
-    return new Promise((resolve: any, _reject: any) => {
+    return new Promise((resolve: any, reject: any) => {
         /* Digest Extension */
         /*
          let extension: any = /\.([0-9a-z]+)$/i;
@@ -841,6 +844,9 @@ Stratus.Internals.JsLoader = (url: any) => {
             Stratus.JS[url] = true
             resolve()
         })
+        Stratus.Events.once('onerror:' + url, () => {
+            reject(new Error('Failed to load script: ' + url))
+        })
 
         /* Resolve Promise OnLoad */
         // NOTE 2025-01-08: this previously had an fallback from 2018 for Stratus.Client.android
@@ -851,7 +857,7 @@ Stratus.Internals.JsLoader = (url: any) => {
             Stratus.Events.trigger('onload:' + url)
         }
         script.onerror = () => {
-            _reject(new Error('Failed to load script: ' + url))
+            Stratus.Events.trigger('onerror:' + url)
         }
 
         /* Inject Link into Head */
