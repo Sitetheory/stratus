@@ -30,12 +30,12 @@
     "npm": ">= 8.19.3"
   },
   "dependencies": {
-    "@stratusjs/angular": "^0.12.5",
+    "@stratusjs/angular": "^0.12.12",
     "@stratusjs/angularjs": "^0.11.0",
-    "@stratusjs/angularjs-extras": "^0.18.0",
+    "@stratusjs/angularjs-extras": "^0.18.1",
     "@stratusjs/boot": "^1.2.0",
     "@stratusjs/map": "^0.6.6",
-    "@stratusjs/runtime": "^0.14.1",
+    "@stratusjs/runtime": "^0.14.3",
     "@stratusjs/swiper": "^1.2.3"
   }
 }
