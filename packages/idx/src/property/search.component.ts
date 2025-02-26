@@ -485,6 +485,7 @@ Stratus.Components.IdxPropertySearch = {
         $scope.resetLocationQuery = (): void => {
             $scope.options.query.where.Location = ''
             $scope.options.query.where.eLocation = ''
+            $scope.options.query.where.UnparsedAddress = ''
             $scope.options.query.where.City = []
             $scope.options.query.where.eCity = []
             $scope.options.query.where.CountyOrParish = []
@@ -507,6 +508,7 @@ Stratus.Components.IdxPropertySearch = {
         $scope.getPresetLocations = (): string[] => {
             const currentWhere = $scope.options.query.where
             return compact(union(
+                [currentWhere.UnparsedAddress],
                 currentWhere.City,
                 currentWhere.eCity,
                 currentWhere.CountyOrParish,
