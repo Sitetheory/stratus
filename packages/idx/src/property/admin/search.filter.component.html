@@ -170,7 +170,12 @@
                         ></md-chips>
                     </div>
                 </div>
-
+                <div class="search-input" data-flex="50">
+                    <md-input-container class="md-block minimal">
+                        <label>Street Address</label>
+                        <input data-ng-model="options.query.where.UnparsedAddress" type="text" maxlength="50" size="20" autocomplete="off">
+                    </md-input-container>
+                </div>
             </div>
 
             <!-- FIXME alignment problems due to sitetheory css: https://app.asana.com/0/1154407311832843/1155341970037633 -->
