@@ -62,6 +62,7 @@
                             </div>
                             <a data-ng-click="displayModelDetails(property, $event)" data-ng-href="{{::getDetailsURL(property)}}" target="popup">
                                 <div class="image-wrapper"
+                                     data-init-now="true"
                                      data-stratus-src-version="{{::(property.Images[0].Lazy == 'stratus-src' ? 'best' : 'false')}}"
                                      data-stratus-src="{{::property.Images[0].MediaURL || 'false'}}"
                                      aria-label="Main Image of Listing"
