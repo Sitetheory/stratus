@@ -2507,7 +2507,7 @@ const angularJsService = (
                         defaultValue = [defaultValue]
                     }
                     if (!isEqual(defaultValue, compareValue)) {
-                        console.log(searchOptionName, defaultValue, compareValue)
+                        // console.log(searchOptionName, defaultValue, compareValue)
                         searchPath += searchOptionName + '/' + compareValue + '/'
                     }
                 }
