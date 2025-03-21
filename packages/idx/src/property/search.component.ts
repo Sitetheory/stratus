@@ -830,7 +830,8 @@ Stratus.Components.IdxPropertySearch = {
                     lastQuery = cloneDeep($scope.options.query)
                     // console.warn('there was a change')
                     Idx.setUrlOptions('Search', $scope.options.query.where)
-                    $window.open($scope.listLinkUrl + '#!/' + Idx.getUrlOptionsPath(defaultQuery), $scope.listLinkTarget)
+                    // Removing / from #!/, because the UrlOptionsPaths will either be blank or always provide / in front now
+                    $window.open($scope.listLinkUrl + '#!' + Idx.getUrlOptionsPath(defaultQuery), $scope.listLinkTarget)
                 }
             }
         }
