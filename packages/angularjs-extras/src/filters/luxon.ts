@@ -18,7 +18,8 @@ type LuxonOptions = {
     diff?: LuxonPossibleInput | true // number|string|Date
     relative?: string // '1w'
     duration?: DurationUnit // string | 'days' | 'hours'
-    format?: string
+    format?: string,
+    locale?: string,
     tz?: 'local' | string
 }
 
@@ -71,7 +72,8 @@ Stratus.Filters.Luxon = () => {
             since: false,
             relative: '1w', // Difference between two dates (with human grammar)
             duration: 'days', // Used with 'diff' to display the incremental between: seconds, minutes, hours, days, weeks, months, years
-            format: 'LLL d yyyy, h:mma'
+            format: 'LLL d yyyy, h:mma',
+            locale: 'en'
         }
         if (isObject(options)) extend(currentOptionsLuxon, options)
         if (!currentOptionsLuxon.tz || isEmpty(currentOptionsLuxon.tz)) currentOptionsLuxon.tz = 'local'
@@ -87,7 +89,11 @@ Stratus.Filters.Luxon = () => {
             console.warn('Invalid TimeZone', clone(currentOptionsLuxon.tz), clone(timeLuxon))
             return 'Invalid TimeZone'
         }
-
+        timeLuxon = timeLuxon.setLocale(currentOptionsLuxon.locale)
+        if (!timeLuxon.isValid) {
+            console.warn('Invalid Locale', clone(currentOptionsLuxon.locale), clone(timeLuxon))
+            return 'Invalid Locale'
+        }
         if (
             isString(currentOptionsLuxon.relative) &&
             Math.round(new Date().getTime() / 1000) > (timeLuxon.toSeconds() + seconds(currentOptionsLuxon.relative))
