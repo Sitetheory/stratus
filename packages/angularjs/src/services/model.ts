@@ -1137,6 +1137,7 @@ export class Model<T = LooseObject> extends ModelBase<T> {
                     if (this.collection) {
                         this.collection.remove(this)
                     }
+                    _resolve(this.data)
                 })
                 .catch(async (error: XMLHttpRequest|ErrorBase) => {
                     this.error = true
