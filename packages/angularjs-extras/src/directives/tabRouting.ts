@@ -198,7 +198,7 @@ Stratus.Directives.TabRouting = (
                     // Ensure we always start with a / for delimiting.
                     path += '/'
                 }
-                path += `/${$scope.options.urlLabel}/${tabName}/`
+                path += `${$scope.options.urlLabel}/${tabName}/`
 
                 // Set the new url options
                 $rootScope.$applyAsync(() => {
