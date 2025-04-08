@@ -42,17 +42,23 @@ const convertLuxon = (date: LuxonPossibleInput, unix?: boolean): DateTime => {
         unix = false
     }
 
+    // force to UTC to avoid edge case issues (we store in UTC)
+    // we must first apply the zone ('utc') before applying timezone to avoid issues where daylight savings time
+    // overlaps, e.g California March 9, Italy March 30, in the middle it is using a local timestamp instead of utc
+    // NOTE: this likely isn't necessary since we just "assume" the timestamp is stored as UTC in the admin
+    // What actually matters is what's stored in the DB but it doen't hurt and if someone past in some other
+    // value from some other non UTC corrected source, it needs to happen
     if (unix) {
         if (isString(date)) {
             date = parseInt(date, 10)
         }
-        timeLuxon = DateTime.fromSeconds(date as number)
+        timeLuxon = DateTime.fromSeconds(date as number).toUTC()
     } else if(date instanceof Date) {
-        timeLuxon = DateTime.fromJSDate(date as Date)
+        timeLuxon = DateTime.fromJSDate(date as Date).toUTC()
     } else if('now' === date) {
-        timeLuxon = DateTime.now()
+        timeLuxon = DateTime.now().toUTC()
     } else {
-        timeLuxon = DateTime.fromISO(date as string)
+        timeLuxon = DateTime.fromISO(date as string).toUTC()
     }
     return timeLuxon
 }
@@ -73,10 +79,10 @@ Stratus.Filters.Luxon = () => {
             relative: '1w', // Difference between two dates (with human grammar)
             duration: 'days', // Used with 'diff' to display the incremental between: seconds, minutes, hours, days, weeks, months, years
             format: 'LLL d yyyy, h:mma',
-            locale: 'en'
+            locale: 'en',
+            tz: 'local'
         }
         if (isObject(options)) extend(currentOptionsLuxon, options)
-        if (!currentOptionsLuxon.tz || isEmpty(currentOptionsLuxon.tz)) currentOptionsLuxon.tz = 'local'
 
         // Process luxon logic
         let timeLuxon = convertLuxon(input, currentOptionsLuxon.unix)
