@@ -234,6 +234,11 @@ export function flatten(data: LooseObject, flatData?: LooseObject, chain?: strin
 // This is a new simplified Patch Function to allow Difference between Object and Nested Arrays
 // Note: We are currently using LooseObject because the tree below outputs as such
 export function patch(newData: LooseObject, priorData: LooseObject, ignoreKeys: Array<string> = []): LooseObject {
+    // NOTE: if patch() is being called inside a nested path, where an array has string values,
+    // it will call patch to confirm again, so it may be a string and we need to do basic comparison
+    if (typeof newData === 'string' && newData !== priorData) {
+        return newData
+    }
     if (!isObject(newData) || !size(newData)) {
         return null
     }
@@ -254,15 +259,21 @@ export function patch(newData: LooseObject, priorData: LooseObject, ignoreKeys: 
         }
         if (isObject(value)) {
             if (isArray(value)) {
+                // Easy comparison if sizes are not identical
+                // WARNING: the size of the array does NOT account for changes to order, so we have to go deeper below
                 if (!priorValue || size(value) !== size(priorValue)) {
                     tree[acc] = value
                     return
                 }
+                // If the sizes are equal we still need to check deeper because an array can change
+                // order or values, e.g. remove one item and add another of different value
                 forEach(value, (v: any, k: number) => {
                     const priorEl = get(priorValue, k)
                     if (v === priorEl) {
                         return
                     }
+                    // NOTE: if they are strings and they don't equal then it's a change set
+                    // patch() will check if it's a string and compare and return the changed data
                     if (size(patch(v, priorEl, ignoreKeys))) {
                         // This shows only the changed cell, which would be more efficient if Sitetheory allowed persistence of array keys
                         // tree[`${acc}[${k}]`] = v
