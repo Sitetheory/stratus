@@ -3,8 +3,9 @@
         [attr.id]="elementId"
         [class.model-changed]="model.changed"
         [class.model-pending]="model.pending"
-        [class.expired]="isExpired() || model.data.status < 1"
+        [class.expired]="isExpired() || model.data.status === 0"
         [class.unverified]="isUnverified()"
+        [class.deleted]="isDeleted() || model.data.status === -1"
 >
     <button
             tabindex="-1"

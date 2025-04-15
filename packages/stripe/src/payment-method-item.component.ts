@@ -104,6 +104,12 @@ export class StripePaymentMethodItemComponent extends StripeComponent implements
         return this.model.data.exp_month < month
     }
 
+    isDeleted() {
+        if (this.model.pending) {return false}
+        if (this.model.data.type !== 'card') {return false} // only cards expire
+        return this.model.data.status === -1
+    }
+
     isExpiring() {
         if (this.model.pending) {return false}
         if (this.model.data.type !== 'card') {return false} // only cards expire

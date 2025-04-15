@@ -2,6 +2,7 @@
 @light-blue-color: #f4faff;
 @light-grey-color: #f5f5f5;
 @medium-grey-color: #d3d3d3;
+@light-red-color: #ffcbc7;
 sa-stripe-payment-method-item {
   mat-card.payment-method-container {
     position: relative;
@@ -20,10 +21,10 @@ sa-stripe-payment-method-item {
         right: 0;
         bottom: 0;
         content: "EXPIRED";
-        color: #eeeeee63;
-        font-size: 57px;
+        color: #eeeeee;
+        font-size: 30px;
         text-align: center;
-        line-height: 1.8;
+        line-height: 4;
         transform: rotate(-20deg);
       }
     }
@@ -37,11 +38,28 @@ sa-stripe-payment-method-item {
         right: 0;
         bottom: 0;
         content: "UNVERIFIED";
-        color: #eeeeee63;
-        font-size: 40px;
+        color: #eeeeee;
+        font-size: 25px;
         text-align: center;
-        line-height: 1.8;
+        line-height: 3;
         transform: rotate(-26deg);
+      }
+    }
+    &.deleted {
+      background-color: @light-red-color;
+      &::before {
+        overflow: hidden;
+        position: absolute;
+        top: 10px;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        content: "DELETED";
+        color: #eeeeee;
+        font-size: 30px;
+        text-align: center;
+        line-height: 4;
+        transform: rotate(-20deg);
       }
     }
     mat-card-content {
