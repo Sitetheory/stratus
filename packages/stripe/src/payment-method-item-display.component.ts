@@ -39,6 +39,7 @@ export class StripePaymentMethodItemDisplayComponent extends StripeComponent imp
     @Input() last4?: string
     @Input() expMonth?: number
     @Input() expYear?: number
+    @Input() status?: number
 
     @Input() templateStyle = 'default'
 
@@ -67,7 +68,8 @@ export class StripePaymentMethodItemDisplayComponent extends StripeComponent imp
             this.brand &&
             this.last4 &&
             this.expMonth &&
-            this.expYear
+            this.expYear &&
+            this.status
         ) {
             this.model = new Model()
             this.model.data.name = this.name
@@ -75,6 +77,7 @@ export class StripePaymentMethodItemDisplayComponent extends StripeComponent imp
             this.model.data.last4 = this.last4
             this.model.data.exp_month = this.expMonth
             this.model.data.exp_year = this.expYear
+            this.model.data.status = this.status
             this.model.changed = false
             this.model.pending = false
             this.model.completed = true
