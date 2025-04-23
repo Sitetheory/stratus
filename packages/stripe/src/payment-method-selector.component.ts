@@ -431,6 +431,7 @@ export class StripePaymentMethodSelectorComponent extends StripeListComponent im
 
     isPMExpired(paymentMethod: Model) {
         if (paymentMethod.pending) {return false}
+        if (paymentMethod.data.type !== 'card') {return false} // only cards expire
         const d = new Date()
         const month = d.getMonth()+1
         const year = d.getFullYear()
