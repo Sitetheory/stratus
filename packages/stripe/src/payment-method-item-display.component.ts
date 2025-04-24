@@ -39,6 +39,7 @@ export class StripePaymentMethodItemDisplayComponent extends StripeComponent imp
     @Input() last4?: string
     @Input() expMonth?: number
     @Input() expYear?: number
+    @Input() bankName?: string
     @Input() status?: number
 
     @Input() templateStyle = 'default'
@@ -65,19 +66,26 @@ export class StripePaymentMethodItemDisplayComponent extends StripeComponent imp
     async ngOnInit() {
         if (
             this.name &&
-            this.brand &&
             this.last4 &&
-            this.expMonth &&
-            this.expYear &&
             this.status
         ) {
             this.model = new Model()
             this.model.data.name = this.name
-            this.model.data.brand = this.brand
             this.model.data.last4 = this.last4
-            this.model.data.exp_month = this.expMonth
-            this.model.data.exp_year = this.expYear
             this.model.data.status = this.status
+            if (this.brand) {
+                this.model.data.brand = this.brand
+            }
+            if (this.expMonth) {
+                this.model.data.exp_month = this.expMonth
+            }
+            if (this.expYear) {
+                this.model.data.exp_year = this.expYear
+            }
+            if (this.bankName) {
+                this.model.data.bank_name = this.bankName
+            }
+
             this.model.changed = false
             this.model.pending = false
             this.model.completed = true
@@ -87,17 +95,8 @@ export class StripePaymentMethodItemDisplayComponent extends StripeComponent imp
             if (!this.name) {
                 console.warn(`${this.uid} was missing "name". Add with data-name="My Name"`)
             }
-            if (!this.brand) {
-                console.warn(`${this.uid} was missing "brand". Add with data-brand="visa"`)
-            }
             if (!this.last4) {
                 console.warn(`${this.uid} was missing "last4". Add with data-last-4="1234"`)
-            }
-            if (!this.expMonth) {
-                console.warn(`${this.uid} was missing "expMonth". Add with data-exp-month="4"`)
-            }
-            if (!this.expYear) {
-                console.warn(`${this.uid} was missing "expYear". Add with data-exp-year="2024"`)
             }
         }
     }
