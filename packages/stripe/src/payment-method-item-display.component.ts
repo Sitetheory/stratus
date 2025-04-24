@@ -34,6 +34,7 @@ export class StripePaymentMethodItemDisplayComponent extends StripeComponent imp
     title = `${packageName}_${componentName}_component`
 
     model: Model
+    @Input() type?: string
     @Input() name?: string
     @Input() brand?: string
     @Input() last4?: string
@@ -65,11 +66,13 @@ export class StripePaymentMethodItemDisplayComponent extends StripeComponent imp
      */
     async ngOnInit() {
         if (
+            this.type &&
             this.name &&
             this.last4 &&
             this.status
         ) {
             this.model = new Model()
+            this.model.data.type = this.type
             this.model.data.name = this.name
             this.model.data.last4 = this.last4
             this.model.data.status = this.status
@@ -92,6 +95,9 @@ export class StripePaymentMethodItemDisplayComponent extends StripeComponent imp
             this.initialized = true
         } else {
             console.warn(`${this.uid} was missing data. not initializing`)
+            if (!this.type) {
+                console.warn(`${this.uid} was missing "type". Add with data-type="card"`)
+            }
             if (!this.name) {
                 console.warn(`${this.uid} was missing "name". Add with data-name="My Name"`)
             }
