@@ -83,7 +83,7 @@ Stratus.Filters.Luxon = () => {
             tz: 'local'
         }
         if (isObject(options)) extend(currentOptionsLuxon, options)
-
+        if (!currentOptionsLuxon.tz || isEmpty(currentOptionsLuxon.tz)) currentOptionsLuxon.tz = 'local'
         // Process luxon logic
         let timeLuxon = convertLuxon(input, currentOptionsLuxon.unix)
         if (!timeLuxon.isValid) {
