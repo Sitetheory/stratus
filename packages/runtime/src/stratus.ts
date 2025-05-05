@@ -1889,7 +1889,10 @@ Stratus.Loaders.Angular = function AngularLoader() {
     require(container.requirement, () => {
         // App Reference
         angular.module('stratusApp', union(Object.keys(Stratus.Modules), container.module)).config([
-            '$sceDelegateProvider', ($sceDelegateProvider: any) => {
+            '$sceDelegateProvider',
+            // HackToOvercome iOS double-click gesture bug
+            '$mdGestureProvider',
+            ($sceDelegateProvider: any, $mdGestureProvider: any) => {
                 const whitelist: any = [
                     'self',
                     'http://*.sitetheory.io/**',
@@ -1905,6 +1908,26 @@ Stratus.Loaders.Angular = function AngularLoader() {
                     }
                 }
                 $sceDelegateProvider.resourceUrlWhitelist(whitelist)
+                // iOS 18+ or modern pointer event environments - ignore old iOS
+                const needsClickHijack = (() => {
+                    // Very old iOS (before 13), Android 4.x, or old mobile WebKit needed this
+                    const ua = navigator.userAgent
+                    const isOldIOS = /iP(ad|hone|od).+OS [0-9]{1,2}_/.test(ua) &&
+                        parseInt((ua.match(/OS (\d+)_/) || [])[1], 10) < 13
+
+                    const isOldAndroid = /Android [0-4]\./.test(ua)
+
+                    const supportsPointerEvents = 'PointerEvent' in window
+                    // Include `!supportsTouchPoints` ONLY if we want to treat simulators differently
+                    // const supportsTouchPoints = navigator.maxTouchPoints > 0
+                    // Modern browsers don’t need click hijacking
+                    return isOldIOS || isOldAndroid || !supportsPointerEvents
+                })()
+
+                if (!needsClickHijack) {
+                    $mdGestureProvider.skipClickHijack()
+                    console.log('Angular Material click hijacking disabled for "' + navigator.userAgent + '" (native handling supported).')
+                }
             }
         ])
 
