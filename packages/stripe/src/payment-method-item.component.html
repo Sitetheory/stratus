@@ -33,6 +33,9 @@
                 <div class="aligned-tile" *ngIf="model.data.brand">
                     <img [src]="getCardLogoUrl(model.data.brand)" [alt]="model.data.brand" class="brand"/>
                 </div>
+                <!--div class="aligned-tile" *ngIf="model.data.bank_name">
+                    <img [src]="getCardLogoUrl('ach')" alt="ACH" class="brand"/>
+                </div-->
                 <div class="aligned-tile" *ngIf="model.data.bank_name">
                     <span [innerHTML]="model.data.bank_name" [style.justifyContent]="'flex-start'"></span>
                 </div>
