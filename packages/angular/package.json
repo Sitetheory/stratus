@@ -1,6 +1,6 @@
 {
   "name": "@stratusjs/angular",
-  "version": "0.12.13",
+  "version": "0.12.14",
   "description": "This is the angular package for StratusJS.",
   "scripts": {},
   "repository": {
@@ -57,8 +57,8 @@
     "@stratusjs/boot": "^1.2.0",
     "@stratusjs/core": "^0.9.2",
     "@stratusjs/map": "^0.6.6",
-    "@stratusjs/runtime": "^0.14.3",
-    "@stratusjs/stripe": "^2.0.1",
+    "@stratusjs/runtime": "^0.14.4",
+    "@stratusjs/stripe": "^2.1.0",
     "angular-froala-wysiwyg": "^3.2.7",
     "codemirror": "^6.0.1",
     "froala-editor": "^3.2.7",
