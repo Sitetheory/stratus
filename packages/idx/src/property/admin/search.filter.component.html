@@ -170,11 +170,38 @@
                         ></md-chips>
                     </div>
                 </div>
-                <div class="search-input" data-flex="50">
-                    <md-input-container class="md-block minimal">
-                        <label>Street Address</label>
-                        <input data-ng-model="options.query.where.UnparsedAddress" type="text" maxlength="50" size="20" autocomplete="off">
-                    </md-input-container>
+                <div data-layout="row">
+                    <div class="search-input" data-flex="50">
+                        <md-chips
+                                class="street-address font-secondary"
+                                aria-label="Street Address(es) to Limit"
+                                data-ng-model="options.query.where.eStreetAddress"
+                                data-md-enable-chip-edit="true"
+                                data-md-add-on-blur="true"
+                                data-md-separator-keys="[$mdConstant.KEY_CODE.ENTER, $mdConstant.KEY_CODE.COMMA]"
+                                data-placeholder="Street Address"
+                                data-secondary-placeholder="+Address"
+                                data-delete-button-label="Remove Address"
+                                data-delete-hint="Press delete to remove Address"
+                        ></md-chips>
+                    </div>
+                    <div
+                            class="search-input deprecated" data-flex="50"
+                            data-ng-if="options.query.where.UnparsedAddress && options.query.where.UnparsedAddress.length"
+                    >
+                        <md-chips
+                                class="full-address font-secondary"
+                                aria-label="Full Address(es) to Limit"
+                                data-ng-model="options.query.where.UnparsedAddress"
+                                data-md-enable-chip-edit="true"
+                                data-md-add-on-blur="true"
+                                data-md-separator-keys="[$mdConstant.KEY_CODE.ENTER, $mdConstant.KEY_CODE.COMMA]"
+                                data-placeholder="Full Address"
+                                data-secondary-placeholder="+Address"
+                                data-delete-button-label="Remove Address"
+                                data-delete-hint="Press delete to remove Address"
+                        ></md-chips>
+                    </div>
                 </div>
             </div>
 

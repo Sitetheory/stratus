@@ -262,7 +262,9 @@ export interface WhereOptions extends LooseObject {
     ListingId?: string[] | string,
     ListingType?: string[] | string,
     Status?: string[] | string,
-    UnparsedAddress?: string,
+    UnparsedAddress?: string[] | string,
+    StreetAddress?: string[] | string,
+    eStreetAddress?: string[] | string,
     City?: string[] | string,
     eCity?: string[] | string,
     PostalCode?: string[] | string,
@@ -655,7 +657,9 @@ const angularJsService = (
     const defaultWhereOptions: WhereOptions = {
         City: [], // Added as default so search and manipulate
         eCity: [], // Added as default so search and manipulate
-        UnparsedAddress: '', // Added as default so search and manipulate
+        UnparsedAddress: [], // Added as default so search and manipulate
+        StreetAddress: [], // Added as default so search and manipulate
+        eStreetAddress: [], // Added as default so search and manipulate
         Location: '', // Added as default so search and manipulate
         eLocation: '', // Added as default so search and manipulate
         Status: [],
@@ -1931,10 +1935,17 @@ const angularJsService = (
                 OpenHouseOnly: {
                     type: 'valueEquals'
                 },
-                // TODO: replace this with a generic API field that supports all MLS (which may not have
-                // TODO: Unparsed Address but instead have StreetName, StreetNumber, etc.
+                // Note this can include unit number, city, state, and zip. use StreetAddress instead
                 UnparsedAddress: {
-                    type: 'stringLike'
+                    type: 'stringLikeArray'
+                },
+                StreetAddress: {
+                    apiField: '_StreetAddress',
+                    type: 'stringLikeArray'
+                },
+                eStreetAddress: {
+                    apiField: '_StreetAddress',
+                    type: 'stringIncludesArray'
                 },
                 City: {
                     type: 'stringLikeArray'
