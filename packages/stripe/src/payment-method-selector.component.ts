@@ -238,7 +238,12 @@ export class StripePaymentMethodSelectorComponent extends StripeListComponent im
             // (value?: number) => {
             (value?: Model) => {
                 // Avoid saving until the Model is truly available
-                if (!value || !value.completed) {
+                /*if (!value || !value.completed) {
+                    // if (!this.model.completed) {
+                    return
+                }*/
+                // Allow values, but only if the value is completed
+                if (value && !value.completed) {
                     // if (!this.model.completed) {
                     return
                 }
@@ -296,7 +301,7 @@ export class StripePaymentMethodSelectorComponent extends StripeListComponent im
         // console.log('inited selector, this is model', this.model)
     }
 
-    valueChanged(value: Model) {
+    valueChanged(value?: Model) {
         if (value) {
             // Update the field to allow external apps to read
             this.form.get(this.fieldNameId).setValue(value.get('id'))
@@ -315,7 +320,7 @@ export class StripePaymentMethodSelectorComponent extends StripeListComponent im
         // Save the qualified change!
         this.model.set(
             this.property,
-            this.normalizeOut(value)
+            value ? this.normalizeOut(value) : null // Either allow null or a value
         )
     }
 
