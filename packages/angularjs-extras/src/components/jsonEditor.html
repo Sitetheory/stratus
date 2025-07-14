@@ -6,6 +6,7 @@
     <textarea name="{{ name }}"
               data-ng-model="jsonString"
               rows="{{ rows }}"
+              style="min-height: 80vh; max-height: 800px; resize: vertical;"
               aria-label="{{ ariaLabel }}"
               class="code-editor"
               data-ng-class='{"invalid-jsonEncode": $ctrl.formFieldCtrl.$error.validJson}'

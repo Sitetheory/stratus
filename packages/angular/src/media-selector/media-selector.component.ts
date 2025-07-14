@@ -92,6 +92,7 @@ export class MediaSelectorComponent extends RootComponent { // implements OnInit
     @Input() direct: boolean
     @Input() api: object
     @Input() urlRoot: string
+    @Input() text: object
 
     // Component Attributes
     @Input() type: string
@@ -164,6 +165,35 @@ export class MediaSelectorComponent extends RootComponent { // implements OnInit
      */
     public activeContainer: any
 
+    /**
+     * Default text strings for UI
+     */
+    public textDisplay: Record<string, string> = {
+        selected: 'Selected',
+        items: 'Items',
+        openLibrary: 'Open Library',
+        closeLibrary: 'Close Library',
+        showDetails: 'Show Details',
+        add: 'Add',
+        clear: 'Clear',
+        permanentlyDelete: 'Permanently Delete from Library',
+        removeSelection: 'Remove Selection',
+        image: 'Image',
+        video: 'Video',
+        audio: 'Audio',
+        document: 'Document',
+    }
+
+    /**
+     *  Custom deep merge that ignores null/empty values
+     */
+    private mergeWithIgnoreEmpty(obj: any, src: any): any {
+        if (_.isObject(obj) && _.isObject(src)) {
+            return _.mergeWith({}, obj, src, this.mergeWithIgnoreEmpty.bind(this))
+        }
+        return src === null || src === '' ? obj : src
+    }
+
     // Construct
     constructor(
         private iconRegistry: MatIconRegistry,
@@ -217,6 +247,10 @@ export class MediaSelectorComponent extends RootComponent { // implements OnInit
 
         // Hydrate Root App Inputs
         this.hydrate(elementRef, sanitizer, keys<MediaSelectorComponent>())
+
+        if (this.text && typeof this.text === 'object') {
+            this.textDisplay = this.mergeWithIgnoreEmpty(this.textDisplay, this.text)
+        }
 
         // Declare Event ID (based on data from hydrated elementRefs above)
         this.eventID = `${this.target}:${this.id}:${this.property}`

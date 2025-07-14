@@ -23,7 +23,8 @@ import {Collection} from '../services/collection'
 import {
     isJSON,
     safeUniqueId,
-    setUrlParams
+    getUrlParams,
+    setUrlParams,
 } from '@stratusjs/core/misc'
 
 // Require this to Sanitize all data-ng-bind-html instances
@@ -69,6 +70,7 @@ Stratus.Controllers.Generic = [
         $scope._ = _
         $scope.cookie = cookie
         $scope.$window = $window
+        $scope.getUrlParams = getUrlParams
         $scope.setUrlParams = setUrlParams
         $scope.$log = $log
 
