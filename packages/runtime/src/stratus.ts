@@ -4,7 +4,7 @@
 // Runtime
 import {
     camelCase,every,extend,filter,findKey,forEach,get,has,head,includes,isArray,isEmpty,isUndefined,
-    isString,kebabCase,map,max,mixin,once,size,startsWith,uniq,uniqueId,union
+    isString,kebabCase,map,max,mixin,once,size,startsWith,uniq,uniqueId,union,merge
 } from 'lodash'
 import jQuery from 'jquery'
 import bowser from 'bowser-legacy'
@@ -18,6 +18,7 @@ import {
     lcfirst,
     LooseObject,
     setUrlParams,
+    getUrlParams,
     ucfirst
 } from '@stratusjs/core/misc'
 import {
@@ -1593,6 +1594,52 @@ Stratus.Internals.SetUrlParams = (params: any, url: any) => {
     // TODO: Add Controls for Deprecation Warnings...
     // console.warn('Stratus.Internals.SetUrlParams is deprecated. Use setUrlParams instead.')
     return setUrlParams(params, url)
+}
+Stratus.Internals.GetUrlParams = (params: any, url: any) => {
+    return getUrlParams(params, url)
+}
+
+// Add an object of values that are merged with the existing values of a cookie, e.g. SITETHEORY-PREFS
+interface CookieOptions {
+    expire: number,
+    path?: string | null,
+    domain?: string | null,
+    secure?: boolean | null,
+    sameSite?: 'Strict' | 'Lax' | 'None' | null
+}
+Stratus.Internals.UpdateCookie = (name: string, value: any, options?:CookieOptions) => {
+    let defaultValue:any = Stratus.Internals.Cookie(name) || null
+    const defaultOptions: CookieOptions = {
+        expire: Date.now() + 1000 * 60 * 60 * 24 * 365,
+        path: null,
+        domain: null,
+        secure: null,
+        sameSite: null
+    }
+    // nested merge
+    options = merge(defaultOptions, options)
+    if (typeof value === 'object') {
+        if (typeof defaultValue === 'string') {
+            defaultValue = JSON.parse(decodeURIComponent(defaultValue))
+        } else if (typeof defaultValue !== 'object' || !defaultValue) {
+            defaultValue = {}
+        }
+        value = JSON.stringify(
+            merge(
+                defaultValue || {},
+                value
+            )
+        )
+    }
+    Stratus.Internals.Cookie(
+        name,
+        value,
+        options.expire,
+        options.path,
+        options.domain,
+        options.secure,
+        options.sameSite
+    )
 }
 
 // Track Location

@@ -5,7 +5,7 @@
 
     <div class="media-component section-container selected-container border-default border-default-all border-radius-default">
         <p class="small-all-caps selected-media-label"
-           [textContent]="'Selected ' + (type || 'Items')"></p>
+           [textContent]="textDisplay.selected + ' ' + (type || textDisplay.items)"></p>
         <!-- TODO: for styles from legacy selector, add class `selected-area` -->
         <div class="media-content media-selected-container"
              cdkDropListGroup
@@ -90,24 +90,28 @@
                                 <mat-icon *ngIf="_.get(selectedModel, 'mime') && _.get(selectedModel, 'mime').includes('image')"
                                           svgIcon="media_selector_image"
                                           aria-hidden="true"
+                                          [attr.aria-label]="textDisplay.image"
                                           aria-label="Image">
                                     Image
                                 </mat-icon>
                                 <mat-icon *ngIf="_.get(selectedModel, 'mime') && _.get(selectedModel, 'mime').includes('video')"
                                           svgIcon="media_selector_video"
                                           aria-hidden="true"
+                                          [attr.aria-label]="textDisplay.video"
                                           aria-label="Video">
                                     Video
                                 </mat-icon>
                                 <mat-icon *ngIf="_.get(selectedModel, 'mime') && _.get(selectedModel, 'mime').includes('audio')"
                                           svgIcon="media_selector_audio"
                                           aria-hidden="true"
+                                          [attr.aria-label]="textDisplay.audio"
                                           aria-label="Audio">
                                     Audio
                                 </mat-icon>
                                 <mat-icon *ngIf="_.get(selectedModel, 'mime') && _.get(selectedModel, 'mime').includes('application')"
                                           svgIcon="media_selector_document"
                                           aria-hidden="true"
+                                          [attr.aria-label]="textDisplay.document"
                                           aria-label="Document">
                                     Document
                                 </mat-icon>
@@ -142,30 +146,36 @@
                                         <span (click)="showDetails(selectedModel)">
                                             <a class="border-radius-default"
                                                href="#"
-                                               [matTooltip]="'Show Details - ' + _.get(selectedModel, 'name')">
+                                               [matTooltip]="textDisplay.showDetails + ' - ' + _.get(selectedModel, 'name')">
                                                 <mat-icon class="info-icon"
                                                           svgIcon="media_selector_info"
                                                           aria-hidden="true"
-                                                          aria-label="Info"></mat-icon>
+                                                          [attr.aria-label]="textDisplay.showDetails"
+                                                          aria-label="Show Details"></mat-icon>
                                             </a>
                                         </span>
                                         <span (click)="remove(selectedModel)">
                                             <a class="border-radius-default"
                                                href="#"
+                                               [matTooltip]="textDisplay.permanentlyDelete"
                                                matTooltip="Permanently Delete from Libary"
+                                               [attr.aria-label]="textDisplay.permanentlyDelete"
                                                *ngIf="!isSelector">
                                                 <mat-icon class="delete-icon"
                                                           svgIcon="media_selector_delete"
                                                           aria-hidden="true"
-                                                          aria-label="Delete"></mat-icon>
+                                                          [attr.aria-label]="textDisplay.permanentlyDelete"
+                                                          aria-label="Permanently Delete from Library"></mat-icon>
                                             </a>
                                             <a class="border-radius-default"
                                                href="#"
                                                matTooltip="Remove Selection"
+                                               [matTooltip]="textDisplay.removeSelection"
                                                *ngIf="isSelector">
                                                 <mat-icon class="clear-icon"
                                                           svgIcon="media_selector_clear"
                                                           aria-hidden="true"
+                                                          [attr.aria-label]="textDisplay.clear"
                                                           aria-label="Clear"></mat-icon>
                                             </a>
                                         </span>
@@ -178,8 +188,8 @@
             </div>
             <div class="media-selected-list media-selected-list-grid">
                 <div class="library-toggle media-selected-box media-selected-box-grid">
-                    <a  class="position-anchor accent-background-hover border-default border-default-all color-primary"
-                        [matTooltip]="(libraryDisplay ? 'Open' : 'Close') + ' Media Library'"
+                    <a class="position-anchor accent-background-hover border-default border-default-all color-primary"
+                        [matTooltip]="(libraryDisplay ? textDisplay.closeLibrary : textDisplay.openLibrary)"
                         (click)="toggleLibrary()"
                         [ngClass]="{'library-toggle-open': libraryDisplay}">
                         <!--<md-tooltip *ngIf="!libraryOpen">Open Media Library</md-tooltip>-->
@@ -188,11 +198,12 @@
                                       *ngIf="!libraryDisplay"
                                       svgIcon="media_selector_add"
                                       aria-hidden="false"
+                                      [attr.aria-label]="textDisplay.add"
                                       aria-label="Add">
                                 Add
                             </mat-icon>
                             <div class="btn-text small-all-caps position-center">
-                                Close Library
+                                {{ textDisplay.closeLibrary }}
                             </div>
                             <img class="shapeholder"
                                  [src]="Stratus.BaseUrl + 'sitetheorycore/images/shapeholder-square.png'">

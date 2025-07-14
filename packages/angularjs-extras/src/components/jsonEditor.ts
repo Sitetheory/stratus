@@ -67,6 +67,12 @@ Stratus.Components.JsonEditor = {
                 return
             }
             $scope.initialized = true
+
+            // TODO: Trigger layout recalculation  because the textarea is too small. This doesn't work... instead
+            //  we put min-height on the HTML styl
+            // window.dispatchEvent(new Event('resize'))
+            // This didn't help
+            // $scope.$applyAsync()
             /**
              * WATCHER - Data Connectivity from ngModel
              * Populate the $scope.jsonString with the ngModel from the page

@@ -1,4 +1,5 @@
-import {camelCase, clone, every, extend, findKey, forEach, get, isArray, isEmpty, isObject, isString, map,  min, size, uniqueId} from 'lodash'
+import {camelCase, clone, every, extend, findKey, forEach, get, isArray, isEmpty, isObject, isString, map,  min, size,
+    uniqueId, set, merge} from 'lodash'
 
 // This function simply extracts the name of a function from code directly
 export function functionName(code: any) {
@@ -137,33 +138,51 @@ export function setHashBangParam(hashParam: string, hashPrefix = '#') {
     window.location.hash = !hashParam.length ? '' : (hashPrefix + hashParam)
 }
 
-// Get a specific value or all values located in the URL
+// Get a specific value or all values located in the URL (supports nesting: ?prefs[foo]=1&prefs[bar]=2)
 export function getUrlParams(key: any, url?: any) {
     const vars: any = {}
-    if (url === undefined) {
+    if (!url) {
         url = window.location.href
     }
     const anchor = url.indexOf('#')
     if (anchor >= 0) {
         url = url.substring(0, anchor)
     }
-    url.replace(/[?&]+([^=&]+)=([^&]*)/gi, (_m: any, keyChild: any, value: any) => {
-        vars[keyChild] = hydrate(value)
+    // Parse key-value pairs
+    url.replace(/[?&]+([^=&]+)=([^&]*)/gi, (_m:any, rawKey:any, value:any):void => {
+        const decodedKey = decodeURIComponent(rawKey)
+        const decodedValue = hydrate(decodeURIComponent(value))
+        const path = parseBracketKey(decodedKey)  // convert 'prefs[genre]' → ['prefs', 'genre']
+        set(vars, path, decodedValue)
     })
-    return (typeof key !== 'undefined' && key) ? vars[key] : vars
+    return typeof key !== 'undefined' ? vars[key] : vars
+}
+
+// Helper Function
+export function parseBracketKey(key: string): string[] {
+    const parts: string[] = []
+    const regex = /\[([^\]]+)\]|([^[\]]+)/g
+
+    for (const match of key.matchAll(regex)) {
+        const bracket = match[1]
+        const plain = match[2]
+        parts.push(bracket || plain)
+    }
+
+    return parts
 }
 
 // This function digests URLs into an object containing their respective
 // values, which will be merged with requested parameters and formulated
 // into a new URL.
+// (supports nesting: ?prefs[foo]=1&prefs[bar]=2
 export function setUrlParams(params: any, url?: any) {
-    if (url === undefined) {
+    if (!url) {
         url = window.location.href
     }
-    if (params === undefined) {
+    if (typeof params !== 'object' || params === null) {
         return url
     }
-    let vars: any = {}
     const glue = url.indexOf('?')
     const anchor = url.indexOf('#')
     let tail = ''
@@ -171,13 +190,38 @@ export function setUrlParams(params: any, url?: any) {
         tail = url.substring(anchor, url.length)
         url = url.substring(0, anchor)
     }
-    url.replace(/[?&]+([^=&]+)=([^&]*)/gi, (_m: any, key: any, value: any) => {
+    const vars: Record<string, any> = {}
+    url.replace(/[?&]+([^=&]+)=([^&]*)/gi, (_match:any, key:any, value:any) => {
         vars[key] = value
     })
-    vars = extend(vars, params)
-    return ((glue >= 0 ? url.substring(0, glue) : url) + '?' +
-        map(vars, (value: any, key: any) => key + '=' + dehydrate(value))
-            .reduce((memo: any, value: any) => memo + '&' + value) + tail)
+
+    // Original:
+    // const merged = extend(vars, params)
+    const merged = merge(vars, params)
+
+    // Flatten into query string
+    const queryString = flattenUrlParams(merged)
+    // preserve the brackets
+    .map(([key, val]) => `${encodeURIComponent(key).replace(/%5B/g, '[').replace(/%5D/g, ']')}=${encodeURIComponent(val)}`)
+    .join('&')
+    return (glue >= 0 ? url.substring(0, glue) : url) + '?' + queryString + tail
+}
+
+// Flattens nested object to array of key=value pairs with bracket notation
+export function flattenUrlParams(obj: any, prefix: string = ''): [string, any][] {
+    const pairs: [string, any][] = []
+    for (const key in obj) {
+        if (!obj.hasOwnProperty(key)) continue
+        const value = obj[key]
+        const paramKey = prefix ? `${prefix}[${key}]` : key
+
+        if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
+            pairs.push(...flattenUrlParams(value, paramKey))
+        } else {
+            pairs.push([paramKey, value])
+        }
+    }
+    return pairs
 }
 
 // Ensure all values in an array or object are true

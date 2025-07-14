@@ -1,6 +1,6 @@
 {
   "name": "@stratusjs/core",
-  "version": "0.9.2",
+  "version": "0.10.0",
   "description": "This is the core package for StratusJS.",
   "scripts": {},
   "repository": {
