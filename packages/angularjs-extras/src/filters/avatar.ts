@@ -12,7 +12,10 @@ Stratus.Filters.Avatar = () => (
 ) => {
     size = size || 80
     fallback = fallback || 'retro' // use wording 'fallback' as 'default' is reserved
-    return `//seccdn.libravatar.org/avatar/${md5(input.trim().toLowerCase())}?s=${size}&d=${fallback}`
+    // Libravatar has not been maintained so we will use Gravatar.
+    // NOTE: We prefer an open source option, other than gravatar (owned by our competitor wordpress)
+    // return `//seccdn.libravatar.org/avatar/${md5(input.trim().toLowerCase())}?s=${size}&d=${fallback}`
+    return `//www.gravatar.com/avatar/${md5(input.trim().toLowerCase())}?s=${size}&d=${fallback}`
 }
 
 /*
