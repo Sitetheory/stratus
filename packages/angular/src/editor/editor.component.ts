@@ -557,6 +557,7 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             'Verdana,Geneva,sans-serif': 'Verdana'
         },
         heightMax: window.innerHeight || document.documentElement.clientHeight || 500,
+        // Limited Support for REGEXP
         htmlAllowedAttrs: [
             // Note: We can't use a blanket regex for attributes, since the `htmlAllowedAttrs`
             // get spliced into the `pasteDeniedAttrs`, so the whitelist can overwrite the
@@ -641,8 +642,12 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             'xlink:actuate', 'xlink:arcrole', 'xlink:href', 'xlink:role', 'xlink:show',
             'xlink:title', 'xlink:type', 'xml:base', 'xml:lang', 'xml:space',
             'y', 'y1', 'y2', 'yChannelSelector',
-            'z', 'zoomAndPan'
+            'z', 'zoomAndPan',
+            // THIRD PARTY:
+            // RealScout
+            'realscout-.*',
         ],
+        // No Support for REGEXP (used inside CSS query selector)
         htmlAllowedEmptyTags: [
             'textarea', 'a', 'iframe', 'object', 'video', 'style', 'script',
             'form',
@@ -740,6 +745,21 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             'sa-stripe-payment-method-list',
             'sa-stripe-payment-method-selector',
             'sa-tree',
+            // THIRD-PARTY
+            // RealScout
+            'realscout-simple-search',
+            'realscout-advanced-search',
+            'realscout-your-listings',
+            'realscout-office-listings',
+        ],
+        // No Support for REGEXP (used inside CSS query selector)
+        htmlDoNotWrapTags: [
+            // THIRD PARTY:
+            // RealScout
+            'realscout-simple-search',
+            'realscout-advanced-search',
+            'realscout-your-listings',
+            'realscout-office-listings',
         ],
         htmlAllowedStyleProps: [
             '.*'
@@ -782,6 +802,7 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             // 'white-space', 'width', 'word-break', 'word-spacing', 'word-wrap',
             // 'z-index'
         ],
+        // Limited Support for REGEXP
         htmlAllowedTags: [
             'a', 'abbr', 'address', 'area', 'article', 'aside', 'audio',
             'b', 'base', 'bdi', 'bdo', 'blockquote', 'br', 'button',
@@ -846,6 +867,9 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             'sa-tree',
             // StratusJS tags
             'stratus-.+',
+            // THIRD PARTY
+            // RealScout
+            'realscout-.*',
         ],
         // @ts-ignore
         htmlRemoveTags: [],
@@ -926,6 +950,7 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             'data-.+',
             'aria-.+',
             'ng-.+',
+            // TODO: I don't know why these would ever be in a "paste" or why we would want to remove them as "dangerous"
             'stratus-.+',
             'sa-.+'
         ],
