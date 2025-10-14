@@ -1,4 +1,4 @@
-# Stratus - Web Design Platform
+# Stratus - Web Design Platform 
 
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/2f4610bc1be141759b51b62c624282ff)](https://www.codacy.com/gh/Sitetheory/stratus/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Sitetheory/stratus&amp;utm_campaign=Badge_Grade)
 [![codecov](https://codecov.io/gh/Sitetheory/stratus/branch/master/graph/badge.svg)](https://codecov.io/gh/Sitetheory/stratus)
