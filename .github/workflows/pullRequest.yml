@@ -1,0 +1,39 @@
+name: Pull Request CI Checks
+
+on:
+  pull_request_target:
+    types: [ opened, reopened, synchronize ]
+    branches:
+      - 'latest'
+  merge_group:
+    types: [ checks_requested ]
+
+permissions:
+  checks: write
+  contents: read
+  pull-requests: write
+  statuses: write
+
+jobs:
+
+  build-nodejs:
+
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        operating-system: [ ubuntu-latest ]
+        node-version: [ 16.x,18.x ]
+        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Use Node.js ${{ matrix.node-version }}  Test on ${{ matrix.operating-system }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+          cache-dependency-path: ./package.json
+      - run: npm install
+      - run: npm test
