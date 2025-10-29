@@ -35,7 +35,7 @@
         <!--<span class="selectedModels" style="display: none" [textContent]="dataSub | async | json"></span>-->
         <!--<span class="selectedModels" style="display: none" *ngIf="log('selector.ngIf:', dataSub | async)"></span>-->
         <!-- [cdkDragDisabled]="get(selectedModel, 'status') < 1" -->
-        <div cdkDrag class="selected-list-row selected-box"
+        <div cdkDrag class="selected-list-row selected-box sa-drag-container"
              [ngClass]="{'active': get(selectedModel, 'status') === 1, 'inactive' : get(selectedModel, 'status') !== 1, 'published': get(selectedModel, 'version.published') === 1, 'unpublished': get(selectedModel, 'version.published') !== 1}"
              *ngFor="let selectedModel of dataSub | async">
             <div class="custom-ghost-placeholder" *cdkDragPlaceholder></div>

@@ -121,9 +121,34 @@ md-autocomplete,
   min-height: 60px;
   display: block;
   border-radius: 4px;
-  overflow: hidden;
+  //overflow: hidden;
+  .routing {
+    color: #333;
+    font-size: 13px;
+  }
+  .selected-list-header {
+    margin-bottom: 20px;
+    padding-bottom: 20px;
+    h3,
+    .note {
+      margin: 0;
+      padding-left: 10px;
+      display: inline-block;
+      vertical-align: text-bottom;
+      line-height: 1.2;
+    }
+  }
+  .selected-message-box {
+    // extra information for the list messages (currently only used for an empty list)
+  }
 }
-.selected-box {
+
+/* Do not limit these classes with any others, otherwise when the item is dragged it will lose styling */
+.selected-list-container {
+  width: 100% !important;
+}
+.sa-drag-container {
+  margin-bottom: 10px;
   padding: 12px 16px;
   color: rgba(0, 0, 0, 0.87);
   display: flex;
@@ -132,45 +157,33 @@ md-autocomplete,
   justify-content: space-between;
   box-sizing: border-box;
   cursor: move;
-  background: white;
   font-size: 14px;
-}
-.selected-box.cdk-drag-preview {
-  box-sizing: border-box;
+  background: white;
   border-radius: 4px;
-  box-shadow: 2px 2px 4px rgba(0,0,0,.3)
-}
-.cdk-drag-animating {
-  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
-}
-.selected-box:last-child {
-  border: none;
-}
-.selected-list.cdk-drop-list-dragging .selected-box:not(.cdk-drag-placeholder) {
-  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
-}
-.custom-ghost-placeholder {
-  background: rgba(0,0,0,.4);
-  min-height: 60px;
-  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
-}
-
-
-/* Selected List Custom */
-
-
-sa-selector,
-sa-internal-selector,
-.selected-box.cdk-drag-preview {
+  box-shadow: 2px 2px 4px rgba(0,0,0,.3);
+  //background: rgba(0, 0, 0, 0.04);
+  &.active {
+    // extra options for status >= 1
+  }
+  &.inactive {
+    // extra options for status < 1
+    background: #DDD;
+  }
+  &.published {
+    // extra options for status == 1
+  }
+  &.unpublished {
+    // extra options for published != 1
+    background: #DDD;
+  }
+  &:last-child {
+    border: none;
+  }
   .column-image,
   .column-title,
   .column-action {
     float: left;
   }
-}
-
-sa-selector,
-sa-internal-selector {
   .column-image {
     width: 15%;
     padding-right: 10px;
@@ -183,6 +196,9 @@ sa-internal-selector {
     width: 60%;
     padding-right: 10px;
   }
+  .column-image {
+    width: 15%;
+  }
   .column-action {
     width: 25%;
     > * {
@@ -191,67 +207,6 @@ sa-internal-selector {
       margin-bottom: 2px;
       &:last-child {
         margin-bottom: 0;
-      }
-    }
-  }
-}
-.selected-box.cdk-drag-preview {
-  .column-image {
-    width: 15%;
-  }
-  .column-title {
-    width: 85%;
-  }
-}
-
-
-
-sa-selector,
-sa-internal-selector {
-  margin: 0 auto;
-  .routing {
-    color: #333;
-    font-size: 13px;
-  }
-  .selected-list {
-    .selected-list-header {
-      margin-bottom: 20px;
-      padding-bottom: 20px;
-      h3,
-      .note {
-        margin: 0;
-        display: inline-block;
-        vertical-align: text-bottom;
-        line-height: 1.2;
-      }
-      .note {
-        padding-left: 10px;
-      }
-    }
-    .selected-message-box {
-      // extra information for the list messages (currently only used for an empty list)
-    }
-    .selected-list-container {
-      width: 100%;
-    }
-    .selected-list-row {
-      margin-bottom: 10px;
-      padding: 12px 16px;
-      background: rgba(0, 0, 0, 0.04);
-      border-radius: 2px;
-      &.active {
-        // extra options for status >= 1
-      }
-      &.inactive {
-        // extra options for status < 1
-        background: #DDD;
-      }
-      &.published {
-        // extra options for status == 1
-      }
-      &.unpublished {
-        // extra options for published != 1
-        background: #DDD;
       }
     }
     .btn.btn-delete, .btn.btn-edit, .btn.btn-status {
@@ -278,10 +233,28 @@ sa-internal-selector {
     }
   }
 }
-.firefox .btn.btn-delete svg, .firefox .btn.btn-edit svg {
-  &,
-  g {
-    max-width: 28px;
-    max-height: 28px;
+.cdk-drag-animating {
+  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.selected-list.cdk-drop-list-dragging {
+  .selected-box:not(.cdk-drag-placeholder) {
+    transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+  }
+  .custom-ghost-placeholder {
+    background: #fff;
+    min-height: 60px;
+    transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+  }
+}
+.firefox {
+  .btn.btn-delete, btn.btn-edit {
+    svg {
+      &,
+      g {
+        max-width: 28px;
+        max-height: 28px;
+      }
+    }
   }
 }
