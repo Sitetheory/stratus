@@ -1,4 +1,4 @@
-<mat-card
+<div
         class="payment-method-container"
         [attr.id]="elementId"
         [class.model-changed]="model.changed"
@@ -22,37 +22,34 @@
         ></mat-icon-->
     </button>
     <!-- TODO make look more like either credit card or check(ACH) -->
-    <mat-card-content [className]="'style-'+templateStyle">
-        <!-- rowHeight="35px" -->
-        <mat-grid-list cols="3" rowHeight="{{templateStyle == 'minimal' ? 15 : 35}}px">
-            <mat-grid-tile colspan="3">
-                <span [innerHTML]="model.data.name" class="aligned-tile name" [style.justifyContent]="'flex-start'"></span>
-            </mat-grid-tile>
-            <mat-grid-tile colspan="2" [style.justifyContent]="'flex-start'">
-                <!--span [innerHTML]="model.data.brand" class="aligned-tile brand" [style.justifyContent]="'flex-start'"></span-->
-                <div class="aligned-tile" *ngIf="model.data.brand">
-                    <img [src]="getCardLogoUrl(model.data.brand)" [alt]="model.data.brand" class="brand"/>
-                </div>
-                <!--div class="aligned-tile" *ngIf="model.data.bank_name">
-                    <img [src]="getCardLogoUrl('ach')" alt="ACH" class="brand"/>
-                </div-->
-                <div class="aligned-tile" *ngIf="model.data.bank_name">
-                    <span [innerHTML]="model.data.bank_name" [style.justifyContent]="'flex-start'"></span>
-                </div>
-            </mat-grid-tile>
-            <mat-grid-tile colspan="1">
-                <span class="aligned-tile last-four" [style.justifyContent]="'flex-end'">...<span [innerHTML]="model.data.last4"></span></span>
-            </mat-grid-tile>
-            <mat-grid-tile colspan="3">
-                <div class="aligned-tile" [style.justifyContent]="'flex-end'" *ngIf="model.data.exp_month && model.data.exp_year">
-                    <span class="expiration" [class.expiring]="isExpiring()">
-                        Expires <span [innerHTML]="model.data.exp_month"></span>/<span [innerHTML]="model.data.exp_year"></span>
-                    </span>
-                </div>
-                <div class="aligned-tile" [style.justifyContent]="'flex-end'" *ngIf="isUnverified()">
-                    <button (click)="verifyPaymentMethod($event)">Verify</button>
-                </div>
-            </mat-grid-tile>
-        </mat-grid-list>
-    </mat-card-content>
-</mat-card>
+
+    <div class="verify" *ngIf="isUnverified()">
+        <button (click)="verifyPaymentMethod($event)">Verify</button>
+    </div>
+    <div class="card-row row-bank-name">
+        <!--div class="card-logo-ACH" *ngIf="model.data.bank_name">
+            <img [src]="getCardLogoUrl('ach')" alt="ACH" class="brand"/>
+        </div-->
+        <div class="clearfix" *ngIf="model.data.bank_name || model.data.brand">
+            <span class="expired-label" *ngIf="isExpired()">Expired</span>
+            <span class="bank-name" *ngIf="model.data.bank_name" [innerHTML]="model.data.bank_name"></span>
+            <span class="bank-name" *ngIf="!model.data.bank_name" [innerHTML]="model.data.brand"></span>
+        </div>
+    </div>
+    <div class="card-row row-number">
+        <span class="card-last-four">&bull;&bull;&bull;&bull;&nbsp;&bull;&bull;&bull;&bull;&nbsp;&bull;&bull;&bull;&bull;&nbsp;<span [innerHTML]="model.data.last4"></span></span>
+    </div>
+    <div class="card-row row-expiration">
+        <span class="expiration" *ngIf="model.data.exp_month && model.data.exp_year">
+            <span class="expiration" [class.expiring]="isExpiring()">
+                Expires <span [innerHTML]="model.data.exp_month"></span>/<span [innerHTML]="model.data.exp_year"></span>
+            </span>
+        </span>
+    </div>
+    <div class="card-row row-name">
+        <span [innerHTML]="model.data.name" class="name"></span>
+    </div>
+    <div class="card-logo" *ngIf="model.data.brand">
+        <img [src]="getCardLogoUrl(model.data.brand)" [alt]="model.data.brand" />
+    </div>
+</div>
