@@ -3,29 +3,53 @@
 @light-grey-color: #f5f5f5;
 @medium-grey-color: #d3d3d3;
 @light-red-color: #ffcbc7;
+@colorExpired: #ff0026;
 sa-stripe-payment-method-item {
-  mat-card.payment-method-container {
+  .payment-method-container {
     position: relative;
-    margin: 5px 1px;
     min-width: 160px;
-    max-width: 220px;
-    background-color: @light-blue-color;
-    padding: 0;
-    &.expired {
-      background-color: @medium-grey-color;
-      &::before {
-        overflow: hidden;
-        position: absolute;
-        top: 10px;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        content: "EXPIRED";
-        color: #eeeeee;
-        font-size: 30px;
-        text-align: center;
-        line-height: 4;
-        transform: rotate(-20deg);
+    max-width: 260px;
+    background: linear-gradient(#f0f0f0, #D8D8D8);
+    padding: 16px 24px;
+    font-size: 14px;
+    border: 1px solid #fff;
+    border-radius: 5px;
+    box-shadow: 0 0 3px rgba(0,0,0,.5);
+    .card-row {
+      padding: 7px 0;
+      &.row-bank-name {
+        padding-top: 0;
+      }
+      &.row-name {
+        padding-bottom: 0;
+      }
+      .name {
+        /* Make room for visa/mc logo */
+        padding-right: 80px;
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        white-space: nowrap;
+      }
+      .expired-label {
+        float: right;
+        text-transform: uppercase;
+        color: @colorExpired;
+        font-weight: bold;
+      }
+      .card-last-four {
+        margin: 20px 0 10px;
+        letter-spacing: 2px;
+        font-size: 16px;
+      }
+    }
+    .card-logo {
+      position: absolute;
+      right: 20px;
+      bottom: 15px;
+      width: 50px;
+      img {
+        width: 100%;
       }
     }
     &.unverified {
@@ -62,27 +86,9 @@ sa-stripe-payment-method-item {
         transform: rotate(-20deg);
       }
     }
-    mat-card-content {
-      display: block;
-      animation: background-color 2s ease-out both;
-      -webkit-animation: background-color 2s ease-out both;
-      white-space: pre;
-
-      padding: 16px;
-      /* padding-top: 20px; */
-      &.style-minimal {
-        padding: 5px 10px;
-      }
-    }
-    mat-grid-tile .aligned-tile {
-      display: flex;
-      width: 100%;
-    }
     .expiration.expiring {
-      background-color: #ff000061;
-      border-radius: 25px;
-      padding: 0 3px;
-      line-height: 1.5;
+      color: @colorExpired;
+      font-weight: bold;
     }
     .action-buttons {
       position: absolute;
