@@ -65,6 +65,20 @@
         return `${location.origin + path}`
     }
 
+    // Cache busting (query-string) for module URLs
+    const cacheParam = (() => {
+        const v = boot && (boot.cacheTime || boot.suffix)
+        return v ? `?v=${encodeURIComponent(String(v))}` : ''
+    })()
+
+    const withCacheBust = (url: string) => {
+        if (typeof url !== 'string' || !url) return url
+        if (!cacheParam) return url
+        // Don't double-append if already has query string
+        return url.includes('?') ? `${url}&v=${encodeURIComponent(String(boot.cacheTime || boot.suffix))}` : `${url}${cacheParam}`
+    }
+
+
     if (typeof requirejs !== 'undefined') {
         // Handle RequireJS Detection
         // TODO: We need to clone the boot configuration because Require.js will change the reference directly
@@ -156,7 +170,10 @@
                     continue
                 }
                 // const pathUrl = `${boot.cdn + boot.relative + config.paths[path]}.js${boot.cacheTime ? '?v=' + boot.cacheTime : ''}`
-                const pathUrl = `${boot.cdn + boot.relative + config.paths[path]}.js`
+                // const pathUrl = `${boot.cdn + boot.relative + config.paths[path]}.js`
+                const rawUrl = `${boot.cdn + boot.relative + config.paths[path]}.js`
+                const pathUrl = withCacheBust(rawUrl)
+
                 if (path.endsWith('*')) {
                     // console.log('wildcard!')
                     const pathRe = path.replace('/', '\\/').replace('*', '(.*)')
