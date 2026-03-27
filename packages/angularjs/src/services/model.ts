@@ -342,6 +342,88 @@ export class Model<T = LooseObject> extends ModelBase<T> {
         return sanitizedOptions
     }
 
+    getReadOnlyFields(): string[] {
+        const fields = this.meta.get('readOnlyFields')
+        return isArray(fields) ? fields.filter((field: any) => isString(field) && !!field) : []
+    }
+
+    deletePath(obj: any, path: string): void {
+        if (!obj || !isString(path)) {
+            return
+        }
+
+        const parts = path.split('.')
+        const lastKey = parts.pop()
+        if (!lastKey) {
+            return
+        }
+
+        let parent = obj as Record<string, any>
+
+        for (const part of parts) {
+            if (!parent || !isObject(parent) || !has(parent, part)) {
+                parent = null
+                break
+            }
+            parent = parent[part]
+        }
+
+        if (parent && isObject(parent) && has(parent, lastKey)) {
+            delete parent[lastKey]
+        }
+    }
+
+    pruneEmptyBranches(obj: any): boolean {
+        if (!isObject(obj) || isArray(obj)) {
+            return isEmpty(obj)
+        }
+
+        const target = obj as Record<string, any>
+
+        for (const key of Object.keys(target)) {
+            const value = target[key]
+
+            if (isObject(value) && !isArray(value)) {
+                const emptyChild = this.pruneEmptyBranches(value)
+                if (emptyChild) {
+                    delete target[key]
+                }
+                continue
+            }
+
+            if (isUndefined(value)) {
+                delete target[key]
+            }
+        }
+
+        return isEmpty(target)
+    }
+
+    sanitizeReadOnlyPatchPayload(payload: any): any {
+        if (!isObject(payload)) {
+            return payload
+        }
+
+        const sanitized = cloneDeep(payload)
+        const readOnlyFields = this.getReadOnlyFields()
+
+        if (!readOnlyFields.length) {
+            return sanitized
+        }
+
+        forEach(readOnlyFields, (path: string) => {
+            this.deletePath(sanitized, path)
+        })
+
+        this.pruneEmptyBranches(sanitized)
+
+        return sanitized
+    }
+
+    getSavablePatch(): any {
+        return this.sanitizeReadOnlyPatchPayload(cloneDeep(this.toPatch()))
+    }
+
     // Watch for Data Changes
     async watcher() {
         // Ensure we only watch once
@@ -377,6 +459,13 @@ export class Model<T = LooseObject> extends ModelBase<T> {
         const isUserChangeSet = isUndefined(changeSet)
         if (isUserChangeSet) {
             changeSet = super.handleChanges()
+
+            // Remove client-computed / read-only fields before autosave logic reacts
+            changeSet = this.sanitizeReadOnlyPatchPayload(changeSet)
+
+            if (!isEmpty(this.patch)) {
+                this.patch = this.sanitizeReadOnlyPatchPayload(this.patch)
+            }
         }
 
         // Ensure ChangeSet is valid
@@ -491,6 +580,8 @@ export class Model<T = LooseObject> extends ModelBase<T> {
         // XHR Flags for Collection
         if (this.collection) {
             // TODO: Change to a Model ID Register
+            // In live edit mode when we are editing a model, we don't necessarily want to make this collection be
+            // considered pending if there are child elements... but there may be contexts in which that is necessary
             this.collection.pending = true
 
             // Dispatch Collection Change Event
@@ -790,7 +881,7 @@ export class Model<T = LooseObject> extends ModelBase<T> {
             return this.doSave(options)
         }
         // Sanity Checks for Persisted Entities
-        if (!this.isNew() && (this.pending || !this.completed || isEmpty(this.toPatch()))) {
+        if (!this.isNew() && (this.pending || !this.completed || isEmpty(this.getSavablePatch()))) {
             console.warn(
                 `Blocked attempt to save ${isEmpty(this.toPatch()) ? 'an empty payload' : 'a duplicate XHR'} to a persisted model.`
             )
@@ -845,7 +936,7 @@ export class Model<T = LooseObject> extends ModelBase<T> {
         if (this.autoSaveTimeout) {
             clearTimeout(this.autoSaveTimeout)
         }
-        if (this.pending || !this.completed || this.isNew() || isEmpty(this.toPatch())) {
+        if (this.pending || !this.completed || this.isNew() || isEmpty(this.getSavablePatch())) {
             return
         }
         if (this.autoSaveHalt && !this.autoSave) {
@@ -882,6 +973,9 @@ export class Model<T = LooseObject> extends ModelBase<T> {
         }
         options.patch = (options.patch && !this.isNew())
         let data = super.toJSON(options)
+        if (options.patch) {
+            data = this.sanitizeReadOnlyPatchPayload(data)
+        }
         const metaData = this.meta.get('api')
         if (metaData) {
             data = {
