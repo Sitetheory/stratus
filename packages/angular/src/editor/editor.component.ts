@@ -4,6 +4,7 @@ import {
     ChangeDetectorRef,
     Component,
     ElementRef,
+    HostBinding,
     Input,
     OnInit,
 } from '@angular/core'
@@ -246,6 +247,24 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
     @Input() property: string
     @Input() classes: object
 
+    // Layout Attributes
+    @Input() compact = false
+    fullscreenActive = false
+
+    get isCompact(): boolean {
+        return !!this.compact && !this.fullscreenActive
+    }
+    // Add if compact
+    @HostBinding('class.editor-compact')
+    get hostCompact(): boolean {
+        return this.isCompact
+    }
+
+    @HostBinding('class.editor-fullscreen')
+    get hostFullscreen(): boolean {
+        return this.fullscreenActive
+    }
+
     // Dependencies
     _ = _
     has = has
@@ -460,9 +479,9 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
         moreMisc: [
             // 'menuButton',
             'html',
+            'fullscreen',
             'undo',
             'redo',
-            'fullscreen',
             'print',
             // FIXME: This plugin doesn't detect the window.html2pdf, likely due to timing issues
             // 'getPDF',
@@ -488,6 +507,16 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             blur: (event: FocusEvent) => this.onBlur(event),
             // FIXME: Froala doesn't support focus events, so this never fires...
             focus: (event: FocusEvent) => this.onFocus(event),
+            fullscreen: () => {
+                const editor = (this.froalaEditorDirective as any).getEditor()
+                this.fullscreenActive = !!editor.fullscreen.isActive()
+
+                setTimeout(() => {
+                    editor.size.refresh()
+                    editor.position.refresh()
+                    this.refresh()
+                }, 30)
+            },
             // bound to Froala Editor
             // contentChanged () {
             //     const editor = this
@@ -1038,7 +1067,7 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             moreMisc: {
                 buttons: this.froalaStandardButtons.moreMisc,
                 align: 'right',
-                buttonsVisible: 1
+                buttonsVisible: 2
             }
         },
         // A MD sized screen will show the default toolbarButtons
@@ -1065,20 +1094,20 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
         toolbarButtonsXS: {
             moreText: {
                 buttons: this.froalaStandardButtons.moreText,
-                buttonsVisible: 0
+                buttonsVisible: 1
             },
             moreParagraph: {
                 buttons: this.froalaStandardButtons.moreParagraph,
-                buttonsVisible: 0
+                buttonsVisible: 1
             },
             moreRich: {
                 buttons: this.froalaStandardButtons.moreRich,
-                buttonsVisible: 0
+                buttonsVisible: 1
             },
             moreMisc: {
                 buttons: this.froalaStandardButtons.moreMisc,
                 align: 'right',
-                buttonsVisible: 0
+                buttonsVisible: 1
             }
         },
         // This needs to remain false, or inline styles will be converted to froala classes.
@@ -1235,6 +1264,11 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             // @ts-ignore
             this.froalaConfig.inlineClasses = this.classes
         }
+
+        if (this.compact) {
+            this.applyCompactToolbar()
+        }
+
         // console.info(`${moduleName}.ngOnInit`)
         const dataControl = this.form.get('dataString')
         // This valueChanges field is an Event Emitter
@@ -1268,6 +1302,72 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
         if (this.dev) {
             this.listDuplicates(this.froalaConfig)
         }
+    }
+
+    applyCompactToolbar() {
+        // this doesn't work anyways in the sidebar
+        this.froalaConfig.toolbarSticky = false
+        // Appear above Sidebar Drawer for Live Edit
+        this.froalaConfig.zIndex = 101
+        // This is necessary in order to make the drop down menus appear
+        this.froalaConfig.scrollableContainer = 'body';
+        // Try to make it reset after fullscreen
+        (this.froalaConfig as any).toolbarResponsiveToEditor = true
+        const compactButtons = {
+            moreText: {
+                buttons: [
+                    'bold',
+                    'italic',
+                    'underline',
+                    'strikeThrough',
+                    'subscript',
+                    'superscript',
+                    // 'fontFamily',
+                    // 'fontSize',
+                    'textColor',
+                    'clearFormatting'
+                ],
+                buttonsVisible: 3
+            },
+            moreParagraph: {
+                buttons: [
+                    'formatUL',
+                    'formatOL',
+                    'alignLeft',
+                    'alignCenter',
+                    'alignRight',
+                    'quote'
+                ],
+                buttonsVisible: 2
+            },
+            moreRich: {
+                buttons: [
+                    'linkManager',
+                    'insertImage',
+                    'insertVideo',
+                    'insertTable',
+                    'citationInsert',
+                    'insertHR',
+                    'specialCharacters'
+                ],
+                buttonsVisible: 2
+            },
+            moreMisc: {
+                buttons: [
+                    'html',
+                    'fullscreen',
+                    'undo',
+                    'redo',
+                    'help'
+                ],
+                align: 'right',
+                buttonsVisible: 2
+            }
+        }
+
+        this.froalaConfig.toolbarButtons = compactButtons
+        this.froalaConfig.toolbarButtonsSM = compactButtons
+        this.froalaConfig.toolbarButtonsXS = compactButtons
     }
 
     modelSave(value: string) {
