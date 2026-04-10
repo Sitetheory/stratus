@@ -24,7 +24,8 @@ import {
     map,
     once,
     set,
-    throttle
+    throttle,
+    unset
 } from 'lodash'
 import {IRootScopeService} from 'angular'
 import {Stratus} from '@stratusjs/runtime/stratus'
@@ -352,25 +353,7 @@ export class Model<T = LooseObject> extends ModelBase<T> {
             return
         }
 
-        const parts = path.split('.')
-        const lastKey = parts.pop()
-        if (!lastKey) {
-            return
-        }
-
-        let parent = obj as Record<string, any>
-
-        for (const part of parts) {
-            if (!parent || !isObject(parent) || !has(parent, part)) {
-                parent = null
-                break
-            }
-            parent = parent[part]
-        }
-
-        if (parent && isObject(parent) && has(parent, lastKey)) {
-            delete parent[lastKey]
-        }
+        unset(obj, path)
     }
 
     pruneEmptyBranches(obj: any): boolean {
@@ -466,6 +449,8 @@ export class Model<T = LooseObject> extends ModelBase<T> {
             if (!isEmpty(this.patch)) {
                 this.patch = this.sanitizeReadOnlyPatchPayload(this.patch)
             }
+            // Recompute dirty flag from the sanitized, savable patch
+            this.changed = !isEmpty(this.patch)
         }
 
         // Ensure ChangeSet is valid
