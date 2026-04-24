@@ -127,6 +127,7 @@ export class Collection<T = LooseObject> extends EventManager {
     // Action Flags
     filtering = false
     paginate = false
+    collectionApiHydratedFromUrl = false
 
     // Allow watching models
     watch = false
@@ -462,6 +463,7 @@ export class Collection<T = LooseObject> extends EventManager {
 
     fetch(action?: string, data?: LooseObject, options?: CollectionSyncOptions) {
         return new Promise(async (resolve: any, reject: any) => {
+            this.hydrateCollectionApiFromUrl()
             this.sync(action, data || this.meta.get('api'), options)
                 .then(resolve)
                 .catch(async (error: XMLHttpRequest|ErrorBase) => {
@@ -485,6 +487,34 @@ export class Collection<T = LooseObject> extends EventManager {
                     return
                 })
         })
+    }
+
+    hydrateCollectionApiFromUrl() {
+        if (this.collectionApiHydratedFromUrl || typeof window === 'undefined') {
+            return
+        }
+        const api = this.meta.get('api') || {}
+        if (!isUndefined(get(api, 'p')) && get(api, 'p') !== null && get(api, 'p') !== '') {
+            this.collectionApiHydratedFromUrl = true
+            return
+        }
+        const url = new URL(window.location.href)
+        let rawPage: string | null = null
+        if (typeof this.target === 'string' && this.target.length) {
+            rawPage = url.searchParams.get(`page[${this.target}]`)
+        }
+        if (!rawPage) {
+            rawPage = url.searchParams.get('page')
+        }
+        const page = Number(rawPage)
+        if (!page || Number.isNaN(page)) {
+            this.collectionApiHydratedFromUrl = true
+            return
+        }
+        this.meta.set('api.p', page)
+        this.meta.set('pagination.pageCurrent', page)
+        this.paginate = true
+        this.collectionApiHydratedFromUrl = true
     }
 
     filter(query: string) {
