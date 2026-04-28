@@ -309,6 +309,14 @@ export class Collection<T = LooseObject> extends EventManager {
                 withCredentials: this.withCredentials,
             }
             if (!isUndefined(data)) {
+                if (isObject(data) && Object.prototype.hasOwnProperty.call(data, 'p')) {
+                    const validPage = this.normalizePositiveWholeNumber((data as LooseObject).p)
+                    if (isUndefined(validPage)) {
+                        delete (data as LooseObject).p
+                    } else {
+                        (data as LooseObject).p = validPage
+                    }
+                }
                 if (action === 'GET') {
                     if (isObject(data) && Object.keys(data).length) {
                         request.url += request.url.includes('?') ? '&' : '?'
@@ -516,10 +524,20 @@ export class Collection<T = LooseObject> extends EventManager {
     }
 
     page(page: any) {
-        this.paginate = !isEmpty(page)
-        this.meta.set('api.p', page)
+        const validPage = this.normalizePositiveWholeNumber(page)
+        this.paginate = !isUndefined(validPage)
+        if (isUndefined(validPage)) {
+            delete this.meta.get('api').p
+            return
+        }
+        this.meta.set('api.p', validPage)
         this.fetch().then()
         delete this.meta.get('api').p
+    }
+
+    private normalizePositiveWholeNumber(value: any): number | undefined {
+        const page = Number(value)
+        return Number.isFinite(page) && Number.isInteger(page) && page >= 1 ? page : undefined
     }
 
     toJSON() {
