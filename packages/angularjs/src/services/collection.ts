@@ -527,23 +527,24 @@ export class Collection<T = LooseObject> extends EventManager {
         const validPage = this.normalizePositiveWholeNumber(page)
         this.paginate = !isUndefined(validPage)
         if (isUndefined(validPage)) {
-            const api = this.meta.get('api')
-            if (isObject(api)) {
-                delete api.p
-            }
+            this.clearApiPage()
             return
         }
         this.meta.set('api.p', validPage)
         this.fetch().then()
-        const api = this.meta.get('api')
-        if (isObject(api)) {
-            delete api.p
-        }
+        this.clearApiPage()
     }
 
     private normalizePositiveWholeNumber(value: any): number | undefined {
         const page = Number(value)
         return Number.isFinite(page) && Number.isInteger(page) && page >= 1 ? page : undefined
+    }
+
+    private clearApiPage(): void {
+        const api = this.meta.get('api')
+        if (isObject(api) && Object.prototype.hasOwnProperty.call(api, 'p')) {
+            delete api.p
+        }
     }
 
     toJSON() {
