@@ -3,10 +3,11 @@
 
 /* global define */
 
-// Ensure angular gets exported appropriately
+// Angular is already primed by the host page. Export the existing global so
+// SystemJS imports do not fetch angular-native a second time.
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['angular-native'], factory) // FIXME defining 'angular-native' here can attempt to load angularjs a second time. Need to import instead
+    define([], factory)
   } else {
     factory()
   }

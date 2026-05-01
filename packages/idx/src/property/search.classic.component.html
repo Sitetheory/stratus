@@ -277,14 +277,15 @@
                     <div class="sale-status-border dotted-spaced-underline"></div>
 
                     <div data-layout="row" data-layout-align="space-around center">
-                        <a class="btn" data-ng-click="search();filterMenu.close();" aria-label="Search Submission">Search</a>
+                        <a class="btn" id="idx-property-search-btn" data-ng-click="search();filterMenu.close();" aria-label="Search Submission">Search</a>
                     </div>
 
                 </div>
             </div>
         </div>
 
-        <a aria-label="Open Additional Search Options"
+        <a id="idx-property-search-advanced-filters-btn"
+           aria-label="Open Additional Search Options"
            data-ng-click="showInlinePopup($event, '.stratus-idx-property-search-menu')"
            class="open-filters">
             Advanced Filters
@@ -293,6 +294,6 @@
     </div>
 
     <div class="search-row" data-layout="row" data-layout-align="space-around center">
-        <a class="btn btn-submit" data-ng-click="search()" aria-label="Search Submission">Search Now</a>
+        <a id="idx-property-search-now-btn" class="btn btn-submit" data-ng-click="search()" aria-label="Search Submission">Search Now</a>
     </div>
 </div>

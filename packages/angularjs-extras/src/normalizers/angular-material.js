@@ -3,7 +3,16 @@
 
 /* global define, System */
 
-// Ensure angular gets injected first
+function hasAngularModule (name) {
+  try {
+    return !!(window.angular && window.angular.module(name))
+  } catch (err) {
+    return false
+  }
+}
+
+// Angular Material is usually primed by the host page. Only fetch the native
+// files when this normalizer is used without that direct script bootstrap.
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
     define(['angular'], factory)
@@ -11,12 +20,13 @@
     factory()
   }
 }(this, async function () {
-  // FIXME: This never actually sets the correct timing for what's referencing the import...
-  await Promise.all([
-    System.import('angular-aria'),
-    System.import('angular-animate'),
-    System.import('angular-messages')
-  ])
-  await System.import('angular-material-native')
-  console.log('[angular-material] timing set via normalizer')
+  if (!hasAngularModule('ngMaterial')) {
+    await Promise.all([
+      hasAngularModule('ngAria') ? null : System.import('angular-aria'),
+      hasAngularModule('ngAnimate') ? null : System.import('angular-animate'),
+      hasAngularModule('ngMessages') ? null : System.import('angular-messages')
+    ])
+    await System.import('angular-material-native')
+  }
+  return window.angular
 }))
