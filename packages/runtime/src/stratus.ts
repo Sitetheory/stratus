@@ -132,7 +132,7 @@ interface StratusRuntime {
         CssLoader?: (url: any) => Promise<void>
         JsLoader?: (url: any) => Promise<void>
         LoadCss?: (urls?: string|string[]|LooseObject) => Promise<void>
-        LoadImage?: (obj: {el?: any, spy?: any, size?: any, ignoreSpy?: boolean, offset?: number}) => void
+        LoadImage?: (obj: {el?: any, spy?: any, size?: any, ignoreSpy?: boolean, offset?: number, nextCheckAt?: number, retryTimer?: any}) => void
         OnScroll?: () => void
         XHR: (request?: XHRRequest) => any
     }
@@ -952,13 +952,21 @@ Stratus.Internals.IsOnScreen = (el: any, offset: any, partial: any) => {
     if (typeof partial !== 'boolean') {
         partial = true
     }
-    const viewPort: any = Stratus.Environment.get('viewPort') || window
+    let viewPort: any = Stratus.Environment.get('viewPort') || window
+    if (viewPort !== window && viewPort instanceof jQuery) {
+        const viewPortCollection: any = viewPort
+        viewPort = viewPortCollection.length ? viewPortCollection[0] : null
+    }
     const nativeEl: any = head(el)
     if (!nativeEl || typeof nativeEl.getBoundingClientRect !== 'function') {
         return false
     }
     const elementRect: any = nativeEl.getBoundingClientRect()
-    const viewportRect: any = viewPort === window
+    const viewportRect: any = (
+        viewPort === window ||
+        !viewPort ||
+        typeof viewPort.getBoundingClientRect !== 'function'
+    )
         ? {
             top: 0,
             bottom: window.innerHeight || document.documentElement.clientHeight,
@@ -1098,7 +1106,7 @@ Stratus.Internals.LoadEnvironment = () => {
 
 // Lazy Load Image
 // ---------------
-Stratus.Internals.LoadImage = (obj: {el?: any, spy?: any, size?: any, ignoreSpy?: boolean, offset?: number}) => {
+Stratus.Internals.LoadImage = (obj: {el?: any, spy?: any, size?: any, ignoreSpy?: boolean, offset?: number, nextCheckAt?: number, retryTimer?: any}) => {
     if (!obj.el) {
         setTimeout(() => {
             Stratus.Internals.LoadImage(obj)
@@ -1120,11 +1128,107 @@ Stratus.Internals.LoadImage = (obj: {el?: any, spy?: any, size?: any, ignoreSpy?
     // we are able to.  We need to slowly phase out the previous jQuery logic
     // for something more Stable and lightweight.
     const nativeEl: any = head(el)
-    // This ensures the image is sizable before we attempt any sizing.
-    if (!(nativeEl.offsetHeight || nativeEl.clientHeight)) {
-        setTimeout(() => {
+    const now = Date.now()
+    const lastCheck = Number(hydrate(el.attr('data-stratus-src-last-check')) || 0)
+    if (lastCheck && now - lastCheck < 200) {
+        return
+    }
+    el.attr('data-stratus-src-last-check', dehydrate(now))
+    const type: string = String(el.prop('tagName') || '').toLowerCase()
+    const spyReference: any = hydrate(el.attr('data-stratus-src-spy')) || null
+    const referenceEl: any = spyReference ? (head(el.parents(spyReference)) || nativeEl) : nativeEl
+    const getCurrentLoadSignature = () => {
+        return [
+            hydrate(el.attr('data-src')) || el.attr('src') || el.css('background-image') || '',
+            hydrate(el.attr('data-size')) || '',
+            Stratus.Environment.get('resizeOptimisticLock') || 0,
+            Stratus.Environment.get('devicePixelRatio') || 1,
+            referenceEl && (referenceEl.offsetWidth || referenceEl.clientWidth || 0),
+            referenceEl && (referenceEl.offsetHeight || referenceEl.clientHeight || 0),
+            spyReference || ''
+        ].join('|')
+    }
+    const currentLoadSignature = getCurrentLoadSignature()
+    if (
+        el.hasClass('loaded') &&
+        hydrate(el.attr('data-stratus-src-loaded-signature')) === currentLoadSignature
+    ) {
+        obj.nextCheckAt = Number.MAX_SAFE_INTEGER
+        return
+    }
+    const preloadOffset = hydrate(el.attr('data-stratus-src-offset'))
+    const defaultPreloadDistance = jQuery(Stratus.Environment.get('viewPort') || window).height()
+    const requestedPreloadDistance = typeof preloadOffset !== 'undefined' ? preloadOffset : obj.offset
+    const preloadDistance = Number(
+        typeof requestedPreloadDistance !== 'undefined' ? requestedPreloadDistance : defaultPreloadDistance
+    ) || 0
+    const scheduleRetry = (delay: number) => {
+        if (obj.retryTimer) {
+            return
+        }
+        obj.nextCheckAt = now + delay
+        obj.retryTimer = setTimeout(() => {
+            obj.retryTimer = null
+            el.removeAttr('data-stratus-src-last-check')
             Stratus.Internals.LoadImage(obj)
-        }, 500)
+        }, delay)
+    }
+    const isNearVerticalViewport = () => {
+        const spyEl: any = head(obj.spy || el)
+        if (!spyEl || typeof spyEl.getBoundingClientRect !== 'function') {
+            return false
+        }
+        let viewPort: any = Stratus.Environment.get('viewPort') || window
+        if (viewPort !== window && viewPort instanceof jQuery) {
+            const viewPortCollection: any = viewPort
+            viewPort = viewPortCollection.length ? viewPortCollection[0] : null
+        }
+        const elementRect: any = spyEl.getBoundingClientRect()
+        const viewportRect: any = (
+            viewPort === window ||
+            !viewPort ||
+            typeof viewPort.getBoundingClientRect !== 'function'
+        )
+            ? {
+                top: 0,
+                bottom: window.innerHeight || document.documentElement.clientHeight
+            }
+            : viewPort.getBoundingClientRect()
+        return elementRect.top <= viewportRect.bottom + preloadDistance &&
+            elementRect.bottom >= viewportRect.top - preloadDistance
+    }
+    if (!obj.ignoreSpy && !Stratus.Internals.IsOnScreen(obj.spy || el, -Math.abs(preloadDistance))) {
+        // if (cookie('env')) {
+        //     console.log('not on screen:', head(el))
+        // }
+        obj.nextCheckAt = now + 200
+        // Horizontal carousels often stage adjacent slides just outside the
+        // visible area without firing scroll/resize when they become active.
+        // Keep those vertically-near elements eligible without polling the
+        // whole offscreen page.
+        if (isNearVerticalViewport()) {
+            scheduleRetry(500)
+        }
+        return
+    }
+    // This ensures the image is sizable before we attempt any sizing. Background
+    // images in ratio/carousel layouts can have useful width before reporting
+    // height, so allow width for non-img elements.
+    const hasNativeSize = (
+        nativeEl.offsetHeight ||
+        nativeEl.clientHeight ||
+        (type !== 'img' && (nativeEl.offsetWidth || nativeEl.clientWidth))
+    )
+    const hasReferenceSize = referenceEl && (
+        referenceEl.offsetHeight ||
+        referenceEl.clientHeight ||
+        (type !== 'img' && (referenceEl.offsetWidth || referenceEl.clientWidth))
+    )
+    if (!(hasNativeSize || hasReferenceSize)) {
+        const heightRetries = Number(hydrate(el.attr('data-stratus-src-height-retries')) || 0)
+        const retryDelay = heightRetries >= 3 ? 2000 : 500
+        el.attr('data-stratus-src-height-retries', dehydrate(heightRetries + 1))
+        scheduleRetry(retryDelay)
         return
     }
     // TODO: Convert to Native or Stratus.Select options
@@ -1142,18 +1246,8 @@ Stratus.Internals.LoadImage = (obj: {el?: any, spy?: any, size?: any, ignoreSpy?
         // }
         return
     }
-    const preloadOffset = hydrate(el.attr('data-stratus-src-offset'))
-    const defaultPreloadDistance = jQuery(Stratus.Environment.get('viewPort') || window).height()
-    const requestedPreloadDistance = typeof preloadOffset !== 'undefined' ? preloadOffset : obj.offset
-    const preloadDistance = Number(
-        typeof requestedPreloadDistance !== 'undefined' ? requestedPreloadDistance : defaultPreloadDistance
-    ) || 0
-    if (!obj.ignoreSpy && !Stratus.Internals.IsOnScreen(obj.spy || el, -Math.abs(preloadDistance))) {
-        // if (cookie('env')) {
-        //     console.log('not on screen:', head(el))
-        // }
-        return
-    }
+    obj.nextCheckAt = null
+    el.removeAttr('data-stratus-src-height-retries')
     el.attr('data-loading', dehydrate(true))
     // TODO: Access `complete()` from `DOM` instead of the deprecated `Stratus.DOM.complete()` reference
     Stratus.DOM.complete(() => {
@@ -1170,13 +1264,23 @@ Stratus.Internals.LoadImage = (obj: {el?: any, spy?: any, size?: any, ignoreSpy?
         // offscreen originally)
         let src: any = hydrate(el.attr('data-src')) || el.attr('src') || null
         // NOTE: Element can be either <img> or any element with background image in style
-        const type: any = el.prop('tagName').toLowerCase()
         const getBackgroundImageSrc = (backgroundImage: string): string|null => {
             if (!backgroundImage || backgroundImage === 'none') {
                 return null
             }
             const match = /^url\(["']?(.+?)["']?\)$/i.exec(backgroundImage)
             return match ? match[1] : null
+        }
+        const normalizeImageSrc = (imageSrc: string|null): string|null => {
+            if (!imageSrc) {
+                return null
+            }
+            return imageSrc.indexOf('//') === 0 ? `${window.location.protocol}${imageSrc}` : imageSrc
+        }
+        const getSizedImageSrc = (imageSrc: string, sizeName: string): string|null => {
+            // Strip the current generated image size before appending the newly selected size.
+            const match = /^(.+?)(-(?:xs|s|m|l|xl|hq|hd|hdl|hdxl|[A-Z]{2}))?\.(?=[^.]*$)(.+)/i.exec(imageSrc)
+            return match ? `${match[1]}-${sizeName}.${match[3]}` : null
         }
         const isExplicitStratusSrc = (): boolean => {
             const attr = el.attr('data-stratus-src') || el.attr('stratus-src') || null
@@ -1202,9 +1306,13 @@ Stratus.Internals.LoadImage = (obj: {el?: any, spy?: any, size?: any, ignoreSpy?
         if (type !== 'img' && !isExplicitStratusSrc()) {
             const backgroundSrc = getBackgroundImageSrc(el.css('background-image'))
             if (backgroundSrc && backgroundSrc !== src) {
-                src = backgroundSrc
-                el.attr('data-src', src)
-                el.removeAttr('data-size')
+                const currentDataSize = hydrate(el.attr('data-size')) || null
+                const currentSizedSrc = currentDataSize ? getSizedImageSrc(src, currentDataSize) : null
+                if (normalizeImageSrc(backgroundSrc) !== normalizeImageSrc(currentSizedSrc)) {
+                    src = backgroundSrc
+                    el.attr('data-src', src)
+                    el.removeAttr('data-size')
+                }
             }
         }
 
@@ -1228,22 +1336,28 @@ Stratus.Internals.LoadImage = (obj: {el?: any, spy?: any, size?: any, ignoreSpy?
         const resizeOptimisticLock = hydrate(el.attr('data-resize-optimistic-lock')) || 0
 
         let width: any = null
+        let height: any = null
         // let unit: any = null
         // let percentage: any = null
 
         // Allow specifying an alternative element to reference the best size. Useful in cases like before/after images
         // or carousels where the element is going to be in a collapsed display non container
-        const spyReference: any = hydrate(el.attr('data-stratus-src-spy')) || null
-        const $referenceElement = spyReference ? (head(el.parents(spyReference)) || nativeEl) : nativeEl
+        const $referenceElement = referenceEl || nativeEl
 
         // if (el.width()) {
         const nativeWidth = $referenceElement.offsetWidth || $referenceElement.clientWidth || null
+        const nativeHeight = $referenceElement.offsetHeight || $referenceElement.clientHeight || null
         if (nativeWidth) {
             // Check if there is CSS width hard coded on the element
             // width = el.width()
             width = nativeWidth
         } else if (el.attr('width')) {
             width = el.attr('width')
+        }
+        if (nativeHeight) {
+            height = nativeHeight
+        } else if (el.attr('height')) {
+            height = el.attr('height')
         }
 
         // TODO: If width comes out to xs, we want to still allow checks!
@@ -1256,6 +1370,48 @@ Stratus.Internals.LoadImage = (obj: {el?: any, spy?: any, size?: any, ignoreSpy?
             width = parseInt(width[1], 10)
             // TODO: getting percentage is useless  unless we know the parent
             // percentage = unit === '%' ? (width / 100) : null
+        }
+        if (height) {
+            const digest = /([\d]+)(.*)/
+            height = digest.exec(height)
+            height = parseInt(height[1], 10)
+        }
+
+        if (
+            canResizeSource &&
+            type !== 'img' &&
+            width > 0 &&
+            height > 0 &&
+            (el.css('background-size') || '').indexOf('cover') !== -1
+        ) {
+            const imageRatioSource = normalizeImageSrc(src)
+            if (!imageRatioSource) {
+                return
+            }
+            const cachedImageRatioSource = hydrate(el.attr('data-stratus-src-natural-ratio-src')) || null
+            const cachedImageRatio = Number(hydrate(el.attr('data-stratus-src-natural-ratio')) || 0)
+            if (cachedImageRatioSource === imageRatioSource && cachedImageRatio > 0) {
+                width = max([width, Math.ceil(height * cachedImageRatio)])
+            } else if (!hydrate(el.attr('data-stratus-src-natural-ratio-loading'))) {
+                el.attr('data-stratus-src-natural-ratio-loading', dehydrate(true))
+                const image = new Image()
+                image.onload = () => {
+                    if (image.naturalWidth && image.naturalHeight) {
+                        el.attr('data-stratus-src-natural-ratio', dehydrate(image.naturalWidth / image.naturalHeight))
+                        el.attr('data-stratus-src-natural-ratio-src', dehydrate(imageRatioSource))
+                    }
+                    el.removeAttr('data-stratus-src-natural-ratio-loading')
+                    el.attr('data-loading', dehydrate(false))
+                    el.removeAttr('data-stratus-src-last-check')
+                    Stratus.Internals.LoadImage(obj)
+                }
+                image.onerror = () => {
+                    el.removeAttr('data-stratus-src-natural-ratio-loading')
+                    el.attr('data-loading', dehydrate(false))
+                }
+                image.src = imageRatioSource
+                return
+            }
         }
 
         let greatestWidth = el.attr('data-greatest-width') || 0
@@ -1399,9 +1555,8 @@ Stratus.Internals.LoadImage = (obj: {el?: any, spy?: any, size?: any, ignoreSpy?
         // Change Source to right size (get the base and extension and ignore size)
         const srcOrigin: string = src
         // FIXME: This regex has targeting issues if the url has an extension after a ?, like ?v=100.jpg
-        const srcRegex: RegExp = /^(.+?)(-[A-Z]{2})?\.(?=[^.]*$)(.+)/gi
-        const srcMatch: RegExpExecArray = canResizeSource ? srcRegex.exec(src) : null
-        if (canResizeSource && srcMatch !== null) {
+        const sizedSrc = canResizeSource ? getSizedImageSrc(src, dataSize) : null
+        if (canResizeSource && sizedSrc) {
             // if (cookie('env')
             //     // @ts-ignore
             //     && includes(src, 'BM-33IrvingAve-SitePlan-Print-R1%20copy')
@@ -1412,7 +1567,7 @@ Stratus.Internals.LoadImage = (obj: {el?: any, spy?: any, size?: any, ignoreSpy?
             //         'srcMatch:', srcMatch
             //     )
             // }
-            src = `${srcMatch[1]}-${dataSize}.${srcMatch[3]}`
+            src = sizedSrc
         } else if (canResizeSource) {
             console.error('Unable to find file name for image src:', el)
         }
@@ -1420,6 +1575,10 @@ Stratus.Internals.LoadImage = (obj: {el?: any, spy?: any, size?: any, ignoreSpy?
         // Stop repeat checks
         if (dataSize === hydrate(el.attr('data-size'))) {
             el.attr('data-loading', dehydrate(false))
+            if (el.hasClass('loaded')) {
+                el.attr('data-stratus-src-loaded-signature', dehydrate(getCurrentLoadSignature()))
+                obj.nextCheckAt = Number.MAX_SAFE_INTEGER
+            }
             return
         }
 
@@ -1429,6 +1588,8 @@ Stratus.Internals.LoadImage = (obj: {el?: any, spy?: any, size?: any, ignoreSpy?
         }
 
         const srcOriginProtocol: string = srcOrigin.startsWith('//') ? window.location.protocol + srcOrigin : srcOrigin
+        const renderedSrc = type === 'img' ? el.attr('src') : getBackgroundImageSrc(el.css('background-image'))
+        const renderedOriginLoaded = normalizeImageSrc(renderedSrc) === normalizeImageSrc(srcOriginProtocol)
 
         // if (cookie('env')) {
         //     console.log('LoadImage() srcOriginProtocol:', srcOriginProtocol)
@@ -1453,7 +1614,7 @@ Stratus.Internals.LoadImage = (obj: {el?: any, spy?: any, size?: any, ignoreSpy?
                 }
                 jQuery(this).remove() // prevent memory leaks
             })
-        } else {
+        } else if (!renderedOriginLoaded) {
             // If Background Image Create a Test Image to Test Loading
             const loadEl: any = jQuery('<img/>')
             loadEl.attr('src', srcOriginProtocol)
@@ -1477,7 +1638,6 @@ Stratus.Internals.LoadImage = (obj: {el?: any, spy?: any, size?: any, ignoreSpy?
         // onLoad and onError (if size doesn't exist, just don't use the prefetched image)
         // Change the Source to be the desired path (for image or background)
         const srcProtocol: any = src.startsWith('//') ? window.location.protocol + src : src
-        el.attr('data-loading', dehydrate(false))
         el.attr('data-size', dehydrate(dataSize))
 
         // if (cookie('env')) {
@@ -1485,7 +1645,24 @@ Stratus.Internals.LoadImage = (obj: {el?: any, spy?: any, size?: any, ignoreSpy?
         // }
 
         // Preload this image first. Ensures speed to display and image is valid
+        if (normalizeImageSrc(renderedSrc) === normalizeImageSrc(srcProtocol)) {
+            el.attr('data-loading', dehydrate(false))
+            el.attr('data-size', dehydrate(dataSize))
+            el.addClass('loaded').removeClass('loading')
+            el.attr('data-stratus-src-loaded-signature', dehydrate(getCurrentLoadSignature()))
+            obj.nextCheckAt = Number.MAX_SAFE_INTEGER
+            return
+        }
+
         const preFetchEl: any = jQuery('<img/>')
+        if (type !== 'img') {
+            el.addClass('loaded').removeClass('loading')
+            el.css('background-image', 'url(' + srcProtocol + ')')
+            el.attr('data-loading', dehydrate(false))
+            el.attr('data-stratus-src-loaded-signature', dehydrate(getCurrentLoadSignature()))
+            obj.nextCheckAt = Number.MAX_SAFE_INTEGER
+            return
+        }
         preFetchEl.attr('src', srcProtocol)
         preFetchEl.on('load', () => {
             el.addClass('loaded').removeClass('loading')
@@ -1494,11 +1671,15 @@ Stratus.Internals.LoadImage = (obj: {el?: any, spy?: any, size?: any, ignoreSpy?
             } else {
                 el.css('background-image', 'url(' + srcProtocol + ')')
             }
+            el.attr('data-loading', dehydrate(false))
+            el.attr('data-stratus-src-loaded-signature', dehydrate(getCurrentLoadSignature()))
+            obj.nextCheckAt = Number.MAX_SAFE_INTEGER
             jQuery(this).remove() // prevent memory leaks
         })
         preFetchEl.on('error', () => {
             // Image failed, dont try to use this url
             // TODO: Go down in sizes before reaching the origin
+            el.attr('data-loading', dehydrate(false))
             if (cookie('env')) {
                 console.warn('LoadImage() Unable to load', dataSize.toUpperCase(), 'size at', srcProtocol)
             }
@@ -1579,6 +1760,9 @@ Stratus.Internals.OnScroll = once(() => {
             if (typeof obj === 'undefined') {
                 return
             }
+            if (obj.nextCheckAt && obj.nextCheckAt > Date.now()) {
+                return
+            }
             // TODO: This feature draft would allow more control between the
             // dynamic request and these event triggers, but would require a
             // change in format for all locations accessing this group.
@@ -1610,6 +1794,12 @@ Stratus.Internals.OnScroll = once(() => {
     }
     const resizeChangeHandler: any = () => {
         Stratus.Environment.iterate('resizeOptimisticLock')
+        const scrollElements: any = Stratus.RegisterGroup.get('OnScroll')
+        forEach(scrollElements, (obj: any) => {
+            if (obj) {
+                obj.nextCheckAt = null
+            }
+        })
         viewPortChangeHandler()
     }
     // if (cookie('env')) {
