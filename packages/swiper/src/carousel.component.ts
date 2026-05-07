@@ -263,7 +263,8 @@ Stratus.Components.SwiperCarousel = {
          */
         const replaceImageSizeSrc = (src: string, sizeName: 'xs' | 's' | 'm' | 'l' | 'xl' | 'hq' | string): string => {
             const srcOrigin = src
-            const srcRegex: RegExp = /^(.+?)(-[A-Z]{2})?\.(?=[^.]*$)(.+)/gi
+            // Strip the current generated image size before appending the newly selected size.
+            const srcRegex: RegExp = /^(.+?)(-(?:xs|s|m|l|xl|hq|hd|hdl|hdxl|[A-Z]{2}))?\.(?=[^.]*$)(.+)/i
             const srcMatch: RegExpExecArray = srcRegex.exec(src)
             if (srcMatch !== null) {
                 src = srcMatch[1] + '-' + sizeName + '.' + srcMatch[3]
