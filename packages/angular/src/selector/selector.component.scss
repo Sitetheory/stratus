@@ -161,6 +161,7 @@ md-autocomplete,
   background: white;
   border-radius: 4px;
   box-shadow: 2px 2px 4px rgba(0,0,0,.3);
+  position: relative;
   //background: rgba(0, 0, 0, 0.04);
   &.active {
     // extra options for status >= 1
@@ -201,36 +202,93 @@ md-autocomplete,
   }
   .column-action {
     width: 25%;
-    > * {
-      display: inline-block;
-      vertical-align: middle;
-      margin-bottom: 2px;
-      &:last-child {
-        margin-bottom: 0;
-      }
-    }
-    .btn.btn-delete, .btn.btn-edit, .btn.btn-status {
-      float: right;
+    display: grid;
+    grid-template-columns: repeat(3, 35px);
+    gap: 5px;
+    justify-content: end;
+    align-content: start;
+    .btn.btn-remove,
+    .btn.btn-edit,
+    .btn.btn-status,
+    .btn.btn-duplicate,
+    .btn.btn-publish,
+    .btn.btn-delete-content {
       width: 35px;
-      min-width: unset;
+      min-width: 35px;
       height: 35px;
       font-size: 10px;
-      margin-left: 3px;
+      margin: 0;
       padding: 0;
       background: #fff;
       box-shadow: 0 0 2px rgba(0, 0, 0, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
       &:hover {
         background: #fff;
         box-shadow: 0 0 2px rgba(0, 0, 0, 0.8);
       }
+      mat-icon {
+        width: 22px;
+        height: 22px;
+        line-height: 22px;
+      }
       svg {
+        display: block;
         margin: 0 auto;
-        width: 60%;
+        width: 22px;
+        height: 22px;
         g {
           fill: #222;
         }
       }
+      &[disabled] {
+        opacity: .45;
+        cursor: default;
+      }
     }
+    .btn.btn-status.inactive-status {
+      svg {
+        transform: rotate(180deg);
+        g {
+          fill: #ff2565;
+        }
+      }
+    }
+    .btn.btn-publish:not(.is-published) {
+      background: #ff2565;
+      svg g {
+        fill: #fff;
+      }
+      &:hover {
+        background: #d9144d;
+      }
+    }
+    .btn.btn-publish.is-published {
+      background: #f2f2f2 !important;
+      opacity: .65;
+      box-shadow: 0 0 2px rgba(0, 0, 0, 0.25);
+      svg g {
+        fill: #777 !important;
+      }
+      &:hover {
+        background: #f2f2f2 !important;
+      }
+    }
+    .btn.btn-publish.is-published[disabled],
+    .btn.btn-publish.is-published.mat-button-disabled {
+      background: #f2f2f2 !important;
+      svg g {
+        fill: #777 !important;
+      }
+    }
+  }
+  .selected-list-row-progress {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 3px;
   }
 }
 .cdk-drag-animating {
@@ -248,7 +306,12 @@ md-autocomplete,
   }
 }
 .firefox {
-  .btn.btn-delete, btn.btn-edit {
+  .btn.btn-remove,
+  .btn.btn-edit,
+  .btn.btn-status,
+  .btn.btn-duplicate,
+  .btn.btn-publish,
+  .btn.btn-delete-content {
     svg {
       &,
       g {

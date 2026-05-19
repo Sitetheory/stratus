@@ -168,9 +168,12 @@ export class SelectorComponent extends RootComponent { // implements OnInit, OnC
 
         // SVG Icons
         forEach({
-            selector_delete: `${Stratus.BaseUrl}sitetheorycore/images/icons/actionButtons/delete.svg`,
+            selector_delete: `${Stratus.BaseUrl}sitetheorycore/images/icons/actionButtons/minus.svg`,
             selector_status: `${Stratus.BaseUrl}sitetheorycore/images/icons/actionButtons/visibility.svg`,
-            selector_edit: `${Stratus.BaseUrl}sitetheorycore/images/icons/actionButtons/edit.svg`
+            selector_duplicate: `${Stratus.BaseUrl}sitetheorycore/images/icons/actionButtons/duplicate.svg`,
+            selector_edit: `${Stratus.BaseUrl}sitetheorycore/images/icons/actionButtons/edit.svg`,
+            selector_publish: `${Stratus.BaseUrl}sitetheorycore/images/icons/actionButtons/publish.svg`,
+            selector_permanent_delete: `${Stratus.BaseUrl}sitetheorycore/images/icons/actionButtons/delete.svg`
         }, (value, key) => iconRegistry.addSvgIcon(key, sanitizer.bypassSecurityTrustResourceUrl(value)).getNamedSvgIcon(key))
 
         // TODO: Assess & Possibly Remove when the System.js ecosystem is complete
@@ -268,7 +271,18 @@ export class SelectorComponent extends RootComponent { // implements OnInit, OnC
         window.open(model.contentType.editUrl + '?id=' + model.id, '_blank')
     }
 
+    getContentApiUrl(model: any): string {
+        const controller = this.getString(model, 'contentType.controller')
+        const target = controller
+            ? controller.replace(/\\/g, '/')
+            : 'Content'
+        return `/Api/${target}/${model.id}`
+    }
+
     toggleStatus(model: any) {
+        if (this.isPending(model)) {
+            return
+        }
         // model is not directly a model, but just a sub entity of content.version.modules
         // so we have to create a special API call to update just this one model
         // 'Content/' + model.id
@@ -278,10 +292,11 @@ export class SelectorComponent extends RootComponent { // implements OnInit, OnC
         }
         const statusOriginal = model.status
         model.status = statusOriginal === 1 ? 0 : 1
+        this.setPending(model, true)
         // Create a direct XHR
         const xhr = new XHR({
             method: 'PUT',
-            url: '/Api/Content/' + model.id,
+            url: this.getContentApiUrl(model),
             data: {
                 route: {},
                 meta,
@@ -296,20 +311,212 @@ export class SelectorComponent extends RootComponent { // implements OnInit, OnC
                 if (!isObject(response) || get(response, 'meta.status[0].code') !== 'SUCCESS') {
                     console.error('error[toggleStatus]:', response)
                     model.status = statusOriginal
+                    this.setPending(model, false)
                     this.refresh().then()
                     return
                 }
                 // console.log('success[toggleStatus]:', response)
+                this.setPending(model, false)
+                this.refresh().then()
             })
             .catch((error: any) => {
                 console.error('error[toggleStatus]:', error)
                 model.status = statusOriginal
+                this.setPending(model, false)
                 this.refresh().then()
             })
         return
     }
 
+    duplicate(model: any) {
+        if (this.isPending(model)) {
+            return
+        }
+        const models = this.dataRef()
+        if (!models || !models.length || !model || !model.id) {
+            console.error('unable to duplicate model from selection:', model, models)
+            this.refresh().then()
+            return
+        }
+
+        let index: number = models.indexOf(model)
+        if (index === -1) {
+            const mirrorModels = models
+                .map((m: any) => model.id === m.id ? m : null)
+                .filter((m: any) => m)
+            if (isArray(mirrorModels) && mirrorModels.length) {
+                index = models.indexOf(
+                    head(mirrorModels)
+                )
+            }
+        }
+
+        if (index === -1) {
+            console.error('unable to find model:', model, 'in selection:', models)
+            return
+        }
+
+        let meta: LooseObject = {}
+        if (!isUndefined(this.data)) {
+            meta = Object.assign({}, get(this.data, 'meta.data.api') || {})
+        }
+        meta.apiSpecialAction = 'duplicate'
+        this.setPending(model, true)
+
+        const xhr = new XHR({
+            method: 'PUT',
+            url: this.getContentApiUrl(model),
+            data: {
+                route: {},
+                meta,
+                payload: model
+            },
+            type: 'application/json'
+        })
+        xhr.send()
+            .then((response: LooseObject | Array<LooseObject> | string) => {
+                if (!isObject(response) || get(response, 'meta.status[0].code') !== 'SUCCESS') {
+                    console.error('error[duplicate]:', response)
+                    this.setPending(model, false)
+                    this.refresh().then()
+                    return
+                }
+
+                const duplicated = get(response, 'payload') || response
+                if (!isObject(duplicated) || !get(duplicated, 'id') || get(duplicated, 'id') === model.id) {
+                    console.error('error[duplicate]: duplicate response did not include a new content id.', response)
+                    this.setPending(model, false)
+                    this.refresh().then()
+                    return
+                }
+
+                models.splice(index + 1, 0, duplicated)
+                this.prioritize()
+                this.setPending(model, false)
+                this.model.trigger('change')
+                this.refresh().then()
+            })
+            .catch((error: any) => {
+                console.error('error[duplicate]:', error)
+                this.setPending(model, false)
+                this.refresh().then()
+            })
+        return
+    }
+
+    publish(model: any) {
+        if (this.isPending(model) || this.isPublished(model)) {
+            return
+        }
+
+        const publishedOriginal = get(model, 'version.published')
+        this.setPending(model, true)
+
+        const xhr = new XHR({
+            method: 'PUT',
+            url: this.getContentApiUrl(model),
+            data: {
+                route: {},
+                meta: {
+                    forceContext: 'context',
+                    showMeta: true,
+                    showRouting: true
+                },
+                payload: {
+                    id: model.id,
+                    version: {
+                        id: get(model, 'version.id'),
+                        timePublish: 'API::NOW'
+                    }
+                }
+            },
+            type: 'application/json'
+        })
+        xhr.send()
+            .then((response: LooseObject | Array<LooseObject> | string) => {
+                if (!isObject(response) || get(response, 'meta.status[0].code') !== 'SUCCESS') {
+                    console.error('error[publish]:', response)
+                    if (model.version) {
+                        model.version.published = publishedOriginal
+                    }
+                    this.setPending(model, false)
+                    this.refresh().then()
+                    return
+                }
+                const publishedModel = get(response, 'payload')
+                if (isObject(publishedModel) && model.version) {
+                    model.version.published = get(publishedModel, 'version.published', 1)
+                    model.version.timePublish = get(publishedModel, 'version.timePublish', model.version.timePublish)
+                } else if (model.version) {
+                    model.version.published = 1
+                }
+                this.setPending(model, false)
+                this.refresh().then()
+            })
+            .catch((error: any) => {
+                console.error('error[publish]:', error)
+                if (model.version) {
+                    model.version.published = publishedOriginal
+                }
+                this.setPending(model, false)
+                this.refresh().then()
+            })
+    }
+
+    deleteContent(model: any) {
+        if (this.isPending(model)) {
+            return
+        }
+        if (!window.confirm(`Delete this ${this.contentTypeName(model)} from the entire site?`)) {
+            return
+        }
+
+        const statusOriginal = model.status
+        let meta = {}
+        if (!isUndefined(this.data)) {
+            meta = get(this.data, 'meta.data.api') || {}
+        }
+        this.setPending(model, true)
+        model.status = -1
+
+        const xhr = new XHR({
+            method: 'PUT',
+            url: this.getContentApiUrl(model),
+            data: {
+                route: {},
+                meta,
+                payload: {
+                    id: model.id,
+                    status: -1
+                }
+            },
+            type: 'application/json'
+        })
+        xhr.send()
+            .then((response: LooseObject | Array<LooseObject> | string) => {
+                if (!isObject(response) || get(response, 'meta.status[0].code') !== 'SUCCESS') {
+                    console.error('error[deleteContent]:', response)
+                    model.status = statusOriginal
+                    this.setPending(model, false)
+                    this.refresh().then()
+                    return
+                }
+                this.setPending(model, false)
+                this.remove(model)
+                this.refresh().then()
+            })
+            .catch((error: any) => {
+                console.error('error[deleteContent]:', error)
+                model.status = statusOriginal
+                this.setPending(model, false)
+                this.refresh().then()
+            })
+    }
+
     remove(model: any) {
+        if (this.isPending(model)) {
+            return
+        }
         const models = this.dataRef()
         if (!models || !models.length) {
             console.error('unable to remove model from selection:', models)
@@ -402,6 +609,38 @@ export class SelectorComponent extends RootComponent { // implements OnInit, OnC
             return null
         }
         return variable
+    }
+
+    contentTypeName(model: any): string {
+        return this.getString(model, 'contentType.name')
+            || this.getString(model, 'name')
+            || 'content'
+    }
+
+    contentTypeDisplay(model: any): string {
+        const contentType = this.contentTypeName(model)
+        const subtype = this.getString(model, 'type')
+        return subtype && subtype !== contentType ? `${contentType}: ${subtype}` : contentType
+    }
+
+    isPublished(model: any): boolean {
+        return Number(get(model, 'version.published')) === 1
+    }
+
+    isActive(model: any): boolean {
+        return Number(get(model, 'status')) === 1
+    }
+
+    isPending(model: any): boolean {
+        return !!get(model, '_selectorPending')
+    }
+
+    setPending(model: any, pending: boolean) {
+        if (!model) {
+            return
+        }
+        model._selectorPending = pending
+        this.refresh().then()
     }
 
     // selectedModel (observer: any) : any {

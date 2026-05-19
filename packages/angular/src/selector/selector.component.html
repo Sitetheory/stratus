@@ -36,7 +36,7 @@
         <!--<span class="selectedModels" style="display: none" *ngIf="log('selector.ngIf:', dataSub | async)"></span>-->
         <!-- [cdkDragDisabled]="get(selectedModel, 'status') < 1" -->
         <div cdkDrag class="selected-list-row selected-box sa-drag-container"
-             [ngClass]="{'active': get(selectedModel, 'status') === 1, 'inactive' : get(selectedModel, 'status') !== 1, 'published': get(selectedModel, 'version.published') === 1, 'unpublished': get(selectedModel, 'version.published') !== 1}"
+             [ngClass]="{'active': isActive(selectedModel), 'inactive' : !isActive(selectedModel), 'published': isPublished(selectedModel), 'unpublished': !isPublished(selectedModel)}"
              *ngFor="let selectedModel of dataSub | async">
             <div class="custom-ghost-placeholder" *cdkDragPlaceholder></div>
             <div class="selected-list-container">
@@ -83,7 +83,7 @@
                         </mat-icon>
                         <span class="comment content-type-name font-body"
                               [ngClass]="((getString(selectedModel, 'contentType.name') || getString(selectedModel, 'name')) | lowercase) + '-color'"
-                              [textContent]="(getString(selectedModel, 'contentType.name') || getString(selectedModel, 'name')) + ((get(selectedModel, 'status') !== 1) ? ' (hidden)' : '') + ((get(selectedModel, 'version.published') !== 1) ? ' (unpublished)' : '')">
+                              [textContent]="contentTypeDisplay(selectedModel) + ((!isActive(selectedModel)) ? ' (hidden)' : '') + ((!isPublished(selectedModel)) ? ' (unpublished)' : '')">
                         </span>
                     </div>
 
@@ -95,30 +95,66 @@
                     </span>
                 </div>
                 <div class="column-action">
-                    <a mat-button
-                            [matTooltip]="'Delete ' + (getString(selectedModel, 'contentType.name') || getString(selectedModel, 'name')) + ' [THIS COLLECTION ONLY]'"
-                            aria-label="Delete Item"
-                            class="btn btn-delete"
-                            (click)="remove(selectedModel)">
-                        <mat-icon svgIcon="selector_delete" aria-hidden="false" aria-label="Delete Item">Delete</mat-icon>
-                    </a>
-                    <a mat-button
-                       [matTooltip]="'Toggle ' + (getString(selectedModel, 'contentType.name') || getString(selectedModel, 'name')) + ' Status ' + (get(selectedModel, 'status') ? 'Off' : 'On') + ' [ALL CONTEXTS]'"
-                       aria-label="Toggle Status"
-                       class="btn btn-status"
-                       (click)="toggleStatus(selectedModel)">
-                        <mat-icon svgIcon="selector_status" aria-hidden="false" aria-label="Toggle Status">Toggle Status</mat-icon>
-                    </a>
-                    <a mat-button
+                    <button type="button"
+                            mat-button
                             *ngIf="has(selectedModel, 'contentType.editUrl')"
-                            [matTooltip]="'Edit ' + (getString(selectedModel, 'contentType.name') || getString(selectedModel, 'name'))"
+                            [matTooltip]="'edit ' + (getString(selectedModel, 'contentType.name') || getString(selectedModel, 'name') || 'content')"
                             aria-label="Edit Item in New Window"
                             class="btn btn-edit"
-                            (click)="goToUrl(selectedModel, '_blank');">
+                            [disabled]="isPending(selectedModel)"
+                            (click)="$event.stopPropagation(); goToUrl(selectedModel, '_blank');">
                         <mat-icon svgIcon="selector_edit" aria-hidden="false" aria-label="Edit">Edit</mat-icon>
-                    </a>
+                    </button>
+                    <button type="button"
+                            mat-button
+                            [matTooltip]="isActive(selectedModel) ? 'make invisible (everywhere)' : 'make visible (everywhere)'"
+                            aria-label="Toggle Status"
+                            class="btn btn-status"
+                            [ngClass]="{'inactive-status': !isActive(selectedModel)}"
+                            [disabled]="isPending(selectedModel)"
+                            (click)="$event.stopPropagation(); toggleStatus(selectedModel)">
+                        <mat-icon svgIcon="selector_status" aria-hidden="false" aria-label="Toggle Status">Toggle Status</mat-icon>
+                    </button>
+                    <button type="button"
+                            mat-button
+                            [matTooltip]="isPublished(selectedModel) ? 'already published' : 'publish this content'"
+                            aria-label="Publish Item"
+                            class="btn btn-publish"
+                            [disabled]="isPending(selectedModel) || isPublished(selectedModel)"
+                            [ngClass]="{'is-published': isPublished(selectedModel)}"
+                            (click)="$event.stopPropagation(); publish(selectedModel)">
+                        <mat-icon svgIcon="selector_publish" aria-hidden="false" aria-label="Publish">Publish</mat-icon>
+                    </button>
+                    <button type="button"
+                            mat-button
+                            [matTooltip]="'duplicate this ' + (getString(selectedModel, 'contentType.name') || getString(selectedModel, 'name') || 'content')"
+                            aria-label="Duplicate Item"
+                            class="btn btn-duplicate"
+                            [disabled]="isPending(selectedModel)"
+                            (click)="$event.stopPropagation(); duplicate(selectedModel)">
+                        <mat-icon svgIcon="selector_duplicate" aria-hidden="false" aria-label="Duplicate">Duplicate</mat-icon>
+                    </button>
+                    <button type="button"
+                            mat-button
+                            matTooltip="remove from this collection"
+                            aria-label="Remove Item from This Collection"
+                            class="btn btn-remove"
+                            [disabled]="isPending(selectedModel)"
+                            (click)="$event.stopPropagation(); remove(selectedModel)">
+                        <mat-icon svgIcon="selector_delete" aria-hidden="false" aria-label="Remove Item">Remove</mat-icon>
+                    </button>
+                    <button type="button"
+                            mat-button
+                            [matTooltip]="'delete this ' + (getString(selectedModel, 'contentType.name') || getString(selectedModel, 'name') || 'content') + ' from the entire site'"
+                            aria-label="Delete Item from Site"
+                            class="btn btn-delete-content"
+                            [disabled]="isPending(selectedModel)"
+                            (click)="$event.stopPropagation(); deleteContent(selectedModel)">
+                        <mat-icon svgIcon="selector_permanent_delete" aria-hidden="false" aria-label="Delete Content">Delete</mat-icon>
+                    </button>
                 </div>
             </div>
+            <mat-progress-bar class="selected-list-row-progress" mode="indeterminate" *ngIf="isPending(selectedModel)"></mat-progress-bar>
         </div>
     </div>
 </div>
