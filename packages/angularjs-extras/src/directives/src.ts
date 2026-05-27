@@ -45,6 +45,7 @@ Stratus.Directives.Src = (
         stratusSrc: '@stratusSrc',
         // stratusSrcSizes: '@stratusSrcSizes', // Unused at this time
         stratusSrcVersion: '@stratusSrcVersion',
+        stratusSrcResize: '@stratusSrcResize',
         style: '@style',
         initNow: '=initNow'
     },

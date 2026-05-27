@@ -117,14 +117,31 @@ md-autocomplete,
 /* Based on Angular Material 8+ */
 .selected-list {
   margin: 0 auto;
-  max-width: 600px;
+  max-width: 650px;
   min-height: 60px;
   display: block;
   border-radius: 4px;
+  padding-right: 50px;
   //overflow: hidden;
   .routing {
     color: #333;
     font-size: 13px;
+  }
+  .flag-syndicated {
+    position: absolute;
+    left: 0;
+    top: 0;
+    border-right-color: transparent !important;
+    border-bottom-color: transparent !important;
+    border-style: solid;
+    border-width: 1em;
+    z-index: 79;
+    &.original {
+      border-color: #8099CC;
+    }
+    &.edited {
+      border-color: #F4B046;
+    }
   }
   .selected-list-header {
     margin-bottom: 20px;
@@ -162,20 +179,36 @@ md-autocomplete,
   border-radius: 4px;
   box-shadow: 2px 2px 4px rgba(0,0,0,.3);
   position: relative;
+  overflow: visible;
   //background: rgba(0, 0, 0, 0.04);
   &.active {
     // extra options for status >= 1
   }
   &.inactive {
-    // extra options for status < 1
-    background: #DDD;
+    background: #f1f1f1;
+    .column-image,
+    .column-title {
+      filter: grayscale(1);
+      opacity: .8;
+    }
+  }
+  &.stale {
+    background: #f7f7f7;
+    .column-image,
+    .column-title {
+      filter: grayscale(1);
+      opacity: .65;
+    }
+    .column-action {
+      filter: none;
+      opacity: 1;
+    }
   }
   &.published {
     // extra options for status == 1
   }
   &.unpublished {
     // extra options for published != 1
-    background: #DDD;
   }
   &:last-child {
     border: none;
@@ -248,10 +281,17 @@ md-autocomplete,
       }
     }
     .btn.btn-status.inactive-status {
+      mat-icon {
+        color: #ff2565;
+      }
       svg {
         transform: rotate(180deg);
+        color: #ff2565;
         g {
-          fill: #ff2565;
+          fill: #ff2565 !important;
+        }
+        * {
+          fill: #ff2565 !important;
         }
       }
     }
@@ -305,6 +345,49 @@ md-autocomplete,
     transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
   }
 }
+.btn.btn-refresh.selected-row-refresh {
+  position: absolute;
+  top: 50%;
+  right: -45px;
+  transform: translateY(-50%);
+  width: 35px;
+  min-width: 35px;
+  height: 35px;
+  margin: 0;
+  padding: 0;
+  background: #fff;
+  box-shadow: 0 0 2px rgba(0, 0, 0, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 85;
+  cursor: pointer;
+  &:hover {
+    background: #fff;
+    box-shadow: 0 0 2px rgba(0, 0, 0, 0.8);
+  }
+  mat-icon {
+    width: 22px;
+    height: 22px;
+    line-height: 22px;
+    color: #4375c4;
+  }
+  svg {
+    display: block;
+    margin: 0 auto;
+    width: 22px;
+    height: 22px;
+    color: #4375c4;
+    fill: #4375c4;
+  }
+  svg * {
+    fill: #4375c4 !important;
+  }
+  &[disabled] {
+    opacity: .45;
+    cursor: default;
+  }
+}
 .firefox {
   .btn.btn-remove,
   .btn.btn-edit,
@@ -318,6 +401,92 @@ md-autocomplete,
         max-width: 28px;
         max-height: 28px;
       }
+    }
+  }
+  .btn.btn-refresh.selected-row-refresh {
+    position: absolute;
+    top: 50%;
+    right: -45px;
+    transform: translateY(-50%);
+    width: 35px;
+    min-width: 35px;
+    height: 35px;
+    margin: 0;
+    padding: 0;
+    background: #fff;
+    box-shadow: 0 0 2px rgba(0, 0, 0, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 85;
+    cursor: pointer;
+    &:hover {
+      background: #fff;
+      box-shadow: 0 0 2px rgba(0, 0, 0, 0.8);
+    }
+    mat-icon {
+      width: 22px;
+      height: 22px;
+      line-height: 22px;
+      color: #4375c4;
+    }
+    svg {
+      display: block;
+      margin: 0 auto;
+      width: 22px;
+      height: 22px;
+      color: #4375c4;
+      fill: #4375c4;
+    }
+    svg * {
+      fill: #4375c4 !important;
+    }
+    &[disabled] {
+      opacity: .45;
+      cursor: default;
+    }
+  }
+}
+
+sa-selector .selected-list .sa-drag-container .column-action .btn.btn-status.inactive-status {
+  md-icon,
+  mat-icon,
+  svg {
+    color: #ff2565 !important;
+    fill: #ff2565 !important;
+  }
+  svg {
+    g,
+    path,
+    polygon,
+    polyline,
+    rect,
+    * {
+      fill: #ff2565 !important;
+    }
+  }
+}
+
+sa-selector,
+sa-internal-selector {
+  .selected-list-row.inactive,
+  .sa-drag-container.inactive,
+  .selected-list-row.stale,
+  .sa-drag-container.stale {
+    .column-image,
+    .column-title {
+      filter: grayscale(1) !important;
+      opacity: .8 !important;
+    }
+    &.stale {
+      .column-image,
+      .column-title {
+        opacity: .65 !important;
+      }
+    }
+    .column-action {
+      filter: none !important;
+      opacity: 1 !important;
     }
   }
 }

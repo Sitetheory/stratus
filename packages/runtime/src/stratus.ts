@@ -1145,6 +1145,8 @@ Stratus.Internals.LoadImage = (obj: {el?: any, spy?: any, size?: any, ignoreSpy?
             Stratus.Environment.get('devicePixelRatio') || 1,
             referenceEl && (referenceEl.offsetWidth || referenceEl.clientWidth || 0),
             referenceEl && (referenceEl.offsetHeight || referenceEl.clientHeight || 0),
+            hydrate(el.attr('data-stratus-src-natural-ratio')) || '',
+            hydrate(el.attr('data-stratus-src-natural-ratio-src')) || '',
             spyReference || ''
         ].join('|')
     }
@@ -1214,15 +1216,19 @@ Stratus.Internals.LoadImage = (obj: {el?: any, spy?: any, size?: any, ignoreSpy?
     // This ensures the image is sizable before we attempt any sizing. Background
     // images in ratio/carousel layouts can have useful width before reporting
     // height, so allow width for non-img elements.
+    const isCoverBackground = type !== 'img' && (
+        hydrate(el.attr('data-stratus-src-cover')) ||
+        (el.css('background-size') || '').indexOf('cover') !== -1
+    )
     const hasNativeSize = (
         nativeEl.offsetHeight ||
         nativeEl.clientHeight ||
-        (type !== 'img' && (nativeEl.offsetWidth || nativeEl.clientWidth))
+        (type !== 'img' && !isCoverBackground && (nativeEl.offsetWidth || nativeEl.clientWidth))
     )
     const hasReferenceSize = referenceEl && (
         referenceEl.offsetHeight ||
         referenceEl.clientHeight ||
-        (type !== 'img' && (referenceEl.offsetWidth || referenceEl.clientWidth))
+        (type !== 'img' && !isCoverBackground && (referenceEl.offsetWidth || referenceEl.clientWidth))
     )
     if (!(hasNativeSize || hasReferenceSize)) {
         const heightRetries = Number(hydrate(el.attr('data-stratus-src-height-retries')) || 0)
@@ -1256,6 +1262,7 @@ Stratus.Internals.LoadImage = (obj: {el?: any, spy?: any, size?: any, ignoreSpy?
         // displays, but if you don't want that, you can bypass it with
         // data-hd="false"
         let hd: any = hydrate(el.attr('data-hd'))
+        const hdIsExplicit = typeof hd !== 'undefined'
         if (typeof hd === 'undefined') {
             hd = true
         }
@@ -1327,7 +1334,8 @@ Stratus.Internals.LoadImage = (obj: {el?: any, spy?: any, size?: any, ignoreSpy?
         }
 
         let dataSize: any = hydrate(el.attr('data-size')) || obj.size || null
-        const canResizeSource = isResizableImageSource(src)
+        const resizeSetting = hydrate(el.attr('data-stratus-src-resize'))
+        const canResizeSource = resizeSetting !== false && resizeSetting !== 'false' && isResizableImageSource(src)
         if (!canResizeSource) {
             dataSize = 'origin'
         }
@@ -1382,35 +1390,19 @@ Stratus.Internals.LoadImage = (obj: {el?: any, spy?: any, size?: any, ignoreSpy?
             type !== 'img' &&
             width > 0 &&
             height > 0 &&
-            (el.css('background-size') || '').indexOf('cover') !== -1
+            isCoverBackground
         ) {
             const imageRatioSource = normalizeImageSrc(src)
-            if (!imageRatioSource) {
-                return
-            }
             const cachedImageRatioSource = hydrate(el.attr('data-stratus-src-natural-ratio-src')) || null
             const cachedImageRatio = Number(hydrate(el.attr('data-stratus-src-natural-ratio')) || 0)
-            if (cachedImageRatioSource === imageRatioSource && cachedImageRatio > 0) {
+            if ((!cachedImageRatioSource || cachedImageRatioSource === imageRatioSource) && cachedImageRatio > 0) {
                 width = max([width, Math.ceil(height * cachedImageRatio)])
-            } else if (!hydrate(el.attr('data-stratus-src-natural-ratio-loading'))) {
-                el.attr('data-stratus-src-natural-ratio-loading', dehydrate(true))
-                const image = new Image()
-                image.onload = () => {
-                    if (image.naturalWidth && image.naturalHeight) {
-                        el.attr('data-stratus-src-natural-ratio', dehydrate(image.naturalWidth / image.naturalHeight))
-                        el.attr('data-stratus-src-natural-ratio-src', dehydrate(imageRatioSource))
-                    }
-                    el.removeAttr('data-stratus-src-natural-ratio-loading')
-                    el.attr('data-loading', dehydrate(false))
-                    el.removeAttr('data-stratus-src-last-check')
-                    Stratus.Internals.LoadImage(obj)
-                }
-                image.onerror = () => {
-                    el.removeAttr('data-stratus-src-natural-ratio-loading')
-                    el.attr('data-loading', dehydrate(false))
-                }
-                image.src = imageRatioSource
-                return
+            } else {
+                // Background-cover sizing needs enough pixels for both axes. Avoid
+                // fetching the origin thumbnail solely to calculate the natural
+                // ratio; that made delayed placeholders download -xs and then the
+                // final size. The larger rendered axis is a conservative fallback.
+                width = max([width, height])
             }
         }
 
@@ -1515,6 +1507,23 @@ Stratus.Internals.LoadImage = (obj: {el?: any, spy?: any, size?: any, ignoreSpy?
             el.attr('data-greatest-width', width)
             el.attr('data-current-width', width)
 
+            // Allow a small amount of upscaling for cover crops. A landscape image
+            // masked into a portrait ratio can land just above the next lower
+            // derivative, and forcing HQ for a few percent more source pixels is
+            // usually more wasteful than useful.
+            if (isCoverBackground) {
+                width = Math.ceil(width * 0.94)
+            }
+
+            // Retina/DPR sizing is still useful for foreground images without
+            // srcset, but masked background-cover images are usually decorative
+            // or visually cropped. Let them choose the closest derivative by CSS
+            // pixel size unless a template explicitly opts back in with
+            // data-hd="true".
+            if (isCoverBackground && !hdIsExplicit) {
+                hd = false
+            }
+
             // Use devicePixelRatio for HD
             if (hd && Stratus.Environment.get('devicePixelRatio')) {
                 width = width * Stratus.Environment.get('devicePixelRatio')
@@ -1590,6 +1599,14 @@ Stratus.Internals.LoadImage = (obj: {el?: any, spy?: any, size?: any, ignoreSpy?
         const srcOriginProtocol: string = srcOrigin.startsWith('//') ? window.location.protocol + srcOrigin : srcOrigin
         const renderedSrc = type === 'img' ? el.attr('src') : getBackgroundImageSrc(el.css('background-image'))
         const renderedOriginLoaded = normalizeImageSrc(renderedSrc) === normalizeImageSrc(srcOriginProtocol)
+        const setImageFetchPriority = (image: any, priority: 'high'|'low'|'auto') => {
+            const imageEl = image && image.jquery ? head(image) : image
+            if (imageEl && 'fetchPriority' in imageEl) {
+                imageEl.fetchPriority = priority
+            } else if (image && image.jquery) {
+                image.attr('fetchpriority', priority)
+            }
+        }
 
         // if (cookie('env')) {
         //     console.log('LoadImage() srcOriginProtocol:', srcOriginProtocol)
@@ -1614,9 +1631,10 @@ Stratus.Internals.LoadImage = (obj: {el?: any, spy?: any, size?: any, ignoreSpy?
                 }
                 jQuery(this).remove() // prevent memory leaks
             })
-        } else if (!renderedOriginLoaded) {
+        } else if (renderedSrc && !renderedOriginLoaded) {
             // If Background Image Create a Test Image to Test Loading
             const loadEl: any = jQuery('<img/>')
+            setImageFetchPriority(loadEl, 'low')
             loadEl.attr('src', srcOriginProtocol)
             loadEl.on('load', () => {
                 // If the image wasn't set in the background yet, set it now
@@ -1654,16 +1672,35 @@ Stratus.Internals.LoadImage = (obj: {el?: any, spy?: any, size?: any, ignoreSpy?
             return
         }
 
-        const preFetchEl: any = jQuery('<img/>')
-        if (type !== 'img') {
-            el.addClass('loaded').removeClass('loading')
-            el.css('background-image', 'url(' + srcProtocol + ')')
-            el.attr('data-loading', dehydrate(false))
-            el.attr('data-stratus-src-loaded-signature', dehydrate(getCurrentLoadSignature()))
-            obj.nextCheckAt = Number.MAX_SAFE_INTEGER
+        const pendingSrc = normalizeImageSrc(hydrate(el.attr('data-stratus-src-pending-src')) || null)
+        if (pendingSrc && pendingSrc === normalizeImageSrc(srcProtocol)) {
             return
         }
-        preFetchEl.attr('src', srcProtocol)
+        const preFetchEl: any = jQuery('<img/>')
+        if (type !== 'img') {
+            setImageFetchPriority(preFetchEl, 'low')
+            el.attr('data-stratus-src-pending-src', dehydrate(srcProtocol))
+            preFetchEl.on('load', () => {
+                el.css('background-image', 'url(' + srcProtocol + ')')
+                el.addClass('loaded').removeClass('loading')
+                el.attr('data-loading', dehydrate(false))
+                el.removeAttr('data-stratus-src-pending-src')
+                el.attr('data-stratus-src-loaded-signature', dehydrate(getCurrentLoadSignature()))
+                obj.nextCheckAt = Number.MAX_SAFE_INTEGER
+                jQuery(this).remove() // prevent memory leaks
+            })
+            preFetchEl.on('error', () => {
+                el.attr('data-loading', dehydrate(false))
+                el.removeAttr('data-stratus-src-pending-src')
+                if (cookie('env')) {
+                    console.warn('LoadImage() Unable to load', dataSize.toUpperCase(), 'size at', srcProtocol)
+                }
+                jQuery(this).remove() // prevent memory leaks
+            })
+            preFetchEl.attr('src', srcProtocol)
+            return
+        }
+        el.attr('data-stratus-src-pending-src', dehydrate(srcProtocol))
         preFetchEl.on('load', () => {
             el.addClass('loaded').removeClass('loading')
             if (type === 'img') {
@@ -1672,6 +1709,7 @@ Stratus.Internals.LoadImage = (obj: {el?: any, spy?: any, size?: any, ignoreSpy?
                 el.css('background-image', 'url(' + srcProtocol + ')')
             }
             el.attr('data-loading', dehydrate(false))
+            el.removeAttr('data-stratus-src-pending-src')
             el.attr('data-stratus-src-loaded-signature', dehydrate(getCurrentLoadSignature()))
             obj.nextCheckAt = Number.MAX_SAFE_INTEGER
             jQuery(this).remove() // prevent memory leaks
@@ -1680,11 +1718,13 @@ Stratus.Internals.LoadImage = (obj: {el?: any, spy?: any, size?: any, ignoreSpy?
             // Image failed, dont try to use this url
             // TODO: Go down in sizes before reaching the origin
             el.attr('data-loading', dehydrate(false))
+            el.removeAttr('data-stratus-src-pending-src')
             if (cookie('env')) {
                 console.warn('LoadImage() Unable to load', dataSize.toUpperCase(), 'size at', srcProtocol)
             }
             jQuery(this).remove() // prevent memory leaks
         })
+        preFetchEl.attr('src', srcProtocol)
 
         // FIXME: This is a mess that we shouldn't need to maintain.
         // RegisterGroups should just use Native Logic instead of
@@ -2244,7 +2284,9 @@ Stratus.Loaders.Angular = function AngularLoader() {
                 const whitelist: any = [
                     'self',
                     'http://*.sitetheory.io/**',
-                    'https://*.sitetheory.io/**'
+                    'https://*.sitetheory.io/**',
+                    'https://img.youtube.com/**',
+                    'https://i.ytimg.com/**'
                 ]
                 if (boot.host) {
                     if (startsWith(boot.host, '//')) {

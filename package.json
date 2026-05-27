@@ -8,8 +8,9 @@
   },
   "scripts": {
     "test": "npm run build && npm run lint",
-    "build": "npm run compileCSS && npm run compileCoffee && npm run bundle && npm run compileTypeScript && npm run dist && npm run compress",
-    "bundle": "node_modules/.bin/gulp compileES6TypeScript && npm run rollup",
+    "build": "npm run compileCSS && npm run compileCoffee && npm run bundle && npm run dist && npm run compress",
+    "bundle": "npm run bundle:rollup && npm run compileTypeScript",
+    "bundle:rollup": "node_modules/.bin/gulp compileES6TypeScript && npm run rollup",
     "rollup": "node_modules/.bin/rollup -c --bundleConfigAsCjs",
     "compile": "node_modules/.bin/gulp compile",
     "compress": "node_modules/.bin/gulp compress",

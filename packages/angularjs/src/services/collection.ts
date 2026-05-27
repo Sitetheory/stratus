@@ -352,10 +352,11 @@ export class Collection<T = LooseObject> extends EventManager {
             }
 
             // begin request
-            this.xhr = new XHR(request)
+            const xhr = new XHR(request)
+            this.xhr = xhr
 
             // TODO: Make this into an over-writable function
-            const handler = (response: LooseObject | Array<LooseObject> | string) => {
+            const handler = (response: LooseObject | Array<LooseObject> | string, responseXhr: XHR = xhr) => {
                 if (!isObject(response) && !isArray(response)) {
                     // Build Report
                     const error = new ErrorBase({
@@ -395,14 +396,14 @@ export class Collection<T = LooseObject> extends EventManager {
                     }
                     // Cache Headers
                     if (!(queryHash in this.cacheHeaders)) {
-                        this.cacheHeaders[queryHash] = this.xhr.getAllResponseHeaders()
+                        this.cacheHeaders[queryHash] = responseXhr.getAllResponseHeaders()
                     } else {
                         responseHeaders = this.cacheHeaders[queryHash]
                     }
                 }
 
                 // Data
-                this.header.set(responseHeaders || this.xhr.getAllResponseHeaders())
+                this.header.set(responseHeaders || responseXhr.getAllResponseHeaders())
                 this.meta.set((response as LooseObject).meta || {})
                 this.models = []
                 const payload = (response as LooseObject).payload || response
@@ -475,19 +476,21 @@ export class Collection<T = LooseObject> extends EventManager {
                         return response
                     })
                     .then((response: LooseObject|Array<LooseObject>|string) => {
-                        this.xhr = {
+                        const prewarmXhr = {
                             getAllResponseHeaders: () => ({})
                         } as XHR
-                        handler(response)
+                        this.xhr = prewarmXhr
+                        handler(response, prewarmXhr)
                     })
                     .catch(() => {
-                        this.xhr = new XHR(request)
-                        const xhrPromise = this.xhr.send()
+                        const retryXhr = new XHR(request)
+                        this.xhr = retryXhr
+                        const xhrPromise = retryXhr.send()
                         if (request.method === 'GET' && typeof window !== 'undefined') {
                             (window as any).StratusApiPrewarm = (window as any).StratusApiPrewarm || {}
                             ;(window as any).StratusApiPrewarm[request.url] = xhrPromise
                         }
-                        xhrPromise.then(handler)
+                        xhrPromise.then((response: LooseObject | Array<LooseObject> | string) => handler(response, retryXhr))
                             .catch((error: any) => {
                                 console.error(`XHR: ${request.method} ${request.url}`)
                                 this.throttleTrigger('change')
@@ -503,7 +506,7 @@ export class Collection<T = LooseObject> extends EventManager {
                 (window as any).StratusApiPrewarm = (window as any).StratusApiPrewarm || {}
                 ;(window as any).StratusApiPrewarm[request.url] = xhrPromise
             }
-            xhrPromise.then(handler)
+            xhrPromise.then((response: LooseObject | Array<LooseObject> | string) => handler(response, xhr))
                 .catch((error: any) => {
                     // (/(.*)\sReceived/i).exec(error.message)[1]
                     console.error(`XHR: ${request.method} ${request.url}`)

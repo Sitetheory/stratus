@@ -36,9 +36,24 @@
         <!--<span class="selectedModels" style="display: none" *ngIf="log('selector.ngIf:', dataSub | async)"></span>-->
         <!-- [cdkDragDisabled]="get(selectedModel, 'status') < 1" -->
         <div cdkDrag class="selected-list-row selected-box sa-drag-container"
-             [ngClass]="{'active': isActive(selectedModel), 'inactive' : !isActive(selectedModel), 'published': isPublished(selectedModel), 'unpublished': !isPublished(selectedModel)}"
-             *ngFor="let selectedModel of dataSub | async">
+             [ngClass]="{'active': isActive(selectedModel), 'inactive' : !isActive(selectedModel), 'published': isPublished(selectedModel), 'unpublished': !isPublished(selectedModel), 'stale': isStale(selectedModel)}"
+             *ngFor="let selectedModel of dataSub | async; trackBy: trackBySelectedModel">
+            <div class="flag-syndicated"
+                 *ngIf="get(selectedModel, 'syndicated')"
+                 [ngClass]="{'original': get(selectedModel, 'syndicated') == 1, 'edited': get(selectedModel, 'syndicated') == 2}"
+                 [matTooltip]="get(selectedModel, 'syndicated') == 1 ? 'Syndicated: original' : 'Syndicated: customized'">
+            </div>
             <div class="custom-ghost-placeholder" *cdkDragPlaceholder></div>
+            <button type="button"
+                    mat-button
+                    *ngIf="isStale(selectedModel)"
+                    matTooltip="refresh this item"
+                    aria-label="Refresh Item"
+                    class="btn btn-refresh selected-row-refresh"
+                    [disabled]="isPending(selectedModel)"
+                    (click)="$event.stopPropagation(); refreshSelectedModel(selectedModel);">
+                <mat-icon svgIcon="selector_refresh" aria-hidden="false" aria-label="Refresh">Refresh</mat-icon>
+            </button>
             <div class="selected-list-container">
                 <div class="column-image position-anchor">
 
@@ -50,14 +65,13 @@
 
                     <!-- This adds stratus-src lazy loading if bestImage isn't a third party service without image sizes, e.g. Video -->
                     <div class="image position-all"
-                         *ngIf="has(selectedModel, 'version.bestImage._thumbnailUrl')"
-                         [attr.data-stratus-src]="!get(selectedModel, 'version.bestImage.service') ? true : false"
-                         [ngStyle]="{'background': 'url(' + getString(selectedModel, 'version.bestImage._thumbnailUrl') + ') no-repeat center center', 'background-size': 'cover'}">
+                         *ngIf="selectedImageUrl(selectedModel)"
+                         [ngStyle]="{'background': 'url(' + selectedImageUrl(selectedModel) + ') no-repeat center center', 'background-size': 'cover'}">
                     </div>
 
                     <!-- Icon for items with no image -->
                     <div class="no-image-icon position-all"
-                         *ngIf="!has(selectedModel, 'version.bestImage._thumbnailUrl')"
+                         *ngIf="!selectedImageUrl(selectedModel)"
                          [ngClass]="getString(selectedModel, 'contentType.class') + '-background-color'">
 
                         <mat-icon class="content-type-icon position-center"
@@ -83,7 +97,7 @@
                         </mat-icon>
                         <span class="comment content-type-name font-body"
                               [ngClass]="((getString(selectedModel, 'contentType.name') || getString(selectedModel, 'name')) | lowercase) + '-color'"
-                              [textContent]="contentTypeDisplay(selectedModel) + ((!isActive(selectedModel)) ? ' (hidden)' : '') + ((!isPublished(selectedModel)) ? ' (unpublished)' : '')">
+                              [textContent]="contentTypeDisplay(selectedModel)">
                         </span>
                     </div>
 
@@ -102,7 +116,7 @@
                             aria-label="Edit Item in New Window"
                             class="btn btn-edit"
                             [disabled]="isPending(selectedModel)"
-                            (click)="$event.stopPropagation(); goToUrl(selectedModel, '_blank');">
+                            (click)="$event.stopPropagation(); goToUrl(selectedModel);">
                         <mat-icon svgIcon="selector_edit" aria-hidden="false" aria-label="Edit">Edit</mat-icon>
                     </button>
                     <button type="button"
@@ -145,10 +159,10 @@
                     </button>
                     <button type="button"
                             mat-button
-                            [matTooltip]="'delete this ' + (getString(selectedModel, 'contentType.name') || getString(selectedModel, 'name') || 'content') + ' from the entire site'"
+                            [matTooltip]="get(selectedModel, 'syndicated') == 1 ? 'Syndicated content cannot be deleted, instead you can disable the status to hide it.' : 'delete this ' + (getString(selectedModel, 'contentType.name') || getString(selectedModel, 'name') || 'content') + ' from the entire site'"
                             aria-label="Delete Item from Site"
                             class="btn btn-delete-content"
-                            [disabled]="isPending(selectedModel)"
+                            [disabled]="isPending(selectedModel) || get(selectedModel, 'syndicated') == 1"
                             (click)="$event.stopPropagation(); deleteContent(selectedModel)">
                         <mat-icon svgIcon="selector_permanent_delete" aria-hidden="false" aria-label="Delete Content">Delete</mat-icon>
                     </button>
