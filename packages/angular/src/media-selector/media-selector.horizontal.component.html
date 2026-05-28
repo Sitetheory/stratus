@@ -123,6 +123,27 @@
                                                           aria-label="Info"></mat-icon>
                                             </a>
                                         </span>
+                                        <span (click)="copyMediaToClipboard(selectedModel)">
+                                            <a class="border-radius-default"
+                                               href="#"
+                                               matTooltip="Copy link to clipboard">
+                                                <mat-icon class="link-icon"
+                                                          svgIcon="media_selector_link"
+                                                          aria-hidden="true"
+                                                          aria-label="Copy link to clipboard"></mat-icon>
+                                            </a>
+                                        </span>
+                                        <span *ngIf="canDownload(selectedModel)"
+                                              (click)="downloadLink(selectedModel)">
+                                            <a class="border-radius-default"
+                                               href="#"
+                                               matTooltip="Download">
+                                                <mat-icon class="download-icon"
+                                                          svgIcon="media_selector_download"
+                                                          aria-hidden="true"
+                                                          aria-label="Download"></mat-icon>
+                                            </a>
+                                        </span>
                                         <span (click)="remove(selectedModel)">
                                             <a class="border-radius-default"
                                                href="#"

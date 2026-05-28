@@ -174,6 +174,8 @@ export class MediaSelectorComponent extends RootComponent { // implements OnInit
         openLibrary: 'Open Library',
         closeLibrary: 'Close Library',
         showDetails: 'Show Details',
+        copyLinkToClipboard: 'Copy link to clipboard',
+        download: 'Download',
         add: 'Add',
         clear: 'Clear',
         permanentlyDelete: 'Permanently Delete from Library',
@@ -224,6 +226,8 @@ export class MediaSelectorComponent extends RootComponent { // implements OnInit
             media_selector_delete: `${Stratus.BaseUrl}sitetheorycore/images/icons/actionButtons/delete.svg`,
             media_selector_edit: `${Stratus.BaseUrl}sitetheorycore/images/icons/actionButtons/edit.svg`,
             media_selector_info: `${Stratus.BaseUrl}sitetheorycore/images/icons/actionButtons/info.svg`,
+            media_selector_link: `${Stratus.BaseUrl}sitetheorycore/images/icons/actionButtons/linkage.svg`,
+            media_selector_download: `${Stratus.BaseUrl}sitetheorycore/images/icons/actionButtons/download.svg`,
             // type icons
             media_selector_image: `${Stratus.BaseUrl}sitetheorymedia/images/mediaTypeIcons/media-icon-image.svg`,
             media_selector_video: `${Stratus.BaseUrl}sitetheorymedia/images/mediaTypeIcons/media-icon-video.svg`,
@@ -332,6 +336,79 @@ export class MediaSelectorComponent extends RootComponent { // implements OnInit
             return
         }
         window.open(model.contentType.editUrl + '?id=' + model.id, '_blank')
+    }
+
+    getMediaExternalLink(model: any): string|null {
+        if (!model) {
+            return null
+        }
+        if (_.get(model, 'mime') === 'video') {
+            const serviceMediaId = _.get(model, 'serviceMediaId') || null
+            if (_.get(model, 'service') === 'youtube') {
+                return `https://www.youtube.com/?watch=${serviceMediaId}`
+            }
+            if (_.get(model, 'service') === 'vimeo') {
+                return `https://vimeo.com/${serviceMediaId}`
+            }
+            return _.get(model, 'url') || null
+        }
+        if (_.get(model, 'service') === 'directLink') {
+            return _.get(model, 'url') || null
+        }
+        if (_.get(model, 'prefix')) {
+            const extension = _.get(model, 'extension')
+            return `https://${_.get(model, 'prefix')}${extension ? `.${extension}` : ''}?v=${_.get(model, 'timeEdit') || ''}`
+        }
+        return _.get(model, 'url') || null
+    }
+
+    copyToClipboard(value: string): boolean {
+        const temp = document.createElement('input')
+        document.body.appendChild(temp)
+        temp.setAttribute('value', value)
+        temp.select()
+        const result = document.execCommand('copy')
+        document.body.removeChild(temp)
+        return result
+    }
+
+    copyMediaToClipboard(model: any) {
+        const externalLink = this.getMediaExternalLink(model)
+        let bestString = externalLink
+        if (_.get(model, 'embed')) {
+            bestString = _.get(model, 'embed')
+        }
+        if (!bestString || !this.copyToClipboard(bestString)) {
+            console.warn('The media link could not be copied.', model)
+        }
+    }
+
+    getDownloadFilename(model: any): string {
+        const filename = _.get(model, 'filename') || _.get(model, 'name') || ''
+        const extension = _.get(model, 'extension') || ''
+        if (!filename || !extension || filename.endsWith(`.${extension}`)) {
+            return filename
+        }
+        return `${filename}.${extension}`
+    }
+
+    downloadLink(model: any) {
+        const url = _.get(model, '_directUrl') || this.getMediaExternalLink(model)
+        if (!url) {
+            console.warn('unable to download media because no external link was found.', model)
+            return
+        }
+        const link = document.createElement('a')
+        link.href = url
+        link.target = '_blank'
+        link.download = this.getDownloadFilename(model)
+        document.body.appendChild(link)
+        link.click()
+        document.body.removeChild(link)
+    }
+
+    canDownload(model: any): boolean {
+        return _.get(model, 'mime') === 'directLink' || !!_.get(model, 'file') || !!_.get(model, 'prefix')
     }
 
     remove(model: any) {
