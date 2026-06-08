@@ -81,10 +81,15 @@
 
                             <div class="thumb-gradient">&nbsp;</div>
 
-                            <!-- This is a fallback for a blank ngStyle on the parent -->
-                            <h4 *ngIf="!_.get(selectedModel, '_thumbnailUrl') && !_.get(selectedModel, 'bestImage.thumb') && !_.get(selectedModel, 'meta.thumbnail_small')"
+                            <img *ngIf="!_.get(selectedModel, '_thumbnailUrl') && !_.get(selectedModel, 'bestImage.thumb') && !_.get(selectedModel, 'meta.thumbnail_small') && (_.get(selectedModel, '_mediaSelectorGraphicUrl') || (_.get(selectedModel, 'extension') && ['aac', 'amr', 'audio', 'csv', 'doc', 'docx', 'document', 'eot', 'epub', 'flac', 'gif', 'ico', 'image', 'jpg', 'jpeg', 'm4a', 'm4b', 'mp3', 'mp4', 'ogg', 'pages', 'pdf', 'png', 'sheet', 'ttf', 'video', 'wav', 'webp', 'woff', 'woff2', 'wma', 'xls', 'xlsx', 'youtube', 'zip'].indexOf(_.get(selectedModel, 'extension').toLowerCase()) !== -1))"
+                                 class="position-center"
+                                 style="display: block; height: auto; max-height: 58%; max-width: 58%; width: auto;"
+                                 [src]="_.get(selectedModel, '_mediaSelectorGraphicUrl') || (Stratus.BaseUrl + 'sitetheorymedia/images/mediaTypeGraphics/media-graphic-' + (_.get(selectedModel, 'extension').toLowerCase() === 'jpeg' ? 'jpg' : (_.get(selectedModel, 'extension').toLowerCase() === 'xlsx' ? 'xls' : _.get(selectedModel, 'extension').toLowerCase())) + '.png')"
+                                 [attr.alt]="_.get(selectedModel, '_mediaSelectorExtensionLabel') || _.get(selectedModel, 'extension')">
+                            <h4 *ngIf="!_.get(selectedModel, '_thumbnailUrl') && !_.get(selectedModel, 'bestImage.thumb') && !_.get(selectedModel, 'meta.thumbnail_small') && !_.get(selectedModel, '_mediaSelectorGraphicUrl') && (!_.get(selectedModel, 'extension') || ['aac', 'amr', 'audio', 'csv', 'doc', 'docx', 'document', 'eot', 'epub', 'flac', 'gif', 'ico', 'image', 'jpg', 'jpeg', 'm4a', 'm4b', 'mp3', 'mp4', 'ogg', 'pages', 'pdf', 'png', 'sheet', 'ttf', 'video', 'wav', 'webp', 'woff', 'woff2', 'wma', 'xls', 'xlsx', 'youtube', 'zip'].indexOf(_.get(selectedModel, 'extension').toLowerCase()) === -1)"
                                 class="thumb-title position-center"
-                                [innerText]="_.get(selectedModel, 'name')"></h4>
+                                style="align-items: center; bottom: 0; display: flex; justify-content: center; left: 0; margin: 0; padding: 0 6px; right: 0; text-align: center; text-transform: uppercase; top: 0; transform: none; width: auto;"
+                                [innerText]="_.get(selectedModel, '_mediaSelectorExtensionLabel') || _.get(selectedModel, 'extension') || _.get(selectedModel, 'name')"></h4>
 
                             <div class="thumb-icon">
                                 <mat-icon *ngIf="_.get(selectedModel, 'mime') && _.get(selectedModel, 'mime').includes('image')"

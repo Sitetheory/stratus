@@ -59,6 +59,47 @@ const moduleName = 'media-selector'
 // Directory Template
 const min = !cookie('env') ? '.min' : ''
 const localDir = `${Stratus.BaseUrl}${boot.configuration.paths[`${systemDir}/*`].replace(/[^/]*$/, '').replace(/\/dist\/$/, '/src/')}`
+const mediaTypeGraphicExtensions = [
+    'aac',
+    'amr',
+    'audio',
+    'csv',
+    'doc',
+    'docx',
+    'document',
+    'eot',
+    'epub',
+    'flac',
+    'gif',
+    'ico',
+    'image',
+    'jpg',
+    'jpeg',
+    'm4a',
+    'm4b',
+    'mp3',
+    'mp4',
+    'ogg',
+    'pages',
+    'pdf',
+    'png',
+    'sheet',
+    'ttf',
+    'video',
+    'wav',
+    'webp',
+    'woff',
+    'woff2',
+    'wma',
+    'xls',
+    'xlsx',
+    'youtube',
+    'zip'
+]
+const mediaTypeGraphicAliases: {[key: string]: string} = {
+    jpeg: 'jpg',
+    xlsx: 'xls'
+}
 
 // Utility Functions
 const has = (object: object, path: string) => _.has(object, path) && !_.isEmpty(_.get(object, path))
@@ -411,6 +452,43 @@ export class MediaSelectorComponent extends RootComponent { // implements OnInit
         return _.get(model, 'mime') === 'directLink' || !!_.get(model, 'file') || !!_.get(model, 'prefix')
     }
 
+    getMediaExtension(model: any): string {
+        const extension = _.get(model, 'extension')
+        if (_.isString(extension) && extension.trim()) {
+            return extension.trim().toLowerCase().replace(/^\./, '')
+        }
+        const name = _.get(model, 'name')
+        if (!_.isString(name) || name.indexOf('.') === -1) {
+            return ''
+        }
+        return name.split('.').pop().trim().toLowerCase()
+    }
+
+    getMediaGraphicExtension(model: any): string {
+        const extension = this.getMediaExtension(model)
+        const normalizedExtension = mediaTypeGraphicAliases[extension] || extension
+        if (mediaTypeGraphicExtensions.indexOf(normalizedExtension) !== -1) {
+            return normalizedExtension
+        }
+        const mime = _.isString(_.get(model, 'mime')) ? _.get(model, 'mime').toLowerCase() : ''
+        if (mime.indexOf('video') !== -1) {
+            return 'video'
+        }
+        if (mime.indexOf('audio') !== -1) {
+            return 'audio'
+        }
+        return ''
+    }
+
+    prepareMediaFallback(model: any) {
+        const extension = this.getMediaExtension(model)
+        const graphicExtension = this.getMediaGraphicExtension(model)
+        model._mediaSelectorExtensionLabel = extension ? extension.toUpperCase() : 'FILE'
+        model._mediaSelectorGraphicUrl = graphicExtension
+            ? `${Stratus.BaseUrl}sitetheorymedia/images/mediaTypeGraphics/media-graphic-${graphicExtension}.png`
+            : ''
+    }
+
     remove(model: any) {
         const models = this.dataRef()
         if (!models || !models.length) {
@@ -475,6 +553,7 @@ export class MediaSelectorComponent extends RootComponent { // implements OnInit
         }
         const models = this.dataRef()
         this.empty = !models.length
+        _.forEach(models, (model: any) => this.prepareMediaFallback(model))
         this.subscriber.next(models)
         /* *
         // FIXME: This gets called twice per cycle...
