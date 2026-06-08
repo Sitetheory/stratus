@@ -73,6 +73,119 @@ let injector = getInjector()
 // let $rootScope: IRootScopeService = injector ? injector.get('$rootScope') : null
 let $rootScope: IRootScopeService
 
+const genericValidationMessages = [
+    'There were validation errors.'
+]
+const transientWriteFailureCode = 'API_TRANSIENT_WRITE_FAILURE'
+const retryableWriteMethods = ['POST', 'PUT', 'PATCH', 'DELETE']
+const transientWriteRetryBackoff = [250, 750, 1500]
+const transientWriteRetryMaxAttempts = 3
+
+function normalizeStatusList(source: any): Array<LooseObject> {
+    const status = get(source, 'meta.status') ||
+        get(source, 'payload.meta.status') ||
+        get(source, 'payload.status') ||
+        get(source, 'status') ||
+        source
+    if (isArray(status)) {
+        return status.filter((entry: any) => isObject(entry))
+    }
+    if (
+        isObject(status) &&
+        (
+            isString(get(status, 'code')) ||
+            isString(get(status, 'message')) ||
+            isString(get(status, 'type'))
+        )
+    ) {
+        return [status as LooseObject]
+    }
+
+    return []
+}
+
+function parseXHRPayload(error: any): any {
+    if (error instanceof ErrorBase) {
+        return get(error, 'payload') || error
+    }
+    if (isObject(error) && !isUndefined(get(error, 'response'))) {
+        return get(error, 'response')
+    }
+    const responseText = get(error, 'responseText')
+    return isString(responseText) && isJSON(responseText) ? JSON.parse(responseText) : null
+}
+
+function isGenericValidationMessage(message: string): boolean {
+    return genericValidationMessages.indexOf(message.trim()) !== -1
+}
+
+function hasStatusCode(source: any, code: string): boolean {
+    return normalizeStatusList(source).some((status: LooseObject) => status.code === code)
+}
+
+function isRetryableTransientWritePayload(action: string, payload: any): boolean {
+    const method = (action || 'GET').toUpperCase()
+    if (retryableWriteMethods.indexOf(method) === -1) {
+        return false
+    }
+    if (!payload) {
+        return false
+    }
+
+    return !!(
+        get(payload, 'code') === transientWriteFailureCode ||
+        hasStatusCode(payload, transientWriteFailureCode)
+    )
+}
+
+function isRetryableTransientWrite(action: string, error: XMLHttpRequest|ErrorBase): boolean {
+    const payload = parseXHRPayload(error)
+    if (!payload) {
+        return false
+    }
+
+    return isRetryableTransientWritePayload(action, payload)
+}
+
+function delay(ms: number): Promise<void> {
+    return new Promise((resolve) => setTimeout(resolve, ms))
+}
+
+function getPreferredStatusMessage(source: any): string|null {
+    const statuses = normalizeStatusList(source)
+    if (!statuses.length) {
+        return null
+    }
+    const messages = statuses
+        .map((status: LooseObject) => isString(status.message) ? status.message.trim() : '')
+        .filter((message: string) => !!message)
+    if (!messages.length) {
+        return null
+    }
+    const specificMessage = messages.find((message: string) => !isGenericValidationMessage(message))
+    return specificMessage || messages[0]
+}
+
+function hasNotableStatus(source: any): boolean {
+    return normalizeStatusList(source).some((status: LooseObject) => {
+        const type = isString(status.type) ? status.type.toLowerCase() : ''
+        return type === 'warning' || type === 'error' || status.code === 'VALIDATION'
+    })
+}
+
+function hasUsablePayload(payload: any): boolean {
+    return (isArray(payload) && !!payload.length) || (isObject(payload) && !isArray(payload))
+}
+
+function isSoftStatusFailure(meta: any, payload: any): boolean {
+    return !!(
+        get(meta, 'success') === false &&
+        hasUsablePayload(payload) &&
+        getPreferredStatusMessage(meta) &&
+        hasNotableStatus(meta)
+    )
+}
+
 // Service Verification Function
 const serviceVerify = async () => {
     return new Promise(async (resolve, _reject) => {
@@ -579,6 +692,7 @@ export class Model<T = LooseObject> extends ModelBase<T> {
         // Execute XHR
         // TODO: Get this in-line with Collection logic
         return new Promise(async (resolve: any, reject: any) => {
+            let successfulResponseMeta: LooseObject|null = null
             action = action || 'GET'
             options = options || {}
             const request: XHRRequest = {
@@ -609,11 +723,64 @@ export class Model<T = LooseObject> extends ModelBase<T> {
                 })
             }
 
-            // Example XHR
-            this.xhr = new XHR(request)
+            const sendRequest = async (attempt = 1): Promise<LooseObject | Array<LooseObject> | string> => {
+                this.xhr = new XHR(request)
+                try {
+                    const response = await this.xhr.send()
+                    if (
+                        attempt < transientWriteRetryMaxAttempts &&
+                        isRetryableTransientWritePayload(request.method, response)
+                    ) {
+                        const nextAttempt = attempt + 1
+                        console.warn(
+                            `XHR: ${request.method} ${request.url} returned ${transientWriteFailureCode}; retrying ${nextAttempt} of ${transientWriteRetryMaxAttempts}.`,
+                            response
+                        )
+                        if (this.toast) {
+                            Toastify({
+                                text: `The server was busy saving. Retrying ${nextAttempt} of ${transientWriteRetryMaxAttempts}...`,
+                                duration: 4000,
+                                close: true,
+                                stopOnFocus: true,
+                                style: {
+                                    background: '#D9902F',
+                                }
+                            }).showToast()
+                        }
+                        await delay(transientWriteRetryBackoff[attempt - 1] || transientWriteRetryBackoff[transientWriteRetryBackoff.length - 1])
+                        return sendRequest(nextAttempt)
+                    }
+                    return response
+                } catch (error) {
+                    if (
+                        attempt < transientWriteRetryMaxAttempts &&
+                        isRetryableTransientWrite(request.method, error as XMLHttpRequest|ErrorBase)
+                    ) {
+                        const nextAttempt = attempt + 1
+                        console.warn(
+                            `XHR: ${request.method} ${request.url} returned ${transientWriteFailureCode}; retrying ${nextAttempt} of ${transientWriteRetryMaxAttempts}.`,
+                            error
+                        )
+                        if (this.toast) {
+                            Toastify({
+                                text: `The server was busy saving. Retrying ${nextAttempt} of ${transientWriteRetryMaxAttempts}...`,
+                                duration: 4000,
+                                close: true,
+                                stopOnFocus: true,
+                                style: {
+                                    background: '#D9902F',
+                                }
+                            }).showToast()
+                        }
+                        await delay(transientWriteRetryBackoff[attempt - 1] || transientWriteRetryBackoff[transientWriteRetryBackoff.length - 1])
+                        return sendRequest(nextAttempt)
+                    }
+                    throw error
+                }
+            }
 
             // Call XHR
-            this.xhr.send().then((response: LooseObject | Array<LooseObject> | string) => {
+            sendRequest().then((response: LooseObject | Array<LooseObject> | string) => {
                 // Data Stores
                 this.status = this.xhr.status
 
@@ -683,7 +850,9 @@ export class Model<T = LooseObject> extends ModelBase<T> {
                 // FIXME: This does not have to do with recent changes, where we handle incoming
                 //        change sets...  There's something else at play.
                 this.header.set(this.xhr.getAllResponseHeaders() || {})
-                this.meta.set((response as LooseObject).meta || {})
+                successfulResponseMeta = (response as LooseObject).meta || null
+                const responseMeta = successfulResponseMeta || {}
+                this.meta.set(responseMeta)
                 this.route.set((response as LooseObject).route || {})
                 const payload = (response as LooseObject).payload || response
 
@@ -692,7 +861,7 @@ export class Model<T = LooseObject> extends ModelBase<T> {
 
                 // Check Status and Associate Payload
                 if (
-                    (this.meta.has('success') && !this.meta.get('success'))
+                    (this.meta.has('success') && !this.meta.get('success') && !isSoftStatusFailure(responseMeta, payload))
                     // Removing checks for status[0]
                     // || (!this.meta.has('success') && this.meta.has('status') && this.meta.get('status[0].code') !== 'SUCCESS')
                 ) {
@@ -714,7 +883,7 @@ export class Model<T = LooseObject> extends ModelBase<T> {
                 if (this.error) {
                     // Build Report
                     const error = new ErrorBase({
-                        payload,
+                        payload: response,
                         message: `Invalid Payload: ${request.method} ${request.url}`
                     }, {})
 
@@ -790,6 +959,19 @@ export class Model<T = LooseObject> extends ModelBase<T> {
                 // Clear Meta Temps
                 this.meta.clearTemp()
 
+                const statusMessage = getPreferredStatusMessage((response as LooseObject).meta || {})
+                if (this.toast && statusMessage && hasNotableStatus((response as LooseObject).meta || {})) {
+                    Toastify({
+                        text: statusMessage,
+                        duration: 12000,
+                        close: true,
+                        stopOnFocus: true,
+                        style: {
+                            background: '#D9902F',
+                        }
+                    }).showToast()
+                }
+
                 // Events
                 this.trigger('success', this)
                 this.trigger('change', this)
@@ -807,6 +989,35 @@ export class Model<T = LooseObject> extends ModelBase<T> {
                 return
             })
             .catch((error: XMLHttpRequest|ErrorBase) => {
+                if (successfulResponseMeta && get(successfulResponseMeta, 'success') === true) {
+                    console.warn(`XHR: ${request.method} ${request.url} completed with API success but post-save handling failed.`, error)
+                    this.error = false
+                    this.resetXHRFlags()
+                    this.completed = true
+                    if (this.collection) {
+                        this.collection.pending = false
+                    }
+                    const statusMessage = getPreferredStatusMessage(successfulResponseMeta)
+                    if (this.toast && statusMessage && hasNotableStatus(successfulResponseMeta)) {
+                        Toastify({
+                            text: statusMessage,
+                            duration: 12000,
+                            close: true,
+                            stopOnFocus: true,
+                            style: {
+                                background: '#D9902F',
+                            }
+                        }).showToast()
+                    }
+                    this.trigger('success', this)
+                    this.trigger('change', this)
+                    this.trigger('complete', this)
+                    if (this.collection instanceof Collection) {
+                        this.collection.throttleTrigger('change')
+                    }
+                    resolve(this.data)
+                    return
+                }
                 // (/(.*)\sReceived/i).exec(error.message)[1]
                 // FIXME: The UI should be able to handle more than a status of 500...
                 // Treat a fatal error like 500 (our UI code relies on this distinction)
@@ -900,10 +1111,9 @@ export class Model<T = LooseObject> extends ModelBase<T> {
                         return
                     }
                     // TODO: Detect why we're getting internal messages outside of Dev Mode!
-                    const errorMessage = this.errorMessage(error)
-                    const formatMessage = errorMessage ? `: ${errorMessage}` : '.'
+                    const errorMessage = this.errorMessage(error) || getPreferredStatusMessage(this.meta.data)
                     Toastify({
-                        text: `Unable to Save ${this.target}${formatMessage}`,
+                        text: errorMessage || `Unable to Save ${this.target}.`,
                         duration: 12000,
                         close: true,
                         stopOnFocus: true,
@@ -1246,13 +1456,17 @@ export class Model<T = LooseObject> extends ModelBase<T> {
     errorMessage(error: XMLHttpRequest|ErrorBase): string|null {
         if (error instanceof ErrorBase) {
             console.error(`[${error.code}] ${error.message}`, error)
+            const message = getPreferredStatusMessage(error)
+            if (message) {
+                return message
+            }
             return error.code !== 'Internal' ? error.message : null
         }
         const digest = (error.responseText && isJSON(error.responseText)) ? JSON.parse(error.responseText) : null
         if (!digest) {
             return null
         }
-        const message = get(digest, 'meta.status[0].message') || get(digest, 'error.exception[0].message') || null
+        const message = getPreferredStatusMessage(digest) || get(digest, 'error.exception[0].message') || null
         if (!message) {
             return null
         }

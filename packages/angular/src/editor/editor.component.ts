@@ -507,6 +507,14 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             blur: (event: FocusEvent) => this.onBlur(event),
             // FIXME: Froala doesn't support focus events, so this never fires...
             focus: (event: FocusEvent) => this.onFocus(event),
+            'commands.before': (command: string) => {
+                if (command !== 'insertImage' || !this.isCompact) {
+                    return true
+                }
+                const editor = (this.froalaEditorDirective as any).getEditor()
+                editor.commands.exec('mediaManager')
+                return false
+            },
             fullscreen: () => {
                 const editor = (this.froalaEditorDirective as any).getEditor()
                 this.fullscreenActive = !!editor.fullscreen.isActive()
@@ -908,7 +916,7 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
         imageInsertButtons: [
             'imageBack',
             '|',
-            // 'mediaManager',
+            'mediaManager',
             'imageUpload',
             'imageByURL',
             // 'imageManager'
@@ -1343,6 +1351,7 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             moreRich: {
                 buttons: [
                     'linkManager',
+                    'mediaManager',
                     'insertImage',
                     'insertVideo',
                     'insertTable',
@@ -1443,7 +1452,7 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
         if (!data || !_.isString(data)) {
             return ''
         }
-        return this.changeImgSize(data, 'hq')
+        return this.changeImgSize(data, 'hq', 'in')
     }
     normalizeOut(data?: string): string {
         // Normalize null values to empty strings to maintain consistent typing.
@@ -1454,7 +1463,7 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             // TODO: look into either piping the data here to remove `fr-original-style`
             return data
         }
-        return this.changeImgSize(data, 'xs')
+        return this.changeImgSize(data, 'xs', 'out')
     }
 
     onFroalaInit() {
@@ -1527,70 +1536,80 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
         setInterval(setToken, 1000 * 60 * 29)
     }
 
-    changeImgSize(data?: string, size?: string): string {
+    changeImgSize(data?: string, size?: string, mode: 'in'|'out' = 'in'): string {
         if (!data || !_.isString(data)) {
             return data
         }
         if (!size || !_.isString(size)) {
             return data
         }
-        // TODO: This currently peels back the image, but we can either do more here or add this format down below
-        const imgRegex: RegExp = /<img([\w\W]+?)>/gi
-        let imgMatch: RegExpExecArray
-        // console.log('imgRegex:', data, imgRegex)
-        // tslint:disable-next-line:no-conditional-assignment
-        while (imgMatch = imgRegex.exec(data)) {
-            // Store the entire element for later use
-            const el: string = imgMatch[0]
-
-            // This skips elements with the entire image data in the src
-            if (el.includes('data:image')) {
-                continue
+        const container = document.createElement('div')
+        container.innerHTML = data
+        _.forEach(container.querySelectorAll('img'), (image: HTMLImageElement) => {
+            const source = image.getAttribute('data-src') || image.getAttribute('src')
+            if (!source || source.indexOf('data:image') === 0) {
+                return
             }
-
-            // TODO: Analyze whether we will need to ensure `data-stratus-src` is available for all Sitetheory Assets.
-            // if (src.includes('cdn.sitetheory.io')) {
-            //     console.log('sitetheory image:', src)
-            // }
-
-            // This skips image sizing for elements without lazy loading
-            // TODO: Enable this after things are normalized
-            // if (!src.includes('data-stratus-src')) {
-            //     continue
-            // }
-
-            // Note: This regex may need further enhancements as more images enter the system.
-            const srcRegex: RegExp = /^<img\s(.+?)(-[A-Z]{2})?\.(?=[^.]*$)(.+)>/gi
-            const srcMatch: RegExpExecArray = srcRegex.exec(el)
-            if (srcMatch === null) {
-                console.warn('Unable to find file name for image src:', el)
-                continue
+            const sizedSource = this.getSizedImageSrc(source, size)
+            const hasStratusSrc = image.hasAttribute('data-stratus-src') && image.getAttribute('data-stratus-src') !== 'false'
+            const canNormalize = hasStratusSrc || (
+                source.indexOf('cdn.sitetheory.io') !== -1 &&
+                sizedSource !== source
+            )
+            if (!canNormalize) {
+                return
             }
-            // Handle Images without Lazy Loading
-            if (!el.includes('data-stratus-src')) {
-                // Ensure we only normalize images from our CDN
-                if (!el.includes('cdn.sitetheory.io')) {
-                    continue
-                }
-                // Ensure we only normalize images with our sizing format
-                if (_.isEmpty(srcMatch[2])) {
-                    continue
-                }
-                // console.log('data-stratus-src not found:', {
-                //     data,
-                //     imgMatch,
-                //     el,
-                //     srcMatch
-                // })
-                // This adds lazy loading to elements that need it
-                data = data.replace(el, `<img data-stratus-src ${srcMatch[1]}-${size}.${srcMatch[3]}>`)
-                // This removes image sizing from elements without lazy loading
-                // data = data.replace(el, `${srcMatch[1]}.${srcMatch[3]}`)
-                continue
+            image.setAttribute('data-stratus-src', '')
+            image.setAttribute('data-src', sizedSource)
+            image.removeAttribute('data-size')
+            image.removeAttribute('data-loading')
+            image.removeAttribute('data-current-width')
+            image.removeAttribute('data-greatest-width')
+            image.removeAttribute('data-resize-optimistic-lock')
+            image.removeAttribute('data-stratus-src-height-retries')
+            image.removeAttribute('data-stratus-src-last-check')
+            image.removeAttribute('data-stratus-src-loaded-signature')
+            image.removeAttribute('data-stratus-src-pending-src')
+            image.classList.remove('loaded', 'loading', 'placeholder')
+            this.ensureImageRatioStyle(image)
+            if (mode === 'out') {
+                image.removeAttribute('src')
+                return
             }
-            data = data.replace(el, `<img ${srcMatch[1]}-${size}.${srcMatch[3]}>`)
+            image.setAttribute('src', sizedSource)
+        })
+        return container.innerHTML
+    }
+
+    getSizedImageSrc(src: string, size: string): string {
+        const srcMatch = /^(.+?)(-(?:xs|s|m|l|xl|hq|hd|hdl|hdxl|[A-Z]{2}))?\.(?=[^.]*$)(.+)/i.exec(src)
+        if (srcMatch === null) {
+            return src
         }
-        return data
+        return `${srcMatch[1]}-${size}.${srcMatch[3]}`
+    }
+
+    ensureImageRatioStyle(image: HTMLImageElement): void {
+        const ratio = this.parseImageRatio(image.getAttribute('data-ratio-real')) ||
+            this.parseImageRatio(image.getAttribute('data-ratio'))
+        const currentStyle = image.getAttribute('style') || ''
+        const nextStyle = []
+        if (currentStyle) {
+            nextStyle.push(currentStyle.replace(/\s*;?\s*$/, ';'))
+        }
+        if (ratio && currentStyle.indexOf('aspect-ratio') === -1) {
+            nextStyle.push(`aspect-ratio: ${ratio[1]} / ${ratio[2]};`)
+        }
+        if (nextStyle.length) {
+            image.setAttribute('style', nextStyle.join(' ').trim())
+        }
+    }
+
+    parseImageRatio(value: string): RegExpMatchArray|null {
+        if (!_.isString(value)) {
+            return null
+        }
+        return value.match(/^\s*(\d+(?:\.\d+)?)\s*[:,x/]\s*(\d+(?:\.\d+)?)\s*$/i)
     }
 
     // ngOnChanges() {

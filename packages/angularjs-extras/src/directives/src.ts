@@ -68,6 +68,29 @@ Stratus.Directives.Src = (
         ]
         $scope.filter = null
 
+        const getSrcPath = (src: string): string => {
+            if (!src) {
+                return ''
+            }
+            try {
+                const url = new URL(
+                    src.indexOf('//') === 0 ? `${window.location.protocol}${src}` : src,
+                    window.location.href
+                )
+                return url.pathname || ''
+            } catch (error) {
+                return src.split(/[?#]/)[0]
+            }
+        }
+        const isBooleanSentinelSrc = (src: string): boolean => {
+            const normalizedSrc = src.trim().replace(/^url\(["']?(.+?)["']?\)$/i, '$1').trim()
+            if (/^(true|false)$/i.test(normalizedSrc)) {
+                return true
+            }
+            const srcPath = getSrcPath(normalizedSrc).replace(/\/+$/, '')
+            return /^\/?(true|false)$/i.test(srcPath)
+        }
+
         // Add Watchers
         $scope.$watch(() => {
             return $attrs.stratusSrc || $attrs.src || $attrs.style
@@ -80,7 +103,7 @@ Stratus.Directives.Src = (
 
         /** Sets the image src/css background on a tag */
         $scope.setSrc = (tagType: string, src: string) => {
-            if (src && isString(src) && src.length > 0 && src !== 'false') {
+            if (src && isString(src) && src.length > 0 && !isBooleanSentinelSrc(src)) {
                 if (tagType === 'img') {
                     $element.attr('src', src)
                 } else {
@@ -92,6 +115,24 @@ Stratus.Directives.Src = (
         // Group Registration
         $scope.registered = false
         $scope.register = () => {
+            const normalizeSrc = (src: any): string|null => {
+                if (
+                    typeof src === 'undefined' ||
+                    src === null ||
+                    src === true ||
+                    src === false ||
+                    src === 'true' ||
+                    src === 'false'
+                ) {
+                    return null
+                }
+                if (isString(src)) {
+                    const normalizedSrc = src.trim().replace(/^url\(["']?(.+?)["']?\)$/i, '$1').trim()
+                    return isBooleanSentinelSrc(normalizedSrc) ? null : normalizedSrc
+                }
+                return src
+            }
+
             // find background image in CSS if there is no src (e.g. for div)
             let backgroundImage = null
             const type = $element.prop('tagName').toLowerCase()
@@ -99,6 +140,9 @@ Stratus.Directives.Src = (
                 backgroundImage = $element.css('background-image') || null
                 if (backgroundImage) {
                     backgroundImage = backgroundImage.slice(4, -1).replace(/"/g, '')
+                    if (isBooleanSentinelSrc(backgroundImage)) {
+                        backgroundImage = null
+                    }
                 }
             }
 
@@ -133,13 +177,13 @@ Stratus.Directives.Src = (
                 $attrs.stratusSrc = null
             }
 
-            const src = $attrs.stratusSrc || $attrs.src || backgroundImage
+            const src = normalizeSrc($attrs.stratusSrc) ||
+                normalizeSrc($attrs.src) ||
+                normalizeSrc(backgroundImage)
 
             // Get Extension
-            let ext = src ? src.match(/\.([0-9a-z]+)(\?.*)?$/i) : null
-            if (ext) {
-                ext = ext[1] ? ext[1].toLowerCase() : null
-            }
+            const extMatch = src ? src.match(/\.([0-9a-z]+)(\?.*)?$/i) : null
+            const ext = extMatch && extMatch[1] ? extMatch[1].toLowerCase() : null
 
             // Limit Resizable Types
             $scope.filter = filter($scope.whitelist, value => ext === value)

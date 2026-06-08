@@ -283,21 +283,21 @@ export class MediaDialogComponent extends ResponsiveComponent implements OnInit 
             }
         }
         if (_.startsWith(media.mime, 'image')) {
-            if (!media._thumbnailUrl || (media.service === 'directLink' && !media.file)) {
+            const imageSrc = media._thumbnailUrl || media.file
+            if (!imageSrc || (media.service === 'directLink' && !media.file)) {
                 console.warn(`media-dialog: unable to determine image source for media id: ${media.id}`)
                 return null
             }
-            // const attrs: LooseObject = {
-            //     alt: media.name || media.filename
-            // }
-            // if (media.mime !== 'image/gif') {
-            //     attrs['data-stratus-src'] = ''
-            // }
+            const alt = _.escape(media.name || media.filename || '')
+            const style = this.getImageRatioStyle(media)
+            const stratusAttrs = media.mime !== 'image/gif'
+                ? ` data-stratus-src data-src="${_.escape(imageSrc)}"${this.getImageRatioAttributes(media)}`
+                : ''
             return {
                 // type: 'image',
                 // url: media._thumbnailUrl || media.file,
                 // attrs,
-                html: `<img src="${media._thumbnailUrl || media.file}" alt="${media.name || media.filename}" ${media.mime !== 'image/gif' ? 'data-stratus-src' : ''}>`
+                html: `<img src="${_.escape(imageSrc)}"${stratusAttrs} alt="${alt}"${style ? ` style="${style}"` : ''}>`
             }
         }
         if (media.mime === 'video') {
@@ -417,6 +417,39 @@ export class MediaDialogComponent extends ResponsiveComponent implements OnInit 
         }
         console.warn(`media-dialog: unsupported mime type: ${media.mime} for media id: ${media.id}`)
         return null
+    }
+
+    getImageRatioStyle(media: Media): string {
+        const ratio = this.parseRatio(media.ratio)
+        if (ratio) {
+            return `aspect-ratio: ${ratio[1]} / ${ratio[2]};`
+        }
+        const dimensions = this.parseRatio(media.dimensions)
+        if (dimensions) {
+            return `aspect-ratio: ${dimensions[1]} / ${dimensions[2]};`
+        }
+        return ''
+    }
+
+    getImageRatioAttributes(media: Media): string {
+        const attrs: Array<string> = []
+        if (_.isString(media.bestRatio) && media.bestRatio) {
+            attrs.push(`data-ratio="${_.escape(media.bestRatio)}"`)
+        }
+        if (_.isString(media.bestRatioWord) && media.bestRatioWord) {
+            attrs.push(`data-ratio-word="${_.escape(media.bestRatioWord)}"`)
+        }
+        if (_.isString(media.ratio) && media.ratio) {
+            attrs.push(`data-ratio-real="${_.escape(media.ratio)}"`)
+        }
+        return attrs.length ? ` ${attrs.join(' ')}` : ''
+    }
+
+    parseRatio(value: string): RegExpMatchArray|null {
+        if (!_.isString(value)) {
+            return null
+        }
+        return value.match(/^\s*(\d+(?:\.\d+)?)\s*[:,x/]\s*(\d+(?:\.\d+)?)\s*$/i)
     }
 }
 
