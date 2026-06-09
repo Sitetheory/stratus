@@ -322,12 +322,14 @@ Stratus.Components.Calendar = {
             /*if (fullUrl.startsWith('http')) {
                 fullUrl = `https://cors-anywhere.herokuapp.com/${url}`
             }*/
+            // Use the microCORS proxy to bypass CORS restrictions on external iCal feeds.
+            // Guard: only proxy URLs that are external http(s) and not already proxied.
             if (
                 url.startsWith('http') &&
                 !url.startsWith('/') &&
-                !url.startsWith('https://app004.sitetheory.io/')
+                !url.startsWith('https://microcors.sitetheory.io/')
             ) {
-                url = `https://app004.sitetheory.io/${url}`
+                url = `https://microcors.sitetheory.io/${url}`
             }
 
             const response = await $http.get(url)
