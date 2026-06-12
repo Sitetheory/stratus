@@ -393,6 +393,10 @@ export class SelectorComponent extends RootComponent { // implements OnInit, OnC
         const key = String(id)
         const cache = this.selectedModelDisplayData[key] || {}
         const previousVersion = isObject(cache.version) ? cloneDeep(cache.version) : null
+        const imageUrl = this.selectedImageUrlFromSource(model)
+        if (imageUrl) {
+            cache._selectorImageUrl = imageUrl
+        }
         ;[
             'contentType',
             'description',
@@ -1199,6 +1203,7 @@ export class SelectorComponent extends RootComponent { // implements OnInit, OnC
             ? this.selectedModelDisplayData[String(id)]
             : null
         return this.selectedImageUrlFromSource(cache)
+            || this.getString(cache, '_selectorImageUrl')
     }
 
     selectedImageUrlFromSource(model: any): string|null {
