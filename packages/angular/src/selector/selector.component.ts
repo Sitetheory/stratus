@@ -30,6 +30,7 @@ import {IconOptions, MatIconRegistry} from '@angular/material/icon'
 // External Dependencies
 import {Stratus} from '@stratusjs/runtime/stratus'
 import {
+    cloneDeep,
     forEach,
     get,
     has,
@@ -40,6 +41,7 @@ import {
     isString,
     isUndefined,
     snakeCase,
+    set,
     uniqueId
 } from 'lodash'
 import {keys} from 'ts-transformer-keys'
@@ -158,6 +160,9 @@ export class SelectorComponent extends RootComponent { // implements OnInit, OnC
     selectedModelDisplayData: {
         [key: string]: LooseObject
     } = {}
+    removeDeleteDialogModel: any = null
+    removeDeleteDialogMode: 'remove'|'delete' = 'remove'
+    deleteConfirmText = ''
 
     constructor(
         private iconRegistry: MatIconRegistry,
@@ -387,6 +392,7 @@ export class SelectorComponent extends RootComponent { // implements OnInit, OnC
         }
         const key = String(id)
         const cache = this.selectedModelDisplayData[key] || {}
+        const previousVersion = isObject(cache.version) ? cloneDeep(cache.version) : null
         ;[
             'contentType',
             'description',
@@ -401,9 +407,12 @@ export class SelectorComponent extends RootComponent { // implements OnInit, OnC
         ].forEach((field) => {
             const value = get(model, field)
             if (!isUndefined(value) && value !== null) {
-                cache[field] = value
+                cache[field] = cloneDeep(value)
             }
         })
+        if (previousVersion && isObject(cache.version)) {
+            this.preserveSelectedVersionMedia(cache.version, previousVersion)
+        }
         this.selectedModelDisplayData[key] = cache
     }
 
@@ -421,11 +430,35 @@ export class SelectorComponent extends RootComponent { // implements OnInit, OnC
                 Object.keys(cache).forEach((field) => {
                     const value = get(model, field)
                     if (isUndefined(value) || value === null) {
-                        model[field] = cache[field]
+                        model[field] = cloneDeep(cache[field])
                     }
                 })
+                if (isObject(model.version) && isObject(cache.version)) {
+                    this.preserveSelectedVersionMedia(model.version, cache.version)
+                }
             }
             this.cacheSelectedModelDisplayData(model)
+        })
+    }
+
+    preserveSelectedVersionMedia(targetVersion: any, cachedVersion: any) {
+        ;[
+            'bestImage',
+            'images',
+            'shellImages',
+            'videos'
+        ].forEach((field) => {
+            const current = get(targetVersion, field)
+            const cached = get(cachedVersion, field)
+            if (
+                (isUndefined(current) || current === null || (isArray(current) && !current.length) || (isObject(current) && isEmpty(current)))
+                && !isUndefined(cached)
+                && cached !== null
+                && (!isArray(cached) || cached.length)
+                && (!isObject(cached) || !isEmpty(cached))
+            ) {
+                set(targetVersion, field, cloneDeep(cached))
+            }
         })
     }
 
@@ -861,14 +894,145 @@ export class SelectorComponent extends RootComponent { // implements OnInit, OnC
             })
     }
 
-    deleteContent(model: any) {
+    openRemoveDeleteDialog(model: any) {
+        if (!model || this.isPending(model)) {
+            return
+        }
+        this.removeDeleteDialogModel = model
+        this.removeDeleteDialogMode = 'remove'
+        this.deleteConfirmText = ''
+        this.refresh().then()
+    }
+
+    closeRemoveDeleteDialog() {
+        this.removeDeleteDialogModel = null
+        this.removeDeleteDialogMode = 'remove'
+        this.deleteConfirmText = ''
+        this.refresh().then()
+    }
+
+    showRemoveDeleteDialogRemove() {
+        this.removeDeleteDialogMode = 'remove'
+        this.deleteConfirmText = ''
+        this.refresh().then()
+    }
+
+    showRemoveDeleteDialogDelete() {
+        if (!this.canDeleteFromSite(this.removeDeleteDialogModel)) {
+            return
+        }
+        this.removeDeleteDialogMode = 'delete'
+        this.deleteConfirmText = ''
+        this.refresh().then()
+    }
+
+    trapRemoveDeleteDialogFocus(event: KeyboardEvent) {
+        if (!this.removeDeleteDialogModel) {
+            return
+        }
+        if (event.key === 'Escape') {
+            event.preventDefault()
+            if (this.removeDeleteDialogMode === 'delete') {
+                this.showRemoveDeleteDialogRemove()
+                return
+            }
+            this.closeRemoveDeleteDialog()
+            return
+        }
+        if (event.key !== 'Tab') {
+            return
+        }
+
+        const target = event.currentTarget as HTMLElement|null
+        const panel = target?.querySelector(
+            this.removeDeleteDialogMode === 'delete'
+                ? '.selector-remove-delete-dialog__panel-delete'
+                : '.selector-remove-delete-dialog__panel-remove'
+        ) as HTMLElement|null
+        if (!panel) {
+            return
+        }
+
+        const focusable = Array.from(panel.querySelectorAll<HTMLElement>(
+            'button:not([disabled]), input:not([disabled]), textarea:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])'
+        )).filter((element) => !!(
+            element.offsetWidth
+            || element.offsetHeight
+            || element.getClientRects().length
+        ))
+
+        if (!focusable.length) {
+            event.preventDefault()
+            return
+        }
+
+        const first = focusable[0]
+        const last = focusable[focusable.length - 1]
+        const active = document.activeElement as HTMLElement|null
+        if (event.shiftKey && active === first) {
+            event.preventDefault()
+            last.focus()
+        } else if (!event.shiftKey && active === last) {
+            event.preventDefault()
+            first.focus()
+        }
+    }
+
+    confirmRemoveDeleteDialogRemove() {
+        const model = this.removeDeleteDialogModel
+        this.closeRemoveDeleteDialog()
+        this.remove(model)
+    }
+
+    confirmRemoveDeleteDialogDelete() {
+        if (this.deleteConfirmText !== 'DELETE') {
+            return
+        }
+        const model = this.removeDeleteDialogModel
+        this.closeRemoveDeleteDialog()
+        this.deleteContent(model, true)
+    }
+
+    canDeleteFromSite(model: any): boolean {
+        return !!model && !this.requiresLocalCopyBeforeEdit(model)
+    }
+
+    deleteFromSiteDisabledReason(model: any): string {
+        return this.canDeleteFromSite(model)
+            ? ''
+            : 'Syndicated content cannot be deleted, instead you can disable the status to hide it.'
+    }
+
+    removeContextLabel(): 'Page'|'Collection' {
+        const routing = this.model && typeof this.model.get === 'function'
+            ? this.model.get('routing')
+            : get(this.model, 'data.routing')
+        return isArray(routing) && routing.length ? 'Page' : 'Collection'
+    }
+
+    contentDisplayName(model: any): string {
+        return this.getString(model, 'version.bestIdentifier')
+            || this.getString(model, 'version.title')
+            || this.getString(model, 'name')
+            || this.getString(model, 'version.internalIdentifier')
+            || `Untitled ${this.contentTypeName(model)}`
+    }
+
+    contentIdentity(model: any): string {
+        const id = get(model, 'id')
+        return `"${this.contentDisplayName(model)}"${id ? ` (#${id})` : ''}`
+    }
+
+    deleteContent(model: any, confirmed = false) {
         if (this.isPending(model)) {
             return
         }
         if (this.requiresLocalCopyBeforeEdit(model)) {
             return
         }
-        if (!window.confirm(`Delete this ${this.contentTypeName(model)} from the entire site?`)) {
+        if (!confirmed) {
+            this.openRemoveDeleteDialog(model)
+            this.showRemoveDeleteDialogDelete()
             return
         }
 
@@ -1026,6 +1190,18 @@ export class SelectorComponent extends RootComponent { // implements OnInit, OnC
     }
 
     selectedImageUrl(model: any): string|null {
+        const modelImageUrl = this.selectedImageUrlFromSource(model)
+        if (modelImageUrl) {
+            return modelImageUrl
+        }
+        const id = get(model, 'id')
+        const cache = !isUndefined(id) && id !== null
+            ? this.selectedModelDisplayData[String(id)]
+            : null
+        return this.selectedImageUrlFromSource(cache)
+    }
+
+    selectedImageUrlFromSource(model: any): string|null {
         return this.getString(model, 'version.bestImage._thumbnailUrl')
             || this.getString(model, 'version.images[0]._thumbnailUrl')
             || this.getString(model, 'version.images[0].src')

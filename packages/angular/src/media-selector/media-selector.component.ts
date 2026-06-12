@@ -480,13 +480,20 @@ export class MediaSelectorComponent extends RootComponent { // implements OnInit
         return ''
     }
 
-    prepareMediaFallback(model: any) {
+    getMediaFallbackLabel(model: any): string {
         const extension = this.getMediaExtension(model)
+        return extension ? extension.toUpperCase() : 'FILE'
+    }
+
+    getMediaGraphicUrl(model: any): string {
         const graphicExtension = this.getMediaGraphicExtension(model)
-        model._mediaSelectorExtensionLabel = extension ? extension.toUpperCase() : 'FILE'
-        model._mediaSelectorGraphicUrl = graphicExtension
+        return graphicExtension
             ? `${Stratus.BaseUrl}sitetheorymedia/images/mediaTypeGraphics/media-graphic-${graphicExtension}.png`
-            : ''
+            : null
+    }
+
+    hasMediaGraphic(model: any): boolean {
+        return !!this.getMediaGraphicUrl(model)
     }
 
     remove(model: any) {
@@ -516,6 +523,9 @@ export class MediaSelectorComponent extends RootComponent { // implements OnInit
         }
         models.splice(index, 1)
         // this.prioritize()
+        if (_.isFunction(this.model.handleChanges)) {
+            this.model.handleChanges()
+        }
         this.model.trigger('change')
         // trigger event emission
         this.removeFromSelected(model.id)
@@ -525,6 +535,12 @@ export class MediaSelectorComponent extends RootComponent { // implements OnInit
     fetchData() {
         if (this.fetched) {
             return this.fetched
+        }
+        const scopeModel = this.getScopeModel()
+        if (scopeModel) {
+            this.model = scopeModel
+            this.data = scopeModel
+            return this.fetched = Promise.resolve(scopeModel)
         }
         return this.fetched = this.registry.fetch(
             Stratus.Select(this.elementRef.nativeElement),
@@ -542,6 +558,32 @@ export class MediaSelectorComponent extends RootComponent { // implements OnInit
         // }, this)
     }
 
+    getScopeModel(): Model|null {
+        const angularApi = (window as any).angular
+        if (!angularApi || !_.isFunction(angularApi.element)) {
+            return null
+        }
+        const elementScope = angularApi.element(this.elementRef.nativeElement).scope()
+        if (!elementScope) {
+            return null
+        }
+        const candidates = [
+            elementScope.model,
+            _.get(elementScope, '$parent.model'),
+            _.get(elementScope, '$parent.$parent.model')
+        ]
+        return _.find(candidates, (model: any) => this.isCompatibleScopeModel(model)) || null
+    }
+
+    isCompatibleScopeModel(model: any): boolean {
+        if (!model || !_.isFunction(model.get)) {
+            return false
+        }
+        const dataId = Number(_.get(model, 'data.id') || 0)
+        const selectorId = Number(this.id || 0)
+        return !selectorId || !dataId || selectorId === dataId
+    }
+
     // Ensures Data is populated before hitting the Subscriber
     dataDefer(subscriber: Subscriber<any>) {
         this.subscriber = this.subscriber || subscriber
@@ -553,7 +595,6 @@ export class MediaSelectorComponent extends RootComponent { // implements OnInit
         }
         const models = this.dataRef()
         this.empty = !models.length
-        _.forEach(models, (model: any) => this.prepareMediaFallback(model))
         this.subscriber.next(models)
         /* *
         // FIXME: This gets called twice per cycle...

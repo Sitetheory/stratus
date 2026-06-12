@@ -936,13 +936,15 @@ export class Model<T = LooseObject> extends ModelBase<T> {
 
                 // Propagate Changes
                 this.data = cloneDeep(intermediateData) as T
-                // Before handling changes make sure we set to false
+                this.pending = false
                 this.changed = false
                 this.changedExternal = false
                 this.saving = false
                 // FIXME: This should be finding the changed identifier...
-                this.handleChanges()
-                this.patch = {}
+                const postSaveChangeSet = this.handleChanges()
+                if (isEmpty(postSaveChangeSet)) {
+                    this.patch = {}
+                }
 
                 // TODO: Handle the remainder here, which was encapsulated after the if (!this.error) {
 
