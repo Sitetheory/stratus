@@ -81,10 +81,15 @@
 
                             <div class="thumb-gradient">&nbsp;</div>
 
-                            <!-- This is a fallback for a blank ngStyle on the parent -->
-                            <h4 *ngIf="!_.get(selectedModel, '_thumbnailUrl') && !_.get(selectedModel, 'bestImage.thumb') && !_.get(selectedModel, 'meta.thumbnail_small')"
+                            <img *ngIf="!_.get(selectedModel, '_thumbnailUrl') && !_.get(selectedModel, 'bestImage.thumb') && !_.get(selectedModel, 'meta.thumbnail_small') && hasMediaGraphic(selectedModel)"
+                                 class="position-center"
+                                 style="display: block; height: auto; max-height: 58%; max-width: 58%; width: auto;"
+                                 [src]="getMediaGraphicUrl(selectedModel)"
+                                 [attr.alt]="getMediaFallbackLabel(selectedModel)">
+                            <h4 *ngIf="!_.get(selectedModel, '_thumbnailUrl') && !_.get(selectedModel, 'bestImage.thumb') && !_.get(selectedModel, 'meta.thumbnail_small') && !hasMediaGraphic(selectedModel)"
                                 class="thumb-title position-center"
-                                [innerText]="_.get(selectedModel, 'name')"></h4>
+                                style="align-items: center; bottom: 0; display: flex; justify-content: center; left: 0; margin: 0; padding: 0 6px; right: 0; text-align: center; text-transform: uppercase; top: 0; transform: none; width: auto;"
+                                [innerText]="getMediaFallbackLabel(selectedModel) || _.get(selectedModel, 'name')"></h4>
 
                             <div class="thumb-icon">
                                 <mat-icon *ngIf="_.get(selectedModel, 'mime') && _.get(selectedModel, 'mime').includes('image')"
@@ -152,6 +157,29 @@
                                                           aria-hidden="true"
                                                           [attr.aria-label]="textDisplay.showDetails"
                                                           aria-label="Show Details"></mat-icon>
+                                            </a>
+                                        </span>
+                                        <span (click)="copyMediaToClipboard(selectedModel)">
+                                            <a class="border-radius-default"
+                                               href="#"
+                                               [matTooltip]="textDisplay.copyLinkToClipboard">
+                                                <mat-icon class="link-icon"
+                                                          svgIcon="media_selector_link"
+                                                          aria-hidden="true"
+                                                          [attr.aria-label]="textDisplay.copyLinkToClipboard"
+                                                          aria-label="Copy link to clipboard"></mat-icon>
+                                            </a>
+                                        </span>
+                                        <span *ngIf="canDownload(selectedModel)"
+                                              (click)="downloadLink(selectedModel)">
+                                            <a class="border-radius-default"
+                                               href="#"
+                                               [matTooltip]="textDisplay.download">
+                                                <mat-icon class="download-icon"
+                                                          svgIcon="media_selector_download"
+                                                          aria-hidden="true"
+                                                          [attr.aria-label]="textDisplay.download"
+                                                          aria-label="Download"></mat-icon>
                                             </a>
                                         </span>
                                         <span (click)="remove(selectedModel)">

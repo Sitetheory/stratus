@@ -6,6 +6,20 @@ Nothing should be outside 'stratus-idx-property-search'/'.md-panel.stratus-idx-p
 stratus-idx-property-search[data-list-id^="property-list"] .property-search-default,
 .md-panel#stratus-idx-property-search-menu.property-search-default {
   position: relative;
+  .button-reset {
+    appearance: none;
+    margin: 0;
+    padding: 0;
+    color: inherit;
+    font: inherit;
+    line-height: inherit;
+    text-align: inherit;
+    background: transparent;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    cursor: pointer;
+  }
   .click-out {
     position: fixed;
     top: 0;
@@ -122,11 +136,24 @@ stratus-idx-property-search[data-list-id^="property-list"] .property-search-defa
         label {
           text-align: left;
         }
+        .search-icon-button,
         .search-icon {
           position: absolute;
           transform: translateY(-50%);
           top: 50%;
           left: 10px;
+        }
+        .search-icon-button {
+          z-index: 1;
+          width: 24px;
+          height: 24px;
+          text-align: center;
+        }
+        .search-icon {
+          display: block;
+          left: 0;
+          width: 24px;
+          height: 24px;
           svg {
             transform: rotate(-30deg);
             g {

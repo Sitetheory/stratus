@@ -57,8 +57,9 @@
                           aria-hidden="true"
                           svgIcon="{{ model.contentType.iconResourcePath | assetPath }}"></mat-icon>
                 <span class="comment content-type-name font-body"
-                      data-ng-class="(model.contentType.name | lowercase) + '-color'"
-                      data-ng-bind="model.contentType.name"></span>
+                      data-ng-class="(model.contentType.name | lowercase) + '-color'">
+                    {{ model.contentType.name }}<span *ngIf="model.type">: {{ model.type }}</span>
+                </span>
             </div>
             -->
             <h3 class="title">

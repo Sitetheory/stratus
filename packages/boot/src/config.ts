@@ -55,11 +55,7 @@
                 deps: ['angular']
             },
             'angular-material': {
-                deps: [
-                    'angular-aria',
-                    'angular-animate',
-                    'angular-messages'
-                ]
+                deps: ['angular']
             },
             'angular-resource': {
                 deps: ['angular']
@@ -322,11 +318,13 @@
             'angular-native': `${boot.deployment}angular/angular${boot.suffix}`,
             'angular-animate': `${boot.deployment}angular-animate/angular-animate${boot.suffix}`,
             'angular-aria': `${boot.deployment}angular-aria/angular-aria${boot.suffix}`,
-            'angular-material': `${boot.deployment}angular-material/angular-material${boot.suffix}`,
+            'angular-material': `${boot.deployment}@stratusjs/angularjs-extras/src/normalizers/angular-material${boot.suffix}`,
+            'angular-material-native': `${boot.deployment}angular-material/angular-material${boot.suffix}`,
             'angular-material-css': `${boot.deployment}angular-material/angular-material${boot.suffix}.css`,
             'angular-messages': `${boot.deployment}angular-messages/angular-messages${boot.suffix}`,
             'angular-resource': `${boot.deployment}angular-resource/angular-resource${boot.suffix}`,
-            'angular-sanitize': `${boot.deployment}angular-sanitize/angular-sanitize${boot.suffix}`,
+            'angular-sanitize': `${boot.deployment}@stratusjs/angularjs-extras/src/normalizers/angular-sanitize${boot.suffix}`,
+            'angular-sanitize-native': `${boot.deployment}angular-sanitize/angular-sanitize${boot.suffix}`,
 
             /* AngularJs Modules */
             'angular-drag-and-drop-lists': `${boot.deployment}angular-drag-and-drop-lists/angular-drag-and-drop-lists${boot.suffix}`,

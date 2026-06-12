@@ -4,6 +4,8 @@
 //  dynamically.
 
 import {DOMComplete} from '@stratusjs/core/dom'
+import {cookie} from '@stratusjs/core/environment'
+import {Stratus} from '@stratusjs/runtime/stratus'
 
 // Fade out detection cycles
 let initialTimeout = 1000
@@ -19,17 +21,29 @@ function exponentialTimeout() {
 
 // TODO: Make this importable, so we can bootstrap other components dynamically in packages outside this one.
 // Attempt to boot Angular
-let boot = false
+let booted = false
+function loadAngularMaterialStyles() {
+    const min = !cookie('env') ? '.min' : ''
+    const localDir = `${Stratus.BaseUrl}${boot.configuration.paths['@stratusjs/angular/*'].replace(/[^/]*$/, '').replace(/\/dist\/$/, '/src/')}`
+
+    return Promise.all([
+        Stratus.Internals.CssLoader('https://fonts.googleapis.com/icon?family=Material+Icons&display=swap'),
+        Stratus.Internals.CssLoader(`${localDir}angular-material-indigo-pink${min}.css`)
+    ]).catch((error: Error) => {
+        console.warn('@stratusjs/angular failed to load Angular Material styles.', error)
+    })
+}
+
 function angularBoot() {
     // Run Once
-    if (boot) {
+    if (booted) {
         console.log('stopped angular boot attempt after successful boot.')
         return
     }
     // Load Angular 8+
     // These are registered valid components to find and load on a page
     // TODO: eventually we need to dynamically load like config.js, e.g. see material.ts
-    const sa = [
+    const angularComponentSelectors = [
         // 'sa-base',
         'sa-boot', // Forcibly Boot Angular. Useful if element is not directly on a page onLoad
         'sa-editor',
@@ -39,9 +53,13 @@ function angularBoot() {
         'sa-stripe-payment-method-item-display',
         'sa-stripe-payment-method-list',
         'sa-stripe-payment-method-selector',
+        'sa-timezone-selector',
         'sa-tree'
         // 'quill-editor'
     ]
+    const sa = angularComponentSelectors.concat(
+        angularComponentSelectors.map((selector: string) => `${selector}-boot`)
+    )
     // sa.map((element) => element).reduce((element) => element);
     let detected = false
     sa.forEach(component => {
@@ -62,9 +80,9 @@ function angularBoot() {
         return
     }
     // Lock Bootstrapper
-    boot = true
-    // Require Main
-    require('@stratusjs/angular/main')
+    booted = true
+    // Require Main after Angular Material styles are requested.
+    loadAngularMaterialStyles().then(() => require('@stratusjs/angular/main'))
 }
 
 // Automatic Bootstrapping on DOM Complete

@@ -16,6 +16,12 @@ AngularJS idx/property Service and Components bundle to be used as an add-on to 
 
 See [the wiki](https://github.com/Sitetheory/stratus/wiki/Idx-Package) for further instructions
 
+## Optimization Notes
+
+The current production bundle is intentionally broad for compatibility. See
+[IDX_BUNDLE_SPLITTING_PLAN.md](./IDX_BUNDLE_SPLITTING_PLAN.md) for the planned
+safe migration toward smaller per-widget IDX bundles.
+
 ---
 ## Frameworks & Libraries
 

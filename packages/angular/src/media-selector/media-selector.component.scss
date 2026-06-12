@@ -208,6 +208,23 @@ sa-internal-media-selector,
 sa-media-selector,
 sa-internal-media-selector,
 .media-selected-box.cdk-drag-preview {
+  .image-hover-info {
+    .action-btns {
+      margin: 0 auto;
+      padding-top: 2px;
+      width: 112px;
+
+      span {
+        display: inline-block;
+        margin: 0 2px;
+      }
+
+      a {
+        display: inline-block;
+      }
+    }
+  }
+
   .column-image,
   .column-title,
   .column-action {

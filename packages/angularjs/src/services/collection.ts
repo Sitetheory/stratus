@@ -250,7 +250,10 @@ export class Collection<T = LooseObject> extends EventManager {
                 if (chain) {
                     key = chain + '[' + key + ']'
                 }
-                str.push(this.serialize(value, key))
+                const serialized = this.serialize(value, key)
+                if (serialized) {
+                    str.push(serialized)
+                }
             } else {
                 let encoded = ''
                 if (chain) {
@@ -310,6 +313,14 @@ export class Collection<T = LooseObject> extends EventManager {
                 withCredentials: this.withCredentials,
             }
             if (!isUndefined(data)) {
+                if (isObject(data) && Object.prototype.hasOwnProperty.call(data, 'p')) {
+                    const validPage = this.normalizePositiveWholeNumber((data as LooseObject).p)
+                    if (isUndefined(validPage)) {
+                        delete (data as LooseObject).p
+                    } else {
+                        (data as LooseObject).p = validPage
+                    }
+                }
                 if (action === 'GET') {
                     if (isObject(data) && Object.keys(data).length) {
                         request.url += request.url.includes('?') ? '&' : '?'
@@ -341,10 +352,11 @@ export class Collection<T = LooseObject> extends EventManager {
             }
 
             // begin request
-            this.xhr = new XHR(request)
+            const xhr = new XHR(request)
+            this.xhr = xhr
 
             // TODO: Make this into an over-writable function
-            const handler = (response: LooseObject | Array<LooseObject> | string) => {
+            const handler = (response: LooseObject | Array<LooseObject> | string, responseXhr: XHR = xhr) => {
                 if (!isObject(response) && !isArray(response)) {
                     // Build Report
                     const error = new ErrorBase({
@@ -384,14 +396,14 @@ export class Collection<T = LooseObject> extends EventManager {
                     }
                     // Cache Headers
                     if (!(queryHash in this.cacheHeaders)) {
-                        this.cacheHeaders[queryHash] = this.xhr.getAllResponseHeaders()
+                        this.cacheHeaders[queryHash] = responseXhr.getAllResponseHeaders()
                     } else {
                         responseHeaders = this.cacheHeaders[queryHash]
                     }
                 }
 
                 // Data
-                this.header.set(responseHeaders || this.xhr.getAllResponseHeaders())
+                this.header.set(responseHeaders || responseXhr.getAllResponseHeaders())
                 this.meta.set((response as LooseObject).meta || {})
                 this.models = []
                 const payload = (response as LooseObject).payload || response
@@ -447,9 +459,54 @@ export class Collection<T = LooseObject> extends EventManager {
                 handler(this.cacheResponse[queryHash])
                 return
             }
+            const prewarmRequest = typeof window !== 'undefined' && (window as any).StratusApiPrewarm
+                ? (window as any).StratusApiPrewarm[request.url]
+                : null
+            const prewarm: Promise<Response|LooseObject|Array<LooseObject>|string> | null = request.method === 'GET'
+                && prewarmRequest
+                && typeof prewarmRequest.then === 'function'
+                ? prewarmRequest
+                : null
+            if (prewarm) {
+                prewarm
+                    .then((response: Response|LooseObject|Array<LooseObject>|string) => {
+                        if (response && typeof (response as Response).clone === 'function') {
+                            return (response as Response).clone().json()
+                        }
+                        return response
+                    })
+                    .then((response: LooseObject|Array<LooseObject>|string) => {
+                        const prewarmXhr = {
+                            getAllResponseHeaders: () => ({})
+                        } as XHR
+                        this.xhr = prewarmXhr
+                        handler(response, prewarmXhr)
+                    })
+                    .catch(() => {
+                        const retryXhr = new XHR(request)
+                        this.xhr = retryXhr
+                        const xhrPromise = retryXhr.send()
+                        if (request.method === 'GET' && typeof window !== 'undefined') {
+                            (window as any).StratusApiPrewarm = (window as any).StratusApiPrewarm || {}
+                            ;(window as any).StratusApiPrewarm[request.url] = xhrPromise
+                        }
+                        xhrPromise.then((response: LooseObject | Array<LooseObject> | string) => handler(response, retryXhr))
+                            .catch((error: any) => {
+                                console.error(`XHR: ${request.method} ${request.url}`)
+                                this.throttleTrigger('change')
+                                this.trigger('error', error)
+                                reject(error)
+                            })
+                    })
+                return
+            }
             // make the call!
-            this.xhr.send()
-                .then(handler)
+            const xhrPromise = this.xhr.send()
+            if (request.method === 'GET' && typeof window !== 'undefined') {
+                (window as any).StratusApiPrewarm = (window as any).StratusApiPrewarm || {}
+                ;(window as any).StratusApiPrewarm[request.url] = xhrPromise
+            }
+            xhrPromise.then((response: LooseObject | Array<LooseObject> | string) => handler(response, xhr))
                 .catch((error: any) => {
                     // (/(.*)\sReceived/i).exec(error.message)[1]
                     console.error(`XHR: ${request.method} ${request.url}`)
@@ -489,32 +546,179 @@ export class Collection<T = LooseObject> extends EventManager {
         })
     }
 
-    hydrateCollectionApiFromUrl() {
-        if (this.collectionApiHydratedFromUrl || typeof window === 'undefined') {
-            return
-        }
-        const api = this.meta.get('api') || {}
-        if (!isUndefined(get(api, 'p')) && get(api, 'p') !== null && get(api, 'p') !== '') {
-            this.collectionApiHydratedFromUrl = true
+    hydrateCollectionApiFromUrl(force = false) {
+        if ((!force && this.collectionApiHydratedFromUrl) || typeof window === 'undefined') {
             return
         }
         const url = new URL(window.location.href)
-        let rawPage: string | null = null
+        const urlApi = this.getUrlSearchObject(url)
+        let filterApplied = false
+        let rawPage: any = null
         if (typeof this.target === 'string' && this.target.length) {
-            rawPage = url.searchParams.get(`page[${this.target}]`)
+            rawPage = this.getUrlSearchValue(url, [`page[${this.target}]`, `p[${this.target}]`])
         }
         if (!rawPage) {
-            rawPage = url.searchParams.get('page')
+            rawPage = this.getUrlSearchValue(url, ['p', 'page'])
         }
-        const page = Number(rawPage)
-        if (!page || Number.isNaN(page)) {
-            this.collectionApiHydratedFromUrl = true
+        const page = this.normalizePositiveWholeNumber(rawPage)
+        if (!isUndefined(page)) {
+            this.meta.set('api.p', page)
+            this.meta.set('pagination.pageCurrent', page)
+            this.paginate = true
+        }
+
+        const query = this.getUrlSearchValue(url, ['q', 'query', 'keyword', 'search'])
+        if (!isUndefined(query) && query !== null && query !== '') {
+            this.meta.set('api.q', query)
+            this.filtering = true
+            filterApplied = true
+        }
+
+        const tags = this.getUrlSearchArray(url, ['tags', 'tag'])
+        if (!isEmpty(tags)) {
+            this.meta.set('api.tags', map(tags, this.parseNumberLikeValue))
+            filterApplied = true
+        }
+
+        const contentTypes = this.getUrlSearchArray(url, ['contentType', 'contentTypes'])
+        if (!isEmpty(contentTypes)) {
+            this.meta.set('api.contentType', map(contentTypes, this.parseNumberLikeValue))
+            filterApplied = true
+        }
+
+        forEach([
+            'authorId',
+            'status',
+            'filterPublished',
+            'filterTimeField',
+            'filterTimeMin',
+            'filterTimeMax',
+            'filterTimeRange',
+            'sort',
+            'sortOrder',
+            'filter'
+        ], (apiKey: string) => {
+            if (!has(urlApi, apiKey)) {
+                return
+            }
+            const value = get(urlApi, apiKey)
+            if (isUndefined(value) || value === null || value === '') {
+                return
+            }
+            this.meta.set(`api.${apiKey}`, this.parseUrlValue(value))
+            filterApplied = true
+        })
+
+        if (filterApplied) {
+            this.meta.set('filterApplied', true)
+        }
+        this.collectionApiHydratedFromUrl = true
+    }
+
+    private getUrlSearchValue(url: URL, keys: string[]): any {
+        for (const key of keys) {
+            const value = url.searchParams.get(key)
+            if (!isUndefined(value) && value !== null && value !== '') {
+                return this.parseUrlValue(value)
+            }
+        }
+        return undefined
+    }
+
+    private getUrlSearchArray(url: URL, keys: string[]): any[] {
+        const values: any[] = []
+        url.searchParams.forEach((value: string, key: string) => {
+            if (!find(keys, (name: string) => key === name || key === `${name}[]` || new RegExp(`^${name}\\[\\d+\\]$`).test(key))) {
+                return
+            }
+            const parsedValue = this.parseUrlValue(value)
+            if (isArray(parsedValue)) {
+                values.push(...parsedValue)
+                return
+            }
+            if (typeof parsedValue === 'string' && parsedValue.indexOf(',') !== -1) {
+                values.push(...parsedValue.split(',').map((item: string) => item.trim()).filter((item: string) => item !== ''))
+                return
+            }
+            values.push(parsedValue)
+        })
+        return values
+    }
+
+    private getUrlSearchObject(url: URL): LooseObject {
+        const output: LooseObject = {}
+        url.searchParams.forEach((value: string, key: string) => {
+            this.assignUrlSearchValue(output, this.getUrlSearchParts(key), value)
+        })
+        return output
+    }
+
+    private getUrlSearchParts(key: string): string[] {
+        const parts: string[] = []
+        const pattern = /([^\[\]]+)|\[(.*?)\]/g
+        let match: RegExpExecArray | null
+        while ((match = pattern.exec(key)) !== null) {
+            parts.push(match[1] || match[2] || '')
+        }
+        return parts
+    }
+
+    private assignUrlSearchValue(output: LooseObject, parts: string[], rawValue: string) {
+        if (!parts.length) {
             return
         }
-        this.meta.set('api.p', page)
-        this.meta.set('pagination.pageCurrent', page)
-        this.paginate = true
-        this.collectionApiHydratedFromUrl = true
+        let cursor: any = output
+        forEach(parts, (part: string, index: number) => {
+            const last = index === parts.length - 1
+            const key: any = part === '' ? this.nextArrayKey(cursor) : part
+            if (last) {
+                if (isUndefined(cursor[key])) {
+                    cursor[key] = rawValue
+                } else if (isArray(cursor[key])) {
+                    cursor[key].push(rawValue)
+                } else {
+                    cursor[key] = [cursor[key], rawValue]
+                }
+                return
+            }
+            if (!isObject(cursor[key])) {
+                cursor[key] = parts[index + 1] === '' || /^\d+$/.test(parts[index + 1]) ? [] : {}
+            }
+            cursor = cursor[key]
+        })
+    }
+
+    private nextArrayKey(value: any): number {
+        return isArray(value) ? value.length : Object.keys(value).length
+    }
+
+    private parseUrlValue(value: any): any {
+        if (isArray(value)) {
+            return map(value, (item: any) => this.parseUrlValue(item))
+        }
+        if (isObject(value)) {
+            return reduce(value, (result: LooseObject, item: any, key: string) => {
+                result[key] = this.parseUrlValue(item)
+                return result
+            }, {})
+        }
+        if (typeof value !== 'string') {
+            return value
+        }
+        if (isJSON(value)) {
+            return JSON.parse(value)
+        }
+        return this.parseNumberLikeValue(value)
+    }
+
+    private parseNumberLikeValue(value: any): any {
+        if (typeof value !== 'string') {
+            return value
+        }
+        if (/^-?\d+(\.\d+)?$/.test(value)) {
+            return Number(value)
+        }
+        return value
     }
 
     filter(query: string) {
@@ -546,10 +750,27 @@ export class Collection<T = LooseObject> extends EventManager {
     }
 
     page(page: any) {
-        this.paginate = !isEmpty(page)
-        this.meta.set('api.p', page)
+        const validPage = this.normalizePositiveWholeNumber(page)
+        this.paginate = !isUndefined(validPage)
+        if (isUndefined(validPage)) {
+            this.clearApiPage()
+            return
+        }
+        this.meta.set('api.p', validPage)
         this.fetch().then()
-        delete this.meta.get('api').p
+        this.clearApiPage()
+    }
+
+    private clearApiPage() {
+        const collectionApi = this.meta.get('api')
+        if (isObject(collectionApi) && Object.prototype.hasOwnProperty.call(collectionApi, 'p')) {
+            delete (collectionApi as LooseObject).p
+        }
+    }
+
+    private normalizePositiveWholeNumber(value: any): number | undefined {
+        const page = Number(value)
+        return Number.isFinite(page) && Number.isInteger(page) && page >= 1 ? page : undefined
     }
 
     toJSON() {

@@ -3,7 +3,16 @@
 
 /* global define, System */
 
-// Ensure angular gets injected first
+function hasAngularModule (name) {
+  try {
+    return !!(window.angular && window.angular.module(name))
+  } catch (err) {
+    return false
+  }
+}
+
+// Angular Sanitize is usually primed by the host page. Only fetch the native
+// file when this normalizer is used without that direct script bootstrap.
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
     define(['angular'], factory)
@@ -11,7 +20,8 @@
     factory()
   }
 }(this, async function () {
-  // FIXME: This never actually sets the correct timing for what's referencing the import...
-  await System.import('angular-sanitize-native')
-  console.log('[angularjs-sanitize] timing set via normalizer')
+  if (!hasAngularModule('ngSanitize')) {
+    await System.import('angular-sanitize-native')
+  }
+  return window.angular
 }))

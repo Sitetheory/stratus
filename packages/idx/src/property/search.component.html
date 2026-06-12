@@ -22,11 +22,16 @@
             change the location they will hit the clear button to remove those, and enter a generic Location. -->
             <!-- TODO: add a "search" icon that shows up ONLY when the location field is clickable and enterable. It should NOT show up with the preset-location text is showing up because it is confusing and makes a person feel like they should be able to click and edit. -->
             <!-- NOTE: some of these fields are arrays -->
-            <md-icon class="search-icon"
-                     data-ng-click="search()"
-                     data-ng-if="!isPresetLocationSet()"
-                     md-svg-src="{{ localDir + 'images/icons/actionButtons/search.svg' }}"
-            ></md-icon>
+            <button type="button"
+                    class="button-reset search-icon-button"
+                    data-ng-click="search()"
+                    data-ng-if="!isPresetLocationSet()"
+                    aria-label="Search listings">
+                <md-icon class="search-icon"
+                         aria-hidden="true"
+                         md-svg-src="{{ localDir + 'images/icons/actionButtons/search.svg' }}"
+                ></md-icon>
+            </button>
             <!-- NOTE: the data-ng-keyup should not be setting: && options.query.where.Location (seems useless???) -->
             <!-- NOTE: data-ng-keyup will run $event.keyCode == 13 && search(). If $event.keyCode is not Enter, search() cannot be reached -->
             <md-input-container
@@ -164,16 +169,21 @@
             </md-input-container>
         </div>
         <div class="search-more-filters" data-ng-if="listInitialized && searchType == 'advanced'">
-            <a class="open-filters-link"
-               data-ng-click="$parent.advancedFiltersStatus = !$parent.advancedFiltersStatus">
+            <button type="button"
+                    aria-label="Open Advanced Search Filters"
+                    class="button-reset open-filters-link"
+                    data-ng-click="$parent.advancedFiltersStatus = !$parent.advancedFiltersStatus"
+                    data-ng-attr-aria-expanded="{{$parent.advancedFiltersStatus ? 'true' : 'false'}}"
+                    aria-controls="stratus-idx-property-search-menu">
                 <md-icon md-svg-src="{{ localDir + 'images/icons/actionButtons/filters.svg' }}"></md-icon>
                 <span class="btn-text"><span data-ng-show="!$parent.advancedFiltersStatus">More </span><span data-ng-show="$parent.advancedFiltersStatus">Less </span><span class="optional-btn-text">Filters</span></span>
-            </a>
+            </button>
         </div>
 
         <div class="search-more-filters" data-ng-if="listInitialized && searchType != 'advanced' && advancedSearchUrl">
             <!-- Only display the href if there is a list -->
             <a class="open-filters-link"
+               aria-label="Got to Advanced Search"
                data-ng-href="{{ advancedSearchUrl }}">
                 <md-icon md-svg-src="{{ localDir + 'images/icons/actionButtons/filters.svg' }}"></md-icon>
                 <span class="btn-text"><span data-ng-bind="advancedSearchLinkName"></span></span>
@@ -182,10 +192,13 @@
 
         <div class="search-more-filters" data-ng-if="!listInitialized">
             <!-- If there isn't a list, run the search() function to send to a pre-filled search page -->
-            <a class="open-filters-link" data-ng-click="search(true)">
+            <button type="button"
+                    aria-label="Go to Advanced Search"
+                    class="button-reset open-filters-link"
+                    data-ng-click="search(true)">
                 <md-icon md-svg-src="{{ localDir + 'images/icons/actionButtons/filters.svg' }}"></md-icon>
                 <span class="btn-text"><span data-ng-bind="advancedSearchLinkName"></span></span>
-            </a>
+            </button>
         </div>
 
         <!-- NO LONGER NEEDED because data-ng-change gives instant results -->
@@ -204,7 +217,7 @@
         <div class="more-filters" data-stratus-full-height="{{ displayFilterFullHeight }}" data-full-height-minus-elements='[".demo-switcher-bar", ".header-common-parent", ".search-filter-top", ".sf-toolbarreset"]'>
 
             <!-- Close Button -->
-            <button type="button" class="btn-close" data-ng-click="$parent.advancedFiltersStatus = !$parent.advancedFiltersStatus">
+            <button aria-label="Close Dialog" type="button" class="button-reset btn-close" data-ng-click="$parent.advancedFiltersStatus = !$parent.advancedFiltersStatus">
                 <span class="sr-only">Close Dialog</span>
                 <md-icon md-svg-src="{{ localDir + 'images/icons/actionButtons/close.svg' }}" aria-hidden="true"></md-icon>
             </button>

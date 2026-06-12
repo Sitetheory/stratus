@@ -30,6 +30,7 @@ import {IconOptions, MatIconRegistry} from '@angular/material/icon'
 // External Dependencies
 import {Stratus} from '@stratusjs/runtime/stratus'
 import {
+    cloneDeep,
     forEach,
     get,
     has,
@@ -40,6 +41,7 @@ import {
     isString,
     isUndefined,
     snakeCase,
+    set,
     uniqueId
 } from 'lodash'
 import {keys} from 'ts-transformer-keys'
@@ -149,6 +151,18 @@ export class SelectorComponent extends RootComponent { // implements OnInit, OnC
     // UI Flags
     styled = false
     empty = false
+    syndicationHydration: {
+        [key: string]: Promise<any>
+    } = {}
+    staleModelIds: {
+        [key: string]: boolean
+    } = {}
+    selectedModelDisplayData: {
+        [key: string]: LooseObject
+    } = {}
+    removeDeleteDialogModel: any = null
+    removeDeleteDialogMode: 'remove'|'delete' = 'remove'
+    deleteConfirmText = ''
 
     constructor(
         private iconRegistry: MatIconRegistry,
@@ -168,9 +182,13 @@ export class SelectorComponent extends RootComponent { // implements OnInit, OnC
 
         // SVG Icons
         forEach({
-            selector_delete: `${Stratus.BaseUrl}sitetheorycore/images/icons/actionButtons/delete.svg`,
+            selector_delete: `${Stratus.BaseUrl}sitetheorycore/images/icons/actionButtons/minus.svg`,
             selector_status: `${Stratus.BaseUrl}sitetheorycore/images/icons/actionButtons/visibility.svg`,
-            selector_edit: `${Stratus.BaseUrl}sitetheorycore/images/icons/actionButtons/edit.svg`
+            selector_duplicate: `${Stratus.BaseUrl}sitetheorycore/images/icons/actionButtons/duplicate.svg`,
+            selector_edit: `${Stratus.BaseUrl}sitetheorycore/images/icons/actionButtons/edit.svg`,
+            selector_refresh: `${Stratus.BaseUrl}sitetheorycore/images/icons/actionButtons/refresh.svg`,
+            selector_publish: `${Stratus.BaseUrl}sitetheorycore/images/icons/actionButtons/publish.svg`,
+            selector_permanent_delete: `${Stratus.BaseUrl}sitetheorycore/images/icons/actionButtons/delete.svg`
         }, (value, key) => iconRegistry.addSvgIcon(key, sanitizer.bypassSecurityTrustResourceUrl(value)).getNamedSvgIcon(key))
 
         // TODO: Assess & Possibly Remove when the System.js ecosystem is complete
@@ -260,15 +278,434 @@ export class SelectorComponent extends RootComponent { // implements OnInit, OnC
         this.model.trigger('change')
     }
 
-    goToUrl(model: any) {
+    hasKnownSyndicatedStatus(model: any): boolean {
+        const syndicated = get(model, 'syndicated')
+        return !isUndefined(syndicated) && syndicated !== null && syndicated !== ''
+    }
+
+    goToUrl(model: any, syndicatedStatus?: any) {
         if (!model || !model.contentType) {
             console.error('unable to execute goToUrl() because a valid model content was not provided.')
             return
         }
+        if (!isUndefined(syndicatedStatus) && syndicatedStatus !== null && syndicatedStatus !== '') {
+            model.syndicated = Number(syndicatedStatus || 0)
+        }
+        if (!this.hasKnownSyndicatedStatus(model)) {
+            this.setPending(model, true)
+            this.fetchSyndication(model)
+                .then(() => {
+                    this.setPending(model, false)
+                    if (this.requiresLocalCopyBeforeEdit(model)) {
+                        this.customizeSyndicatedForEdit(model)
+                        return
+                    }
+                    this.openEditWindow(model)
+                })
+                .catch((error: any) => {
+                    console.error('error[goToUrl]: unable to determine syndicated status before editing.', error)
+                    this.setPending(model, false)
+                    this.refresh().then()
+                })
+            return
+        }
+        if (this.requiresLocalCopyBeforeEdit(model)) {
+            this.customizeSyndicatedForEdit(model)
+            return
+        }
+        this.openEditWindow(model)
+    }
+
+    openEditWindow(model: any) {
+        if (!model || !model.contentType || !model.id) {
+            console.error('unable to open edit window because a valid model content was not provided.', model)
+            return
+        }
+        this.markStale(model)
+        this.emitDataChange()
         window.open(model.contentType.editUrl + '?id=' + model.id, '_blank')
     }
 
+    getContentApiUrl(model: any): string {
+        const controller = this.getString(model, 'contentType.controller')
+        const target = controller
+            ? controller.replace(/\\/g, '/')
+            : 'Content'
+        return `/Api/${target}/${model.id}`
+    }
+
+    getSelectionIndex(model: any): number {
+        const models = this.dataRef()
+        if (!models || !models.length || !model || !model.id) {
+            return -1
+        }
+
+        let index: number = models.indexOf(model)
+        if (index === -1) {
+            const mirrorModels = models
+                .map((m: any) => model.id === m.id ? m : null)
+                .filter((m: any) => m)
+            if (isArray(mirrorModels) && mirrorModels.length) {
+                index = models.indexOf(
+                    head(mirrorModels)
+                )
+            }
+        }
+        return index
+    }
+
+    requiresLocalCopyBeforeEdit(model: any): boolean {
+        return !!model && Number(get(model, 'syndicated')) === 1
+    }
+
+    trackBySelectedModel(index: number, model: any): any {
+        return get(model, 'id') || get(model, 'uid') || index
+    }
+
+    isStale(model: any): boolean {
+        return !!model && (
+            !!get(model, '_selectorStale')
+            || !!this.staleModelIds[String(get(model, 'id'))]
+        )
+    }
+
+    markStale(model: any) {
+        const id = get(model, 'id')
+        if (!isUndefined(id) && id !== null) {
+            this.staleModelIds[String(id)] = true
+        }
+        model._selectorStale = true
+    }
+
+    clearStale(model: any) {
+        const id = get(model, 'id')
+        if (!isUndefined(id) && id !== null) {
+            delete this.staleModelIds[String(id)]
+        }
+        model._selectorStale = false
+    }
+
+    cacheSelectedModelDisplayData(model: any) {
+        const id = get(model, 'id')
+        if (!model || isUndefined(id) || id === null) {
+            return
+        }
+        const key = String(id)
+        const cache = this.selectedModelDisplayData[key] || {}
+        const previousVersion = isObject(cache.version) ? cloneDeep(cache.version) : null
+        const imageUrl = this.selectedImageUrlFromSource(model)
+        if (imageUrl) {
+            cache._selectorImageUrl = imageUrl
+        }
+        ;[
+            'contentType',
+            'description',
+            'iconResourcePath',
+            'name',
+            'overwriteId',
+            'routing',
+            'siteId',
+            'syndicated',
+            'type',
+            'version'
+        ].forEach((field) => {
+            const value = get(model, field)
+            if (!isUndefined(value) && value !== null) {
+                cache[field] = cloneDeep(value)
+            }
+        })
+        if (previousVersion && isObject(cache.version)) {
+            this.preserveSelectedVersionMedia(cache.version, previousVersion)
+        }
+        this.selectedModelDisplayData[key] = cache
+    }
+
+    hydrateSelectedDisplayData(models: Array<any>) {
+        if (!models || !models.length) {
+            return
+        }
+        models.forEach((model: any) => {
+            const id = get(model, 'id')
+            if (!model || isUndefined(id) || id === null) {
+                return
+            }
+            const cache = this.selectedModelDisplayData[String(id)]
+            if (cache) {
+                Object.keys(cache).forEach((field) => {
+                    const value = get(model, field)
+                    if (isUndefined(value) || value === null) {
+                        model[field] = cloneDeep(cache[field])
+                    }
+                })
+                if (isObject(model.version) && isObject(cache.version)) {
+                    this.preserveSelectedVersionMedia(model.version, cache.version)
+                }
+            }
+            this.cacheSelectedModelDisplayData(model)
+        })
+    }
+
+    preserveSelectedVersionMedia(targetVersion: any, cachedVersion: any) {
+        ;[
+            'bestImage',
+            'images',
+            'shellImages',
+            'videos'
+        ].forEach((field) => {
+            const current = get(targetVersion, field)
+            const cached = get(cachedVersion, field)
+            if (
+                (isUndefined(current) || current === null || (isArray(current) && !current.length) || (isObject(current) && isEmpty(current)))
+                && !isUndefined(cached)
+                && cached !== null
+                && (!isArray(cached) || cached.length)
+                && (!isObject(cached) || !isEmpty(cached))
+            ) {
+                set(targetVersion, field, cloneDeep(cached))
+            }
+        })
+    }
+
+    emitDataChange() {
+        this.dataDefer(this.subscriber)
+        this.refresh().then()
+    }
+
+    applySelectedModelData(model: any, incoming: any, options: LooseObject = {}) {
+        if (!model || !isObject(incoming)) {
+            return
+        }
+        const priority = get(model, 'priority')
+        const stale = !!get(options, 'stale')
+        this.cacheSelectedModelDisplayData(model)
+        delete (incoming as any)._selectorPending
+        Object.keys(model).forEach((key) => delete model[key])
+        Object.assign(model, incoming)
+        if (!isUndefined(priority)) {
+            model.priority = priority
+        }
+        model._selectorPending = false
+        if (stale) {
+            this.markStale(model)
+        } else {
+            this.clearStale(model)
+        }
+        this.hydrateSelectedDisplayData([model])
+    }
+
+    refreshSelectedModel(model: any) {
+        if (!model || !model.id || this.isPending(model)) {
+            return
+        }
+        this.setPending(model, true)
+        const xhr = new XHR({
+            method: 'GET',
+            url: `${this.getContentApiUrl(model)}?forceContext=context&showEditUrl=true&showLayout=true&showRouting=true&showSentinels=true`,
+            type: 'application/json'
+        })
+        xhr.send()
+            .then((response: LooseObject | Array<LooseObject> | string) => {
+                if (!isObject(response) || get(response, 'meta.status[0].code') !== 'SUCCESS') {
+                    console.error('error[refreshSelectedModel]:', response)
+                    this.setPending(model, false)
+                    this.refresh().then()
+                    return
+                }
+                this.applySelectedModelData(model, get(response, 'payload') || response)
+                this.emitDataChange()
+            })
+            .catch((error: any) => {
+                console.error('error[refreshSelectedModel]:', error)
+                this.setPending(model, false)
+                this.refresh().then()
+            })
+    }
+
+    getSyndicatedStatus(model: any): number {
+        this.hydrateSyndication(model)
+        return Number(get(model, 'syndicated') || 0)
+    }
+
+    hydrateSelectedSyndication(models: Array<any>) {
+        if (!models || !models.length) {
+            return
+        }
+        models.forEach((model: any) => this.hydrateSyndication(model))
+    }
+
+    hydrateSyndication(model: any) {
+        if (!model || !model.id || !model.contentType || this.hasKnownSyndicatedStatus(model)) {
+            return
+        }
+        this.fetchSyndication(model)
+            .then(() => this.refresh())
+            .catch((error: any) => console.error('error[hydrateSyndication]:', error))
+    }
+
+    fetchSyndication(model: any): Promise<any> {
+        if (!model || !model.id) {
+            return Promise.reject('Invalid model for syndication lookup.')
+        }
+        const key = String(model.id)
+        if (this.syndicationHydration[key]) {
+            return this.syndicationHydration[key]
+        }
+        const xhr = new XHR({
+            method: 'GET',
+            url: `${this.getContentApiUrl(model)}?forceContext=context&showEditUrl=true&showLayout=true&showRouting=true&showSentinels=true`,
+            type: 'application/json'
+        })
+        this.syndicationHydration[key] = xhr.send()
+            .then((response: LooseObject | Array<LooseObject> | string) => {
+                if (!isObject(response) || get(response, 'meta.status[0].code') !== 'SUCCESS') {
+                    delete this.syndicationHydration[key]
+                    return Promise.reject(response)
+                }
+                const hydrated: any = get(response, 'payload') || response
+                const originalId = Number(get(model, 'id'))
+                const hydratedId = Number(get(hydrated, 'id'))
+                const originalPriority = get(model, 'priority')
+                const overwriteId = get(hydrated, 'overwriteId')
+                const isLocalOverwrite = hydratedId
+                    && hydratedId !== originalId
+                    && (
+                        Number(get(hydrated, 'syndicated')) === 2
+                        || (!isUndefined(overwriteId) && Number(overwriteId) === originalId)
+                    )
+                if (isLocalOverwrite) {
+                    Object.assign(model, hydrated)
+                    if (!isUndefined(originalPriority)) {
+                        model.priority = originalPriority
+                    }
+                }
+                model.syndicated = Number(get(model, 'syndicated') || get(hydrated, 'syndicated') || 0)
+                if (!isUndefined(get(hydrated, 'siteId'))) {
+                    model.siteId = get(hydrated, 'siteId')
+                }
+                return isLocalOverwrite ? model : hydrated
+            })
+            .catch((error: any) => {
+                delete this.syndicationHydration[key]
+                return Promise.reject(error)
+            })
+        return this.syndicationHydration[key]
+    }
+
+    customizeSyndicatedForEdit(
+        model: any,
+        payloadPatch: LooseObject = {},
+        options: LooseObject = {}
+    ) {
+        if (this.isPending(model)) {
+            return
+        }
+        const openEditWindow = isUndefined(options.openEditWindow) ? true : !!options.openEditWindow
+        const models = this.dataRef()
+        const index = this.getSelectionIndex(model)
+        if (!models || !models.length || !model || !model.id || index === -1) {
+            console.error('unable to customize syndicated model from selection:', model, models)
+            if (typeof options.onFailure === 'function') {
+                options.onFailure()
+            }
+            this.refresh().then()
+            return
+        }
+
+        let meta: LooseObject = {}
+        if (!isUndefined(this.data)) {
+            meta = Object.assign({}, get(this.data, 'meta.data.api') || {})
+        }
+        delete meta.apiSpecialAction
+        meta.forceContext = meta.forceContext || 'context'
+        meta.showAssociatedContent = true
+        meta.showEditUrl = true
+        meta.showLayout = true
+        meta.showRouting = true
+        meta.showSentinels = true
+        this.setPending(model, true)
+
+        const originalId = Number(model.id)
+        const payload = Object.assign({}, model, payloadPatch || {})
+        delete payload._selectorPending
+
+        const xhr = new XHR({
+            method: 'PUT',
+            url: this.getContentApiUrl(model),
+            data: {
+                route: {},
+                meta,
+                payload
+            },
+            type: 'application/json'
+        })
+        xhr.send()
+            .then((response: LooseObject | Array<LooseObject> | string) => {
+                if (!isObject(response) || get(response, 'meta.status[0].code') !== 'SUCCESS') {
+                    console.error('error[customizeSyndicatedForEdit]:', response)
+                    if (typeof options.onFailure === 'function') {
+                        options.onFailure()
+                    }
+                    this.setPending(model, false)
+                    this.refresh().then()
+                    return
+                }
+
+                const customized: any = get(response, 'payload') || response
+                const customizedId = Number(get(customized, 'id'))
+                const overwriteId = get(customized, 'overwriteId')
+                const overwritesOriginal = !isUndefined(overwriteId)
+                    ? Number(overwriteId) === originalId
+                    : Number(get(customized, 'syndicated')) === 2
+                if (!isObject(customized) || !customizedId || customizedId === originalId || !overwritesOriginal) {
+                    console.error('error[customizeSyndicatedForEdit]: syndication save did not return a local overwrite record.', response)
+                    if (typeof options.onFailure === 'function') {
+                        options.onFailure()
+                    }
+                    this.setPending(model, false)
+                    this.refresh().then()
+                    return
+                }
+
+                ;(customized as any).priority = get(model, 'priority')
+                this.applySelectedModelData(model, customized, {stale: openEditWindow})
+                if (models[index] !== model) {
+                    models.splice(index, 1, model)
+                }
+                this.prioritize()
+                this.model.trigger('change')
+                this.emitDataChange()
+                if (openEditWindow) {
+                    this.openEditWindow(model)
+                }
+            })
+            .catch((error: any) => {
+                console.error('error[customizeSyndicatedForEdit]:', error)
+                if (typeof options.onFailure === 'function') {
+                    options.onFailure()
+                }
+                this.setPending(model, false)
+                this.refresh().then()
+            })
+    }
+
     toggleStatus(model: any) {
+        if (this.isPending(model)) {
+            return
+        }
+        if (!this.hasKnownSyndicatedStatus(model)) {
+            this.setPending(model, true)
+            this.fetchSyndication(model)
+                .then(() => {
+                    this.setPending(model, false)
+                    this.toggleStatus(model)
+                })
+                .catch((error: any) => {
+                    console.error('error[toggleStatus]: unable to determine syndicated status before toggling status.', error)
+                    this.setPending(model, false)
+                    this.refresh().then()
+                })
+            return
+        }
         // model is not directly a model, but just a sub entity of content.version.modules
         // so we have to create a special API call to update just this one model
         // 'Content/' + model.id
@@ -277,11 +714,24 @@ export class SelectorComponent extends RootComponent { // implements OnInit, OnC
             meta = get(this.data, 'meta.data.api')
         }
         const statusOriginal = model.status
+        const statusTarget = statusOriginal === 1 ? 0 : 1
+        if (this.requiresLocalCopyBeforeEdit(model)) {
+            this.customizeSyndicatedForEdit(
+                model,
+                {status: statusTarget},
+                {
+                    openEditWindow: false,
+                    onFailure: () => model.status = statusOriginal
+                }
+            )
+            return
+        }
         model.status = statusOriginal === 1 ? 0 : 1
+        this.setPending(model, true)
         // Create a direct XHR
         const xhr = new XHR({
             method: 'PUT',
-            url: '/Api/Content/' + model.id,
+            url: this.getContentApiUrl(model),
             data: {
                 route: {},
                 meta,
@@ -296,20 +746,346 @@ export class SelectorComponent extends RootComponent { // implements OnInit, OnC
                 if (!isObject(response) || get(response, 'meta.status[0].code') !== 'SUCCESS') {
                     console.error('error[toggleStatus]:', response)
                     model.status = statusOriginal
+                    this.setPending(model, false)
                     this.refresh().then()
                     return
                 }
                 // console.log('success[toggleStatus]:', response)
+                this.setPending(model, false)
+                this.emitDataChange()
             })
             .catch((error: any) => {
                 console.error('error[toggleStatus]:', error)
                 model.status = statusOriginal
+                this.setPending(model, false)
                 this.refresh().then()
             })
         return
     }
 
+    duplicate(model: any) {
+        if (this.isPending(model)) {
+            return
+        }
+        const models = this.dataRef()
+        if (!models || !models.length || !model || !model.id) {
+            console.error('unable to duplicate model from selection:', model, models)
+            this.refresh().then()
+            return
+        }
+
+        let index: number = models.indexOf(model)
+        if (index === -1) {
+            const mirrorModels = models
+                .map((m: any) => model.id === m.id ? m : null)
+                .filter((m: any) => m)
+            if (isArray(mirrorModels) && mirrorModels.length) {
+                index = models.indexOf(
+                    head(mirrorModels)
+                )
+            }
+        }
+
+        if (index === -1) {
+            console.error('unable to find model:', model, 'in selection:', models)
+            return
+        }
+
+        let meta: LooseObject = {}
+        if (!isUndefined(this.data)) {
+            meta = Object.assign({}, get(this.data, 'meta.data.api') || {})
+        }
+        meta.apiSpecialAction = 'duplicate'
+        this.setPending(model, true)
+
+        const xhr = new XHR({
+            method: 'PUT',
+            url: this.getContentApiUrl(model),
+            data: {
+                route: {},
+                meta,
+                payload: model
+            },
+            type: 'application/json'
+        })
+        xhr.send()
+            .then((response: LooseObject | Array<LooseObject> | string) => {
+                if (!isObject(response) || get(response, 'meta.status[0].code') !== 'SUCCESS') {
+                    console.error('error[duplicate]:', response)
+                    this.setPending(model, false)
+                    this.refresh().then()
+                    return
+                }
+
+                const duplicated = get(response, 'payload') || response
+                if (!isObject(duplicated) || !get(duplicated, 'id') || get(duplicated, 'id') === model.id) {
+                    console.error('error[duplicate]: duplicate response did not include a new content id.', response)
+                    this.setPending(model, false)
+                    this.refresh().then()
+                    return
+                }
+
+                models.splice(index + 1, 0, duplicated)
+                this.prioritize()
+                this.setPending(model, false)
+                this.model.trigger('change')
+                this.refresh().then()
+            })
+            .catch((error: any) => {
+                console.error('error[duplicate]:', error)
+                this.setPending(model, false)
+                this.refresh().then()
+            })
+        return
+    }
+
+    publish(model: any) {
+        if (this.isPending(model) || this.isPublished(model)) {
+            return
+        }
+
+        const publishedOriginal = get(model, 'version.published')
+        this.setPending(model, true)
+
+        const xhr = new XHR({
+            method: 'PUT',
+            url: this.getContentApiUrl(model),
+            data: {
+                route: {},
+                meta: {
+                    forceContext: 'context',
+                    showMeta: true,
+                    showRouting: true
+                },
+                payload: {
+                    id: model.id,
+                    version: {
+                        id: get(model, 'version.id'),
+                        timePublish: 'API::NOW'
+                    }
+                }
+            },
+            type: 'application/json'
+        })
+        xhr.send()
+            .then((response: LooseObject | Array<LooseObject> | string) => {
+                if (!isObject(response) || get(response, 'meta.status[0].code') !== 'SUCCESS') {
+                    console.error('error[publish]:', response)
+                    if (model.version) {
+                        model.version.published = publishedOriginal
+                    }
+                    this.setPending(model, false)
+                    this.refresh().then()
+                    return
+                }
+                const publishedModel = get(response, 'payload')
+                if (isObject(publishedModel) && model.version) {
+                    model.version.published = get(publishedModel, 'version.published', 1)
+                    model.version.timePublish = get(publishedModel, 'version.timePublish', model.version.timePublish)
+                } else if (model.version) {
+                    model.version.published = 1
+                }
+                this.setPending(model, false)
+                this.refresh().then()
+            })
+            .catch((error: any) => {
+                console.error('error[publish]:', error)
+                if (model.version) {
+                    model.version.published = publishedOriginal
+                }
+                this.setPending(model, false)
+                this.refresh().then()
+            })
+    }
+
+    openRemoveDeleteDialog(model: any) {
+        if (!model || this.isPending(model)) {
+            return
+        }
+        this.removeDeleteDialogModel = model
+        this.removeDeleteDialogMode = 'remove'
+        this.deleteConfirmText = ''
+        this.refresh().then()
+    }
+
+    closeRemoveDeleteDialog() {
+        this.removeDeleteDialogModel = null
+        this.removeDeleteDialogMode = 'remove'
+        this.deleteConfirmText = ''
+        this.refresh().then()
+    }
+
+    showRemoveDeleteDialogRemove() {
+        this.removeDeleteDialogMode = 'remove'
+        this.deleteConfirmText = ''
+        this.refresh().then()
+    }
+
+    showRemoveDeleteDialogDelete() {
+        if (!this.canDeleteFromSite(this.removeDeleteDialogModel)) {
+            return
+        }
+        this.removeDeleteDialogMode = 'delete'
+        this.deleteConfirmText = ''
+        this.refresh().then()
+    }
+
+    trapRemoveDeleteDialogFocus(event: KeyboardEvent) {
+        if (!this.removeDeleteDialogModel) {
+            return
+        }
+        if (event.key === 'Escape') {
+            event.preventDefault()
+            if (this.removeDeleteDialogMode === 'delete') {
+                this.showRemoveDeleteDialogRemove()
+                return
+            }
+            this.closeRemoveDeleteDialog()
+            return
+        }
+        if (event.key !== 'Tab') {
+            return
+        }
+
+        const target = event.currentTarget as HTMLElement|null
+        const panel = target?.querySelector(
+            this.removeDeleteDialogMode === 'delete'
+                ? '.selector-remove-delete-dialog__panel-delete'
+                : '.selector-remove-delete-dialog__panel-remove'
+        ) as HTMLElement|null
+        if (!panel) {
+            return
+        }
+
+        const focusable = Array.from(panel.querySelectorAll<HTMLElement>(
+            'button:not([disabled]), input:not([disabled]), textarea:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])'
+        )).filter((element) => !!(
+            element.offsetWidth
+            || element.offsetHeight
+            || element.getClientRects().length
+        ))
+
+        if (!focusable.length) {
+            event.preventDefault()
+            return
+        }
+
+        const first = focusable[0]
+        const last = focusable[focusable.length - 1]
+        const active = document.activeElement as HTMLElement|null
+        if (event.shiftKey && active === first) {
+            event.preventDefault()
+            last.focus()
+        } else if (!event.shiftKey && active === last) {
+            event.preventDefault()
+            first.focus()
+        }
+    }
+
+    confirmRemoveDeleteDialogRemove() {
+        const model = this.removeDeleteDialogModel
+        this.closeRemoveDeleteDialog()
+        this.remove(model)
+    }
+
+    confirmRemoveDeleteDialogDelete() {
+        if (this.deleteConfirmText !== 'DELETE') {
+            return
+        }
+        const model = this.removeDeleteDialogModel
+        this.closeRemoveDeleteDialog()
+        this.deleteContent(model, true)
+    }
+
+    canDeleteFromSite(model: any): boolean {
+        return !!model && !this.requiresLocalCopyBeforeEdit(model)
+    }
+
+    deleteFromSiteDisabledReason(model: any): string {
+        return this.canDeleteFromSite(model)
+            ? ''
+            : 'Syndicated content cannot be deleted, instead you can disable the status to hide it.'
+    }
+
+    removeContextLabel(): 'Page'|'Collection' {
+        const routing = this.model && typeof this.model.get === 'function'
+            ? this.model.get('routing')
+            : get(this.model, 'data.routing')
+        return isArray(routing) && routing.length ? 'Page' : 'Collection'
+    }
+
+    contentDisplayName(model: any): string {
+        return this.getString(model, 'version.bestIdentifier')
+            || this.getString(model, 'version.title')
+            || this.getString(model, 'name')
+            || this.getString(model, 'version.internalIdentifier')
+            || `Untitled ${this.contentTypeName(model)}`
+    }
+
+    contentIdentity(model: any): string {
+        const id = get(model, 'id')
+        return `"${this.contentDisplayName(model)}"${id ? ` (#${id})` : ''}`
+    }
+
+    deleteContent(model: any, confirmed = false) {
+        if (this.isPending(model)) {
+            return
+        }
+        if (this.requiresLocalCopyBeforeEdit(model)) {
+            return
+        }
+        if (!confirmed) {
+            this.openRemoveDeleteDialog(model)
+            this.showRemoveDeleteDialogDelete()
+            return
+        }
+
+        const statusOriginal = model.status
+        let meta = {}
+        if (!isUndefined(this.data)) {
+            meta = get(this.data, 'meta.data.api') || {}
+        }
+        this.setPending(model, true)
+        model.status = -1
+
+        const xhr = new XHR({
+            method: 'PUT',
+            url: this.getContentApiUrl(model),
+            data: {
+                route: {},
+                meta,
+                payload: {
+                    id: model.id,
+                    status: -1
+                }
+            },
+            type: 'application/json'
+        })
+        xhr.send()
+            .then((response: LooseObject | Array<LooseObject> | string) => {
+                if (!isObject(response) || get(response, 'meta.status[0].code') !== 'SUCCESS') {
+                    console.error('error[deleteContent]:', response)
+                    model.status = statusOriginal
+                    this.setPending(model, false)
+                    this.refresh().then()
+                    return
+                }
+                this.setPending(model, false)
+                this.remove(model)
+                this.refresh().then()
+            })
+            .catch((error: any) => {
+                console.error('error[deleteContent]:', error)
+                model.status = statusOriginal
+                this.setPending(model, false)
+                this.refresh().then()
+            })
+    }
+
     remove(model: any) {
+        if (this.isPending(model)) {
+            return
+        }
         const models = this.dataRef()
         if (!models || !models.length) {
             console.error('unable to remove model from selection:', models)
@@ -371,6 +1147,7 @@ export class SelectorComponent extends RootComponent { // implements OnInit, OnC
         }
         const models = this.dataRef()
         this.empty = !models.length
+        this.hydrateSelectedDisplayData(models)
         this.subscriber.next(models)
         /* *
         // FIXME: This gets called twice per cycle...
@@ -402,6 +1179,62 @@ export class SelectorComponent extends RootComponent { // implements OnInit, OnC
             return null
         }
         return variable
+    }
+
+    contentTypeName(model: any): string {
+        return this.getString(model, 'contentType.name')
+            || this.getString(model, 'name')
+            || 'content'
+    }
+
+    contentTypeDisplay(model: any): string {
+        const contentType = this.contentTypeName(model)
+        const subtype = this.getString(model, 'type')
+        return subtype && subtype !== contentType ? `${contentType}: ${subtype}` : contentType
+    }
+
+    selectedImageUrl(model: any): string|null {
+        const modelImageUrl = this.selectedImageUrlFromSource(model)
+        if (modelImageUrl) {
+            return modelImageUrl
+        }
+        const id = get(model, 'id')
+        const cache = !isUndefined(id) && id !== null
+            ? this.selectedModelDisplayData[String(id)]
+            : null
+        return this.selectedImageUrlFromSource(cache)
+            || this.getString(cache, '_selectorImageUrl')
+    }
+
+    selectedImageUrlFromSource(model: any): string|null {
+        return this.getString(model, 'version.bestImage._thumbnailUrl')
+            || this.getString(model, 'version.images[0]._thumbnailUrl')
+            || this.getString(model, 'version.images[0].src')
+            || this.getString(model, 'version.shellImages[0]._thumbnailUrl')
+            || this.getString(model, 'version.shellImages[0].src')
+            || this.getString(model, 'version.videos[0].bestImage._thumbnailUrl')
+            || this.getString(model, 'version.videos[0]._thumbnailUrl')
+            || this.getString(model, 'version.videos[0].src')
+    }
+
+    isPublished(model: any): boolean {
+        return Number(get(model, 'version.published')) === 1
+    }
+
+    isActive(model: any): boolean {
+        return Number(get(model, 'status')) === 1
+    }
+
+    isPending(model: any): boolean {
+        return !!get(model, '_selectorPending')
+    }
+
+    setPending(model: any, pending: boolean) {
+        if (!model) {
+            return
+        }
+        model._selectorPending = pending
+        this.refresh().then()
     }
 
     // selectedModel (observer: any) : any {

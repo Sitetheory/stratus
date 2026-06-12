@@ -13,9 +13,6 @@ import {IdxComponentScope, IdxEmitter, IdxListScope, IdxService, Member, Propert
 import {MapComponent, MarkerSettings} from '@stratusjs/map/map.component'
 import {numeralFormat} from '@stratusjs/angularjs-extras/filters/numeral'
 
-// Stratus Preload
-import '@stratusjs/angular' // sa-map
-
 // Environment
 const min = !cookie('env') ? '.min' : ''
 const packageName = 'idx'
@@ -189,6 +186,10 @@ Stratus.Components.IdxMap = {
         $scope.instanceFullPath = `Stratus.Instances.${$scope.instancePath}`
 
         this.$onInit = () => {
+            if (typeof require !== 'undefined') {
+                // @ts-ignore
+                require(['@stratusjs/angular/boot']) // sa-map
+            }
             $scope.Idx = Idx
             $scope.listId = $attrs.listId || null
             $scope.initialized = false

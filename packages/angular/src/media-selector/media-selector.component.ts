@@ -59,6 +59,47 @@ const moduleName = 'media-selector'
 // Directory Template
 const min = !cookie('env') ? '.min' : ''
 const localDir = `${Stratus.BaseUrl}${boot.configuration.paths[`${systemDir}/*`].replace(/[^/]*$/, '').replace(/\/dist\/$/, '/src/')}`
+const mediaTypeGraphicExtensions = [
+    'aac',
+    'amr',
+    'audio',
+    'csv',
+    'doc',
+    'docx',
+    'document',
+    'eot',
+    'epub',
+    'flac',
+    'gif',
+    'ico',
+    'image',
+    'jpg',
+    'jpeg',
+    'm4a',
+    'm4b',
+    'mp3',
+    'mp4',
+    'ogg',
+    'pages',
+    'pdf',
+    'png',
+    'sheet',
+    'ttf',
+    'video',
+    'wav',
+    'webp',
+    'woff',
+    'woff2',
+    'wma',
+    'xls',
+    'xlsx',
+    'youtube',
+    'zip'
+]
+const mediaTypeGraphicAliases: {[key: string]: string} = {
+    jpeg: 'jpg',
+    xlsx: 'xls'
+}
 
 // Utility Functions
 const has = (object: object, path: string) => _.has(object, path) && !_.isEmpty(_.get(object, path))
@@ -174,6 +215,8 @@ export class MediaSelectorComponent extends RootComponent { // implements OnInit
         openLibrary: 'Open Library',
         closeLibrary: 'Close Library',
         showDetails: 'Show Details',
+        copyLinkToClipboard: 'Copy link to clipboard',
+        download: 'Download',
         add: 'Add',
         clear: 'Clear',
         permanentlyDelete: 'Permanently Delete from Library',
@@ -224,6 +267,8 @@ export class MediaSelectorComponent extends RootComponent { // implements OnInit
             media_selector_delete: `${Stratus.BaseUrl}sitetheorycore/images/icons/actionButtons/delete.svg`,
             media_selector_edit: `${Stratus.BaseUrl}sitetheorycore/images/icons/actionButtons/edit.svg`,
             media_selector_info: `${Stratus.BaseUrl}sitetheorycore/images/icons/actionButtons/info.svg`,
+            media_selector_link: `${Stratus.BaseUrl}sitetheorycore/images/icons/actionButtons/linkage.svg`,
+            media_selector_download: `${Stratus.BaseUrl}sitetheorycore/images/icons/actionButtons/download.svg`,
             // type icons
             media_selector_image: `${Stratus.BaseUrl}sitetheorymedia/images/mediaTypeIcons/media-icon-image.svg`,
             media_selector_video: `${Stratus.BaseUrl}sitetheorymedia/images/mediaTypeIcons/media-icon-video.svg`,
@@ -334,6 +379,123 @@ export class MediaSelectorComponent extends RootComponent { // implements OnInit
         window.open(model.contentType.editUrl + '?id=' + model.id, '_blank')
     }
 
+    getMediaExternalLink(model: any): string|null {
+        if (!model) {
+            return null
+        }
+        if (_.get(model, 'mime') === 'video') {
+            const serviceMediaId = _.get(model, 'serviceMediaId') || null
+            if (_.get(model, 'service') === 'youtube') {
+                return `https://www.youtube.com/watch?v=${serviceMediaId}`
+            }
+            if (_.get(model, 'service') === 'vimeo') {
+                return `https://vimeo.com/${serviceMediaId}`
+            }
+            return _.get(model, 'url') || null
+        }
+        if (_.get(model, 'service') === 'directLink') {
+            return _.get(model, 'url') || null
+        }
+        if (_.get(model, 'prefix')) {
+            const extension = _.get(model, 'extension')
+            return `https://${_.get(model, 'prefix')}${extension ? `.${extension}` : ''}?v=${_.get(model, 'timeEdit') || ''}`
+        }
+        return _.get(model, 'url') || null
+    }
+
+    copyToClipboard(value: string): boolean {
+        const temp = document.createElement('input')
+        document.body.appendChild(temp)
+        temp.setAttribute('value', value)
+        temp.select()
+        const result = document.execCommand('copy')
+        document.body.removeChild(temp)
+        return result
+    }
+
+    copyMediaToClipboard(model: any) {
+        const externalLink = this.getMediaExternalLink(model)
+        let bestString = externalLink
+        if (_.get(model, 'embed')) {
+            bestString = _.get(model, 'embed')
+        }
+        if (!bestString || !this.copyToClipboard(bestString)) {
+            console.warn('The media link could not be copied.', model)
+        }
+    }
+
+    getDownloadFilename(model: any): string {
+        const filename = _.get(model, 'filename') || _.get(model, 'name') || ''
+        const extension = _.get(model, 'extension') || ''
+        if (!filename || !extension || filename.endsWith(`.${extension}`)) {
+            return filename
+        }
+        return `${filename}.${extension}`
+    }
+
+    downloadLink(model: any) {
+        const url = _.get(model, '_directUrl') || this.getMediaExternalLink(model)
+        if (!url) {
+            console.warn('unable to download media because no external link was found.', model)
+            return
+        }
+        const link = document.createElement('a')
+        link.href = url
+        link.target = '_blank'
+        link.download = this.getDownloadFilename(model)
+        document.body.appendChild(link)
+        link.click()
+        document.body.removeChild(link)
+    }
+
+    canDownload(model: any): boolean {
+        return _.get(model, 'mime') === 'directLink' || !!_.get(model, 'file') || !!_.get(model, 'prefix')
+    }
+
+    getMediaExtension(model: any): string {
+        const extension = _.get(model, 'extension')
+        if (_.isString(extension) && extension.trim()) {
+            return extension.trim().toLowerCase().replace(/^\./, '')
+        }
+        const name = _.get(model, 'name')
+        if (!_.isString(name) || name.indexOf('.') === -1) {
+            return ''
+        }
+        return name.split('.').pop().trim().toLowerCase()
+    }
+
+    getMediaGraphicExtension(model: any): string {
+        const extension = this.getMediaExtension(model)
+        const normalizedExtension = mediaTypeGraphicAliases[extension] || extension
+        if (mediaTypeGraphicExtensions.indexOf(normalizedExtension) !== -1) {
+            return normalizedExtension
+        }
+        const mime = _.isString(_.get(model, 'mime')) ? _.get(model, 'mime').toLowerCase() : ''
+        if (mime.indexOf('video') !== -1) {
+            return 'video'
+        }
+        if (mime.indexOf('audio') !== -1) {
+            return 'audio'
+        }
+        return ''
+    }
+
+    getMediaFallbackLabel(model: any): string {
+        const extension = this.getMediaExtension(model)
+        return extension ? extension.toUpperCase() : 'FILE'
+    }
+
+    getMediaGraphicUrl(model: any): string {
+        const graphicExtension = this.getMediaGraphicExtension(model)
+        return graphicExtension
+            ? `${Stratus.BaseUrl}sitetheorymedia/images/mediaTypeGraphics/media-graphic-${graphicExtension}.png`
+            : null
+    }
+
+    hasMediaGraphic(model: any): boolean {
+        return !!this.getMediaGraphicUrl(model)
+    }
+
     remove(model: any) {
         const models = this.dataRef()
         if (!models || !models.length) {
@@ -361,6 +523,9 @@ export class MediaSelectorComponent extends RootComponent { // implements OnInit
         }
         models.splice(index, 1)
         // this.prioritize()
+        if (_.isFunction(this.model.handleChanges)) {
+            this.model.handleChanges()
+        }
         this.model.trigger('change')
         // trigger event emission
         this.removeFromSelected(model.id)
@@ -370,6 +535,12 @@ export class MediaSelectorComponent extends RootComponent { // implements OnInit
     fetchData() {
         if (this.fetched) {
             return this.fetched
+        }
+        const scopeModel = this.getScopeModel()
+        if (scopeModel) {
+            this.model = scopeModel
+            this.data = scopeModel
+            return this.fetched = Promise.resolve(scopeModel)
         }
         return this.fetched = this.registry.fetch(
             Stratus.Select(this.elementRef.nativeElement),
@@ -385,6 +556,32 @@ export class MediaSelectorComponent extends RootComponent { // implements OnInit
         //     api: this.api,
         //     urlRoot: this.urlRoot,
         // }, this)
+    }
+
+    getScopeModel(): Model|null {
+        const angularApi = (window as any).angular
+        if (!angularApi || !_.isFunction(angularApi.element)) {
+            return null
+        }
+        const elementScope = angularApi.element(this.elementRef.nativeElement).scope()
+        if (!elementScope) {
+            return null
+        }
+        const candidates = [
+            elementScope.model,
+            _.get(elementScope, '$parent.model'),
+            _.get(elementScope, '$parent.$parent.model')
+        ]
+        return _.find(candidates, (model: any) => this.isCompatibleScopeModel(model)) || null
+    }
+
+    isCompatibleScopeModel(model: any): boolean {
+        if (!model || !_.isFunction(model.get)) {
+            return false
+        }
+        const dataId = Number(_.get(model, 'data.id') || 0)
+        const selectorId = Number(this.id || 0)
+        return !selectorId || !dataId || selectorId === dataId
     }
 
     // Ensures Data is populated before hitting the Subscriber

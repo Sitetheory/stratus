@@ -36,9 +36,37 @@
         <!--<span class="selectedModels" style="display: none" *ngIf="log('selector.ngIf:', dataSub | async)"></span>-->
         <!-- [cdkDragDisabled]="get(selectedModel, 'status') < 1" -->
         <div cdkDrag class="selected-list-row selected-box sa-drag-container"
-             [ngClass]="{'active': get(selectedModel, 'status') === 1, 'inactive' : get(selectedModel, 'status') !== 1, 'published': get(selectedModel, 'version.published') === 1, 'unpublished': get(selectedModel, 'version.published') !== 1}"
-             *ngFor="let selectedModel of dataSub | async">
+             [ngClass]="{'active': isActive(selectedModel), 'inactive' : !isActive(selectedModel), 'published': isPublished(selectedModel), 'unpublished': !isPublished(selectedModel), 'stale': isStale(selectedModel)}"
+             *ngFor="let selectedModel of dataSub | async; trackBy: trackBySelectedModel">
+            <div class="flag-syndicated"
+                 *ngIf="get(selectedModel, 'syndicated')"
+                 [ngClass]="{'original': get(selectedModel, 'syndicated') == 1, 'edited': get(selectedModel, 'syndicated') == 2}"
+                 [matTooltip]="get(selectedModel, 'syndicated') == 1 ? 'Syndicated: original' : 'Syndicated: customized'">
+            </div>
             <div class="custom-ghost-placeholder" *cdkDragPlaceholder></div>
+            <div class="selected-row-side-actions"
+                 *ngIf="!isPublished(selectedModel) || isStale(selectedModel)">
+                <button type="button"
+                        mat-button
+                        *ngIf="!isPublished(selectedModel)"
+                        matTooltip="publish this content"
+                        aria-label="Publish Item"
+                        class="btn btn-publish selected-row-publish"
+                        [disabled]="isPending(selectedModel)"
+                        (click)="$event.stopPropagation(); publish(selectedModel)">
+                    <mat-icon svgIcon="selector_publish" aria-hidden="false" aria-label="Publish">Publish</mat-icon>
+                </button>
+                <button type="button"
+                        mat-button
+                        *ngIf="isStale(selectedModel)"
+                        matTooltip="refresh this item"
+                        aria-label="Refresh Item"
+                        class="btn btn-refresh selected-row-refresh"
+                        [disabled]="isPending(selectedModel)"
+                        (click)="$event.stopPropagation(); refreshSelectedModel(selectedModel);">
+                    <mat-icon svgIcon="selector_refresh" aria-hidden="false" aria-label="Refresh">Refresh</mat-icon>
+                </button>
+            </div>
             <div class="selected-list-container">
                 <div class="column-image position-anchor">
 
@@ -50,14 +78,13 @@
 
                     <!-- This adds stratus-src lazy loading if bestImage isn't a third party service without image sizes, e.g. Video -->
                     <div class="image position-all"
-                         *ngIf="has(selectedModel, 'version.bestImage._thumbnailUrl')"
-                         [attr.data-stratus-src]="!get(selectedModel, 'version.bestImage.service') ? true : false"
-                         [ngStyle]="{'background': 'url(' + getString(selectedModel, 'version.bestImage._thumbnailUrl') + ') no-repeat center center', 'background-size': 'cover'}">
+                         *ngIf="selectedImageUrl(selectedModel)"
+                         [ngStyle]="{'background': 'url(' + selectedImageUrl(selectedModel) + ') no-repeat center center', 'background-size': 'cover'}">
                     </div>
 
                     <!-- Icon for items with no image -->
                     <div class="no-image-icon position-all"
-                         *ngIf="!has(selectedModel, 'version.bestImage._thumbnailUrl')"
+                         *ngIf="!selectedImageUrl(selectedModel)"
                          [ngClass]="getString(selectedModel, 'contentType.class') + '-background-color'">
 
                         <mat-icon class="content-type-icon position-center"
@@ -83,7 +110,7 @@
                         </mat-icon>
                         <span class="comment content-type-name font-body"
                               [ngClass]="((getString(selectedModel, 'contentType.name') || getString(selectedModel, 'name')) | lowercase) + '-color'"
-                              [textContent]="(getString(selectedModel, 'contentType.name') || getString(selectedModel, 'name')) + ((get(selectedModel, 'status') !== 1) ? ' (hidden)' : '') + ((get(selectedModel, 'version.published') !== 1) ? ' (unpublished)' : '')">
+                              [textContent]="contentTypeDisplay(selectedModel)">
                         </span>
                     </div>
 
@@ -95,29 +122,116 @@
                     </span>
                 </div>
                 <div class="column-action">
-                    <a mat-button
-                            [matTooltip]="'Delete ' + (getString(selectedModel, 'contentType.name') || getString(selectedModel, 'name')) + ' [THIS COLLECTION ONLY]'"
-                            aria-label="Delete Item"
-                            class="btn btn-delete"
-                            (click)="remove(selectedModel)">
-                        <mat-icon svgIcon="selector_delete" aria-hidden="false" aria-label="Delete Item">Delete</mat-icon>
-                    </a>
-                    <a mat-button
-                       [matTooltip]="'Toggle ' + (getString(selectedModel, 'contentType.name') || getString(selectedModel, 'name')) + ' Status ' + (get(selectedModel, 'status') ? 'Off' : 'On') + ' [ALL CONTEXTS]'"
-                       aria-label="Toggle Status"
-                       class="btn btn-status"
-                       (click)="toggleStatus(selectedModel)">
-                        <mat-icon svgIcon="selector_status" aria-hidden="false" aria-label="Toggle Status">Toggle Status</mat-icon>
-                    </a>
-                    <a mat-button
+                    <button type="button"
+                            mat-button
                             *ngIf="has(selectedModel, 'contentType.editUrl')"
-                            [matTooltip]="'Edit ' + (getString(selectedModel, 'contentType.name') || getString(selectedModel, 'name'))"
+                            [matTooltip]="'edit ' + (getString(selectedModel, 'contentType.name') || getString(selectedModel, 'name') || 'content')"
                             aria-label="Edit Item in New Window"
                             class="btn btn-edit"
-                            (click)="goToUrl(selectedModel, '_blank');">
+                            [disabled]="isPending(selectedModel)"
+                            (click)="$event.stopPropagation(); goToUrl(selectedModel);">
                         <mat-icon svgIcon="selector_edit" aria-hidden="false" aria-label="Edit">Edit</mat-icon>
-                    </a>
+                    </button>
+                    <button type="button"
+                            mat-button
+                            [matTooltip]="isActive(selectedModel) ? 'make invisible (everywhere)' : 'make visible (everywhere)'"
+                            aria-label="Toggle Status"
+                            class="btn btn-status"
+                            [ngClass]="{'inactive-status': !isActive(selectedModel)}"
+                            [disabled]="isPending(selectedModel)"
+                            (click)="$event.stopPropagation(); toggleStatus(selectedModel)">
+                        <mat-icon svgIcon="selector_status" aria-hidden="false" aria-label="Toggle Status">Toggle Status</mat-icon>
+                    </button>
+                    <button type="button"
+                            mat-button
+                            [matTooltip]="'duplicate this ' + (getString(selectedModel, 'contentType.name') || getString(selectedModel, 'name') || 'content')"
+                            aria-label="Duplicate Item"
+                            class="btn btn-duplicate"
+                            [disabled]="isPending(selectedModel)"
+                            (click)="$event.stopPropagation(); duplicate(selectedModel)">
+                        <mat-icon svgIcon="selector_duplicate" aria-hidden="false" aria-label="Duplicate">Duplicate</mat-icon>
+                    </button>
+                    <button type="button"
+                            mat-button
+                            matTooltip="Remove or Delete"
+                            aria-label="Remove or Delete Item"
+                            class="btn btn-remove-delete"
+                            [disabled]="isPending(selectedModel)"
+                            (click)="$event.stopPropagation(); openRemoveDeleteDialog(selectedModel)">
+                        <mat-icon svgIcon="selector_permanent_delete" aria-hidden="false" aria-label="Remove or Delete">Remove or Delete</mat-icon>
+                    </button>
                 </div>
+            </div>
+            <mat-progress-bar class="selected-list-row-progress" mode="indeterminate" *ngIf="isPending(selectedModel)"></mat-progress-bar>
+        </div>
+    </div>
+    <div class="selector-remove-delete-dialog"
+         *ngIf="removeDeleteDialogModel"
+         (click)="closeRemoveDeleteDialog()">
+        <div class="selector-remove-delete-dialog__surface"
+             role="dialog"
+             aria-modal="true"
+             aria-label="Remove or Delete Content"
+             (keydown)="trapRemoveDeleteDialogFocus($event)"
+             (click)="$event.stopPropagation()">
+            <div class="selector-remove-delete-dialog__panels"
+                 [ngClass]="{'show-delete': removeDeleteDialogMode === 'delete'}">
+                <section class="selector-remove-delete-dialog__panel selector-remove-delete-dialog__panel-remove"
+                         [attr.aria-hidden]="removeDeleteDialogMode !== 'remove'"
+                         [attr.inert]="removeDeleteDialogMode !== 'remove' ? '' : null">
+                    <h2 [textContent]="'Remove ' + contentIdentity(removeDeleteDialogModel)"></h2>
+                    <p [textContent]="'Choose whether to remove this content only from this ' + removeContextLabel().toLowerCase() + ', or delete it from the entire website.'"></p>
+                    <div class="selector-remove-delete-dialog__actions">
+                        <div class="selector-remove-delete-dialog__primary-actions">
+                            <button type="button"
+                                    mat-button
+                                    class="btn btn-cancel"
+                                    [disabled]="removeDeleteDialogMode !== 'remove'"
+                                    (click)="closeRemoveDeleteDialog()">Cancel</button>
+                            <button type="button"
+                                    mat-button
+                                    class="btn btn-remove-context"
+                                    [disabled]="removeDeleteDialogMode !== 'remove'"
+                                    (click)="confirmRemoveDeleteDialogRemove()"
+                                    [textContent]="'Remove only from this ' + removeContextLabel()"></button>
+                        </div>
+                        <div class="selector-remove-delete-dialog__danger-actions">
+                            <button type="button"
+                                    mat-button
+                                    class="btn btn-delete-site"
+                                    [disabled]="removeDeleteDialogMode !== 'remove' || !canDeleteFromSite(removeDeleteDialogModel)"
+                                    [matTooltip]="deleteFromSiteDisabledReason(removeDeleteDialogModel)"
+                                    (click)="showRemoveDeleteDialogDelete()">Delete from Site</button>
+                        </div>
+                    </div>
+                </section>
+                <section class="selector-remove-delete-dialog__panel selector-remove-delete-dialog__panel-delete"
+                         [attr.aria-hidden]="removeDeleteDialogMode !== 'delete'"
+                         [attr.inert]="removeDeleteDialogMode !== 'delete' ? '' : null">
+                    <h2 [textContent]="'Delete: ' + contentIdentity(removeDeleteDialogModel)"></h2>
+                    <p class="selector-remove-delete-dialog__warning"
+                       [textContent]="'Are you sure you want to delete this content from the entire website, not only from this ' + removeContextLabel().toLowerCase() + '?'"></p>
+                    <mat-form-field class="selector-remove-delete-dialog__confirm">
+                        <mat-label>type "DELETE" to confirm</mat-label>
+                        <input matInput
+                               #deleteConfirmInput
+                               autocomplete="off"
+                               [value]="deleteConfirmText"
+                               (input)="deleteConfirmText = deleteConfirmInput.value">
+                    </mat-form-field>
+                    <div class="selector-remove-delete-dialog__actions selector-remove-delete-dialog__actions-delete">
+                        <button type="button"
+                                mat-button
+                                class="btn btn-cancel"
+                                [disabled]="removeDeleteDialogMode !== 'delete'"
+                                (click)="showRemoveDeleteDialogRemove()">Cancel</button>
+                        <button type="button"
+                                mat-button
+                                class="btn btn-delete-site btn-delete-site-final"
+                                [disabled]="removeDeleteDialogMode !== 'delete' || deleteConfirmText !== 'DELETE'"
+                                (click)="confirmRemoveDeleteDialogDelete()">Delete from Site</button>
+                    </div>
+                </section>
             </div>
         </div>
     </div>

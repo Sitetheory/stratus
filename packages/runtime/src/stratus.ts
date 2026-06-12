@@ -132,7 +132,7 @@ interface StratusRuntime {
         CssLoader?: (url: any) => Promise<void>
         JsLoader?: (url: any) => Promise<void>
         LoadCss?: (urls?: string|string[]|LooseObject) => Promise<void>
-        LoadImage?: (obj: {el?: any, spy?: any, size?: any, ignoreSpy?: boolean}) => void
+        LoadImage?: (obj: {el?: any, spy?: any, size?: any, ignoreSpy?: boolean, offset?: number, nextCheckAt?: number, retryTimer?: any}) => void
         OnScroll?: () => void
         XHR: (request?: XHRRequest) => any
     }
@@ -397,6 +397,28 @@ mixin({
     // Note: Delete with `cookie(name, '', -1)`
     cookie,
 })
+
+const versionStylesheetUrl = (url: any): any => {
+    if (!isString(url) || !url || includes(url, '?') || !Stratus.Environment) {
+        return url
+    }
+    if (startsWith(url, '//') || /^https?:\/\//i.test(url) || startsWith(url, 'data:') || startsWith(url, 'blob:')) {
+        return url
+    }
+    const cacheTime = Stratus.Environment.get('cacheTime')
+    if (!cacheTime) {
+        return url
+    }
+    if (
+        startsWith(url, '/assets/') ||
+        (!!Stratus.BaseUrl && startsWith(url, Stratus.BaseUrl)) ||
+        (!!Stratus.BundlePath && startsWith(url, Stratus.BundlePath)) ||
+        (!!Stratus.DeploymentPath && startsWith(url, Stratus.DeploymentPath))
+    ) {
+        return url + '?v=' + cacheTime
+    }
+    return url
+}
 
 // Client Information
 // const browser: any = Bowser.getParser(window.navigator.userAgent)
@@ -762,6 +784,8 @@ Stratus.Internals.Convoy = (convoy: any, query: any) => new Promise((resolve: an
 
 Stratus.Internals.CssLoader = (url: any) => {
     return new Promise((resolve: any, reject: any) => {
+        url = versionStylesheetUrl(url)
+
         /* Digest Extension */
         /*
          FIXME: Less files won't load correctly due to less.js not being able to parse new stylesheets after runtime
@@ -928,17 +952,36 @@ Stratus.Internals.IsOnScreen = (el: any, offset: any, partial: any) => {
     if (typeof partial !== 'boolean') {
         partial = true
     }
-    const viewPort: any = Stratus.Environment.get('viewPort') || window
-    const $viewPort = jQuery(viewPort)
-    let pageTop: any = $viewPort.scrollTop()
-    let pageBottom: any = pageTop + $viewPort.height()
-    let elementTop: any = el.offset().top
-    if (viewPort !== window) {
-        elementTop += pageTop
+    let viewPort: any = Stratus.Environment.get('viewPort') || window
+    if (viewPort !== window && viewPort instanceof jQuery) {
+        const viewPortCollection: any = viewPort
+        viewPort = viewPortCollection.length ? viewPortCollection[0] : null
     }
-    const elementBottom: any = elementTop + el.height()
-    pageTop = pageTop + offset
-    pageBottom = pageBottom - offset
+    const nativeEl: any = head(el)
+    if (!nativeEl || typeof nativeEl.getBoundingClientRect !== 'function') {
+        return false
+    }
+    const elementRect: any = nativeEl.getBoundingClientRect()
+    const viewportRect: any = (
+        viewPort === window ||
+        !viewPort ||
+        typeof viewPort.getBoundingClientRect !== 'function'
+    )
+        ? {
+            top: 0,
+            bottom: window.innerHeight || document.documentElement.clientHeight,
+            left: 0,
+            right: window.innerWidth || document.documentElement.clientWidth
+        }
+        : viewPort.getBoundingClientRect()
+    const pageTop: any = viewportRect.top + offset
+    const pageBottom: any = viewportRect.bottom - offset
+    const pageLeft: any = viewportRect.left
+    const pageRight: any = viewportRect.right
+    const elementTop: any = elementRect.top
+    const elementBottom: any = elementRect.bottom
+    const elementLeft: any = elementRect.left
+    const elementRight: any = elementRect.right
     // if (cookie('env')) {
     //     console.log('onScreen:',
     //         {
@@ -952,7 +995,19 @@ Stratus.Internals.IsOnScreen = (el: any, offset: any, partial: any) => {
     //         partial ? (elementTop <= pageBottom && elementBottom >= pageTop) : (pageTop < elementTop && pageBottom > elementBottom)
     //     )
     // }
-    return partial ? (elementTop <= pageBottom && elementBottom >= pageTop) : (pageTop < elementTop && pageBottom > elementBottom)
+    return partial
+        ? (
+            elementTop <= pageBottom &&
+            elementBottom >= pageTop &&
+            elementLeft <= pageRight &&
+            elementRight >= pageLeft
+        )
+        : (
+            pageTop < elementTop &&
+            pageBottom > elementBottom &&
+            pageLeft < elementLeft &&
+            pageRight > elementRight
+        )
 }
 
 // Internal CSS Loader
@@ -1051,7 +1106,7 @@ Stratus.Internals.LoadEnvironment = () => {
 
 // Lazy Load Image
 // ---------------
-Stratus.Internals.LoadImage = (obj: {el?: any, spy?: any, size?: any, ignoreSpy?: boolean}) => {
+Stratus.Internals.LoadImage = (obj: {el?: any, spy?: any, size?: any, ignoreSpy?: boolean, offset?: number, nextCheckAt?: number, retryTimer?: any}) => {
     if (!obj.el) {
         setTimeout(() => {
             Stratus.Internals.LoadImage(obj)
@@ -1073,17 +1128,147 @@ Stratus.Internals.LoadImage = (obj: {el?: any, spy?: any, size?: any, ignoreSpy?
     // we are able to.  We need to slowly phase out the previous jQuery logic
     // for something more Stable and lightweight.
     const nativeEl: any = head(el)
-    // This ensures the image is sizable before we attempt any sizing.
-    if (!(nativeEl.offsetHeight || nativeEl.clientHeight)) {
-        setTimeout(() => {
+    const now = Date.now()
+    const lastCheck = Number(hydrate(el.attr('data-stratus-src-last-check')) || 0)
+    if (lastCheck && now - lastCheck < 200) {
+        return
+    }
+    el.attr('data-stratus-src-last-check', dehydrate(now))
+    const type: string = String(el.prop('tagName') || '').toLowerCase()
+    const transparentImageSrc = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw=='
+    const placeholderImageSrc = 'data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 18%27 preserveAspectRatio=%27none%27%3E%3Cdefs%3E%3ClinearGradient id=%27g%27 x1=%270%27 x2=%271%27%3E%3Cstop stop-color=%27%23111b33%27/%3E%3Cstop offset=%27.5%27 stop-color=%27%233e568e%27 stop-opacity=%27.65%27/%3E%3Cstop offset=%271%27 stop-color=%27%23111b33%27/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width=%2732%27 height=%2718%27 fill=%27%23111b33%27/%3E%3Crect width=%2732%27 height=%2718%27 fill=%27url(%23g)%27%3E%3Canimate attributeName=%27x%27 values=%27-32;32%27 dur=%271.4s%27 repeatCount=%27indefinite%27/%3E%3C/rect%3E%3C/svg%3E'
+    const isTransparentImageSrc = (imageSrc: string|null): boolean => {
+        return !!imageSrc && (
+            imageSrc.indexOf(transparentImageSrc) === 0 ||
+            imageSrc.indexOf(placeholderImageSrc) === 0
+        )
+    }
+    if (type === 'img' && !el.attr('src')) {
+        el.attr('src', placeholderImageSrc)
+    }
+    const spyReference: any = hydrate(el.attr('data-stratus-src-spy')) || null
+    const referenceEl: any = spyReference ? (head(el.parents(spyReference)) || nativeEl) : nativeEl
+    const getCurrentLoadSignature = () => {
+        return [
+            hydrate(el.attr('data-src')) || el.attr('src') || el.css('background-image') || '',
+            hydrate(el.attr('data-size')) || '',
+            Stratus.Environment.get('resizeOptimisticLock') || 0,
+            Stratus.Environment.get('devicePixelRatio') || 1,
+            referenceEl && (referenceEl.offsetWidth || referenceEl.clientWidth || 0),
+            referenceEl && (referenceEl.offsetHeight || referenceEl.clientHeight || 0),
+            hydrate(el.attr('data-stratus-src-natural-ratio')) || '',
+            hydrate(el.attr('data-stratus-src-natural-ratio-src')) || '',
+            spyReference || ''
+        ].join('|')
+    }
+    const currentLoadSignature = getCurrentLoadSignature()
+    if (
+        type === 'img' &&
+        el.hasClass('loaded') &&
+        !isTransparentImageSrc(el.attr('src'))
+    ) {
+        el.removeClass('loading placeholder')
+        el.attr('data-loading', dehydrate(false))
+        el.removeAttr('data-stratus-src-pending-src')
+    }
+    if (
+        el.hasClass('loaded') &&
+        hydrate(el.attr('data-stratus-src-loaded-signature')) === currentLoadSignature
+    ) {
+        obj.nextCheckAt = Number.MAX_SAFE_INTEGER
+        return
+    }
+    const preloadOffset = hydrate(el.attr('data-stratus-src-offset'))
+    const defaultPreloadDistance = jQuery(Stratus.Environment.get('viewPort') || window).height()
+    const requestedPreloadDistance = typeof preloadOffset !== 'undefined' ? preloadOffset : obj.offset
+    const preloadDistance = Number(
+        typeof requestedPreloadDistance !== 'undefined' ? requestedPreloadDistance : defaultPreloadDistance
+    ) || 0
+    const scheduleRetry = (delay: number) => {
+        if (obj.retryTimer) {
+            return
+        }
+        obj.nextCheckAt = now + delay
+        obj.retryTimer = setTimeout(() => {
+            obj.retryTimer = null
+            el.removeAttr('data-stratus-src-last-check')
             Stratus.Internals.LoadImage(obj)
-        }, 500)
+        }, delay)
+    }
+    const isNearVerticalViewport = () => {
+        const spyEl: any = head(obj.spy || el)
+        if (!spyEl || typeof spyEl.getBoundingClientRect !== 'function') {
+            return false
+        }
+        let viewPort: any = Stratus.Environment.get('viewPort') || window
+        if (viewPort !== window && viewPort instanceof jQuery) {
+            const viewPortCollection: any = viewPort
+            viewPort = viewPortCollection.length ? viewPortCollection[0] : null
+        }
+        const elementRect: any = spyEl.getBoundingClientRect()
+        const viewportRect: any = (
+            viewPort === window ||
+            !viewPort ||
+            typeof viewPort.getBoundingClientRect !== 'function'
+        )
+            ? {
+                top: 0,
+                bottom: window.innerHeight || document.documentElement.clientHeight
+            }
+            : viewPort.getBoundingClientRect()
+        return elementRect.top <= viewportRect.bottom + preloadDistance &&
+            elementRect.bottom >= viewportRect.top - preloadDistance
+    }
+    if (!obj.ignoreSpy && !Stratus.Internals.IsOnScreen(obj.spy || el, -Math.abs(preloadDistance))) {
+        // if (cookie('env')) {
+        //     console.log('not on screen:', head(el))
+        // }
+        obj.nextCheckAt = now + 200
+        // Horizontal carousels often stage adjacent slides just outside the
+        // visible area without firing scroll/resize when they become active.
+        // Keep those vertically-near elements eligible without polling the
+        // whole offscreen page.
+        if (isNearVerticalViewport()) {
+            scheduleRetry(500)
+        }
+        return
+    }
+    // This ensures the image is sizable before we attempt any sizing. Background
+    // images in ratio/carousel layouts can have useful width before reporting
+    // height, so allow width for non-img elements.
+    const isCoverBackground = type !== 'img' && (
+        hydrate(el.attr('data-stratus-src-cover')) ||
+        (el.css('background-size') || '').indexOf('cover') !== -1
+    )
+    const isCoverImage = type === 'img' && (
+        hydrate(el.attr('data-stratus-src-cover')) ||
+        (el.css('object-fit') || '').indexOf('cover') !== -1
+    )
+    const isCoverSized = isCoverBackground || isCoverImage
+    const hasNativeSize = (
+        nativeEl.offsetHeight ||
+        nativeEl.clientHeight ||
+        (type !== 'img' && !isCoverBackground && (nativeEl.offsetWidth || nativeEl.clientWidth))
+    )
+    const hasReferenceSize = referenceEl && (
+        referenceEl.offsetHeight ||
+        referenceEl.clientHeight ||
+        (type !== 'img' && !isCoverBackground && (referenceEl.offsetWidth || referenceEl.clientWidth))
+    )
+    if (!(hasNativeSize || hasReferenceSize)) {
+        const heightRetries = Number(hydrate(el.attr('data-stratus-src-height-retries')) || 0)
+        const retryDelay = heightRetries >= 3 ? 2000 : 500
+        el.attr('data-stratus-src-height-retries', dehydrate(heightRetries + 1))
+        scheduleRetry(retryDelay)
         return
     }
     // TODO: Convert to Native or Stratus.Select options
     if (!el.hasClass('placeholder')) {
         el.addClass('placeholder')
         el.on('load', () => {
+            if (type === 'img' && isTransparentImageSrc(el.attr('src'))) {
+                return
+            }
             el.removeClass('placeholder')
             jQuery(this).remove() // prevent memory leaks
         })
@@ -1095,12 +1280,8 @@ Stratus.Internals.LoadImage = (obj: {el?: any, spy?: any, size?: any, ignoreSpy?
         // }
         return
     }
-    if (!obj.ignoreSpy && !Stratus.Internals.IsOnScreen(obj.spy || el)) {
-        // if (cookie('env')) {
-        //     console.log('not on screen:', head(el))
-        // }
-        return
-    }
+    obj.nextCheckAt = null
+    el.removeAttr('data-stratus-src-height-retries')
     el.attr('data-loading', dehydrate(true))
     // TODO: Access `complete()` from `DOM` instead of the deprecated `Stratus.DOM.complete()` reference
     Stratus.DOM.complete(() => {
@@ -1109,15 +1290,134 @@ Stratus.Internals.LoadImage = (obj: {el?: any, spy?: any, size?: any, ignoreSpy?
         // displays, but if you don't want that, you can bypass it with
         // data-hd="false"
         let hd: any = hydrate(el.attr('data-hd'))
+        const hdIsExplicit = typeof hd !== 'undefined'
         if (typeof hd === 'undefined') {
             hd = true
         }
 
         // Don't Get the Width, until it's "onScreen" (in case it was collapsed
         // offscreen originally)
-        let src: any = hydrate(el.attr('data-src')) || el.attr('src') || null
+        const getSrcPath = (imageSrc: string): string => {
+            if (!imageSrc) {
+                return ''
+            }
+            try {
+                const url = new URL(
+                    imageSrc.indexOf('//') === 0 ? `${window.location.protocol}${imageSrc}` : imageSrc,
+                    window.location.href
+                )
+                return url.pathname || ''
+            } catch (error) {
+                return imageSrc.split(/[?#]/)[0]
+            }
+        }
+        const isBooleanSentinelSrc = (imageSrc: string): boolean => {
+            const src = imageSrc.trim().replace(/^url\(["']?(.+?)["']?\)$/i, '$1').trim()
+            if (/^(true|false)$/i.test(src)) {
+                return true
+            }
+            const srcPath = getSrcPath(src).replace(/\/+$/, '')
+            return /^\/?(true|false)$/i.test(srcPath)
+        }
+        const hasResizableImageExtension = (imageSrc: string): boolean => {
+            const srcPath = getSrcPath(imageSrc)
+            return /\.(?:apng|avif|gif|jpe?g|png|webp)$/i.test(srcPath)
+        }
+        const normalizeLazyImageSrc = (imageSrc: any): string|null => {
+            if (
+                typeof imageSrc === 'undefined' ||
+                imageSrc === null ||
+                imageSrc === true ||
+                imageSrc === false ||
+                imageSrc === 'true' ||
+                imageSrc === 'false'
+            ) {
+                return null
+            }
+            if (isString(imageSrc)) {
+                const src = imageSrc.trim().replace(/^url\(["']?(.+?)["']?\)$/i, '$1').trim()
+                return isBooleanSentinelSrc(src) ? null : src
+            }
+            return imageSrc
+        }
+        let src: any = normalizeLazyImageSrc(hydrate(el.attr('data-src'))) ||
+            normalizeLazyImageSrc(el.attr('data-src')) ||
+            normalizeLazyImageSrc(el.attr('src')) ||
+            null
         // NOTE: Element can be either <img> or any element with background image in style
-        const type: any = el.prop('tagName').toLowerCase()
+        const getBackgroundImageSrc = (backgroundImage: string): string|null => {
+            if (!backgroundImage || backgroundImage === 'none') {
+                return null
+            }
+            const match = /^url\(["']?(.+?)["']?\)$/i.exec(backgroundImage)
+            return match ? normalizeLazyImageSrc(match[1]) : null
+        }
+        const normalizeImageSrc = (imageSrc: string|null): string|null => {
+            if (!imageSrc) {
+                return null
+            }
+            return imageSrc.indexOf('//') === 0 ? `${window.location.protocol}${imageSrc}` : imageSrc
+        }
+        const parseRatio = (ratio: string|number|null): number|null => {
+            if (!ratio) {
+                return null
+            }
+            if (typeof ratio === 'number') {
+                return ratio > 0 ? ratio : null
+            }
+            const match = /^([\d.]+)\s*[:/]\s*([\d.]+)$/.exec(ratio)
+            if (!match) {
+                const numericRatio = Number(ratio)
+                return numericRatio > 0 ? numericRatio : null
+            }
+            const ratioWidth = Number(match[1])
+            const ratioHeight = Number(match[2])
+            return ratioWidth > 0 && ratioHeight > 0 ? ratioWidth / ratioHeight : null
+        }
+        const getSizedImageSrc = (imageSrc: string, sizeName: string): string|null => {
+            // Strip the current generated image size before appending the newly selected size.
+            const suffixIndex = imageSrc.search(/[?#]/)
+            const imageBase = suffixIndex >= 0 ? imageSrc.slice(0, suffixIndex) : imageSrc
+            const imageSuffix = suffixIndex >= 0 ? imageSrc.slice(suffixIndex) : ''
+            const slashIndex = imageBase.lastIndexOf('/')
+            const imagePath = slashIndex >= 0 ? imageBase.slice(0, slashIndex + 1) : ''
+            const imageFile = slashIndex >= 0 ? imageBase.slice(slashIndex + 1) : imageBase
+            const match = /^(.+?)(-(?:xs|s|m|l|xl|hq|hd|hdl|hdxl|[A-Z]{2}))?\.([^.\/]+)$/i.exec(imageFile)
+            return match ? `${imagePath}${match[1]}-${sizeName}.${match[3]}${imageSuffix}` : null
+        }
+        const isExplicitStratusSrc = (): boolean => {
+            const attr = el.attr('data-stratus-src') || el.attr('stratus-src') || null
+            return isString(attr) && attr !== '' && attr !== 'true' && attr !== 'false'
+        }
+        const isResizableImageSource = (imageSrc: string): boolean => {
+            if (!imageSrc || imageSrc.indexOf('data:image') === 0 || !hasResizableImageExtension(imageSrc)) {
+                return false
+            }
+            if (!/^(https?:)?\/\//i.test(imageSrc)) {
+                return true
+            }
+            try {
+                const url = new URL(
+                    imageSrc.indexOf('//') === 0 ? `${window.location.protocol}${imageSrc}` : imageSrc
+                )
+                return url.hostname === window.location.hostname || url.hostname === 'cdn.sitetheory.io'
+            } catch (error) {
+                return false
+            }
+        }
+
+        if (type !== 'img' && !isExplicitStratusSrc()) {
+            const backgroundSrc = getBackgroundImageSrc(el.css('background-image'))
+            if (backgroundSrc && backgroundSrc !== src) {
+                const currentDataSize = hydrate(el.attr('data-size')) || null
+                const currentSizedSrc = currentDataSize ? getSizedImageSrc(src, currentDataSize) : null
+                if (normalizeImageSrc(backgroundSrc) !== normalizeImageSrc(currentSizedSrc)) {
+                    src = backgroundSrc
+                    el.attr('data-src', src)
+                    el.removeAttr('data-size')
+                }
+            }
+        }
 
         // Handle precedence
         // TODO: @deprecated - we don't need to support "lazy" since that is the same as empty
@@ -1129,44 +1429,100 @@ Stratus.Internals.LoadImage = (obj: {el?: any, spy?: any, size?: any, ignoreSpy?
             return
         }
 
-        // FIXME: This needs to still check for an upsize
         let dataSize: any = hydrate(el.attr('data-size')) || obj.size || null
+        const resizeSetting = hydrate(el.attr('data-stratus-src-resize'))
+        const canResizeSource = resizeSetting !== false && resizeSetting !== 'false' && isResizableImageSource(src)
+        if (!canResizeSource) {
+            dataSize = 'origin'
+        }
 
         // Detect Optimistic Lock
         const resizeOptimisticLock = hydrate(el.attr('data-resize-optimistic-lock')) || 0
 
+        let width: any = null
+        let height: any = null
+        // let unit: any = null
+        // let percentage: any = null
+
+        // Allow specifying an alternative element to reference the best size. Useful in cases like before/after images
+        // or carousels where the element is going to be in a collapsed display non container
+        const $referenceElement = referenceEl || nativeEl
+
+        // if (el.width()) {
+        const nativeWidth = $referenceElement.offsetWidth || $referenceElement.clientWidth || null
+        const nativeHeight = $referenceElement.offsetHeight || $referenceElement.clientHeight || null
+        if (nativeWidth) {
+            // Check if there is CSS width hard coded on the element
+            // width = el.width()
+            width = nativeWidth
+        } else if (el.attr('width')) {
+            width = el.attr('width')
+        }
+        if (nativeHeight) {
+            height = nativeHeight
+        } else if (el.attr('height')) {
+            height = el.attr('height')
+        }
+
+        // TODO: If width comes out to xs, we want to still allow checks!
+        // Digest Width Attribute
+        if (width) {
+            const digest = /([\d]+)(.*)/
+            width = digest.exec(width)
+            // unit = width[2]
+            // make sure width only refers to the number (not 'px' or '%')
+            width = parseInt(width[1], 10)
+            // TODO: getting percentage is useless  unless we know the parent
+            // percentage = unit === '%' ? (width / 100) : null
+        }
+        if (height) {
+            const digest = /([\d]+)(.*)/
+            height = digest.exec(height)
+            height = parseInt(height[1], 10)
+        }
+
+        if (
+            canResizeSource &&
+            isCoverSized &&
+            width > 0 &&
+            height > 0
+        ) {
+            const imageRatioSource = normalizeImageSrc(src)
+            const cachedImageRatioSource = hydrate(el.attr('data-stratus-src-natural-ratio-src')) || null
+            const cachedImageRatio = Number(
+                hydrate(el.attr('data-stratus-src-natural-ratio')) ||
+                parseRatio(hydrate(el.attr('data-ratio-real')) || hydrate(el.attr('data-ratio-original')) || hydrate(el.attr('data-ratio'))) ||
+                0
+            )
+            if ((!cachedImageRatioSource || cachedImageRatioSource === imageRatioSource) && cachedImageRatio > 0) {
+                width = max([width, Math.ceil(height * cachedImageRatio)])
+            } else {
+                // Background-cover sizing needs enough pixels for both axes. Avoid
+                // fetching the origin thumbnail solely to calculate the natural
+                // ratio; that made delayed placeholders download -xs and then the
+                // final size. The larger rendered axis is a conservative fallback.
+                width = max([width, height])
+            }
+        }
+
+        let greatestWidth = el.attr('data-greatest-width') || 0
+        if (isString(greatestWidth)) {
+            greatestWidth = hydrate(greatestWidth)
+        }
+
+        const currentWidth = width || 0
+        const shouldCalculateSize = (
+            canResizeSource &&
+            (
+                !dataSize ||
+                dataSize === 'xs' ||
+                resizeOptimisticLock !== Stratus.Environment.get('resizeOptimisticLock') ||
+                currentWidth > greatestWidth
+            )
+        )
+
         // if a specific valid size is requested, use that
-        if (!dataSize || resizeOptimisticLock !== Stratus.Environment.get('resizeOptimisticLock')) {
-            let width: any = null
-            // let unit: any = null
-            // let percentage: any = null
-
-            // Allow specifying an alternative element to reference the best size. Useful in cases like before/after images
-            // or carousels where the element is going to be in a collapsed display non container
-            const spyReference: any = hydrate(el.attr('data-stratus-src-spy')) || null
-            const $referenceElement = spyReference ? (head(el.parents(spyReference)) || nativeEl) : nativeEl
-
-            // if (el.width()) {
-            const nativeWidth = $referenceElement.offsetWidth || $referenceElement.clientWidth || null
-            if (nativeWidth) {
-                // Check if there is CSS width hard coded on the element
-                // width = el.width()
-                width = nativeWidth
-            } else if (el.attr('width')) {
-                width = el.attr('width')
-            }
-
-            // TODO: If width comes out to xs, we want to still allow checks!
-            // Digest Width Attribute
-            if (width) {
-                const digest = /([\d]+)(.*)/
-                width = digest.exec(width)
-                // unit = width[2]
-                // make sure width only refers to the number (not 'px' or '%')
-                width = parseInt(width[1], 10)
-                // TODO: getting percentage is useless  unless we know the parent
-                // percentage = unit === '%' ? (width / 100) : null
-            }
+        if (shouldCalculateSize) {
             // FIXME: This should only happen if the CSS has completely loaded.
             // TODO: This may be able to be removed as it doesn't appear to be used (no reference to
             //  `data-ignore-visibility` and also the logic is all wrong. But the idea is that if there is an image
@@ -1244,16 +1600,28 @@ Stratus.Internals.LoadImage = (obj: {el?: any, spy?: any, size?: any, ignoreSpy?
             // Save New Optimistic Lock
             el.attr('data-resize-optimistic-lock', dehydrate(Stratus.Environment.get('resizeOptimisticLock')))
 
-            // Retrieve greatest width
-            let greatestWidth = el.attr('data-greatest-width') || 0
-            if (isString(greatestWidth)) {
-                greatestWidth = hydrate(greatestWidth)
-            }
             // Find greatest width
             width = max([width, greatestWidth])
             // Set greatest width for future reference
             el.attr('data-greatest-width', width)
             el.attr('data-current-width', width)
+
+            // Allow a small amount of upscaling for cover crops. A landscape image
+            // masked into a portrait ratio can land just above the next lower
+            // derivative, and forcing HQ for a few percent more source pixels is
+            // usually more wasteful than useful.
+            if (isCoverBackground) {
+                width = Math.ceil(width * 0.94)
+            }
+
+            // Retina/DPR sizing is still useful for foreground images without
+            // srcset, but masked background-cover images are usually decorative
+            // or visually cropped. Let them choose the closest derivative by CSS
+            // pixel size unless a template explicitly opts back in with
+            // data-hd="true".
+            if (isCoverBackground && !hdIsExplicit) {
+                hd = false
+            }
 
             // Use devicePixelRatio for HD
             if (hd && Stratus.Environment.get('devicePixelRatio')) {
@@ -1295,9 +1663,8 @@ Stratus.Internals.LoadImage = (obj: {el?: any, spy?: any, size?: any, ignoreSpy?
         // Change Source to right size (get the base and extension and ignore size)
         const srcOrigin: string = src
         // FIXME: This regex has targeting issues if the url has an extension after a ?, like ?v=100.jpg
-        const srcRegex: RegExp = /^(.+?)(-[A-Z]{2})?\.(?=[^.]*$)(.+)/gi
-        const srcMatch: RegExpExecArray = srcRegex.exec(src)
-        if (srcMatch !== null) {
+        const sizedSrc = canResizeSource ? getSizedImageSrc(src, dataSize) : null
+        if (canResizeSource && sizedSrc) {
             // if (cookie('env')
             //     // @ts-ignore
             //     && includes(src, 'BM-33IrvingAve-SitePlan-Print-R1%20copy')
@@ -1308,14 +1675,18 @@ Stratus.Internals.LoadImage = (obj: {el?: any, spy?: any, size?: any, ignoreSpy?
             //         'srcMatch:', srcMatch
             //     )
             // }
-            src = `${srcMatch[1]}-${dataSize}.${srcMatch[3]}`
-        } else {
+            src = sizedSrc
+        } else if (canResizeSource) {
             console.error('Unable to find file name for image src:', el)
         }
 
         // Stop repeat checks
         if (dataSize === hydrate(el.attr('data-size'))) {
             el.attr('data-loading', dehydrate(false))
+            if (el.hasClass('loaded')) {
+                el.attr('data-stratus-src-loaded-signature', dehydrate(getCurrentLoadSignature()))
+                obj.nextCheckAt = Number.MAX_SAFE_INTEGER
+            }
             return
         }
 
@@ -1324,7 +1695,27 @@ Stratus.Internals.LoadImage = (obj: {el?: any, spy?: any, size?: any, ignoreSpy?
             el.addClass('loading')
         }
 
-        const srcOriginProtocol: string = srcOrigin.startsWith('//') ? window.location.protocol + src : src
+        const srcOriginProtocol: string = srcOrigin.startsWith('//') ? window.location.protocol + srcOrigin : srcOrigin
+        const renderedSrc = type === 'img' ? el.attr('src') : getBackgroundImageSrc(el.css('background-image'))
+        const renderedOriginLoaded = normalizeImageSrc(renderedSrc) === normalizeImageSrc(srcOriginProtocol)
+        const setImageFetchPriority = (image: any, priority: 'high'|'low'|'auto') => {
+            const imageEl = image && image.jquery ? head(image) : image
+            if (imageEl && 'fetchPriority' in imageEl) {
+                imageEl.fetchPriority = priority
+            } else if (image && image.jquery) {
+                image.attr('fetchpriority', priority)
+            }
+        }
+        const markImageLoaded = () => {
+            if (type === 'img' && isTransparentImageSrc(el.attr('src'))) {
+                return
+            }
+            el.addClass('loaded').removeClass('loading placeholder')
+            el.attr('data-loading', dehydrate(false))
+            el.removeAttr('data-stratus-src-pending-src')
+            el.attr('data-stratus-src-loaded-signature', dehydrate(getCurrentLoadSignature()))
+            obj.nextCheckAt = Number.MAX_SAFE_INTEGER
+        }
 
         // if (cookie('env')) {
         //     console.log('LoadImage() srcOriginProtocol:', srcOriginProtocol)
@@ -1334,7 +1725,7 @@ Stratus.Internals.LoadImage = (obj: {el?: any, spy?: any, size?: any, ignoreSpy?
         if (type === 'img') {
             // Add Listeners (Only once per Element!)
             el.on('load', () => {
-                el.addClass('loaded').removeClass('loading')
+                markImageLoaded()
                 // if (cookie('env')) {
                 //     console.log('LoadImage() loaded:', el)
                 // }
@@ -1349,9 +1740,10 @@ Stratus.Internals.LoadImage = (obj: {el?: any, spy?: any, size?: any, ignoreSpy?
                 }
                 jQuery(this).remove() // prevent memory leaks
             })
-        } else {
+        } else if (renderedSrc && !renderedOriginLoaded) {
             // If Background Image Create a Test Image to Test Loading
             const loadEl: any = jQuery('<img/>')
+            setImageFetchPriority(loadEl, 'low')
             loadEl.attr('src', srcOriginProtocol)
             loadEl.on('load', () => {
                 // If the image wasn't set in the background yet, set it now
@@ -1373,7 +1765,6 @@ Stratus.Internals.LoadImage = (obj: {el?: any, spy?: any, size?: any, ignoreSpy?
         // onLoad and onError (if size doesn't exist, just don't use the prefetched image)
         // Change the Source to be the desired path (for image or background)
         const srcProtocol: any = src.startsWith('//') ? window.location.protocol + src : src
-        el.attr('data-loading', dehydrate(false))
         el.attr('data-size', dehydrate(dataSize))
 
         // if (cookie('env')) {
@@ -1381,25 +1772,62 @@ Stratus.Internals.LoadImage = (obj: {el?: any, spy?: any, size?: any, ignoreSpy?
         // }
 
         // Preload this image first. Ensures speed to display and image is valid
-        const preFetchEl: any = jQuery('<img/>')
-        preFetchEl.attr('src', srcProtocol)
-        preFetchEl.on('load', () => {
+        if (normalizeImageSrc(renderedSrc) === normalizeImageSrc(srcProtocol)) {
+            el.attr('data-loading', dehydrate(false))
+            el.attr('data-size', dehydrate(dataSize))
             el.addClass('loaded').removeClass('loading')
-            if (type === 'img') {
+            el.attr('data-stratus-src-loaded-signature', dehydrate(getCurrentLoadSignature()))
+            obj.nextCheckAt = Number.MAX_SAFE_INTEGER
+            return
+        }
+
+        const pendingSrc = normalizeImageSrc(hydrate(el.attr('data-stratus-src-pending-src')) || null)
+        if (pendingSrc && pendingSrc === normalizeImageSrc(srcProtocol)) {
+            return
+        }
+        const preFetchEl: any = jQuery('<img/>')
+        if (type === 'img') {
+            setImageFetchPriority(preFetchEl, 'high')
+            el.attr('data-stratus-src-pending-src', dehydrate(srcProtocol))
+            preFetchEl.on('load', () => {
                 el.attr('src', srcProtocol)
-            } else {
+                markImageLoaded()
+                jQuery(this).remove() // prevent memory leaks
+            })
+            preFetchEl.on('error', () => {
+                el.attr('data-loading', dehydrate(false))
+                el.removeAttr('data-stratus-src-pending-src')
+                if (cookie('env')) {
+                    console.warn('LoadImage() Unable to load', dataSize.toUpperCase(), 'size at', srcProtocol)
+                }
+                jQuery(this).remove() // prevent memory leaks
+            })
+            preFetchEl.attr('src', srcProtocol)
+            return
+        }
+        if (type !== 'img') {
+            setImageFetchPriority(preFetchEl, 'low')
+            el.attr('data-stratus-src-pending-src', dehydrate(srcProtocol))
+            preFetchEl.on('load', () => {
                 el.css('background-image', 'url(' + srcProtocol + ')')
-            }
-            jQuery(this).remove() // prevent memory leaks
-        })
-        preFetchEl.on('error', () => {
-            // Image failed, dont try to use this url
-            // TODO: Go down in sizes before reaching the origin
-            if (cookie('env')) {
-                console.warn('LoadImage() Unable to load', dataSize.toUpperCase(), 'size at', srcProtocol)
-            }
-            jQuery(this).remove() // prevent memory leaks
-        })
+                el.addClass('loaded').removeClass('loading')
+                el.attr('data-loading', dehydrate(false))
+                el.removeAttr('data-stratus-src-pending-src')
+                el.attr('data-stratus-src-loaded-signature', dehydrate(getCurrentLoadSignature()))
+                obj.nextCheckAt = Number.MAX_SAFE_INTEGER
+                jQuery(this).remove() // prevent memory leaks
+            })
+            preFetchEl.on('error', () => {
+                el.attr('data-loading', dehydrate(false))
+                el.removeAttr('data-stratus-src-pending-src')
+                if (cookie('env')) {
+                    console.warn('LoadImage() Unable to load', dataSize.toUpperCase(), 'size at', srcProtocol)
+                }
+                jQuery(this).remove() // prevent memory leaks
+            })
+            preFetchEl.attr('src', srcProtocol)
+            return
+        }
 
         // FIXME: This is a mess that we shouldn't need to maintain.
         // RegisterGroups should just use Native Logic instead of
@@ -1456,13 +1884,8 @@ Stratus.Internals.Location = (options: any) => {
 Stratus.Internals.OnScroll = once(() => {
     // Reset Elements:
     // if (!elements || elements.length === 0) return false;
-
-    // Execute the methods for every registered object ONLY when there is a
-    // change to the viewPort
-    Stratus.Environment.on('change:viewPortChange', (_event: any, model: any) => {
-        if (!model.get('viewPortChange')) {
-            return
-        }
+    let scrollCheckFrame: any = null
+    const runScrollElements = (model: any) => {
         model.set('lastScroll', Stratus.Internals.GetScrollDir())
 
         // Cycle through all the registered objects an execute their function
@@ -1473,6 +1896,9 @@ Stratus.Internals.OnScroll = once(() => {
 
         forEach(scrollElements, (obj: any) => {
             if (typeof obj === 'undefined') {
+                return
+            }
+            if (obj.nextCheckAt && obj.nextCheckAt > Date.now()) {
                 return
             }
             // TODO: This feature draft would allow more control between the
@@ -1490,6 +1916,15 @@ Stratus.Internals.OnScroll = once(() => {
         // }
         model.set('viewPortChange', false)
         model.set('windowTop', jQuery(Stratus.Environment.get('viewPort') || window).scrollTop())
+    }
+
+    // Execute the methods for every registered object ONLY when there is a
+    // change to the viewPort
+    Stratus.Environment.on('change:viewPortChange', (_event: any, model: any) => {
+        if (!model.get('viewPortChange')) {
+            return
+        }
+        runScrollElements(model)
     })
 
     // Listen for Scrolling Updates
@@ -1499,13 +1934,25 @@ Stratus.Internals.OnScroll = once(() => {
         // if (cookie('env')) {
         //     console.log('scrolling:', Stratus.Internals.GetScrollDir())
         // }
-        if (Stratus.Environment.get('viewPortChange')) {
+        if (scrollCheckFrame) {
             return
         }
-        Stratus.Environment.set('viewPortChange', true)
+        scrollCheckFrame = requestAnimationFrame(() => {
+            scrollCheckFrame = null
+            Stratus.Environment.set('viewPortChange', true)
+            if (Stratus.Environment.get('viewPortChange')) {
+                runScrollElements(Stratus.Environment)
+            }
+        })
     }
     const resizeChangeHandler: any = () => {
         Stratus.Environment.iterate('resizeOptimisticLock')
+        const scrollElements: any = Stratus.RegisterGroup.get('OnScroll')
+        forEach(scrollElements, (obj: any) => {
+            if (obj) {
+                obj.nextCheckAt = null
+            }
+        })
         viewPortChangeHandler()
     }
     // if (cookie('env')) {
@@ -1523,6 +1970,159 @@ Stratus.Internals.OnScroll = once(() => {
         Stratus.Environment.set('viewPortChange', true)
     })
 })
+
+Stratus.Internals.LoadStratusSrcElements = (forceRetry = false) => {
+    const placeholderSrc = 'data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 18%27 preserveAspectRatio=%27none%27%3E%3Cdefs%3E%3ClinearGradient id=%27g%27 x1=%270%27 x2=%271%27%3E%3Cstop stop-color=%27%23111b33%27/%3E%3Cstop offset=%27.5%27 stop-color=%27%233e568e%27 stop-opacity=%27.65%27/%3E%3Cstop offset=%271%27 stop-color=%27%23111b33%27/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width=%2732%27 height=%2718%27 fill=%27%23111b33%27/%3E%3Crect width=%2732%27 height=%2718%27 fill=%27url(%23g)%27%3E%3Canimate attributeName=%27x%27 values=%27-32;32%27 dur=%271.4s%27 repeatCount=%27indefinite%27/%3E%3C/rect%3E%3C/svg%3E'
+    const getSrcPath = (src: string): string => {
+        if (!src) {
+            return ''
+        }
+        try {
+            const url = new URL(
+                src.indexOf('//') === 0 ? `${window.location.protocol}${src}` : src,
+                window.location.href
+            )
+            return url.pathname || ''
+        } catch (error) {
+            return src.split(/[?#]/)[0]
+        }
+    }
+    const isBooleanSentinelSrc = (src: string): boolean => {
+        const normalizedSrc = src.trim().replace(/^url\(["']?(.+?)["']?\)$/i, '$1').trim()
+        if (/^(true|false)$/i.test(normalizedSrc)) {
+            return true
+        }
+        const srcPath = getSrcPath(normalizedSrc).replace(/\/+$/, '')
+        return /^\/?(true|false)$/i.test(srcPath)
+    }
+    const normalizeLazySrc = (src: any): string|null => {
+        if (
+            typeof src === 'undefined' ||
+            src === null ||
+            src === true ||
+            src === false ||
+            src === 'true' ||
+            src === 'false'
+        ) {
+            return null
+        }
+        if (isString(src)) {
+            const normalizedSrc = src.trim().replace(/^url\(["']?(.+?)["']?\)$/i, '$1').trim()
+            return isBooleanSentinelSrc(normalizedSrc) ? null : normalizedSrc
+        }
+        return src
+    }
+    const elements = document.querySelectorAll('[data-stratus-src], [stratus-src]')
+    forEach(elements, (nativeEl: any) => {
+        if (!nativeEl || nativeEl.getAttribute('data-stratus-src') === 'false') {
+            return
+        }
+        const tagType = String(nativeEl.tagName || '').toLowerCase()
+        const el = jQuery(nativeEl)
+        const src = normalizeLazySrc(hydrate(el.attr('data-src'))) ||
+            normalizeLazySrc(el.attr('data-src')) ||
+            normalizeLazySrc(hydrate(el.attr('data-stratus-src'))) ||
+            normalizeLazySrc(el.attr('data-stratus-src')) ||
+            normalizeLazySrc(hydrate(el.attr('stratus-src'))) ||
+            normalizeLazySrc(el.attr('stratus-src')) ||
+            normalizeLazySrc(el.attr('src'))
+
+        if (!src) {
+            return
+        }
+        if (!el.attr('data-src')) {
+            el.attr('data-src', src)
+        }
+        if (tagType === 'img' && !el.attr('src')) {
+            el.attr('src', placeholderSrc)
+        }
+        const spyReference = hydrate(el.attr('data-stratus-src-spy')) || el.attr('data-stratus-src-spy')
+        const spyEl = spyReference ?
+            (el.parents(spyReference).first().length ? el.parents(spyReference).first() : jQuery(document.querySelector(spyReference))) :
+            el
+        let group = nativeEl.__stratusSrcGroup
+        if (!group) {
+            group = {
+                method: Stratus.Internals.LoadImage,
+                el,
+                spy: spyEl && spyEl.length ? spyEl : el
+            }
+            nativeEl.__stratusSrcGroup = group
+            Stratus.RegisterGroup.add('OnScroll', group)
+            el.attr('data-stratus-src-native-registered', dehydrate(true))
+        } else {
+            group.el = el
+            group.spy = spyEl && spyEl.length ? spyEl : el
+        }
+        if (
+            forceRetry &&
+            hydrate(el.attr('data-loading')) &&
+            !el.attr('data-stratus-src-pending-src') &&
+            !el.hasClass('loaded')
+        ) {
+            el.attr('data-loading', dehydrate(false))
+            el.removeAttr('data-stratus-src-last-check')
+        }
+        if (forceRetry || !el.hasClass('loaded')) {
+            Stratus.Internals.LoadImage(group)
+        }
+    })
+    Stratus.Internals.OnScroll()
+}
+
+Stratus.Internals.WatchStratusSrcElements = () => {
+    if (
+        typeof MutationObserver === 'undefined' ||
+        Stratus.Internals.stratusSrcMutationObserver
+    ) {
+        return
+    }
+
+    let scanTimer: any = null
+    const scheduleScan = (forceRetry = false) => {
+        if (scanTimer) {
+            return
+        }
+        scanTimer = setTimeout(() => {
+            scanTimer = null
+            Stratus.Internals.LoadStratusSrcElements(forceRetry)
+        }, 50)
+    }
+    const nodeHasStratusSrc = (node: any): boolean => {
+        if (!node || node.nodeType !== 1) {
+            return false
+        }
+        return (
+            node.hasAttribute('data-stratus-src') ||
+            node.hasAttribute('stratus-src') ||
+            !!node.querySelector('[data-stratus-src], [stratus-src]')
+        )
+    }
+
+    Stratus.Internals.stratusSrcMutationObserver = new MutationObserver((mutations) => {
+        for (const mutation of mutations) {
+            if (
+                mutation.type === 'attributes' &&
+                nodeHasStratusSrc(mutation.target)
+            ) {
+                scheduleScan(true)
+                return
+            }
+            for (const node of Array.from(mutation.addedNodes)) {
+                if (nodeHasStratusSrc(node)) {
+                    scheduleScan()
+                    return
+                }
+            }
+        }
+    })
+    Stratus.Internals.stratusSrcMutationObserver.observe(document.documentElement, {
+        attributes: true,
+        attributeFilter: ['data-stratus-src', 'stratus-src', 'data-src', 'src'],
+        childList: true,
+        subtree: true
+    })
+}
 
 // FIXME: This logic above needs to be specific to a particular component or controller.
 // It can be abstracted into an underscore function or something, but this currently is
@@ -1824,25 +2424,32 @@ Stratus.Loaders.Angular = function AngularLoader() {
         if (isArray(element.selector)) {
             element.length = 0
             forEach(element.selector, (selector: any) => {
-                nodes = document.querySelectorAll(selector)
-                element.length += nodes.length
-                if (!nodes.length) {
-                    return
-                }
-                const name: any = selector.replace(/^\[/, '').replace(/]$/, '')
-                requirement = element.namespace + lcfirst(camelCase(
-                    name.replace(/^stratus/, '').replace(/^data-stratus/, '').replace(/^ng/, '')
-                ))
-                if (has(boot.configuration.paths, requirement)) {
-                    injection = {
-                        requirement
+                const selectors = (
+                    isString(selector) &&
+                    !selector.match(/^\[/) &&
+                    !selector.match(/-boot$/)
+                ) ? [selector, `${selector}-boot`] : [selector]
+                forEach(selectors, (activeSelector: any) => {
+                    nodes = document.querySelectorAll(activeSelector)
+                    element.length += nodes.length
+                    if (!nodes.length) {
+                        return
                     }
-                    if (element.module) {
-                        injection.module = isString(element.module) ? element.module
-                                                                      : lcfirst(camelCase(name + (element.suffix || '')))
+                    const name: any = activeSelector.replace(/^\[/, '').replace(/]$/, '').replace(/-boot$/, '')
+                    requirement = element.namespace + lcfirst(camelCase(
+                        name.replace(/^stratus/, '').replace(/^data-stratus/, '').replace(/^ng/, '')
+                    ))
+                    if (has(boot.configuration.paths, requirement)) {
+                        injection = {
+                            requirement
+                        }
+                        if (element.module) {
+                            injection.module = isString(element.module) ? element.module
+                                                                          : lcfirst(camelCase(name + (element.suffix || '')))
+                        }
+                        injector(injection)
                     }
-                    injector(injection)
-                }
+                })
             })
         } else if (isString(element.selector)) {
             nodes = document.querySelectorAll(element.selector)
@@ -1943,7 +2550,9 @@ Stratus.Loaders.Angular = function AngularLoader() {
                 const whitelist: any = [
                     'self',
                     'http://*.sitetheory.io/**',
-                    'https://*.sitetheory.io/**'
+                    'https://*.sitetheory.io/**',
+                    'https://img.youtube.com/**',
+                    'https://i.ytimg.com/**'
                 ]
                 if (boot.host) {
                     if (startsWith(boot.host, '//')) {
@@ -2302,6 +2911,13 @@ Stratus.Events.once('initialize', () => {
     // Load Angular
     Stratus.Loaders.Angular()
 
+    // Register static Stratus lazy images that are not compiled by Angular.
+    Stratus.Internals.LoadStratusSrcElements()
+    Stratus.Internals.WatchStratusSrcElements()
+    Stratus.DOM.complete(() => {
+        Stratus.Internals.LoadStratusSrcElements(true)
+    })
+
     // Load Views
     /* *
      Stratus.Internals.Loader().then((views: any) => {
@@ -2457,48 +3073,55 @@ Stratus.DOM.ready(() => {
 // stub.
 // TODO: Access `complete()` from `DOM` instead of the deprecated `Stratus.DOM.complete()` reference
 Stratus.DOM.complete(() => {
-    // Renderer Detection
-    const renderer: any = Stratus.Internals.Renderer()
-    Stratus.Environment.set('render', renderer)
+    // Handle Classes (for Design Timing). Renderer detection is available through
+    // Stratus.Internals.Renderer(), but should be called on demand instead of startup.
+    Stratus.Select('body').removeClass('loading unloaded').addClass('loaded')
 
-    // List Qualified Vendors
-    const qualified: any = {
-        vendors: [
-            'NVIDIA Corporation',
-            'ATI Technologies Inc.',
-            'Qualcomm'
-        ],
-        renderers: [
-            'NVIDIA',
-            'GeForce',
-            'AMD',
-            'ATI',
-            'Radeon',
-            'Adreno'
-        ]
-    }
+    const angularComponentSelectors = [
+        'sa-boot',
+        'sa-editor',
+        'sa-map',
+        'sa-media-selector',
+        'sa-selector',
+        'sa-stripe-payment-method-item-display',
+        'sa-stripe-payment-method-list',
+        'sa-stripe-payment-method-selector',
+        'sa-timezone-selector',
+        'sa-tree'
+    ]
+    const angularBootSelectors = angularComponentSelectors.concat(
+        angularComponentSelectors.map((selector: string) => `${selector}-boot`)
+    )
+    const shouldBootAngular = () => !hamlet.isUndefined('document') && angularBootSelectors.some(
+        (selector: string) => !!document.querySelector(selector)
+    )
 
-    let quality: any
-    quality = (
-                  (renderer.vendor && qualified.vendors.indexOf(renderer.vendor) >= 0) ||
-                  (renderer.renderer &&
-                      map(qualified.renderers,
-                          (r: string) => startsWith(r, renderer.renderer)
-                      )
-                  )
-              ) ? 'high' : 'low'
-
-    Stratus.Environment.set('quality', quality)
-
-    // Handle Classes (for Design Timing)
-    Stratus.Select('body').removeClass('loading unloaded').addClass(`loaded quality-${quality}`)
-
-    // Load Angular 12+
-    if (!hamlet.isUndefined('System')) {
+    let angularBootRequested = false
+    const requestAngularBoot = () => {
+        if (angularBootRequested || hamlet.isUndefined('System') || !shouldBootAngular()) {
+            return false
+        }
+        angularBootRequested = true
         require([
             // 'quill',
             '@stratusjs/angular/boot'
         ])
+        return true
+    }
+
+    // Load Angular 12+ only when Angular component tags are present. AngularJS admin views may remove
+    // ng-if sections during model loading, so watch briefly for those tags to be restored.
+    if (!requestAngularBoot() && !hamlet.isUndefined('MutationObserver') && !hamlet.isUndefined('document')) {
+        const angularBootObserver = new MutationObserver(() => {
+            if (requestAngularBoot()) {
+                angularBootObserver.disconnect()
+            }
+        })
+        angularBootObserver.observe(document.documentElement, {
+            childList: true,
+            subtree: true
+        })
+        setTimeout(() => angularBootObserver.disconnect(), 30000)
     }
 })
 
