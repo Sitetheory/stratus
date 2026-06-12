@@ -386,7 +386,7 @@ export class MediaSelectorComponent extends RootComponent { // implements OnInit
         if (_.get(model, 'mime') === 'video') {
             const serviceMediaId = _.get(model, 'serviceMediaId') || null
             if (_.get(model, 'service') === 'youtube') {
-                return `https://www.youtube.com/?watch=${serviceMediaId}`
+                return `https://www.youtube.com/watch?v=${serviceMediaId}`
             }
             if (_.get(model, 'service') === 'vimeo') {
                 return `https://vimeo.com/${serviceMediaId}`
