@@ -1,4 +1,4 @@
-<mat-progress-bar mode="indeterminate" *ngIf="!styled"></mat-progress-bar>
+<mat-progress-bar mode="indeterminate" *ngIf="!styled && editor != 'froala'"></mat-progress-bar>
 
 <!--
 <div class="editor-component"
@@ -11,7 +11,8 @@
 
 <div class="editor-component"
      [formGroup]="form"
-     [attr.data-uid]="uid">
+     [attr.data-uid]="uid"
+     style="position: relative;">
     <!-- *ngIf="styled" -->
     <!-- The pipe data shows properly in the span below -->
     <!--
@@ -37,6 +38,18 @@
     </ng-container>
     !-- -->
 
+    <ng-container *ngIf="editor == 'froala' && froalaLoading">
+        <div class="froala-loading-placeholder"
+             [class.froala-loading-placeholder--overlay]="styled">
+            <div class="froala-loading-placeholder__inner">
+                <div class="froala-loading-placeholder__text">
+                    Loading editor...
+                </div>
+                <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+            </div>
+        </div>
+    </ng-container>
+
     <ng-container *ngIf="styled && editor == 'froala'">
         <!-- Media Selector -->
         <!--
@@ -49,6 +62,12 @@
         -->
         <!-- Froala Editor -->
         <textarea [froalaEditor]="froalaConfig" formControlName="dataString"></textarea>
+        <button *ngIf="froalaHydrationBlocked"
+                type="button"
+                (click)="recoverFroalaHydration(true)"
+                style="position: absolute; z-index: 10020; top: 0; right: 0; bottom: 0; left: 0; display: flex; align-items: center; justify-content: center; padding: 24px; border: 1px solid rgba(0, 0, 0, .25); background: rgba(255, 255, 255, .94); color: #222; font-weight: 700; line-height: 1.4; text-align: center; cursor: pointer;">
+            {{ froalaHydrationMessage }}
+        </button>
         <!--
         <textarea [froalaEditor]="froalaConfig" (froalaModelChange)="onChangeEvent($event)" [(froalaModel)]="model"></textarea>
         -->

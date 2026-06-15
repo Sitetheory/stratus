@@ -293,6 +293,10 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
     // UI Flags
     initialized = false
     styled = false
+    dataReady = false
+    froalaLoading = true
+    froalaHydrationBlocked = false
+    froalaHydrationMessage = 'The editor did not load the saved text. Click to refresh the editor before editing.'
     blurred = false
     focused = false
     codeViewIsOpen: boolean
@@ -1250,17 +1254,35 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             // TODO: This may need to only work on blur and not focus, unless it is the initialization value
             const dataControl = this.form.get('dataString')
             if (dataControl.value === evt) {
+                this.dataReady = true
+                this.froalaLoading = false
+                this.ref.detectChanges()
                 // In the case of data being edited by the code view or something else,
                 // we need to refresh the UI, as long as it has been initialized.
                 if (this.initialized) {
                     this.refresh()
+                    setTimeout(() => this.ensureFroalaHydration(false), 1)
                 }
                 return
             }
             dataControl.patchValue(evt)
+            this.dataReady = true
+            this.froalaLoading = false
+            this.ref.detectChanges()
+            setTimeout(() => this.ensureFroalaHydration(false), 1)
             // Note: A refresh may be necessary if things become less responsive
             this.refresh()
         })
+
+        setTimeout(() => {
+            const dataControl = this.form.get('dataString')
+            dataControl.patchValue(this.dataRef(), {emitEvent: false})
+            this.dataReady = true
+            this.froalaLoading = false
+            this.ref.detectChanges()
+            this.refresh()
+            setTimeout(() => this.ensureFroalaHydration(false), 1)
+        }, 1500)
 
         // console.info('constructor!');
     }
@@ -1388,6 +1410,13 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
         if (!this.model.completed) {
             return
         }
+        if (!this.dataReady) {
+            this.dataReady = true
+            this.froalaLoading = false
+        }
+        if (this.detectFroalaHydrationFailure(value)) {
+            return
+        }
 
         // This avoids saving if it's the same
         // if (value === this.model.get(this.property)) {
@@ -1466,7 +1495,102 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
         return this.changeImgSize(data, 'xs', 'out')
     }
 
+    htmlHasMeaningfulContent(data?: string): boolean {
+        if (!data || !_.isString(data)) {
+            return false
+        }
+        if (/<(img|iframe|video|audio|table|ul|ol|li|blockquote|hr|figure)\b/i.test(data)) {
+            return true
+        }
+        const text = data
+            .replace(/<br\s*\/?>/gi, '')
+            .replace(/&nbsp;/gi, ' ')
+            .replace(/<[^>]*>/g, '')
+            .trim()
+        return !!text
+    }
+
+    getFroalaEditorHtml(): string {
+        const froalaEditorDirective = this.froalaEditorDirective as any
+        if (!froalaEditorDirective || !froalaEditorDirective.getEditor()) {
+            return ''
+        }
+        const editor = froalaEditorDirective.getEditor()
+        if (editor.html && editor.html.get) {
+            return editor.html.get() || ''
+        }
+        return editor.el && editor.el.innerHTML ? editor.el.innerHTML : ''
+    }
+
+    setFroalaEditorHtml(value: string): void {
+        const froalaEditorDirective = this.froalaEditorDirective as any
+        if (!froalaEditorDirective || !froalaEditorDirective.getEditor()) {
+            return
+        }
+        const editor = froalaEditorDirective.getEditor()
+        if (editor.html && editor.html.set) {
+            editor.html.set(value || '', true)
+        } else if (editor.el) {
+            editor.el.innerHTML = value || ''
+        }
+        if (editor.undo) {
+            editor.undo.reset()
+            editor.undo.saveStep()
+        }
+    }
+
+    detectFroalaHydrationFailure(value?: string): boolean {
+        const modelValue = this.dataRef()
+        if (!this.htmlHasMeaningfulContent(modelValue)) {
+            this.froalaHydrationBlocked = false
+            return false
+        }
+        if (this.htmlHasMeaningfulContent(this.getFroalaEditorHtml())) {
+            this.froalaHydrationBlocked = false
+            return false
+        }
+        this.froalaHydrationBlocked = true
+        this.setFroalaEditorHtml(modelValue)
+        this.form.get('dataString')?.patchValue(modelValue, {emitEvent: false})
+        this.refresh()
+        console.error(`[sa-editor] blocked empty Froala save for ${this.property}; model has existing content.`, this)
+        return true
+    }
+
+    ensureFroalaHydration(reloadOnFailure = false): void {
+        if (!this.dataReady) {
+            return
+        }
+        const modelValue = this.dataRef()
+        if (!this.htmlHasMeaningfulContent(modelValue)) {
+            this.froalaHydrationBlocked = false
+            this.refresh()
+            return
+        }
+        if (this.htmlHasMeaningfulContent(this.getFroalaEditorHtml())) {
+            this.froalaHydrationBlocked = false
+            this.refresh()
+            return
+        }
+        this.setFroalaEditorHtml(modelValue)
+        this.form.get('dataString')?.patchValue(modelValue, {emitEvent: false})
+        setTimeout(() => {
+            this.froalaHydrationBlocked = this.htmlHasMeaningfulContent(modelValue)
+                && !this.htmlHasMeaningfulContent(this.getFroalaEditorHtml())
+            this.refresh()
+            if (reloadOnFailure && this.froalaHydrationBlocked) {
+                window.location.reload()
+            }
+        }, 50)
+    }
+
+    recoverFroalaHydration(reloadOnFailure = false): void {
+        this.ensureFroalaHydration(reloadOnFailure)
+    }
+
     onFroalaInit() {
+        setTimeout(() => this.ensureFroalaHydration(false), 1)
+
         // Set Token via Cookie if present
         // Stratus.Environment.set('token', cookie('apiToken') || null)
 
@@ -1676,11 +1800,9 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
         }
         const prevString = _.clone(this.incomingData)
         const dataString = this.dataRef()
-        // ensure changes have occurred
-        if (prevString === dataString) {
-            return
-        }
-        if (!dataString && (!this.data || !this.data.completed)) {
+        const modelReady = !!this.model && (!('completed' in this.model) || this.model.completed)
+        const dataReady = !!this.data && (!('completed' in this.data) || this.data.completed)
+        if (!dataString && !modelReady && !dataReady) {
             if (this.dev) {
                 console.warn(`[defer] debouncing subscriber due to unavailable data on ${this.uid}`, this.data)
             }
@@ -1692,8 +1814,12 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             }, 250)
             return
         }
+        // ensure changes have occurred, except for the initial loaded-empty value
+        if (this.dataReady && prevString === dataString) {
+            return
+        }
         if (!this.froalaConfig.useClasses) {
-            if (prevString === dataString) {
+            if (this.dataReady && prevString === dataString) {
                 return
             }
         }
