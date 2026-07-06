@@ -122,6 +122,108 @@ Stratus.Directives.Froala = (): StratusDirective => {
 
             scope.initMode = attrs.froalaInit ? MANUAL : AUTOMATIC
 
+            const htmlHasMeaningfulContent = (data?: string): boolean => {
+                if (!data || !_.isString(data)) {
+                    return false
+                }
+                if (/<(img|iframe|video|audio|table|ul|ol|li|blockquote|hr|figure)\b/i.test(data)) {
+                    return true
+                }
+                const text = data
+                    .replace(/<br\s*\/?>/gi, '')
+                    .replace(/&nbsp;/gi, ' ')
+                    .replace(/<[^>]*>/g, '')
+                    .trim()
+                return !!text
+            }
+
+            const getEditor = (): any => element.data('froala.editor')
+
+            const getEditorValue = (): string => {
+                const editor = getEditor()
+                if (!editor) {
+                    return ''
+                }
+                if (editor.html && editor.html.get) {
+                    return editor.html.get() || ''
+                }
+                return editor.el && editor.el.innerHTML ? editor.el.innerHTML : ''
+            }
+
+            const removeHydrationOverlay = () => {
+                const editor = getEditor()
+                if (!editor || !editor.$box) {
+                    return
+                }
+                editor.$box.find('.stratus-froala-hydration-warning').remove()
+            }
+
+            const showHydrationOverlay = () => {
+                const editor = getEditor()
+                if (!editor || !editor.$box || editor.$box.find('.stratus-froala-hydration-warning').length) {
+                    return
+                }
+                const overlay = jQuery('<button type="button" class="stratus-froala-hydration-warning">The editor did not load the saved text. Click to refresh the editor before editing.</button>')
+                overlay.css({
+                    position: 'absolute',
+                    zIndex: 10020,
+                    top: 0,
+                    right: 0,
+                    bottom: 0,
+                    left: 0,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    padding: '24px',
+                    border: '1px solid rgba(0, 0, 0, .25)',
+                    background: 'rgba(255, 255, 255, .94)',
+                    color: '#222',
+                    fontWeight: 700,
+                    lineHeight: 1.4,
+                    textAlign: 'center',
+                    cursor: 'pointer'
+                })
+                overlay.on('click', () => {
+                    ngModel.$render()
+                    setTimeout(() => {
+                        if (scope.model instanceof Model
+                            && scope.property
+                            && htmlHasMeaningfulContent(scope.model.get(scope.property))
+                            && !htmlHasMeaningfulContent(getEditorValue())
+                        ) {
+                            window.location.reload()
+                            return
+                        }
+                        removeHydrationOverlay()
+                    }, 50)
+                })
+                editor.$box.css('position', 'relative')
+                editor.$box.append(overlay)
+            }
+
+            ctrl.guardHydration = (): boolean => {
+                if (!ctrl.editorInitialized || !(scope.model instanceof Model) || !scope.property || specialTag) {
+                    return false
+                }
+                const modelValue = scope.model.get(scope.property)
+                if (!htmlHasMeaningfulContent(modelValue)) {
+                    removeHydrationOverlay()
+                    return false
+                }
+                if (htmlHasMeaningfulContent(getEditorValue())) {
+                    removeHydrationOverlay()
+                    return false
+                }
+                ngModel.$render()
+                if (htmlHasMeaningfulContent(getEditorValue())) {
+                    removeHydrationOverlay()
+                    return false
+                }
+                showHydrationOverlay()
+                console.error(`${scope.uid} blocked empty Froala save for ${scope.property}; model has existing content.`)
+                return true
+            }
+
             scope.settle = () => {
                 if (ctrl.editorInitialized &&
                     scope.model instanceof Model &&
@@ -141,6 +243,9 @@ Stratus.Directives.Froala = (): StratusDirective => {
                     scope.property &&
                     scope.model.changed === true
                 ) {
+                    if (ctrl.guardHydration()) {
+                        return
+                    }
                     // scope.model.set(scope.property, scope.value);
                     scope.model.throttleSave()
                 }
@@ -166,6 +271,7 @@ Stratus.Directives.Froala = (): StratusDirective => {
                 scope.$watch('model.data.' + scope.property, (data: any) => {
                     scope.value = data
                     ngModel.$render() // if the value changes, show the new change (since rendering doesn't always happen)
+                    setTimeout(() => ctrl.guardHydration(), 1)
                 })
 
                 // init the editor
@@ -224,6 +330,7 @@ Stratus.Directives.Froala = (): StratusDirective => {
                     const flushNgModel: any = () => {
                         ctrl.editorInitialized = true
                         ngModel.$render()
+                        setTimeout(() => ctrl.guardHydration(), 1)
                     }
 
                     if (specialTag) {
@@ -395,4 +502,3 @@ Stratus.Directives.FroalaView = ($sce: any) => ({
         })
     }
 })
-

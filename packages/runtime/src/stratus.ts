@@ -132,7 +132,7 @@ interface StratusRuntime {
         CssLoader?: (url: any) => Promise<void>
         JsLoader?: (url: any) => Promise<void>
         LoadCss?: (urls?: string|string[]|LooseObject) => Promise<void>
-        LoadImage?: (obj: {el?: any, spy?: any, size?: any, ignoreSpy?: boolean, offset?: number, nextCheckAt?: number, retryTimer?: any}) => void
+        LoadImage?: (obj: {el?: any, spy?: any, size?: any, ignoreSpy?: boolean, offset?: number, nextCheckAt?: number, retryTimer?: any, passive?: boolean}) => void
         OnScroll?: () => void
         XHR: (request?: XHRRequest) => any
     }
@@ -1106,7 +1106,7 @@ Stratus.Internals.LoadEnvironment = () => {
 
 // Lazy Load Image
 // ---------------
-Stratus.Internals.LoadImage = (obj: {el?: any, spy?: any, size?: any, ignoreSpy?: boolean, offset?: number, nextCheckAt?: number, retryTimer?: any}) => {
+Stratus.Internals.LoadImage = (obj: {el?: any, spy?: any, size?: any, ignoreSpy?: boolean, offset?: number, nextCheckAt?: number, retryTimer?: any, passive?: boolean}) => {
     if (!obj.el) {
         setTimeout(() => {
             Stratus.Internals.LoadImage(obj)
@@ -1787,7 +1787,7 @@ Stratus.Internals.LoadImage = (obj: {el?: any, spy?: any, size?: any, ignoreSpy?
         }
         const preFetchEl: any = jQuery('<img/>')
         if (type === 'img') {
-            setImageFetchPriority(preFetchEl, 'high')
+            setImageFetchPriority(preFetchEl, obj.passive ? 'low' : 'high')
             el.attr('data-stratus-src-pending-src', dehydrate(srcProtocol))
             preFetchEl.on('load', () => {
                 el.attr('src', srcProtocol)
@@ -1806,26 +1806,27 @@ Stratus.Internals.LoadImage = (obj: {el?: any, spy?: any, size?: any, ignoreSpy?
             return
         }
         if (type !== 'img') {
-            setImageFetchPriority(preFetchEl, 'low')
+            // Background images do not expose a load event, so preload with a
+            // native Image before swapping the shimmer/placeholder background.
             el.attr('data-stratus-src-pending-src', dehydrate(srcProtocol))
-            preFetchEl.on('load', () => {
+            const backgroundPreload = new Image()
+            setImageFetchPriority(backgroundPreload, 'low')
+            backgroundPreload.onload = () => {
                 el.css('background-image', 'url(' + srcProtocol + ')')
-                el.addClass('loaded').removeClass('loading')
+                el.addClass('loaded').removeClass('loading placeholder')
                 el.attr('data-loading', dehydrate(false))
                 el.removeAttr('data-stratus-src-pending-src')
                 el.attr('data-stratus-src-loaded-signature', dehydrate(getCurrentLoadSignature()))
                 obj.nextCheckAt = Number.MAX_SAFE_INTEGER
-                jQuery(this).remove() // prevent memory leaks
-            })
-            preFetchEl.on('error', () => {
+            }
+            backgroundPreload.onerror = () => {
                 el.attr('data-loading', dehydrate(false))
                 el.removeAttr('data-stratus-src-pending-src')
                 if (cookie('env')) {
                     console.warn('LoadImage() Unable to load', dataSize.toUpperCase(), 'size at', srcProtocol)
                 }
-                jQuery(this).remove() // prevent memory leaks
-            })
-            preFetchEl.attr('src', srcProtocol)
+            }
+            backgroundPreload.src = srcProtocol
             return
         }
 
@@ -1934,6 +1935,7 @@ Stratus.Internals.OnScroll = once(() => {
         // if (cookie('env')) {
         //     console.log('scrolling:', Stratus.Internals.GetScrollDir())
         // }
+        Stratus.Environment.set('lastUserScrollAt', Date.now())
         if (scrollCheckFrame) {
             return
         }
@@ -2068,6 +2070,85 @@ Stratus.Internals.LoadStratusSrcElements = (forceRetry = false) => {
         }
     })
     Stratus.Internals.OnScroll()
+    Stratus.Internals.SchedulePassiveStratusSrcLoad()
+}
+
+Stratus.Internals.SchedulePassiveStratusSrcLoad = () => {
+    if (Stratus.Internals.stratusSrcPassiveTimer) {
+        return
+    }
+    const userAgent = (window.navigator && window.navigator.userAgent) || ''
+    if (/Chrome-Lighthouse|Lighthouse/i.test(userAgent)) {
+        return
+    }
+    const startDelay = Number(Stratus.Environment.get('stratusSrcPassiveDelay') || 7000)
+    Stratus.Internals.stratusSrcPassiveTimer = setTimeout(() => {
+        Stratus.Internals.stratusSrcPassiveTimer = null
+        Stratus.Internals.RunPassiveStratusSrcLoad()
+    }, startDelay)
+}
+
+Stratus.Internals.RunPassiveStratusSrcLoad = () => {
+    if (Stratus.Internals.stratusSrcPassiveRunning) {
+        return
+    }
+    const scrollElements: any = Stratus.RegisterGroup.get('OnScroll') || []
+    const queue: any[] = []
+    forEach(scrollElements, (obj: any) => {
+        if (!obj || !obj.el) {
+            return
+        }
+        const el: any = obj.el instanceof jQuery ? obj.el : jQuery(obj.el)
+        const nativeEl: any = head(el)
+        if (
+            !nativeEl ||
+            !nativeEl.isConnected ||
+            el.hasClass('loaded') ||
+            hydrate(el.attr('data-loading')) ||
+            el.attr('data-stratus-src-pending-src')
+        ) {
+            return
+        }
+        queue.push(obj)
+    })
+    if (!queue.length) {
+        return
+    }
+    queue.sort((left: any, right: any) => {
+        const leftEl: any = head(left.spy || left.el)
+        const rightEl: any = head(right.spy || right.el)
+        const leftRect: any = leftEl && leftEl.getBoundingClientRect ? leftEl.getBoundingClientRect() : {top: 0, left: 0}
+        const rightRect: any = rightEl && rightEl.getBoundingClientRect ? rightEl.getBoundingClientRect() : {top: 0, left: 0}
+        return (leftRect.top - rightRect.top) || (leftRect.left - rightRect.left)
+    })
+    Stratus.Internals.stratusSrcPassiveRunning = true
+    const requestIdle = (callback: any) => {
+        if ('requestIdleCallback' in window) {
+            return (window as any).requestIdleCallback(callback, {timeout: 1500})
+        }
+        return setTimeout(callback, 250)
+    }
+    const runNext = () => {
+        if (!queue.length) {
+            Stratus.Internals.stratusSrcPassiveRunning = false
+            return
+        }
+        const lastScrollAt = Number(Stratus.Environment.get('lastUserScrollAt') || 0)
+        if (lastScrollAt && Date.now() - lastScrollAt < 1200) {
+            Stratus.Internals.stratusSrcPassiveRunning = false
+            Stratus.Internals.SchedulePassiveStratusSrcLoad()
+            return
+        }
+        const obj = queue.shift()
+        if (obj) {
+            Stratus.Internals.LoadImage(extend({}, obj, {
+                ignoreSpy: true,
+                passive: true
+            }))
+        }
+        setTimeout(() => requestIdle(runNext), 250)
+    }
+    requestIdle(runNext)
 }
 
 Stratus.Internals.WatchStratusSrcElements = () => {

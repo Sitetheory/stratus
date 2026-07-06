@@ -244,6 +244,7 @@ Stratus.Directives.Src = (
             Stratus.RegisterGroup.add('OnScroll', $scope.group) // TODO Stratus.RegisterGroup typings needed
             Stratus.Internals.LoadImage($scope.group)
             Stratus.Internals.OnScroll()
+            Stratus.Internals.SchedulePassiveStratusSrcLoad()
         }
 
         $scope.loadImage = () => {

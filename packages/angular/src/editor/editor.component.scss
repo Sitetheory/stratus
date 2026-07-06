@@ -25,6 +25,44 @@
       // Nothing yet
     }
   }
+  .froala-loading-placeholder {
+    box-sizing: border-box;
+    width: 100%;
+    min-height: 300px;
+    border: 1px solid #d8d8d8;
+    background: #f3f3f3;
+    color: #555555;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+
+    &__inner {
+      width: 100%;
+      max-width: 80%;
+    }
+
+    &__text {
+      margin: 0 0 14px;
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: .02em;
+      text-align: center;
+      text-transform: uppercase;
+    }
+
+    mat-progress-bar {
+      width: 100%;
+    }
+
+    &--overlay {
+      position: absolute;
+      z-index: 20;
+      top: 0;
+      right: 0;
+      left: 0;
+    }
+  }
   /* Reduce the spacing of the toolbar button groups to fit more */
   .fr-toolbar {
     .fr-btn-grp {
