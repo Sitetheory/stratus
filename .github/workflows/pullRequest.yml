@@ -23,13 +23,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Use Node.js 18.x
+      - name: Use Node.js 18.19.1
         uses: actions/setup-node@v4
         with:
-          node-version: 18.x
+          node-version: 18.19.1
           cache: 'npm'
-          cache-dependency-path: ./package.json
+          cache-dependency-path: ./package-lock.json
       - name: Use npm 9.2.0
         run: npm install -g npm@9.2.0
-      - run: npm install
+      - run: npm ci
       - run: npm test
