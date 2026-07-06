@@ -1274,8 +1274,15 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             this.refresh()
         })
 
+        const hydrationFallbackValue = this.form.get('dataString').value
         setTimeout(() => {
             const dataControl = this.form.get('dataString')
+            if (
+                this.dataReady ||
+                dataControl.value !== hydrationFallbackValue
+            ) {
+                return
+            }
             dataControl.patchValue(this.dataRef(), {emitEvent: false})
             this.dataReady = true
             this.froalaLoading = false
@@ -1546,6 +1553,15 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             return false
         }
         if (this.htmlHasMeaningfulContent(this.getFroalaEditorHtml())) {
+            this.froalaHydrationBlocked = false
+            return false
+        }
+        const dataControl = this.form.get('dataString')
+        if (
+            dataControl &&
+            dataControl.dirty &&
+            (value || '') === this.getFroalaEditorHtml()
+        ) {
             this.froalaHydrationBlocked = false
             return false
         }
