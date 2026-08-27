@@ -9,6 +9,8 @@ FIXME we CANNOT rely of media queries, it needs to know the sizing of the elemen
 @phone: ~"(max-width: 600px)";
 @desktop-only: ~"(min-width: 600px)";
 stratus-idx-property-list .property-list-default {
+  min-height: 80vh;
+
   .no-results {
     padding: 200px 40px 0;
     font-size: 24px;
@@ -63,8 +65,16 @@ stratus-idx-property-list .property-list-default {
   .sort-options-container {
     margin: 10px 0 0;
     float: right;
-    .options-button,
-    .options-button a {
+    .options-button {
+      appearance: none;
+      border: 0;
+      background: none;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      min-height: 44px;
+      padding: 0;
       font-size: 13px;
       font-weight: normal;
       font-style: italic;
@@ -265,12 +275,17 @@ stratus-idx-property-list .property-list-default {
             }
           }
           .image-wrapper {
+            aspect-ratio: 3 / 2;
             background-position: center;
             background-repeat: no-repeat;
             background-size: cover;
+            display: block;
+            overflow: hidden;
           }
           img {
+            display: block;
             width: 100%;
+            height: auto;
           }
           a {
             &,
@@ -324,7 +339,7 @@ stratus-idx-property-list .property-list-default {
           .property-address {
             margin: 0 0 24px;
             padding: 0 0 24px;
-            h4 {
+            .property-heading {
               margin: 0;
               min-width: 160px;
               font-size: 14px;
@@ -372,6 +387,7 @@ stratus-idx-property-list .property-list-default {
             img {
               display: inline-block;
               width: unset;
+              aspect-ratio: auto;
               max-height: 15px;
             }
           }
@@ -393,6 +409,116 @@ stratus-idx-property-list .property-list-default {
       .button {
         margin: 0 auto;
       }
+    }
+  }
+
+  .property-list-skeleton-section {
+    .skeleton-header-section {
+      min-height: 54px;
+    }
+
+    .skeleton-sort-options-container {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      min-height: 44px;
+    }
+
+    .skeleton-property-card {
+      box-shadow: 0 0 1px 1px rgba(0, 0, 0, .08);
+    }
+
+    .property-image.skeleton-property-image {
+      --idx-skeleton-image-background: #eef1f4;
+      background: var(--idx-skeleton-image-background);
+
+      .skeleton-status {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        z-index: 1;
+        width: 58px;
+        height: 18px;
+        border-radius: 2px;
+      }
+    }
+
+    .skeleton-block {
+      display: block;
+      overflow: hidden;
+      background: linear-gradient(100deg, #e3e7eb 20%, #f4f6f8 40%, #e3e7eb 60%);
+      background-size: 220% 100%;
+      animation: idxSkeletonLoading 1.8s ease-in-out infinite;
+    }
+
+    .skeleton-image {
+      width: 100%;
+      aspect-ratio: 3 / 2;
+      background-color: #e3e7eb;
+    }
+
+    .skeleton-line {
+      height: 12px;
+      margin-right: auto;
+      margin-left: auto;
+      border-radius: 10px;
+    }
+
+    .skeleton-sort-arrow {
+      width: 7px;
+      height: 7px;
+      border-radius: 2px;
+      transform: rotate(45deg);
+    }
+
+    .skeleton-sort-label {
+      width: 88px;
+      height: 12px;
+      border-radius: 10px;
+    }
+
+    .skeleton-line-address {
+      width: 62%;
+      margin-bottom: 14px;
+    }
+
+    .skeleton-line-city {
+      width: 38%;
+      height: 9px;
+    }
+
+    .skeleton-line-stats {
+      width: 70%;
+      margin-bottom: 14px;
+    }
+
+    .skeleton-line-price {
+      width: 44%;
+    }
+
+    .skeleton-line-mls {
+      display: inline-block;
+      width: 90px;
+      height: 8px;
+      margin-left: 8px;
+      vertical-align: middle;
+    }
+
+    .skeleton-logo {
+      display: inline-block;
+      width: 45px;
+      height: 15px;
+      border-radius: 2px;
+      vertical-align: middle;
+    }
+  }
+
+  @keyframes idxSkeletonLoading {
+    0% {
+      background-position: 120% 0;
+    }
+    100% {
+      background-position: -120% 0;
     }
   }
 

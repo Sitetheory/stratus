@@ -104,8 +104,11 @@
         </div>
 
         <div class="search-input search-price" data-ng-if="searchType != 'simple'">
-            <a class="open-price-link"
-               data-ng-click="openPrice=!openPrice">
+            <button class="open-price-link"
+                    type="button"
+                    data-ng-click="openPrice=!openPrice"
+                    data-ng-attr-aria-expanded="{{openPrice ? 'true' : 'false'}}"
+                    aria-controls="{{elementId}}_price_dropdown">
                 <span data-ng-show="options.query.where.ListPriceMin == null && options.query.where.ListPriceMax == null">Any Price</span>
                 <span data-ng-show="options.query.where.ListPriceMin != null || options.query.where.ListPriceMax != null">
                     <span data-ng-show="options.query.where.ListPriceMin != null"><span data-ng-bind="options.query.where.ListPriceMin | numeral:{format:'$0[.]0a'} | uppercase"></span></span>
@@ -117,9 +120,9 @@
                     <span data-ng-show="options.query.where.ListPriceMax == null">No Max</span>
                 </span>
                 <md-icon md-svg-src="{{ localDir + 'images/dropDownFat.svg' }}"></md-icon>
-            </a>
+            </button>
 
-            <div class="price-dropdown" data-ng-class="{'open-price' : openPrice == true}">
+            <div id="{{elementId}}_price_dropdown" class="price-dropdown" data-ng-class="{'open-price' : openPrice == true}">
                 <!-- TODO: replace dollar sign with dynamic currency sign -->
                 <span>$</span>
                 <md-input-container class="md-block minimal">
@@ -170,7 +173,7 @@
         </div>
         <div class="search-more-filters" data-ng-if="listInitialized && searchType == 'advanced'">
             <button type="button"
-                    aria-label="Open Advanced Search Filters"
+                    data-ng-attr-aria-label="{{$parent.advancedFiltersStatus ? 'Less Filters' : 'More Filters'}}"
                     class="button-reset open-filters-link"
                     data-ng-click="$parent.advancedFiltersStatus = !$parent.advancedFiltersStatus"
                     data-ng-attr-aria-expanded="{{$parent.advancedFiltersStatus ? 'true' : 'false'}}"

@@ -34,7 +34,7 @@ stratus-idx-property-search[data-list-id^="property-list"] .property-search-defa
       vertical-align: middle;
       font-weight: bold;
       &.inactive {
-        color: #aaa;
+        color: #666;
         font-weight: normal;
       }
       &:first-child {
@@ -340,7 +340,17 @@ stratus-idx-property-search[data-list-id^="property-list"] .property-search-defa
     }
   }
   .open-price-link {
+    appearance: none;
+    border: 0;
+    background: none;
+    color: inherit;
+    cursor: pointer;
     display: block;
+    font: inherit;
+    line-height: inherit;
+    margin: 0;
+    text-align: inherit;
+    width: 100%;
     position: relative;
     padding-right: 22px;
     md-icon {

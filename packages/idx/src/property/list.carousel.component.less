@@ -10,6 +10,8 @@
 @phone: ~"(max-width: 600px)";
 @desktop-only: ~"(min-width: 600px)";
 stratus-idx-property-list .property-list-carousel {
+  min-height: 80vh;
+
   stratus-swiper-carousel {
     .swiper {
       /* Images are dynamic and might not have a width at first */
@@ -84,12 +86,17 @@ stratus-idx-property-list .property-list-carousel {
           position: relative;
           background: #000;
           .image-wrapper {
+            aspect-ratio: 9 / 4;
             background-position: center;
             background-repeat: no-repeat;
             background-size: cover;
+            display: block;
+            overflow: hidden;
           }
           img {
+            display: block;
             width: 100%;
+            height: auto;
           }
           a {
             &,
@@ -222,6 +229,89 @@ stratus-idx-property-list .property-list-carousel {
       .button {
         margin: 0 auto;
       }
+    }
+  }
+
+  .property-list-skeleton-section {
+    .skeleton-property-container {
+      width: 100%;
+    }
+
+    .skeleton-property-card,
+    .property-content-container {
+      position: relative;
+    }
+
+    .property-image.skeleton-property-image {
+      --idx-skeleton-image-background: #eef1f4;
+      background: var(--idx-skeleton-image-background);
+    }
+
+    .skeleton-block {
+      display: block;
+      overflow: hidden;
+      background: linear-gradient(100deg, #e3e7eb 20%, #f4f6f8 40%, #e3e7eb 60%);
+      background-size: 220% 100%;
+      animation: idxSkeletonLoading 1.8s ease-in-out infinite;
+    }
+
+    .skeleton-image {
+      width: 100%;
+      aspect-ratio: 9 / 4;
+      background-color: #e3e7eb;
+    }
+
+    .skeleton-line {
+      height: 10px;
+      margin-right: auto;
+      margin-left: auto;
+      border-radius: 10px;
+    }
+
+    .skeleton-line-status {
+      width: 24%;
+      height: 22px;
+      margin-bottom: 16px;
+    }
+
+    .skeleton-line-address {
+      width: 50%;
+      margin-bottom: 13px;
+    }
+
+    .skeleton-line-city {
+      width: 34%;
+      margin-bottom: 15px;
+    }
+
+    .skeleton-line-details {
+      width: 38%;
+      margin-bottom: 15px;
+    }
+
+    .skeleton-line-mls {
+      display: inline-block;
+      width: 22%;
+      height: 8px;
+      margin-left: 8px;
+      vertical-align: middle;
+    }
+
+    .skeleton-logo {
+      display: inline-block;
+      width: 45px;
+      height: 15px;
+      border-radius: 2px;
+      vertical-align: middle;
+    }
+  }
+
+  @keyframes idxSkeletonLoading {
+    0% {
+      background-position: 120% 0;
+    }
+    100% {
+      background-position: -120% 0;
     }
   }
 

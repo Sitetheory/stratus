@@ -1,12 +1,56 @@
 <div id="{{elementId}}" class="property-list property-list-default" data-ng-cloak>
     <md-progress-linear data-ng-if="!initialized" md-mode="indeterminate"></md-progress-linear>
+    <section class="property-list-skeleton-section"
+             data-ng-show="!initialized || collection.pending"
+             aria-hidden="true">
+        <div class="header-section skeleton-header-section clearfix"
+             style="min-height: 54px;"
+             data-ng-if="displayOrderOptions">
+            <div class="sort-options-container skeleton-sort-options-container"
+                 style="display: inline-flex; align-items: center; gap: 6px; min-height: 44px;">
+                <span class="skeleton-block skeleton-sort-arrow"
+                      style="width: 7px; height: 7px; border-radius: 2px; transform: rotate(45deg);"></span>
+                <span class="skeleton-block skeleton-sort-label"
+                      style="width: 88px; height: 12px; border-radius: 10px;"></span>
+            </div>
+        </div>
+        <div class="list-container skeleton-list-container clearfix"
+             data-ng-class="displayPerRowText + '-per-row'">
+            <div class="property-container skeleton-property-container"
+                data-ng-repeat="skeletonItem in [1,2,3,4]">
+                <md-card class="property-item skeleton-property-card">
+                    <div class="property-image skeleton-property-image">
+                        <span class="skeleton-block skeleton-status"></span>
+                        <div class="image-wrapper skeleton-block skeleton-image"></div>
+                    </div>
+                    <div class="property-content">
+                        <div class="property-address dotted-spaced-underline">
+                            <div class="property-heading">
+                                <span class="skeleton-block skeleton-line skeleton-line-address"></span>
+                                <span class="skeleton-block skeleton-line skeleton-line-city"></span>
+                            </div>
+                        </div>
+                        <div class="property-data">
+                            <span class="skeleton-block skeleton-line skeleton-line-stats"></span>
+                            <span class="skeleton-block skeleton-line skeleton-line-price"></span>
+                        </div>
+                        <div class="mls-service-name">
+                            <span class="skeleton-block skeleton-logo"></span>
+                            <span class="skeleton-block skeleton-line skeleton-line-mls"></span>
+                        </div>
+                    </div>
+                </md-card>
+            </div>
+        </div>
+    </section>
     <div data-ng-if="initialized">
         <div class="header-section clearfix" data-ng-if="displayOrderOptions">
             <div class="sort-options-container" data-ng-if="collection.meta.data.totalRecords">
                 <md-menu data-md-position-mode="target-right target" data-md-offset="0 30">
-                    <div class=" options-button" data-ng-click="$mdMenu.open()" aria-label="Sort Options - {{getOrderName()}}">
-                        <i class="arrow small down grey"></i> <span class="options-name"><a href="" data-ng-bind="getOrderName() || 'Sort Options'"></a></span>
-                    </div>
+                    <button class="options-button" type="button" data-ng-click="$mdMenu.open()" aria-label="Sort Options - {{getOrderName()}}">
+                        <i class="arrow small down grey" aria-hidden="true"></i>
+                        <span class="options-name" data-ng-bind="getOrderName() || 'Sort Options'"></span>
+                    </button>
                     <md-menu-content data-ng-click="$mdMenu.close()">
                         <md-menu-item data-ng-repeat="(name, order) in getOrderOptions()">
                             <md-button data-ng-click="orderChange(order, $event)" data-ng-bind="::name" aria-label="{{::name}}"></md-button>
@@ -62,25 +106,24 @@
                             </div>
                             <a data-ng-click="displayModelDetails(property, $event)" data-ng-href="{{::getDetailsURL(property)}}" target="popup">
                                 <div class="image-wrapper"
-                                     data-init-now="true"
-                                     data-stratus-src-version="{{::(property.Images[0].Lazy == 'stratus-src' ? 'best' : 'false')}}"
+                                     data-ng-attr-init-now="::(itemPosition < displayPerRow ? 'true' : undefined)"
+                                     data-stratus-src-resize="{{::(property.Images[0].Lazy == 'stratus-src' ? 'true' : 'false')}}"
                                      data-stratus-src="{{::property.Images[0].MediaURL || 'false'}}"
                                      aria-label="Main Image of Listing"
                                 >
                                     <meta data-ng-if="::property.Images.length > 0" property="image" content="{{::property.Images[0].MediaURL}}">
-                                    <img data-ng-if="::property.Images.length > 0" data-ng-src="{{::localDir}}images/stratus-property-shapeholder.png" alt="Image Shapeholder" aria-hidden="true"/>
-                                    <img data-ng-if="::property.Images.length === 0 || !property.Images" data-ng-src="{{::localDir}}images/no-image.jpg" alt="No Main Image Available"/>
+                                    <img data-ng-if="::property.Images.length === 0 || !property.Images" data-ng-src="{{::localDir}}images/no-image.jpg" width="1200" height="800" alt="No Main Image Available"/>
                                 </div>
                             </a>
                         </div>
                         <div class="property-content">
                             <div class="property-address dotted-spaced-underline">
-                                <div id="{{::elementId}}_{{::property._id}}_address" role="text" property="address">
-                                    <h4>
+                                <div id="{{::elementId}}_{{::property._id}}_address" property="address">
+                                    <div class="property-heading">
                                         <a data-ng-click="displayModelDetails(property, $event)" data-ng-href="{{::getDetailsURL(property)}}" data-ng-bind="::getStreetAddress(property)" target="popup"></a>
                                         <br/>
                                         <span class="city" data-ng-bind="::property.City"></span>
-                                    </h4>
+                                    </div>
                                 </div>
                             </div>
                             <div class="property-data">
@@ -99,7 +142,7 @@
                                 </div>
                             </div>
                             <div class="mls-service-name" role="text">
-                                <span data-ng-if="::getMLSLogo(property._ServiceId, 'tiny')" class="mls-logo"><img data-ng-src="{{::getMLSLogo(property._ServiceId, 'tiny')}}" alt="MLS Logo"/></span>
+                                <span data-ng-if="::getMLSLogo(property._ServiceId, 'tiny')" class="mls-logo"><img data-ng-src="{{::getMLSLogo(property._ServiceId, 'tiny')}}" width="45" height="15" alt="MLS Logo"/></span>
                                 <span data-ng-bind="::getMLSName(property._ServiceId)" data-ng-show="::!getMLSName(property._ServiceId)" property="maintainer" class="mls-name"></span>#
                                 <span data-ng-bind="::property.ListingId || property.ListingKey" property="identifier" class="mls-number"></span>
                             </div>

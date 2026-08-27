@@ -1,5 +1,28 @@
 <div id="{{elementId}}" class="property-list property-list-carousel" data-ng-cloak>
     <md-progress-linear data-ng-if="!initialized" md-mode="indeterminate"></md-progress-linear>
+    <section class="property-list-skeleton-section"
+             data-ng-show="!initialized || collection.pending"
+             aria-hidden="true">
+        <div class="list-container skeleton-list-container clearfix">
+            <div class="property-container skeleton-property-container">
+                <div class="property-item skeleton-property-card">
+                    <div class="property-content-container">
+                        <div class="property-image skeleton-property-image">
+                            <div class="image-wrapper skeleton-block skeleton-image"></div>
+                        </div>
+                        <div class="property-content font-body">
+                            <span class="skeleton-block skeleton-line skeleton-line-status"></span>
+                            <span class="skeleton-block skeleton-line skeleton-line-address"></span>
+                            <span class="skeleton-block skeleton-line skeleton-line-city"></span>
+                            <span class="skeleton-block skeleton-line skeleton-line-details"></span>
+                            <span class="skeleton-block skeleton-logo"></span>
+                            <span class="skeleton-block skeleton-line skeleton-line-mls"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
     <div data-ng-if="initialized">
 
         <md-progress-linear data-ng-show="collection.pending" md-mode="indeterminate"></md-progress-linear>
@@ -72,7 +95,7 @@
                                     </div>
 
                                     <div class="mls-service-name" role="text">
-                                        <span data-ng-show="::getMLSLogo($parent.slideData._ServiceId, 'tiny')" class="mls-logo"><img data-ng-src="{{::getMLSLogo($parent.slideData._ServiceId, 'tiny')}}" alt="MLS Logo"/></span>
+                                        <span data-ng-show="::getMLSLogo($parent.slideData._ServiceId, 'tiny')" class="mls-logo"><img data-ng-src="{{::getMLSLogo($parent.slideData._ServiceId, 'tiny')}}" width="45" height="15" alt="MLS Logo"/></span>
                                         <span data-ng-bind="::getMLSName($parent.slideData._ServiceId)" data-ng-show="::!getMLSLogo($parent.slideData._ServiceId, 'tiny')" property="maintainer" class="mls-name"></span>#
                                         <span data-ng-bind="::$parent.slideData.ListingId || $parent.slideData.ListingKey" property="identifier" class="mls-number"></span>
                                     </div>
@@ -82,13 +105,13 @@
                                 <div class="property-image">
                                     <a data-ng-click="::displayModelDetails($parent.slideData, $event)" data-ng-href="{{::getDetailsURL($parent.slideData)}}" target="popup">
                                         <div class="image-wrapper"
-                                             data-stratus-src-version="{{::($parent.slideData.Images[0].Lazy == 'stratus-src' ? 'best' : 'false')}}"
+                                             data-ng-attr-init-now="::($parent.$index === 0 ? 'true' : undefined)"
+                                             data-stratus-src-resize="{{::($parent.slideData.Images[0].Lazy == 'stratus-src' ? 'true' : 'false')}}"
                                              data-stratus-src="{{::$parent.slideData.Images[0].MediaURL || 'false'}}"
                                              aria-label="Main Image of Listing"
                                         >
                                             <meta property="image" content="{{::($parent.slideData.Images.length > 0 ? $parent.slideData.Images[0].MediaURL : '')}}">
-                                            <img data-ng-show="::$parent.slideData.Images.length > 0" data-ng-src="{{::localDir}}images/stratus-property-carousel-shapeholder.png" alt="Image Shapeholder" aria-hidden="true"/>
-                                            <img data-ng-show="::$parent.slideData.Images.length === 0 || !$parent.slideData.Images" data-ng-src="{{::localDir}}images/no-image.jpg" alt="No Main Image Available"/>
+                                            <img data-ng-show="::$parent.slideData.Images.length === 0 || !$parent.slideData.Images" data-ng-src="{{::localDir}}images/no-image.jpg" width="1200" height="800" alt="No Main Image Available"/>
                                         </div>
                                     </a>
                                 </div>
