@@ -145,7 +145,7 @@
     "gulp-dest": "^0.2.3",
     "gulp-htmlmin": "^5.0.1",
     "gulp-less": "^4.0.1",
-    "gulp-mocha": "^7.0.2",
+    "gulp-mocha": "^10.0.1",
     "gulp-shell": "^0.8.0",
     "gulp-sourcemaps": "^3.0.0",
     "gulp-standard": "^14.0.0",
