@@ -158,7 +158,8 @@ Stratus.Components.IdxPropertyDetails = {
                 ? sectionNavRoot.querySelector<HTMLElement>('.cta-area.cta-contact-fallback')
                 : section
             if (target && target.getClientRects().length) {
-                target.scrollIntoView({behavior: 'smooth', block: 'start'})
+                const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches
+                target.scrollIntoView({behavior: reduceMotion ? 'auto' : 'smooth', block: 'start'})
             }
         }
 
