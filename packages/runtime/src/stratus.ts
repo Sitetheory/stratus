@@ -1106,6 +1106,18 @@ Stratus.Internals.LoadEnvironment = () => {
 
 // Lazy Load Image
 // ---------------
+const placeholderImageSrc = 'data:image/svg+xml,' + encodeURIComponent(
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 18" preserveAspectRatio="none">' +
+    '<defs><linearGradient id="shimmer" x1="0" x2="1">' +
+    '<stop offset=".18" stop-color="#fff" stop-opacity="0"/>' +
+    '<stop offset=".5" stop-color="#fff" stop-opacity=".45"/>' +
+    '<stop offset=".82" stop-color="#fff" stop-opacity="0"/>' +
+    '</linearGradient></defs>' +
+    '<rect width="32" height="18" fill="#000" fill-opacity=".07"/>' +
+    '<rect class="shimmer" x="-32" width="32" height="18" fill="url(#shimmer)">' +
+    '<animate attributeName="x" values="-32;32" dur="1.8s" repeatCount="indefinite"/>' +
+    '</rect><style>@media (prefers-reduced-motion: reduce) { .shimmer { display: none; } }</style></svg>'
+)
 Stratus.Internals.LoadImage = (obj: {el?: any, spy?: any, size?: any, ignoreSpy?: boolean, offset?: number, nextCheckAt?: number, retryTimer?: any, passive?: boolean}) => {
     if (!obj.el) {
         setTimeout(() => {
@@ -1136,7 +1148,6 @@ Stratus.Internals.LoadImage = (obj: {el?: any, spy?: any, size?: any, ignoreSpy?
     el.attr('data-stratus-src-last-check', dehydrate(now))
     const type: string = String(el.prop('tagName') || '').toLowerCase()
     const transparentImageSrc = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw=='
-    const placeholderImageSrc = 'data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 18%27 preserveAspectRatio=%27none%27%3E%3Cdefs%3E%3ClinearGradient id=%27g%27 x1=%270%27 x2=%271%27%3E%3Cstop stop-color=%27%23111b33%27/%3E%3Cstop offset=%27.5%27 stop-color=%27%233e568e%27 stop-opacity=%27.65%27/%3E%3Cstop offset=%271%27 stop-color=%27%23111b33%27/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width=%2732%27 height=%2718%27 fill=%27%23111b33%27/%3E%3Crect width=%2732%27 height=%2718%27 fill=%27url(%23g)%27%3E%3Canimate attributeName=%27x%27 values=%27-32;32%27 dur=%271.4s%27 repeatCount=%27indefinite%27/%3E%3C/rect%3E%3C/svg%3E'
     const isTransparentImageSrc = (imageSrc: string|null): boolean => {
         return !!imageSrc && (
             imageSrc.indexOf(transparentImageSrc) === 0 ||
@@ -2013,7 +2024,6 @@ Stratus.Internals.OnScroll = once(() => {
 })
 
 Stratus.Internals.LoadStratusSrcElements = (forceRetry = false) => {
-    const placeholderSrc = 'data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 18%27 preserveAspectRatio=%27none%27%3E%3Cdefs%3E%3ClinearGradient id=%27g%27 x1=%270%27 x2=%271%27%3E%3Cstop stop-color=%27%23111b33%27/%3E%3Cstop offset=%27.5%27 stop-color=%27%233e568e%27 stop-opacity=%27.65%27/%3E%3Cstop offset=%271%27 stop-color=%27%23111b33%27/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width=%2732%27 height=%2718%27 fill=%27%23111b33%27/%3E%3Crect width=%2732%27 height=%2718%27 fill=%27url(%23g)%27%3E%3Canimate attributeName=%27x%27 values=%27-32;32%27 dur=%271.4s%27 repeatCount=%27indefinite%27/%3E%3C/rect%3E%3C/svg%3E'
     const bindScrollableAncestors = (nativeEl: HTMLElement) => {
         let ancestor: HTMLElement|null = nativeEl.parentElement
         while (ancestor && ancestor !== document.body && ancestor !== document.documentElement) {
@@ -2103,7 +2113,7 @@ Stratus.Internals.LoadStratusSrcElements = (forceRetry = false) => {
             el.attr('data-src', src)
         }
         if (tagType === 'img' && !el.attr('src')) {
-            el.attr('src', placeholderSrc)
+            el.attr('src', placeholderImageSrc)
         }
         const spyReference = hydrate(el.attr('data-stratus-src-spy')) || el.attr('data-stratus-src-spy')
         const spyEl = spyReference ?

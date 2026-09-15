@@ -136,9 +136,32 @@ Stratus.Components.IdxPropertyDetails = {
         let mlsVariables: MLSService
         let googleMapEmbed: string
         let sectionNavScrollElement: HTMLElement | null = null
+        let sectionNavRoot: HTMLElement | null = null
         let sectionNavLastScrollTop = 0
         let sectionNavAnimationFrame = 0
         let sectionNavSetupTimer = 0
+
+        const handleSectionNavClick = (event: MouseEvent): void => {
+            const link = event.target instanceof Element
+                ? event.target.closest<HTMLAnchorElement>('.idx-property-section-nav a[href^="#"]')
+                : null
+            if (!link || !sectionNavRoot || !sectionNavRoot.contains(link)) {
+                return
+            }
+
+            event.preventDefault()
+            event.stopPropagation()
+
+            const sectionId = (link.getAttribute('href') || '').slice(1)
+            const section = sectionNavRoot.querySelector<HTMLElement>(`#${sectionId}`)
+            const target = sectionId === 'contact' && (!section || !section.getClientRects().length)
+                ? sectionNavRoot.querySelector<HTMLElement>('.cta-area.cta-contact-fallback')
+                : section
+            if (target && target.getClientRects().length) {
+                const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches
+                target.scrollIntoView({behavior: reduceMotion ? 'auto' : 'smooth', block: 'start'})
+            }
+        }
 
         const updateSectionNavState = (): void => {
             sectionNavAnimationFrame = 0
@@ -182,6 +205,14 @@ Stratus.Components.IdxPropertyDetails = {
             )
             if (!supportsSectionNav) {
                 return
+            }
+
+            if (sectionNavRoot !== root) {
+                if (sectionNavRoot) {
+                    sectionNavRoot.removeEventListener('click', handleSectionNavClick)
+                }
+                sectionNavRoot = root
+                sectionNavRoot.addEventListener('click', handleSectionNavClick)
             }
 
             const scrollElement = (root.closest('stratus-idx-property-details') as HTMLElement) || root.parentElement
@@ -1351,6 +1382,9 @@ Stratus.Components.IdxPropertyDetails = {
             }
             if (sectionNavScrollElement) {
                 sectionNavScrollElement.removeEventListener('scroll', handleSectionNavScroll)
+            }
+            if (sectionNavRoot) {
+                sectionNavRoot.removeEventListener('click', handleSectionNavClick)
             }
         })
 
