@@ -545,16 +545,14 @@ stratus-idx-property-list .property-list-default {
         margin: 0 5px 0 0;
         min-width: 0;
         float: left;
-        background: none;
-        border: 1px solid rgba(0, 0, 0, .2);
+        background: #fff;
+        border: 1px solid #222;
         padding: 14px;
         outline: none;
         line-height: 8px;
+        color: #222;
         > .arrow {
           border-color: #222;
-        }
-        svg g {
-          fill: #222;
         }
         svg g {
           fill: #222;
@@ -573,12 +571,35 @@ stratus-idx-property-list .property-list-default {
         &.disabled {
           &,
           &:hover {
-            background: none;
-            border: 1px solid rgba(0, 0, 0, .1);
+            color: #999;
+            background: #fff;
+            border: 1px solid #ddd;
           }
           > .arrow,
           > .arrow:hover {
             border-color: #ddd;
+          }
+        }
+        #app &.md-button {
+          color: #222;
+          background: #fff;
+          border: 1px solid #222;
+          > .arrow { border-color: #222; }
+          svg g { fill: #222; }
+          &:hover {
+            color: #fff;
+            background: #222;
+            border: 1px solid #222;
+            > .arrow { border-color: #fff; }
+            svg g { fill: #fff; }
+          }
+          &.disabled,
+          &.disabled:hover {
+            color: #999;
+            background: #fff;
+            border: 1px solid #ddd;
+            > .arrow { border-color: #ddd; }
+            svg g { fill: #ddd; }
           }
         }
       }
