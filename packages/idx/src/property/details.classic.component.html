@@ -185,9 +185,9 @@
 					</div>
 
 
-					<div class="links-container dotted-spaced-underline" data-ng-if="::model.data.VirtualTourURLUnbranded || model.data.VirtualTourURLBranded">
-						<div class="response-link vtour" data-ng-if="::model.data.VirtualTourURLUnbranded || model.data.VirtualTourURLBranded">
-							<a data-ng-href="{{::model.data.VirtualTourURLUnbranded || model.data.VirtualTourURLBranded}}" target="_blank" aria-label="Virtual Tour Link">Virtual Tour</a>
+					<div class="links-container dotted-spaced-underline" data-ng-if="mediaLinks.length">
+						<div class="response-link vtour" data-ng-if="mediaLinks.length">
+							<a data-ng-repeat="mediaLink in mediaLinks track by mediaLink" data-ng-href="{{mediaLink}}" rel="noopener noreferrer" target="_blank" aria-label="Virtual Tour Link">Virtual Tour</a>
 						</div>
 					</div>
 
@@ -234,6 +234,7 @@
 
 		<section class="additional-photos details-container" role="region" aria-label="Image Slideshow" data-ng-if="model.data.Images && model.data.Images.length > 0" data-md-whiteframe="1">
 			<stratus-swiper-carousel
+                    data-pagination='{"render":"fraction"}'
 					init-now="model.completed"
 					slides="images"
 			></stratus-swiper-carousel>
@@ -241,6 +242,8 @@
 			<!-- autoplay="true" -->
 			<!-- pagination='{"clickable":true,"render":"numberBullet"}' -->
 		</section>
+
+		<div data-ng-if="mediaPlayers.length" data-ng-include="mediaTemplateUrl"></div>
 
 		<section class="additional-details details-container" role="region" aria-label="Additional Details" data-md-whiteframe="1">
 			<div class="description" data-ng-if="::model.data.PublicRemarks" data-ng-bind-html="::getPublicRemarksHTML()" aria-label="Description"></div>

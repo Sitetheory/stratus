@@ -1,0 +1,22 @@
+<div class="idx-property-media" data-ng-if="mediaPlayers.length">
+    <section data-ng-repeat="group in [{id:'video', kind:'video', title:'Video'}, {id:'tour', kind:'tour', title:'3D Tour'}]"
+             data-ng-if="(mediaPlayers | filter:{kind:group.kind}).length"
+             id="{{group.id}}" class="details-container property-media-section"
+             data-ng-class="{'property-tour': group.kind === 'tour', 'video-details-container': group.kind === 'video'}"
+             aria-label="{{group.title}}">
+        <h2 class="dotted-spaced-underline" data-ng-bind="group.title"></h2>
+        <div class="property-media-grid" data-ng-class="{'property-media-single': (mediaPlayers | filter:{kind:group.kind}).length === 1}">
+            <div class="property-media-card" data-ng-repeat="player in mediaPlayers | filter:{kind:group.kind} track by player.key">
+                <div class="iframe-video-wrapper">
+                    <iframe data-ng-if="player.provider !== 'video'"
+                            data-ng-src="{{player.trustedUrl}}"
+                            title="{{group.title}} — {{getStreetAddress()}}"
+                            loading="lazy" allow="fullscreen; picture-in-picture; encrypted-media; accelerometer; gyroscope"
+                            referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                    <video data-ng-if="player.provider === 'video'" data-ng-src="{{player.trustedUrl}}"
+                           aria-label="Property Video" controls playsinline preload="none"></video>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>

@@ -17,6 +17,7 @@
         <section class="property-header static-element" property="address" aria-label="Property Header">
             <div class="gallery-video-container" data-ng-if="model.data.Images && model.data.Images.length > 0">
                 <stratus-swiper-carousel
+                    data-pagination='{"render":"fraction"}'
                         data-init-now="model.completed"
                         data-slides="images"
                         aria-label="Slideshow of Images"
@@ -255,18 +256,9 @@
                     <!--h3 class="property-title">An exclusive haven destined for modern, indoor-outdoor entertaining</h3-->
                     <div class="font-body description" data-ng-if="::model.data.PublicRemarks && !hideVariables.includes('PublicRemarks')" data-ng-bind-html="::getPublicRemarksHTML()" aria-label="Description" property="description"></div>
                     <div class="response-container">
-                        <a data-ng-if="::model.data.VirtualTourURLUnbranded && !hideVariables.includes('VirtualTourURLUnbranded')"
-                           data-ng-href="{{::model.data.VirtualTourURLUnbranded}}"
-                           class="vtour btn btn-alt" target="_blank" aria-label="Virtual Tour Link"
-                        >
-                            Virtual Tour
-                        </a>
-                        <a data-ng-if="::!(model.data.VirtualTourURLUnbranded && !hideVariables.includes('VirtualTourURLUnbranded')) && model.data.VirtualTourURLBranded && !hideVariables.includes('VirtualTourURLBranded')"
-                           data-ng-href="{{::model.data.VirtualTourURLBranded}}"
-                           class="vtour btn btn-alt" target="_blank" aria-label="Virtual Tour Link"
-                        >
-                            Virtual Tour
-                        </a>
+                        <a data-ng-repeat="mediaLink in mediaLinks track by mediaLink"
+                           data-ng-href="{{mediaLink}}"
+                           class="vtour btn btn-alt" target="_blank" rel="noopener noreferrer" aria-label="Virtual Tour Link">Virtual Tour</a>
                         <!-- TODO no support for files other than images at this time -->
                         <!--a class="download-PDF btn btn-alt" href="">Download PDF</a-->
                     </div>
@@ -429,6 +421,8 @@
             <iframe data-ng-src="{{::getGoogleMapEmbed()}}" class="google-map-embed"></iframe>
         </div>
 
+
+        <div data-ng-if="mediaPlayers.length" data-ng-include="mediaTemplateUrl"></div>
 
         <section class="additional-details details-container static-element" role="region" aria-label="Additional Details">
             <h2 class="dotted-spaced-underline">More</h2>

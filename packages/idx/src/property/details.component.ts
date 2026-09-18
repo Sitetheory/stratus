@@ -27,6 +27,7 @@ import {Model} from '@stratusjs/angularjs/services/model'
 import {isJSON, safeUniqueId} from '@stratusjs/core/misc'
 import {cookie} from '@stratusjs/core/environment'
 import {SlideImage} from '@stratusjs/swiper/carousel.component'
+import {collectPropertyMedia, propertyMediaPlayer, PropertyMediaPlayer} from './media'
 
 // Stratus Preload
 import '@stratusjs/angularjs-extras' // angular-material + angular-sanitize + directives/src + filters/moment, math
@@ -47,6 +48,9 @@ export type IdxPropertyDetailsScope = IdxDetailsScope<Property> & {
     options: any // TODO ned to specify
     defaultListOptions: object
     images: object[]
+    mediaPlayers: (PropertyMediaPlayer & {trustedUrl: any})[]
+    mediaLinks: string[]
+    mediaTemplateUrl: string
     contact?: object | any
     contactData?: string
     contactUrl?: string
@@ -127,6 +131,9 @@ Stratus.Components.IdxPropertyDetails = {
         Stratus.Instances[$scope.elementId] = $scope
         $scope.instancePath = `Stratus.Instances.${$scope.elementId}`
         $scope.localDir = localDir
+        $scope.mediaPlayers = []
+        $scope.mediaLinks = []
+        $scope.mediaTemplateUrl = `${localDir}details-media.component${min}.html`
         if ($attrs.tokenUrl) {
             Idx.setTokenURL($attrs.tokenUrl)
         }
@@ -1399,6 +1406,18 @@ Stratus.Components.IdxPropertyDetails = {
                 sectionNavSetupTimer = window.setTimeout(setupSectionNavScroll)
                 // Check if empty
                 Idx.devLog('Loaded Details Data:', data)
+                const media = collectPropertyMedia(data, $scope.hideVariables)
+                $scope.mediaPlayers = media.players.map(player => ({
+                    ...player, trustedUrl: $sce.trustAsResourceUrl(player.url)
+                }))
+                $scope.mediaLinks = media.links
+                // Older services can return mixed media in Images; keep players out of photo slots.
+                if (Array.isArray(data.Images)) {
+                    data.Images = data.Images.filter(image =>
+                        !/video|tour|document/i.test(String(image.MediaCategory || image.MediaClassification || image.MimeType || '')) &&
+                        !propertyMediaPlayer(image.MediaURL)
+                    )
+                }
                 // prepare the images provided
                 $scope.images = $scope.getSlideshowImages()
                 // Idx.devLog('IDX images is now', $scope.images)

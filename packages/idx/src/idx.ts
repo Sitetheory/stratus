@@ -599,6 +599,10 @@ export interface Property extends LooseObject {
 
     // Custom
     Images?: Media[]
+    Media?: Media[] // Public video/tour records, separate from the photo gallery
+    VirtualTourURLUnbranded?: string
+    VirtualTourURLBranded?: string
+    VideosCount?: number
     OpenHouses?: OpenHouse[]
     _ServiceId: number
     _Class: string
