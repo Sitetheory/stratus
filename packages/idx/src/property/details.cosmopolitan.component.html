@@ -32,6 +32,12 @@
                         <span aria-hidden="true" class="ng-scope"><span class="menu-text">Description</span><span class="link-extra"></span></span>
                     </a>
                 </li>
+                <li class="link-video" data-ng-if="(mediaPlayers | filter:{kind:'video'}).length">
+                    <a class="site-nav-link" data-level="1" href="#video" aria-label="Video"><span class="menu-text">Video</span></a>
+                </li>
+                <li class="link-tour" data-ng-if="(mediaPlayers | filter:{kind:'tour'}).length">
+                    <a class="site-nav-link" data-level="1" href="#tour" aria-label="3D Tour"><span class="menu-text">3D Tour</span></a>
+                </li>
                 <li class="link-details">
                     <a class="site-nav-link" data-level="1" href="#details" aria-label="Details">
                         <span aria-hidden="true" class="ng-scope"><span class="menu-text">Details</span><span class="link-extra"></span></span>
@@ -53,6 +59,7 @@
         <section id="gallery" class="property-header header-content static-element" property="address" aria-label="Property Header">
             <div class="gallery-video-container gallery" data-ng-if="model.data.Images && model.data.Images.length > 0">
                 <stratus-swiper-carousel
+                    data-pagination='{"render":"fraction"}'
                         data-init-now="model.completed"
                         data-slides="images"
                         aria-label="Slideshow of Images"
@@ -142,18 +149,9 @@
                 </a>
             </div>
             <div class="response-container">
-                <a data-ng-if="::model.data.VirtualTourURLUnbranded && !hideVariables.includes('VirtualTourURLUnbranded')"
-                   data-ng-href="{{::model.data.VirtualTourURLUnbranded}}"
-                   class="vtour btn btn-alt" target="_blank" aria-label="Virtual Tour Link"
-                >
-                    Virtual Tour
-                </a>
-                <a data-ng-if="::!(model.data.VirtualTourURLUnbranded && !hideVariables.includes('VirtualTourURLUnbranded')) && model.data.VirtualTourURLBranded && !hideVariables.includes('VirtualTourURLBranded')"
-                   data-ng-href="{{::model.data.VirtualTourURLBranded}}"
-                   class="vtour btn btn-alt" target="_blank" aria-label="Virtual Tour Link"
-                >
-                    Virtual Tour
-                </a>
+                <a data-ng-repeat="mediaLink in mediaLinks track by mediaLink"
+                           data-ng-href="{{mediaLink}}"
+                           class="vtour btn btn-alt" target="_blank" rel="noopener noreferrer" aria-label="Virtual Tour Link">Virtual Tour</a>
             </div>
             <section class="listing-credit-container dotted-spaced-underline" data-ng-if="::Idx.sharedValues.contact.name || getListAgentName()" role="region" aria-label="Listing Credits" data-layout="row" data-layout-xs="column" data-layout-align="space-around stretch">
                 <div class="presenting-agent-container" data-ng-if="::Idx.sharedValues.contact.name" data-flex data-layout="column" aria-label="Advertising Broker">
@@ -187,6 +185,8 @@
                 </div>
             </section>
         </section>
+
+        <div data-ng-if="mediaPlayers.length" data-ng-include="mediaTemplateUrl"></div>
 
         <section id="details" class="additional-details details-container static-element" role="region" aria-label="Property Details">
             <h2 class="dotted-spaced-underline">Details</h2>

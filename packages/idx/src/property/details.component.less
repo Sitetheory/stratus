@@ -560,3 +560,17 @@ stratus-idx-property-details .property-details-default {
     }
   }
 }
+
+// Shared with every details layout, following Property.html.twig's tour/video sections.
+stratus-idx-property-details .idx-property-media {
+  .property-media-section { padding: 45px 6%; }
+  .property-media-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; }
+  .property-media-single { grid-template-columns: minmax(0, 1fr); }
+  .iframe-video-wrapper { position: relative; width: 100%; aspect-ratio: 16 / 9; background: #111; }
+  iframe, video { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+  .property-media-source { display: inline-block; margin-top: 8px; font-size: 13px; }
+  @media @phone {
+    .property-media-section { padding: 30px 5%; }
+    .property-media-grid { grid-template-columns: minmax(0, 1fr); }
+  }
+}

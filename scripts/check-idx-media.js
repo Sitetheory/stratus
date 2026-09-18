@@ -1,0 +1,31 @@
+const assert = require('assert/strict')
+const fs = require('fs')
+const path = require('path')
+const ts = require('typescript')
+const vm = require('vm')
+const source = fs.readFileSync(path.join(__dirname, '../packages/idx/src/property/media.ts'), 'utf8')
+const compiled = ts.transpileModule(source, {compilerOptions: {module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2020}})
+const context = {exports: {}, URL, Set}
+vm.runInNewContext(compiled.outputText, context)
+const {propertyMediaPlayer: player, collectPropertyMedia: collect} = context.exports
+for (const url of ['https://youtu.be/oFPvUw3uW78', 'https://www.youtube.com/watch?v=oFPvUw3uW78', 'https://youtube.com/shorts/oFPvUw3uW78', 'https://www.youtube.com/embed/oFPvUw3uW78']) {
+  assert.equal(player(url).url, 'https://www.youtube-nocookie.com/embed/oFPvUw3uW78?rel=0')
+}
+assert.equal(player('https://vimeo.com/1225671067?share=copy&fl=sv').url, 'https://player.vimeo.com/video/1225671067')
+assert.equal(player('https://vimeo.com/123456789/abc123').url, 'https://player.vimeo.com/video/123456789?h=abc123')
+assert.equal(player('https://player.vimeo.com/video/123456789?h=abc123').url, 'https://player.vimeo.com/video/123456789?h=abc123')
+assert.equal(player('https://my.matterport.com/show/?m=rNWnz8sobEx&mls=1').url, 'https://my.matterport.com/show/?m=rNWnz8sobEx&mls=1')
+assert.equal(player('https://cdn.example.com/house.mp4?signature=abc').provider, 'video')
+for (const url of ['javascript:alert(1)', 'https://youtube.com.evil.example/watch?v=oFPvUw3uW78', 'https://youtube.com@evil.example/watch?v=oFPvUw3uW78', 'https://my.matterport.com/show/', 'https://vimeo.com/not-a-video', '', null]) assert.equal(player(url), null)
+const video = 'https://vimeo.com/1225671067'
+let result = collect({VirtualTourURLUnbranded: video, Media: [{MediaURL:video, MediaCategory:'Video'}, {MediaURL:'https://my.matterport.com/show/?m=rNWnz8sobEx', MediaCategory:'Unbranded Virtual Tour'}]})
+assert.equal(result.players.length, 2)
+assert.equal(result.links.length, 0)
+assert.equal(collect({VideosCount: 5}).players.length, 0)
+assert.equal(collect({VirtualTourURLUnbranded:'https://unknown.example/tour'}).links.length, 1)
+assert.equal(collect({VirtualTourURLUnbranded:video}, ['VirtualTourURLUnbranded']).players.length, 0)
+assert.equal(collect({VirtualTourURLUnbranded:video, VirtualTourURLBranded:'https://youtu.be/oFPvUw3uW78'}).players.length, 1)
+assert.equal(collect({VirtualTourURLBranded:video}).players.length, 1)
+assert.equal(collect({_unmapped:{VirtualTourURLUnbranded:video}, PrivateMedia:[{MediaURL:video}], Media:[{MediaURL:video, MediaCategory:'Video', Permission:['Private']}]}).players.length, 0)
+assert.equal(collect({Images:[{MediaURL:video, MediaCategory:'Photo'}]}).players.length, 0)
+console.log('IDX media URL, privacy, fallback and deduplication checks passed')
