@@ -4,7 +4,7 @@
 // --------------
 
 // Runtime
-import {clone, findKey, get, has, isArray, isBoolean, isNull, isUndefined} from 'lodash'
+import {clone, get, has, isArray, isBoolean, isNull, isUndefined} from 'lodash'
 import {Stratus} from '@stratusjs/runtime/stratus'
 import {IAttributes, IAugmentedJQuery, IController, IScope, ITimeoutService, IWindowService} from 'angular'
 import {Swiper} from 'swiper'
@@ -22,6 +22,7 @@ import {Model} from '@stratusjs/angularjs/services/model'
 import {Collection} from '@stratusjs/angularjs/services/collection'
 import {isJSON, safeUniqueId} from '@stratusjs/core/misc'
 import {cookie} from '@stratusjs/core/environment'
+import {getCarouselImageName, getCarouselImageSize, resizeCarouselImage} from './image'
 // Stratus Directives
 import '@stratusjs/angularjs-extras' // directives/src
 
@@ -251,9 +252,7 @@ Stratus.Components.SwiperCarousel = {
             const el = Stratus.Select(selector)
             const width = getElementSize(el, columns)
             // console.log('final width', width, el)
-            return findKey(Stratus.Settings.image.size, (s: number) => {
-                return (s >= width)
-            })
+            return getCarouselImageSize(width, Stratus.Settings.image.size)
         }
 
         /**
@@ -262,17 +261,7 @@ Stratus.Components.SwiperCarousel = {
          * @param sizeName - Size name to append to image url
          */
         const replaceImageSizeSrc = (src: string, sizeName: 'xs' | 's' | 'm' | 'l' | 'xl' | 'hq' | string): string => {
-            const srcOrigin = src
-            // Strip the current generated image size before appending the newly selected size.
-            const srcRegex: RegExp = /^(.+?)(-(?:xs|s|m|l|xl|hq|hd|hdl|hdxl|[A-Z]{2}))?\.(?=[^.]*$)(.+)/i
-            const srcMatch: RegExpExecArray = srcRegex.exec(src)
-            if (srcMatch !== null) {
-                src = srcMatch[1] + '-' + sizeName + '.' + srcMatch[3]
-            } else {
-                console.error('Unable to find file name for image src:', srcOrigin)
-            }
-
-            return src
+            return resizeCarouselImage(src, sizeName)
         }
 
         const initHtmlSlides = (htmlSlides: LooseObject[] | LooseObject): void => {
@@ -323,13 +312,16 @@ Stratus.Components.SwiperCarousel = {
                                     image.src = replaceImageSizeSrc(image.src, sizeName)
                                     // console.log('image upgraded to ', image.src)
                                 }
-                                image.title = get(image, 'title')
+                                image.title = get(image, 'title') || get(image, 'name')
                                 image.description = get(image, 'ShortDescription') ||
                                     get(image, 'description') || get(image, 'LongDescription') || image.title
                                 preppedImage = image
                             }
                         }
                         if (Object.keys(preppedImage).length > 0) {
+                            preppedImage.title = preppedImage.title || preppedImage.description ||
+                                getCarouselImageName(preppedImage.src, preppedImage.lazy === 'stratus-src')
+                            preppedImage.description = preppedImage.description || preppedImage.title
                             processedImages.push(preppedImage)
                         }
                     })
