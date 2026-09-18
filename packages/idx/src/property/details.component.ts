@@ -1518,10 +1518,16 @@ Stratus.Components.IdxPropertyDetails = {
                 $scope.model.data.Images &&
                 isArray($scope.model.data.Images)
             ) {
-                $scope.model.data.Images.forEach((image: { MediaURL?: string, Lazy?: string }) => {
-                    // TODO need title/description variables
+                $scope.model.data.Images.forEach((image: {
+                    MediaURL?: string, Lazy?: string, MediaName?: string,
+                    ShortDescription?: string, LongDescription?: string
+                }) => {
                     if (Object.prototype.hasOwnProperty.call(image, 'MediaURL')) {
-                        const imageObject: SlideImage = {src: image.MediaURL}
+                        const imageObject: SlideImage = {
+                            src: image.MediaURL,
+                            title: image.MediaName || image.ShortDescription,
+                            description: image.LongDescription || image.ShortDescription
+                        }
                         if (Object.prototype.hasOwnProperty.call(image, 'Lazy')) {
                             imageObject.lazy = image.Lazy
                         }
