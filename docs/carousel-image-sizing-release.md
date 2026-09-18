@@ -1,3 +1,15 @@
+<!-- markdownlint-configure-file
+{
+  "MD043": {
+    "headings": [
+      "# Carousel image sizing release",
+      "## Build and validate",
+      "## Publish and update Sitetheory"
+    ]
+  }
+}
+-->
+
 # Carousel image sizing release
 
 Release `@stratusjs/swiper@1.2.5`, then `@stratusjs/idx@0.28.7`.
