@@ -1,6 +1,6 @@
 {
   "name": "@stratusjs/dev",
-  "version": "1.0.1",
+  "version": "1.0.0",
   "description": "This platform intends to bridge the gap between Web Design and Development in a fast, flexible environment.",
   "main": "packages/runtime/src/stratus.ts",
   "directories": {

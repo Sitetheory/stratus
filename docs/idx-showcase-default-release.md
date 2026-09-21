@@ -1,7 +1,8 @@
 # IDX Showcase default release
 
 Release `@stratusjs/idx@0.28.8` after `@stratusjs/swiper@1.2.5`.
-The root development package version is `1.0.1`; it is not published.
+The root development package remains `1.0.0`; it is not published.
+Its test scripts register the IDX regression check without a version bump.
 
 ## Behavior
 
