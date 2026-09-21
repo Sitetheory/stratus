@@ -7,7 +7,7 @@
     "test": "test"
   },
   "scripts": {
-    "test": "npm run build && npm run test:bundle-order && npm run test:carousel-images && npm run lint",
+    "test": "npm run build && npm run test:bundle-order && npm run test:carousel-images && npm run test:idx-details-template && npm run lint",
     "build": "npm run compileCSS && npm run compileCoffee && npm run bundle && npm run dist && npm run compress",
     "bundle": "npm run bundle:rollup && npm run compileTypeScript",
     "bundle:rollup": "node_modules/.bin/gulp compileES6TypeScript && npm run rollup",
@@ -25,7 +25,8 @@
     "lint": "node_modules/.bin/gulp lint",
     "test:bundle-order": "node scripts/check-angular-bundle-order.js",
     "lint-deprecate": "node_modules/.bin/gulp lint && ng lint",
-    "test:carousel-images": "node scripts/check-carousel-images.js"
+    "test:carousel-images": "node scripts/check-carousel-images.js",
+    "test:idx-details-template": "node scripts/check-idx-details-template.js"
   },
   "repository": {
     "type": "git",

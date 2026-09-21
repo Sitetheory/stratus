@@ -1634,5 +1634,9 @@ Stratus.Components.IdxPropertyDetails = {
             // TODO need to kill any attached slideshows
         }
     },
-    templateUrl: ($attrs: IAttributes): string => `${localDir}${$attrs.template || componentName}.component${min}.html`
+    // The legacy "details" name remains an alias so older embeds also use Showcase.
+    templateUrl: ($attrs: IAttributes): string => {
+        const template = !$attrs.template || $attrs.template === componentName ? 'details.showcase' : $attrs.template
+        return `${localDir}${template}.component${min}.html`
+    }
 }

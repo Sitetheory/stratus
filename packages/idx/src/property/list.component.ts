@@ -175,9 +175,9 @@ Stratus.Components.IdxPropertyList = {
         detailsLayout: '@',
         /**
          * Type: string
-         * Default: 'details'
+         * Default: 'details.showcase'
          * The file name in which is loaded for the view of the Details widget. The name will automatically be appended
-         * with '.component.min.html'. The default is `'details.component.html'` / `'details'`. This view only  is used
+         * with '.component.min.html'. The default is `'details.showcase.component.html'` / `'details.showcase'`. This view only  is used
          * if a popup appears rather than loading the Details widget on a fresh page.
          * TODO: Will need to allow setting a custom path of views outside the library directory.
          */
