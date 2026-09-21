@@ -180,56 +180,60 @@
                          [attr.aria-hidden]="removeDeleteDialogMode !== 'remove'"
                          [attr.inert]="removeDeleteDialogMode !== 'remove' ? '' : null">
                     <h2 [textContent]="'Remove ' + contentIdentity(removeDeleteDialogModel)"></h2>
-                    <p [textContent]="'Choose whether to remove this content only from this ' + removeContextLabel().toLowerCase() + ', or delete it from the entire website.'"></p>
-                    <div class="selector-remove-delete-dialog__actions">
-                        <div class="selector-remove-delete-dialog__primary-actions">
-                            <button type="button"
-                                    mat-button
-                                    class="btn btn-cancel"
-                                    [disabled]="removeDeleteDialogMode !== 'remove'"
-                                    (click)="closeRemoveDeleteDialog()">Cancel</button>
-                            <button type="button"
-                                    mat-button
-                                    class="btn btn-remove-context"
-                                    [disabled]="removeDeleteDialogMode !== 'remove'"
-                                    (click)="confirmRemoveDeleteDialogRemove()"
-                                    [textContent]="'Remove only from this ' + removeContextLabel()"></button>
-                        </div>
-                        <div class="selector-remove-delete-dialog__danger-actions">
-                            <button type="button"
-                                    mat-button
-                                    class="btn btn-delete-site"
-                                    [disabled]="removeDeleteDialogMode !== 'remove' || !canDeleteFromSite(removeDeleteDialogModel)"
-                                    [matTooltip]="deleteFromSiteDisabledReason(removeDeleteDialogModel)"
-                                    (click)="showRemoveDeleteDialogDelete()">Delete from Site</button>
-                        </div>
+                    <p [textContent]="'Choose whether to remove content only from this ' + removeContextLabel().toLowerCase() + ' or delete it from the entire website.'"></p>
+                    <div class="selector-remove-delete-dialog__primary-actions">
+                        <button type="button"
+                                mat-button
+                                class="selector-remove-delete-dialog__button selector-remove-delete-dialog__button-cancel"
+                                [disabled]="removeDeleteDialogMode !== 'remove'"
+                                (click)="closeRemoveDeleteDialog()">
+                            <mat-icon svgIcon="selector_cancel" aria-hidden="true"></mat-icon>
+                            <span>cancel</span>
+                        </button>
+                        <button type="button"
+                                mat-button
+                                class="selector-remove-delete-dialog__button selector-remove-delete-dialog__button-remove"
+                                [disabled]="removeDeleteDialogMode !== 'remove'"
+                                (click)="confirmRemoveDeleteDialogRemove()">
+                            <mat-icon svgIcon="selector_remove_context" aria-hidden="true"></mat-icon>
+                            <span [textContent]="'remove from this ' + removeContextLabel().toLowerCase()"></span>
+                        </button>
                     </div>
+                    <div class="selector-remove-delete-dialog__divider" aria-hidden="true"></div>
+                    <button type="button"
+                            mat-button
+                            class="selector-remove-delete-dialog__delete-link"
+                            [disabled]="removeDeleteDialogMode !== 'remove' || !canDeleteFromSite(removeDeleteDialogModel)"
+                            [matTooltip]="deleteFromSiteDisabledReason(removeDeleteDialogModel)"
+                            (click)="showRemoveDeleteDialogDelete()">
+                        <mat-icon svgIcon="selector_permanent_delete" aria-hidden="true"></mat-icon>
+                        <span>delete from site</span>
+                    </button>
                 </section>
                 <section class="selector-remove-delete-dialog__panel selector-remove-delete-dialog__panel-delete"
                          [attr.aria-hidden]="removeDeleteDialogMode !== 'delete'"
                          [attr.inert]="removeDeleteDialogMode !== 'delete' ? '' : null">
-                    <h2 [textContent]="'Delete: ' + contentIdentity(removeDeleteDialogModel)"></h2>
+                    <h2 [textContent]="'Delete ' + contentIdentity(removeDeleteDialogModel)"></h2>
                     <p class="selector-remove-delete-dialog__warning"
-                       [textContent]="'Are you sure you want to delete this content from the entire website, not only from this ' + removeContextLabel().toLowerCase() + '?'"></p>
-                    <mat-form-field class="selector-remove-delete-dialog__confirm">
-                        <mat-label>type "DELETE" to confirm</mat-label>
-                        <input matInput
-                               #deleteConfirmInput
-                               autocomplete="off"
-                               [value]="deleteConfirmText"
-                               (input)="deleteConfirmText = deleteConfirmInput.value">
-                    </mat-form-field>
-                    <div class="selector-remove-delete-dialog__actions selector-remove-delete-dialog__actions-delete">
+                       [textContent]="'Are you sure you want to delete this content from the entire website, not just from this ' + removeContextLabel().toLowerCase() + '?'"></p>
+                    <div class="selector-remove-delete-dialog__divider" aria-hidden="true"></div>
+                    <div class="selector-remove-delete-dialog__primary-actions selector-remove-delete-dialog__primary-actions-delete">
                         <button type="button"
                                 mat-button
-                                class="btn btn-cancel"
+                                class="selector-remove-delete-dialog__button selector-remove-delete-dialog__button-cancel"
                                 [disabled]="removeDeleteDialogMode !== 'delete'"
-                                (click)="showRemoveDeleteDialogRemove()">Cancel</button>
+                                (click)="showRemoveDeleteDialogRemove()">
+                            <mat-icon svgIcon="selector_cancel" aria-hidden="true"></mat-icon>
+                            <span>cancel</span>
+                        </button>
                         <button type="button"
                                 mat-button
-                                class="btn btn-delete-site btn-delete-site-final"
-                                [disabled]="removeDeleteDialogMode !== 'delete' || deleteConfirmText !== 'DELETE'"
-                                (click)="confirmRemoveDeleteDialogDelete()">Delete from Site</button>
+                                class="selector-remove-delete-dialog__button selector-remove-delete-dialog__button-delete"
+                                [disabled]="removeDeleteDialogMode !== 'delete'"
+                                (click)="confirmRemoveDeleteDialogDelete()">
+                            <mat-icon svgIcon="selector_permanent_delete" aria-hidden="true"></mat-icon>
+                            <span>delete from website</span>
+                        </button>
                     </div>
                 </section>
             </div>
