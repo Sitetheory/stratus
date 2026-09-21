@@ -183,7 +183,6 @@ export class SelectorComponent extends RootComponent { // implements OnInit, OnC
     } = {}
     removeDeleteDialogModel: any = null
     removeDeleteDialogMode: 'remove'|'delete' = 'remove'
-    deleteConfirmText = ''
 
     constructor(
         private iconRegistry: MatIconRegistry,
@@ -209,6 +208,8 @@ export class SelectorComponent extends RootComponent { // implements OnInit, OnC
             selector_edit: `${Stratus.BaseUrl}sitetheorycore/images/icons/actionButtons/edit.svg`,
             selector_refresh: `${Stratus.BaseUrl}sitetheorycore/images/icons/actionButtons/refresh.svg`,
             selector_publish: `${Stratus.BaseUrl}sitetheorycore/images/icons/actionButtons/publish.svg`,
+            selector_cancel: `${Stratus.BaseUrl}sitetheorycore/images/icons/actionButtons/clear.svg`,
+            selector_remove_context: `${Stratus.BaseUrl}sitetheorycore/images/icons/actionButtons/removeCircle.svg`,
             selector_permanent_delete: `${Stratus.BaseUrl}sitetheorycore/images/icons/actionButtons/delete.svg`
         }, (value, key) => iconRegistry.addSvgIcon(key, sanitizer.bypassSecurityTrustResourceUrl(value)).getNamedSvgIcon(key))
 
@@ -581,7 +582,7 @@ export class SelectorComponent extends RootComponent { // implements OnInit, OnC
         }))
     }
 
-    emitSelectorLiveEditAction(action: string, model: any): boolean {
+    emitSelectorLiveEditAction(action: string, model: any, additionalDetail: LooseObject = {}): boolean {
         const event = new CustomEvent('stratus-selector-live-edit-action', {
             bubbles: true,
             cancelable: true,
@@ -591,7 +592,8 @@ export class SelectorComponent extends RootComponent { // implements OnInit, OnC
                 model,
                 parentModel: this.model,
                 models: this.dataRef(),
-                property: this.property
+                property: this.property,
+                ...additionalDetail
             }
         })
         this.elementRef.nativeElement.dispatchEvent(event)
@@ -1331,22 +1333,37 @@ export class SelectorComponent extends RootComponent { // implements OnInit, OnC
         if (!model || this.isPending(model)) {
             return
         }
+        if (this.isLiveEditSelector()) {
+            const handled = this.emitSelectorLiveEditAction('remove-delete', model, {
+                identity: this.contentIdentity(model),
+                contextLabel: this.removeContextLabel(),
+                canDelete: this.canDeleteFromSite(model),
+                deleteDisabledReason: this.deleteFromSiteDisabledReason(model),
+                complete: (action: 'remove'|'delete') => {
+                    if (action === 'remove') {
+                        this.remove(model)
+                    } else if (action === 'delete') {
+                        this.deleteContent(model, true)
+                    }
+                }
+            })
+            if (handled) {
+                return
+            }
+        }
         this.removeDeleteDialogModel = model
         this.removeDeleteDialogMode = 'remove'
-        this.deleteConfirmText = ''
         this.refresh().then()
     }
 
     closeRemoveDeleteDialog() {
         this.removeDeleteDialogModel = null
         this.removeDeleteDialogMode = 'remove'
-        this.deleteConfirmText = ''
         this.refresh().then()
     }
 
     showRemoveDeleteDialogRemove() {
         this.removeDeleteDialogMode = 'remove'
-        this.deleteConfirmText = ''
         this.refresh().then()
     }
 
@@ -1355,7 +1372,6 @@ export class SelectorComponent extends RootComponent { // implements OnInit, OnC
             return
         }
         this.removeDeleteDialogMode = 'delete'
-        this.deleteConfirmText = ''
         this.refresh().then()
     }
 
@@ -1418,9 +1434,6 @@ export class SelectorComponent extends RootComponent { // implements OnInit, OnC
     }
 
     confirmRemoveDeleteDialogDelete() {
-        if (this.deleteConfirmText !== 'DELETE') {
-            return
-        }
         const model = this.removeDeleteDialogModel
         this.closeRemoveDeleteDialog()
         this.deleteContent(model, true)
