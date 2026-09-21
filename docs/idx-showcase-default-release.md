@@ -1,3 +1,16 @@
+<!-- markdownlint-configure-file
+{
+  "MD043": {
+    "headings": [
+      "# IDX Showcase default release",
+      "## Behavior",
+      "## Validation",
+      "## Publication"
+    ]
+  }
+}
+-->
+
 # IDX Showcase default release
 
 Release `@stratusjs/idx@0.28.8` after `@stratusjs/swiper@1.2.5`.
