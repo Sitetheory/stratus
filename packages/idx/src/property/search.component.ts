@@ -8,6 +8,8 @@
 import './search.component.less'
 import './search.compact.component.less'
 import './search.classic.component.less'
+import './admin/search.filter.component.less'
+import './search.filters.shared.less'
 
 // Runtime
 import _, {
@@ -126,7 +128,11 @@ export type IdxPropertySearchScope = IdxSearchScope & {
     filterMenu?: material.IPanelRef & any // material.IPanelRef // disabled because we need to set reposition()
     _: typeof _
 
+    activeListingTypeGroup?: string
+
     // Functions
+    selectListingTypeGroup(listingGroup: string): void
+    getListingTypeCount(listingGroup: string): number
     canDisplayListingTypeButton(listType: ListingTypeSelectionSetting): boolean
     displayOfficeGroupSelector(searchTerm?: string, editIndex?: number, ev?: any): void
     focusElement(selector: string): void
@@ -242,6 +248,8 @@ Stratus.Components.IdxPropertySearch = {
         hidePreviewResults: '@',
         // TODO
         variableSync: '@',
+        /** Disable initial writes for autosaving editors; explicit clears then sync as null. */
+        variableSyncOnInit: '@',
         // TODO
         widgetName: '@'
     },
@@ -369,8 +377,7 @@ Stratus.Components.IdxPropertySearch = {
                 Lease: ['Active']
             }
             $scope.options.selection.ListingType ??= {}
-            // These determine what ListingTypes options that should currently be 'shown' based on selections.
-            // Automatically updated with a watcher
+            // Track categories with saved selections independently of the visible category.
             $scope.options.selection.ListingType.group ??= {
                 Residential: true,
                 Commercial: false
@@ -470,7 +477,7 @@ Stratus.Components.IdxPropertySearch = {
             })
         }
 
-        $scope.$watch('options.query.where.ListingType', () => {
+        $scope.$watchCollection('options.query.where.ListingType', () => {
             if ($scope.options?.query?.where && $scope.options?.selection?.ListingType?.list) {
                 if (!$scope.options?.query?.where?.ListingType) {
                     $scope.options.query.where.ListingType = []
@@ -479,14 +486,15 @@ Stratus.Components.IdxPropertySearch = {
                 if (!isArray($scope.options.query.where.ListingType)) {
                     $scope.options.query.where.ListingType = [$scope.options.query.where.ListingType]
                 }
-                $scope.options.selection.ListingType.group.Residential =
-                    $scope.isIntersecting($scope.options.selection.ListingType.list.Residential, $scope.options.query.where.ListingType)
-                $scope.options.selection.ListingType.group.Commercial =
-                    $scope.isIntersecting($scope.options.selection.ListingType.list.Commercial, $scope.options.query.where.ListingType)
-
-                $scope.options.forRent =
-                    $scope.isIntersecting($scope.options.selection.ListingType.list.Lease, $scope.options.query.where.ListingType)
-                // console.log('watched ListingType', $scope.options.query.ListingType, $scope.options.selection.ListingType.group)
+                // An empty selection must not move the tab or switch Rent back to Buy.
+                if ($scope.options.query.where.ListingType.length) {
+                    $scope.options.forRent =
+                        $scope.isIntersecting($scope.options.selection.ListingType.list.Lease, $scope.options.query.where.ListingType)
+                }
+                $scope.options.selection.ListingType.group.Residential = $scope.getListingTypeCount('Residential') > 0
+                $scope.options.selection.ListingType.group.Commercial = $scope.getListingTypeCount('Commercial') > 0
+                $scope.activeListingTypeGroup ??= $scope.options.selection.ListingType.group.Commercial &&
+                    !$scope.options.selection.ListingType.group.Residential ? 'Commercial' : 'Residential'
             }
         })
 
@@ -601,6 +609,7 @@ Stratus.Components.IdxPropertySearch = {
         $scope.variableSync = async (): Promise<void> => {
             $scope.variableSyncing = $attrs.variableSync && isJSON($attrs.variableSync) ? JSON.parse($attrs.variableSync) : {}
             // console.log('variables syncing: ', clone($scope.variableSyncing))
+            const syncOnInit = $attrs.variableSyncOnInit !== 'false'
             const promises: any[] = []
             Object.keys($scope.variableSyncing).forEach((elementId: string) => {
                 promises.push(
@@ -614,28 +623,28 @@ Stratus.Components.IdxPropertySearch = {
                             await Idx.updateScopeValuePath($scope, scopeVarPath, varElement.val())
                             $scope.setWhere($scope.options.query.where) // ensure the basic items are always set
 
-                            // Creating watcher to update the input when the scope changes
+                            // Hydration must not become an edit in an autosaving drawer.
+                            let firstSync = true
+                            const jsonInput = varElement[0].hasAttribute('stratus-json-to-object') ||
+                                varElement[0].hasAttribute('data-stratus-json-to-object')
                             $scope.$watch(
                                 scopeVarPath,
                                 (value: any) => {
-                                    // console.log('detecting', scopeVarPath, 'as', value)
-                                    if (
-                                        isString(value) ||
-                                        isNumber(value) ||
-                                        isUndefined(value) ||
-                                        value == null
-                                    ) {
-                                        if (isUndefined(value)) {
-                                            // elements can't process undefined... treat as null
-                                            value = null
-                                        }
-                                        // console.log('updating', scopeVarPath, 'value to', value, 'was', varElement.val())
-                                        varElement.val(value)
-                                    } else {
-                                        // console.log('updating json', scopeVarPath, 'value to', value, 'was', varElement.val())
-                                        varElement.val(JSON.stringify(value))
+                                    if (firstSync) {
+                                        firstSync = false
+                                        if (!syncOnInit) return
                                     }
-                                    // varElement.fireEvent('onchange') // deprecated and no longer works
+                                    // Only a later, deliberate edit can clear an optional field.
+                                    if (!syncOnInit && (value === '' ||
+                                        ((isArray(value) || _.isPlainObject(value)) && isEmpty(value)))) {
+                                        value = null
+                                    }
+                                    const serialized = value == null
+                                        ? (jsonInput && !syncOnInit ? 'null' : '')
+                                        : (isString(value) || isNumber(value) ? value : JSON.stringify(value))
+                                    // Avoid echoing equivalent values into the parent content model.
+                                    if (!syncOnInit && String(varElement.val() ?? '') === String(serialized)) return
+                                    varElement.val(serialized)
                                     varElement[0].dispatchEvent(new Event('change'))
                                 },
                                 true
@@ -648,8 +657,22 @@ Stratus.Components.IdxPropertySearch = {
             await $q.all(promises)
         }
 
+        $scope.getListingTypeCount = (listingGroup: string): number => {
+            return ($scope.options.selection.ListingType?.All || []).filter(listType =>
+                listType.group === listingGroup && listType.lease === $scope.options.forRent &&
+                includes($scope.options.query.where.ListingType, listType.value)
+            ).length
+        }
+
+        $scope.selectListingTypeGroup = (listingGroup: string): void => {
+            $scope.activeListingTypeGroup = listingGroup
+            if ($scope.filterMenu) {
+                $scope.filterMenu.reposition()
+            }
+        }
+
         $scope.canDisplayListingTypeButton = (listType: ListingTypeSelectionSetting): boolean => {
-            return $scope.options.forRent === listType.lease && $scope.options.selection.ListingType.group[listType.group]
+            return $scope.options.forRent === listType.lease && $scope.activeListingTypeGroup === listType.group
         }
 
         $scope.inArray = (item: any, array: any[]) => includes(array, item)
@@ -784,15 +807,11 @@ Stratus.Components.IdxPropertySearch = {
         }
 
         $scope.selectDefaultListingType = (listingGroup?: string): void => {
-            if (!listingGroup) {
-                listingGroup = 'Commercial'
-                if (!$scope.options.selection.ListingType.group.Commercial) {
-                    listingGroup = 'Residential'
-                }
-            }
-            $scope.options.query.where.ListingType = $scope.options.forRent ?
+            listingGroup ??= $scope.activeListingTypeGroup || 'Residential'
+            // Copy defaults so selecting individual classes cannot mutate future defaults.
+            $scope.options.query.where.ListingType = [...($scope.options.forRent ?
                 $scope.options.selection.ListingType.default.Lease[listingGroup] :
-                $scope.options.selection.ListingType.default.Sale[listingGroup]
+                $scope.options.selection.ListingType.default.Sale[listingGroup])]
             if ($scope.filterMenu) {
                 $scope.filterMenu.reposition()
             }

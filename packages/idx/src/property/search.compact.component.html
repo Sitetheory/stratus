@@ -116,8 +116,8 @@
                     <div class="property-specs-border dotted-spaced-underline"></div>
 
 
-                    <div class="toggle-switch" data-layout="row" data-layout-align="center center" aria-label="Listings to Buy or Rent">
-                        <div class="option-choice font-primary" data-ng-class="{inactive: options.forRent}" data-flex>
+                    <div class="toggle-switch" data-layout="row" data-layout-align="start center" aria-label="Listings to Buy or Rent">
+                        <div class="option-choice font-primary" data-ng-class="{inactive: options.forRent}">
                             Buy
                         </div>
 
@@ -125,10 +125,10 @@
                                 data-ng-model="options.forRent"
                                 data-ng-change="selectDefaultListingType()"
                                 aria-label="Buy or Rent"
-                                data-flex>
+                               >
                         </md-switch>
-                        <div class="option-choice font-primary" data-ng-class="{inactive: !options.forRent}" data-flex>
-                            Rent
+                        <div class="option-choice font-primary" data-ng-class="{inactive: !options.forRent}">
+                            For Rent
                         </div>
                     </div>
 
@@ -192,31 +192,34 @@
                     <div class="property-zoning" data-layout="row" data-layout-align="space-around center" aria-label="Listing Zoning">
                         <md-button
                                 class="font-primary"
-                                data-ng-class="{'md-primary': options.selection.ListingType.group.Residential}"
-                                data-ng-click="selectDefaultListingType('Residential')"
+                                data-ng-class="{'md-primary': (getListingTypeCount('Residential') > 0), 'category-visible': activeListingTypeGroup === 'Residential'}"
+                                data-ng-click="selectListingTypeGroup('Residential')"
+                                data-ng-attr-aria-expanded="{{activeListingTypeGroup === 'Residential'}}"
                                 aria-label="Residential"
                                 data-md-prevent-menu-close
                         >
-                            Residential
+                            Residential <span data-ng-if="getListingTypeCount('Residential')">({{getListingTypeCount('Residential')}})</span>
                         </md-button>
                         <md-button
                                 class="font-primary"
-                                data-ng-class="{'md-primary': options.selection.ListingType.group.Commercial}"
-                                data-ng-click="selectDefaultListingType('Commercial')"
+                                data-ng-class="{'md-primary': (getListingTypeCount('Commercial') > 0), 'category-visible': activeListingTypeGroup === 'Commercial'}"
+                                data-ng-click="selectListingTypeGroup('Commercial')"
+                                data-ng-attr-aria-expanded="{{activeListingTypeGroup === 'Commercial'}}"
                                 aria-label="Commercial"
                                 data-md-prevent-menu-close
                         >
-                            Commercial
+                            Commercial <span data-ng-if="getListingTypeCount('Commercial')">({{getListingTypeCount('Commercial')}})</span>
                         </md-button>
                     </div>
 
-                    <div data-layout="row" data-layout-align="center center" aria-label="Listing Types" data-layout-wrap>
+                    <div class="listing-types" data-layout="row" data-layout-align="start center" aria-label="Listing Types" data-layout-wrap>
                         <md-button
                                 data-ng-repeat="listType in ::options.selection.ListingType.All"
                                 class="md-raised font-primary"
-                                data-ng-show="options.forRent === listType.lease && options.selection.ListingType.group[listType.group]"
+                                data-ng-show="canDisplayListingTypeButton(listType)"
                                 data-ng-class="{'md-primary': _.includes(options.query.where.ListingType, listType.value)}"
                                 data-ng-click="toggleArrayElement(listType.value, options.query.where.ListingType)"
+                                data-ng-attr-aria-pressed="{{_.includes(options.query.where.ListingType, listType.value)}}"
                                 aria-label="{{::listType.name}}"
                                 data-md-prevent-menu-close
                                 data-ng-bind="::listType.name"

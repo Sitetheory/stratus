@@ -1,0 +1,135 @@
+{
+  "description": "Mixed-category PropertyFilter UI, no initialization saves, and generic API scalar payload guard; dev core 0.0 only.",
+  "changedFiles": [
+    {
+      "path": "packages/idx/src/property/search.component.ts",
+      "notes": "Retain mixed category selections and apply consistent admin, live-editor, and public filter controls."
+    },
+    {
+      "path": "packages/idx/src/property/search.component.less",
+      "notes": "Retain mixed category selections and apply consistent admin, live-editor, and public filter controls."
+    },
+    {
+      "path": "packages/idx/src/property/search.filters.shared.less",
+      "notes": "Retain mixed category selections and apply consistent admin, live-editor, and public filter controls."
+    },
+    {
+      "path": "packages/idx/src/property/admin/search.filter.component.html",
+      "notes": "Retain mixed category selections and apply consistent admin, live-editor, and public filter controls."
+    },
+    {
+      "path": "packages/idx/src/property/search.component.html",
+      "notes": "Retain mixed category selections and apply consistent admin, live-editor, and public filter controls."
+    },
+    {
+      "path": "packages/idx/src/property/search.classic.component.html",
+      "notes": "Retain mixed category selections and apply consistent admin, live-editor, and public filter controls."
+    },
+    {
+      "path": "packages/idx/src/property/search.compact.component.html",
+      "notes": "Retain mixed category selections and apply consistent admin, live-editor, and public filter controls."
+    },
+    {
+      "path": "src/Sitetheory/ComponentBundle/Controller/EntityApiController.php",
+      "notes": "Shared guard uses column/API field types, field-path validation errors, and prevents flush on invalid input."
+    }
+  ],
+  "uploadFiles": [
+    {
+      "path": "src/Sitetheory/CoreBundle/Resources/public/node_modules/@stratusjs/idx/src/property/admin/search.filter.component.html",
+      "reason": "Shared IDX filter runtime, compiled styles, templates, or matching source map."
+    },
+    {
+      "path": "src/Sitetheory/CoreBundle/Resources/public/node_modules/@stratusjs/idx/src/property/admin/search.filter.component.min.html",
+      "reason": "Shared IDX filter runtime, compiled styles, templates, or matching source map."
+    },
+    {
+      "path": "src/Sitetheory/CoreBundle/Resources/public/node_modules/@stratusjs/idx/src/property/search.component.html",
+      "reason": "Shared IDX filter runtime, compiled styles, templates, or matching source map."
+    },
+    {
+      "path": "src/Sitetheory/CoreBundle/Resources/public/node_modules/@stratusjs/idx/src/property/search.component.min.html",
+      "reason": "Shared IDX filter runtime, compiled styles, templates, or matching source map."
+    },
+    {
+      "path": "src/Sitetheory/CoreBundle/Resources/public/node_modules/@stratusjs/idx/src/property/search.classic.component.html",
+      "reason": "Shared IDX filter runtime, compiled styles, templates, or matching source map."
+    },
+    {
+      "path": "src/Sitetheory/CoreBundle/Resources/public/node_modules/@stratusjs/idx/src/property/search.classic.component.min.html",
+      "reason": "Shared IDX filter runtime, compiled styles, templates, or matching source map."
+    },
+    {
+      "path": "src/Sitetheory/CoreBundle/Resources/public/node_modules/@stratusjs/idx/src/property/search.compact.component.html",
+      "reason": "Shared IDX filter runtime, compiled styles, templates, or matching source map."
+    },
+    {
+      "path": "src/Sitetheory/CoreBundle/Resources/public/node_modules/@stratusjs/idx/src/property/search.compact.component.min.html",
+      "reason": "Shared IDX filter runtime, compiled styles, templates, or matching source map."
+    },
+    {
+      "path": "src/Sitetheory/CoreBundle/Resources/public/node_modules/@stratusjs/idx/src/property/search.component.js",
+      "reason": "Shared IDX filter runtime, compiled styles, templates, or matching source map."
+    },
+    {
+      "path": "src/Sitetheory/CoreBundle/Resources/public/node_modules/@stratusjs/idx/src/property/search.component.min.js",
+      "reason": "Shared IDX filter runtime, compiled styles, templates, or matching source map."
+    },
+    {
+      "path": "src/Sitetheory/CoreBundle/Resources/public/node_modules/@stratusjs/idx/src/property/search.component.js.map",
+      "reason": "Shared IDX filter runtime, compiled styles, templates, or matching source map."
+    },
+    {
+      "path": "src/Sitetheory/CoreBundle/Resources/public/node_modules/@stratusjs/idx/dist/idx.bundle.js",
+      "reason": "Shared IDX filter runtime, compiled styles, templates, or matching source map."
+    },
+    {
+      "path": "src/Sitetheory/CoreBundle/Resources/public/node_modules/@stratusjs/idx/dist/idx.bundle.min.js",
+      "reason": "Shared IDX filter runtime, compiled styles, templates, or matching source map."
+    },
+    {
+      "path": "src/Sitetheory/CoreBundle/Resources/public/node_modules/@stratusjs/idx/dist/idx.bundle.js.map",
+      "reason": "Shared IDX filter runtime, compiled styles, templates, or matching source map."
+    },
+    {
+      "path": "src/Sitetheory/CoreBundle/Resources/public/node_modules/@stratusjs/idx/dist/idx.bundle.min.css",
+      "reason": "Shared IDX filter runtime, compiled styles, templates, or matching source map."
+    },
+    {
+      "path": "src/Sitetheory/CoreBundle/Resources/public/node_modules/@stratusjs/idx/dist/idx.bundle.min.css.map",
+      "reason": "Shared IDX filter runtime, compiled styles, templates, or matching source map."
+    },
+    {
+      "path": "src/Sitetheory/PropertyBundle/Entity/PropertyFilter.php",
+      "reason": "Remove superseded sort-specific validation from the dev deployment; shared persister now validates scalar payload shape."
+    },
+    {
+      "path": "src/Sitetheory/CoreBundle/Resources/public/stratus/directives/liveEditorTemplate.propertyFilter.js",
+      "reason": "Validate sort before persistence and prevent live editor initialization writes."
+    },
+    {
+      "path": "src/Sitetheory/CoreBundle/Resources/public/stratus/directives/liveEditorTemplate.propertyFilter.min.js",
+      "reason": "Validate sort before persistence and prevent live editor initialization writes."
+    },
+    {
+      "path": "src/Sitetheory/CoreBundle/Resources/public/stratus/directives/liveEditorTemplate.propertyFilter.js.map",
+      "reason": "Validate sort before persistence and prevent live editor initialization writes."
+    },
+    {
+      "path": "src/Sitetheory/CoreBundle/Resources/public/stratus/directives/liveEditorFieldBlocks.js",
+      "reason": "Validate sort before persistence and prevent live editor initialization writes."
+    },
+    {
+      "path": "src/Sitetheory/CoreBundle/Resources/public/stratus/directives/liveEditorFieldBlocks.min.js",
+      "reason": "Validate sort before persistence and prevent live editor initialization writes."
+    },
+    {
+      "path": "src/Sitetheory/CoreBundle/Resources/public/stratus/directives/liveEditorFieldBlocks.js.map",
+      "reason": "Validate sort before persistence and prevent live editor initialization writes."
+    },
+    {
+      "path": "src/Sitetheory/ComponentBundle/Controller/EntityApiController.php",
+      "reason": "Reject incompatible container payloads for declared scalar fields before conversions/setters across API entities."
+    }
+  ]
+}
