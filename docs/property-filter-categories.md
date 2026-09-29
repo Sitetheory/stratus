@@ -1,3 +1,7 @@
+<!-- markdownlint-configure-file
+{"MD043": {"headings": ["# PropertyFilter category selection and layout", "*"]}}
+-->
+
 # PropertyFilter category selection and layout
 
 Workspace: `/Users/chadwickmeyer/Sites/stratus-feature-property-filter-categories`
@@ -29,7 +33,8 @@ have consistent text and spacing.
 - `tsc --noEmit`, `npm run bundle:rollup`, `npm run compileTypeScript`,
   `npm run design`, and `npm run compress`.
 - Local Angular Material rendering checked at desktop and 420px panel widths.
-- Dev integration page: https://admin.chad.sitetheory.io/Property-Filter/Edit?id=525219
+- Dev integration page:
+  <https://admin.chad.sitetheory.io/Property-Filter/Edit?id=525219>
 
 ## Dev upload
 
@@ -39,7 +44,8 @@ it uses a copy of Sitetheory's existing `bin/dev-upload` script. Source edits st
 in the dedicated Stratus and Sitetheory feature workspaces; main checkouts are unchanged.
 
 Status: built and uploaded to `dev.chad.sitetheory.io:/var/www/core/v/0/0`
-on 2026-09-29. Admin, public, and live-editor selection-retention checks pass. Verified the
+on 2026-09-29. Admin, public, and live-editor selection-retention checks pass.
+Verified the
 admin theme renders selected classes as `#444`, unselected classes as `#ddd`,
 and both Agent/Office placeholders as 13px. Equal columns retain their 30px gap.
 Public/live-editor checks used the existing `/Hillsborough` PropertyFilter on
@@ -187,3 +193,18 @@ builds. Sitetheory 1.7 now requires ^0.28.9. Its lockfile pins the registry tarb
 URL and checksum of the prepared npm archive. Publish that exact archive before
 installing the Sitetheory dependency update; it is not yet available on npm.
 Both existing upstream PRs are updated.
+
+## Codacy follow-up
+
+The 15 findings from PR 865 are addressed in the stylesheet, sync regression,
+and this document. CSS comments use block syntax; `fade(#000, 6%)` compiles to
+the same rgba color, and keyword casing is normalized. A file-specific Stylelint
+override recognizes LESS fade() and prefix media syntax: LESS 3 cannot parse
+the modern media range syntax requested by the CSS rule. The existing disabled
+specificity rule uses Stylelint's supported null setting.
+
+PMD's unnecessary-block reports refer to object shorthand/destructuring in the
+regression fixture; explicit property access keeps the same assertions. Markdown
+uses links, wrapped prose, and an explicit MD043 heading structure instead of
+Codacy's enabled rule with an empty required-heading list. No runtime behavior
+change or package publication is needed for this source cleanup.
