@@ -268,7 +268,7 @@
                  data-layout="row"
                  aria-label="Listings to Buy or Rent"
                  data-layout-align="start center">
-                <div class="option-choice font-primary" data-ng-class="{inactive: options.forRent}" data-flex>
+                <div class="option-choice font-primary" data-ng-class="{inactive: options.forRent}">
                     Buy
                 </div>
                 <md-switch
@@ -277,12 +277,12 @@
                         aria-label="Buy or Rent"
                         >
                 </md-switch>
-                <div class="option-choice font-primary" data-ng-class="{inactive: !options.forRent}" data-flex>
-                    Rent
+                <div class="option-choice font-primary" data-ng-class="{inactive: !options.forRent}">
+                    For Rent
                 </div>
             </div>
 
-            <div data-layout="row"
+            <div class="listing-status-options" data-layout="row"
                  data-ng-show="!options.forRent"
                  data-layout-align="left"
                  aria-label="Listing Status">
@@ -329,25 +329,27 @@
             <div class="property-zoning" aria-label="Listing Zoning" data-layout="row" data-layout-align="left" >
                 <md-button
                         class="font-primary"
-                        data-ng-class="{'md-primary': options.selection.ListingType.group.Residential}"
-                        data-ng-click="selectDefaultListingType('Residential')"
+                        data-ng-class="{'md-primary': (getListingTypeCount('Residential') > 0), 'category-visible': activeListingTypeGroup === 'Residential'}"
+                        data-ng-click="selectListingTypeGroup('Residential')"
+                        data-ng-attr-aria-expanded="{{activeListingTypeGroup === 'Residential'}}"
                         aria-label="Residential"
                         data-md-prevent-menu-close
                 >
-                    Residential
+                    Residential <span data-ng-if="getListingTypeCount('Residential')">({{getListingTypeCount('Residential')}})</span>
                 </md-button>
                 <md-button
                         class="font-primary"
-                        data-ng-class="{'md-primary': options.selection.ListingType.group.Commercial}"
-                        data-ng-click="selectDefaultListingType('Commercial')"
+                        data-ng-class="{'md-primary': (getListingTypeCount('Commercial') > 0), 'category-visible': activeListingTypeGroup === 'Commercial'}"
+                        data-ng-click="selectListingTypeGroup('Commercial')"
+                        data-ng-attr-aria-expanded="{{activeListingTypeGroup === 'Commercial'}}"
                         aria-label="Commercial"
                         data-md-prevent-menu-close
                 >
-                    Commercial
+                    Commercial <span data-ng-if="getListingTypeCount('Commercial')">({{getListingTypeCount('Commercial')}})</span>
                 </md-button>
             </div>
 
-            <div data-layout="row"
+            <div class="listing-types" data-layout="row"
                  data-layout-align="left"
                  aria-label="Listing Types"
                  data-layout-wrap
@@ -358,56 +360,62 @@
                         data-ng-show="canDisplayListingTypeButton(listType)"
                         data-ng-class="{'md-primary': _.includes(options.query.where.ListingType, listType.value)}"
                         data-ng-click="toggleArrayElement(listType.value, options.query.where.ListingType)"
+                        data-ng-attr-aria-pressed="{{_.includes(options.query.where.ListingType, listType.value)}}"
                         aria-label="{{::listType.name}}"
                         data-md-prevent-menu-close
                         data-ng-bind="::listType.name"
                 ></md-button>
             </div>
 
-            <h3>Agent</h3>
-            <div class="agent-specs"
-                 data-layout="row"
-                 data-layout-align="left"
-                 aria-label="Agent Specs">
-                <md-chips
-                        class="agent-license font-secondary"
-                        aria-label="Agent License(s) to Search"
-                        data-ng-model="options.query.where.AgentLicense"
-                        data-md-enable-chip-edit="true"
-                        data-md-add-on-blur="true"
-                        data-md-separator-keys="[$mdConstant.KEY_CODE.ENTER, $mdConstant.KEY_CODE.COMMA]"
-                        data-placeholder="Agent License"
-                        data-secondary-placeholder="+License"
-                        data-delete-button-label="Remove License"
-                        data-delete-hint="Press delete to remove License"
-                ></md-chips>
+            <div class="agent-office-fields">
+                <div class="agent-office-field">
+                    <h3>Agent</h3>
+                    <div class="agent-specs"
+                         data-layout="row"
+                         data-layout-align="left"
+                         aria-label="Agent Specs">
+                        <md-chips
+                                class="agent-license font-secondary"
+                                aria-label="Agent License(s) to Search"
+                                data-ng-model="options.query.where.AgentLicense"
+                                data-md-enable-chip-edit="true"
+                                data-md-add-on-blur="true"
+                                data-md-separator-keys="[$mdConstant.KEY_CODE.ENTER, $mdConstant.KEY_CODE.COMMA]"
+                                data-placeholder="Agent License"
+                                data-secondary-placeholder="+License"
+                                data-delete-button-label="Remove License"
+                                data-delete-hint="Press delete to remove License"
+                        ></md-chips>
+                    </div>
+                    <div class="agent-specs-border dotted-spaced-underline"></div>
+                </div>
+                <div class="agent-office-field">
+                    <!-- Office look up widget replaces office id-->
+                    <h3>Office</h3>
+                    <div class="office-specs"
+                         data-layout="row"
+                         data-layout-align="left"
+                    >
+                        <md-chips
+                                class="office-groups font-secondary"
+                                aria-label="Office"
+                                data-ng-model="options.officeGroups"
+                                data-md-enable-chip-edit="true"
+                                data-placeholder="Office"
+                                data-secondary-placeholder="+Office"
+                                data-delete-button-label="Remove Office"
+                                data-delete-hint="Press delete to remove Office"
+                                data-md-transform-chip="displayOfficeGroupSelector($chip, null, $event)"
+                                data-md-on-remove="validateOfficeGroups()"
+                        >
+                            <md-chip-template>
+                                <span data-ng-click="displayOfficeGroupSelector(null, $index, $event)">{{$chip.name}}</span>
+                            </md-chip-template>
+                        </md-chips>
+                    </div>
+                    <div class="office-specs-border dotted-spaced-underline"></div>
+                </div>
             </div>
-            <div class="agent-specs-border dotted-spaced-underline"></div>
-
-            <!-- Office look up widget replaces office id-->
-            <h3>Office</h3>
-            <div class="office-specs"
-                 data-layout="row"
-                 data-layout-align="left"
-            >
-                <md-chips
-                        class="office-groups font-secondary"
-                        aria-label="Office"
-                        data-ng-model="options.officeGroups"
-                        data-md-enable-chip-edit="true"
-                        data-placeholder="Office"
-                        data-secondary-placeholder="+Office"
-                        data-delete-button-label="Remove Office"
-                        data-delete-hint="Press delete to remove Office"
-                        data-md-transform-chip="displayOfficeGroupSelector($chip, null, $event)"
-                        data-md-on-remove="validateOfficeGroups()"
-                >
-                    <md-chip-template>
-                        <span data-ng-click="displayOfficeGroupSelector(null, $index, $event)">{{$chip.name}}</span>
-                    </md-chip-template>
-                </md-chips>
-            </div>
-            <div class="office-specs-border dotted-spaced-underline"></div>
 
             <!--div class="office-specs"
                  data-layout="row"
