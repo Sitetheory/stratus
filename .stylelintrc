@@ -18,36 +18,5 @@
         ]
       }
     ]
-  },
-  "overrides": [
-    {
-      "files": [
-        "packages/idx/src/property/search.filters.shared.less"
-      ],
-      "rules": {
-        "function-no-unknown": [
-          true,
-          {
-            "ignoreFunctions": [
-              "fade"
-            ]
-          }
-        ],
-        "media-feature-range-notation": "prefix",
-        "declaration-property-value-no-unknown": [
-          true,
-          {
-            "ignoreProperties": {
-              "background": [
-                "fade(#000, 6%)"
-              ],
-              "box-shadow": [
-                "inset 0 1px 3px fade(#000, 6%)"
-              ]
-            }
-          }
-        ]
-      }
-    }
-  ]
+  }
 }

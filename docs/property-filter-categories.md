@@ -1,6 +1,5 @@
-<!-- markdownlint-configure-file
-{"MD043": {"headings": ["# PropertyFilter category selection and layout", "*"]}}
--->
+<!-- markdownlint-disable MD043 -->
+<!-- This standalone task document has no required heading template. -->
 
 # PropertyFilter category selection and layout
 
@@ -198,14 +197,15 @@ Both existing upstream PRs are updated.
 
 The 15 findings from PR 865 are addressed in the stylesheet, sync regression,
 and this document. CSS comments use block syntax; `fade(#000, 6%)` compiles to
-the same rgba color, and keyword casing is normalized. A file-specific Stylelint
-override recognizes LESS fade() (including its two exact property values) and
-prefix media syntax: LESS 3 cannot parse
+the same rgba color, and keyword casing is normalized. Scoped Stylelint
+directives recognize LESS fade() and prefix media syntax:
+LESS 3 cannot parse
 the modern media range syntax requested by the CSS rule. The existing disabled
 specificity rule uses Stylelint's supported null setting.
 
 PMD's unnecessary-block reports refer to object shorthand/destructuring in the
 regression fixture; explicit property access keeps the same assertions. Markdown
-uses links, wrapped prose, and an explicit MD043 heading structure instead of
-Codacy's enabled rule with an empty required-heading list. No runtime behavior
+uses links and wrapped prose. Its MD043 exception is limited to this standalone
+document, which has no required heading template; Codacy enables that rule with
+an empty required-heading list. No runtime behavior
 change or package publication is needed for this source cleanup.

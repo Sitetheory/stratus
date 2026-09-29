@@ -1,3 +1,5 @@
+/* stylelint-disable media-feature-range-notation -- LESS 3 requires prefix media queries. */
+
 /* Shared by the admin, live editor, and public search templates. */
 stratus-idx-property-search .property-search,
 .stratus-idx-property-search-menu.property-search-filter-admin,
@@ -53,6 +55,7 @@ stratus-idx-property-search .property-search,
         border-bottom-color: currentcolor;
       }
       &.category-visible {
+        /* stylelint-disable-next-line function-no-unknown, declaration-property-value-no-unknown -- Compiled by LESS. */
         background: fade(#000, 6%);
       }
     }
@@ -66,6 +69,8 @@ stratus-idx-property-search .property-search,
     background: #f7f7f7;
     border: 1px solid #e9e9e9;
     border-radius: 4px;
+
+    /* stylelint-disable-next-line function-no-unknown, declaration-property-value-no-unknown -- Compiled by LESS. */
     box-shadow: inset 0 1px 3px fade(#000, 6%);
 
     /* Preserve the neutral class hierarchy against host themes (including #content button rules). */
