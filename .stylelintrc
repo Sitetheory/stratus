@@ -1,14 +1,7 @@
 {
   "extends": "stylelint-config-standard",
   "rules": {
-    "no-descending-specificity": [
-      false,
-      {
-        "ignore": [
-          "selectors-within-list"
-        ]
-      }
-    ],
+    "no-descending-specificity": null,
     "rule-empty-line-before": [
       "never-multi-line",
       {

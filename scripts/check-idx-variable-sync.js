@@ -48,13 +48,15 @@ async function fixture(saved, syncOnInit = false) {
   new Function('$scope', '$attrs', 'Idx', '$q', '_', 'isJSON', 'isArray', 'isEmpty', 'isString', 'isNumber', 'Event', syncCode)(scope, {variableSync: JSON.stringify(fields), variableSyncOnInit: String(syncOnInit)}, Idx, $q, _, isJSON, _.isArray, _.isEmpty, _.isString, _.isNumber, dom.window.Event)
   await scope.variableSync()
   scope.$digest()
-  return {scope, host, changes: () => changes}
+  const result = {scope: scope, changes: () => changes}
+  return result
 }
 ;(async () => {
   for (const saved of [{}, {filter: null, service: null, sort: null, office: null}, {filter: {ListingType: ['House', 'Commercial']}, service: [1], sort: '-BestPrice', office: [{name: 'Office A', group: ['123']}]}]) {
-    const {scope, changes} = await fixture(saved)
+    const result = await fixture(saved)
+    const scope = result.scope
     assert.deepEqual(scope.saved, saved, 'Opening a live editor must preserve missing, null, and saved values')
-    assert.equal(changes(), 0, 'Hydration must not dispatch change events')
+    assert.equal(result.changes(), 0, 'Hydration must not dispatch change events')
     scope.options.query.order = 'BestPrice'
     scope.$digest()
     assert.equal(scope.saved.sort, 'BestPrice', 'Actual edits still sync')
