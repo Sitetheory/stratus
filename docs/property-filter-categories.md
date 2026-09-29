@@ -177,3 +177,13 @@ unrelated latest-branch commits. Stratus remains on
 `feature/property-filter-categories`, based on current upstream/master (Stratus
 has no 1.7 branch). Companion PRs must be released together: the Sitetheory drawer
 opts into the new Stratus no-initialization-write binding.
+
+## IDX patch release 0.28.9
+
+User requested the package release preparation and will perform npm publication.
+The IDX package manifest and Stratus local-file lock entry are bumped from 0.28.8
+to 0.28.9, followed by rollup, TypeScript, stylesheet/template, and compression
+builds. Sitetheory 1.7 now requires ^0.28.9. Its lockfile pins the registry tarball
+URL and checksum of the prepared npm archive. Publish that exact archive before
+installing the Sitetheory dependency update; it is not yet available on npm.
+Both existing upstream PRs are updated.
