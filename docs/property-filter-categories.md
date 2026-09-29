@@ -199,7 +199,8 @@ Both existing upstream PRs are updated.
 The 15 findings from PR 865 are addressed in the stylesheet, sync regression,
 and this document. CSS comments use block syntax; `fade(#000, 6%)` compiles to
 the same rgba color, and keyword casing is normalized. A file-specific Stylelint
-override recognizes LESS fade() and prefix media syntax: LESS 3 cannot parse
+override recognizes LESS fade() (including its two exact property values) and
+prefix media syntax: LESS 3 cannot parse
 the modern media range syntax requested by the CSS rule. The existing disabled
 specificity rule uses Stylelint's supported null setting.
 
