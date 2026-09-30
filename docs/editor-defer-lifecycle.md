@@ -1,3 +1,11 @@
+<!-- markdownlint-configure-file
+{
+  "MD043": {
+    "headings": ["# Editor data retry lifecycle patch"]
+  }
+}
+-->
+
 # Editor data retry lifecycle patch
 
 Workspace: `/Users/chadwickmeyer/Sites/stratus-carousel-release`, reused after

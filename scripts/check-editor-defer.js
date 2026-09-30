@@ -3,6 +3,7 @@ const assert = require('assert/strict')
 const fs = require('fs')
 const ts = require('typescript')
 const vm = require('vm')
+const { test } = require('node:test')
 const source = fs.readFileSync('packages/angular/src/editor/editor.component.ts', 'utf8')
 const tree = ts.createSourceFile('editor.ts', source, ts.ScriptTarget.Latest, true)
 const editor = tree.statements.find(n => ts.isClassDeclaration(n) && n.name.text === 'EditorComponent')
@@ -29,7 +30,7 @@ function fixture() {
     const tick = () => { const next = tasks.entries().next().value; if (next) { tasks.delete(next[0]); next[1]() } }
     return { instance, subscriber, tasks, warnings, values, tick }
 }
-{
+test('retries are bounded and late data can recover', () => {
     const f = fixture()
     for (let i = 0; i < 50; i++) f.instance.dataDefer(f.subscriber)
     assert.equal(f.tasks.size, 1, 'concurrent requests share one retry')
@@ -41,7 +42,7 @@ function fixture() {
     f.instance.value = 'Loaded after timeout'
     f.instance.dataDefer(f.subscriber)
     assert.deepEqual(f.values, ['Loaded after timeout'], 'late model event recovers after timeout')
-}
+})
 for (const value of ['', 'Existing content']) {
     const f = fixture()
     f.instance.dataDefer(f.subscriber)
@@ -55,15 +56,15 @@ for (const value of ['', 'Existing content']) {
     f.instance.dataDefer(f.subscriber)
     assert.equal(f.values.length, 1, 'unchanged data does not emit again')
 }
-{
+test('a subscriber arriving cancels its pending retry', () => {
     const f = fixture()
     f.instance.dataDefer(undefined)
     assert.equal(f.tasks.size, 1)
     f.instance.model = { completed: true }
     f.instance.dataDefer(f.subscriber)
     assert.equal(f.tasks.size, 0, 'subscriber arriving clears previous retry')
-}
-{
+})
+test('destruction cancels retries and removes only its listener', () => {
     const f = fixture()
     let unsubscribed = false
     const own = () => {}
@@ -78,18 +79,18 @@ for (const value of ['', 'Existing content']) {
     assert.equal(unsubscribed, true)
     assert.equal(f.instance.dataChangeSource.listeners.change.length, 1)
     assert.equal(f.instance.dataChangeSource.listeners.change[0].method, other)
-}
-{
+})
+test('closed subscribers stop retrying', () => {
     const f = fixture()
     f.instance.dataDefer(f.subscriber)
     f.subscriber.closed = true
     f.tick()
     assert.equal(f.tasks.size, 0, 'closed subscriber stops retries')
-}
-{
+})
+test('failed bindings do not poll', () => {
     const f = fixture()
     f.instance.dataBindingFailed = true
     f.instance.dataDefer(f.subscriber)
     assert.equal(f.tasks.size, 0, 'failed binding does not poll')
-}
+})
 console.log('Editor defer lifecycle regression checks passed')
