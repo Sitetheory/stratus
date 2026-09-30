@@ -25,6 +25,7 @@ import {
     ObservableInput,
     Subject,
     Subscriber,
+    Subscription,
     timer
 } from 'rxjs'
 import {
@@ -283,6 +284,13 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
     dataSub: Observable<[]>
     onChange = new Subject()
     subscriber: Subscriber<any>
+    private dataSubscription: Subscription
+    private dataRetryTimer: ReturnType<typeof setTimeout>
+    private dataRetryCount = 0
+    private dataBindingFailed = false
+    private destroyed = false
+    private dataChangeSource: EventManager
+    private dataChangeHandler: () => void
     // Note: It may be better to LifeCycle::tick(), but this works for now
 
     // Icon Localization
@@ -1201,7 +1209,12 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
         // TODO: Spelunk through this code to determine why I am getting an empty component on occasion...
         this.fetchData()
             .then(data => {
+                if (this.destroyed) {
+                    return
+                }
                 if (!data || !(data instanceof EventManager)) {
+                    this.dataBindingFailed = true
+                    this.clearDataRetry()
                     console.warn('Unable to bind data from Registry!')
                     // console.warn(this.title, 'Unable to bind data from Registry!', clone(this), data, typeof data)
                     return
@@ -1209,7 +1222,7 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
                 // Manually render upon model change
                 // this.ref.detach();
                 const onDataChange = () => {
-                    if (!data.completed) {
+                    if (this.destroyed || !data.completed) {
                         return
                     }
                     // this.onDataChange();
@@ -1227,8 +1240,17 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
                     // FIXME: Somehow this doesn't completely work...  It gets data from the model
                     // when it is changed, but won't propagate it when the form event changes the data.
                 }
+                this.dataChangeSource = data
+                this.dataChangeHandler = onDataChange
                 data.on('change', onDataChange)
                 onDataChange()
+            }).catch((error: Error) => {
+                if (this.destroyed) {
+                    return
+                }
+                this.dataBindingFailed = true
+                this.clearDataRetry()
+                console.error('Unable to bind editor data:', this.uid, error)
             })
 
         // Declare Observable with Subscriber (Only Happens Once)
@@ -1239,7 +1261,7 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             }
             return this.dataDefer(subscriber)
         })
-        this.dataSub.pipe(
+        this.dataSubscription = this.dataSub.pipe(
             // debounceTime(250),
             debounce(() => timer(250)),
             catchError(this.handleError)
@@ -1278,6 +1300,8 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
         setTimeout(() => {
             const dataControl = this.form.get('dataString')
             if (
+                this.destroyed ||
+                !this.model || !this.model.completed ||
                 this.dataReady ||
                 dataControl.value !== hydrationFallbackValue
             ) {
@@ -1799,19 +1823,58 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
         // }, this)
     }
 
+    private clearDataRetry(): void {
+        if (this.dataRetryTimer !== undefined) {
+            clearTimeout(this.dataRetryTimer)
+            this.dataRetryTimer = undefined
+        }
+    }
+
+    private scheduleDataRetry(): void {
+        if (this.destroyed || this.dataBindingFailed || this.dataRetryTimer !== undefined) {
+            return
+        }
+        // Poll for at most 30 seconds. A later model change can still hydrate
+        // the editor, but a missing binding must not keep the page busy forever.
+        if (this.dataRetryCount >= 120) {
+            return
+        }
+        this.dataRetryCount++
+        this.dataRetryTimer = setTimeout(() => {
+            this.dataRetryTimer = undefined
+            this.dataDefer(this.subscriber)
+            if (this.dataRetryCount === 120 && this.dataRetryTimer === undefined && !this.destroyed) {
+                console.warn('Editor is still waiting for its data; polling stopped:', this.uid)
+            }
+        }, 250)
+    }
+
+    ngOnDestroy(): void {
+        this.destroyed = true
+        this.clearDataRetry()
+        if (this.dataSubscription) {
+            this.dataSubscription.unsubscribe()
+        }
+        // EventManager.off() is currently a stub. Remove only our own listener.
+        if (this.dataChangeSource && this.dataChangeHandler) {
+            this.dataChangeSource.listeners.change = (this.dataChangeSource.listeners.change || [])
+                .filter(event => event.method !== this.dataChangeHandler)
+        }
+        super.ngOnDestroy()
+    }
+
     // Ensures Data is populated before hitting the Subscriber
     dataDefer(subscriber: Subscriber<any>) {
+        if (this.destroyed || this.dataBindingFailed) {
+            return
+        }
         this.subscriber = this.subscriber || subscriber
+        if (this.subscriber && this.subscriber.closed) {
+            this.clearDataRetry()
+            return
+        }
         if (!this.subscriber) {
-            if (this.dev) {
-                console.warn(`[defer] debouncing due to empty subscriber on ${this.uid}`)
-            }
-            setTimeout(() => {
-                if (this.dev) {
-                    console.warn(`[defer] debounced subscriber returned on ${this.uid}`)
-                }
-                this.dataDefer(subscriber)
-            }, 250)
+            this.scheduleDataRetry()
             return
         }
         const prevString = _.clone(this.incomingData)
@@ -1819,17 +1882,11 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
         const modelReady = !!this.model && (!('completed' in this.model) || this.model.completed)
         const dataReady = !!this.data && (!('completed' in this.data) || this.data.completed)
         if (!dataString && !modelReady && !dataReady) {
-            if (this.dev) {
-                console.warn(`[defer] debouncing subscriber due to unavailable data on ${this.uid}`, this.data)
-            }
-            setTimeout(() => {
-                if (this.dev) {
-                    console.warn(`[defer] debounced subscriber returned on ${this.uid}`)
-                }
-                this.dataDefer(subscriber)
-            }, 250)
+            this.scheduleDataRetry()
             return
         }
+        this.clearDataRetry()
+        this.dataRetryCount = 0
         // ensure changes have occurred, except for the initial loaded-empty value
         if (this.dataReady && prevString === dataString) {
             return
