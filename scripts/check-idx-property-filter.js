@@ -87,3 +87,22 @@ rental.toggleArrayElement('House', rental.options.query.where.ListingType)
 assert.deepEqual(Array.from(rental.options.selection.ListingType.default.Sale.Residential), ['House', 'Condo', 'Townhouse'], 'Selections must not mutate defaults')
 assert.deepEqual(Array.from(rental.options.query.where.Status), ['Active', 'Closed'], 'Category selection does not change sale statuses')
 console.log('IDX property filters: all four templates retain mixed selections, counts, colors, saved filters, rental mode, and immutable defaults')
+
+// Feed sources come from the authorized service list, including Exclusive (0).
+// A static option would duplicate that source or offer it without a subscription.
+const feedTemplate = dom.window.document.createElement('div')
+feedTemplate.innerHTML = fs.readFileSync(path.join(propertyDir, 'admin/search.filter.component.html'), 'utf8')
+for (const services of [[{id: 0, name: 'Exclusive'}, {id: 5, name: 'MLS'}], [{id: 5, name: 'MLS'}]]) {
+  const scope = root.$new()
+  scope.options = {query: {service: [0]}}
+  scope.getMLSVariables = () => services
+  const selector = angular.element(feedTemplate.querySelector('[data-ng-model="options.query.service"]').cloneNode(true))
+  compile(selector)(scope)
+  scope.$digest()
+  const options = Array.from(selector[0].querySelectorAll('md-option'))
+  assert.deepEqual(options.map(option => option.textContent.trim()), services.map(service => service.name))
+  assert.deepEqual(options.map(option => angular.element(option).scope().$eval(option.getAttribute('data-ng-value'))), services.map(service => service.id))
+  assert.deepEqual(scope.options.query.service, [0], 'Rendering feed options must preserve saved service IDs')
+  scope.$destroy()
+}
+console.log('PASS: one option per authorized feed source, including serviceId 0')
