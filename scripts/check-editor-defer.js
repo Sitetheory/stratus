@@ -28,7 +28,8 @@ function fixture() {
         dataRef() { return this.incomingData = this.value || '' } })
     const subscriber = { closed: false, next: value => values.push(value) }
     const tick = () => { const next = tasks.entries().next().value; if (next) { tasks.delete(next[0]); next[1]() } }
-    return { instance: instance, subscriber: subscriber, tasks: tasks, warnings: warnings, values: values, tick: tick }
+    const result = { instance, subscriber, tasks, warnings, values, tick }
+    return result
 }
 test('retries are bounded and late data can recover', () => {
     const f = fixture()
