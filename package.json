@@ -7,7 +7,7 @@
     "test": "test"
   },
   "scripts": {
-    "test": "npm run build && npm run test:bundle-order && npm run test:carousel-images && npm run test:idx-details-template && npm run test:idx-property-filter && npm run test:idx-variable-sync && npm run lint",
+    "test": "npm run build && npm run test:bundle-order && npm run test:carousel-images && npm run test:idx-details-template && npm run test:idx-property-filter && npm run test:idx-variable-sync && npm run test:editor-defer && npm run lint",
     "build": "npm run compileCSS && npm run compileCoffee && npm run bundle && npm run dist && npm run compress",
     "bundle": "npm run bundle:rollup && npm run compileTypeScript",
     "bundle:rollup": "node_modules/.bin/gulp compileES6TypeScript && npm run rollup",
@@ -28,7 +28,8 @@
     "test:carousel-images": "node scripts/check-carousel-images.js",
     "test:idx-property-filter": "node scripts/check-idx-property-filter.js",
     "test:idx-details-template": "node scripts/check-idx-details-template.js",
-    "test:idx-variable-sync": "node scripts/check-idx-variable-sync.js"
+    "test:idx-variable-sync": "node scripts/check-idx-variable-sync.js",
+    "test:editor-defer": "node scripts/check-editor-defer.js"
   },
   "repository": {
     "type": "git",
