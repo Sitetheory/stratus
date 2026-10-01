@@ -312,7 +312,9 @@ sa-internal-media-selector,
 
   }
 
-  .info-hover-container {
+  // The adjacent AngularJS library also uses .media-selector. Its popups must
+  // remain interactive; only modern selected items use these hidden defaults.
+  .selected-media-item .info-hover-container {
     left: 50%;
     opacity: 0;
     pointer-events: none;
@@ -335,7 +337,7 @@ sa-internal-media-selector,
     }
   }
 
-  .image-hover-info {
+  .selected-media-item .image-hover-info {
     position: relative;
     pointer-events: none;
     z-index: 1;
