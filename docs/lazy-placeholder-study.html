@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lazy image placeholder comparison</title>
+  <style>
+    :root {
+      color-scheme: light;
+      font-family: Arial, Helvetica, sans-serif;
+      color: #242b2d;
+      background: #f5f7f6;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; }
+    header { background: #fff; border-bottom: 1px solid #d9dfdc; }
+    .inner { max-width: 1460px; margin: 0 auto; padding: 24px clamp(20px, 4vw, 52px); }
+    h1 { margin: 0; font-size: 22px; font-weight: 650; }
+    .intro { margin: 7px 0 0; color: #5c6766; font-size: 13px; line-height: 1.5; }
+    main { max-width: 1460px; margin: 0 auto; padding: 24px clamp(20px, 4vw, 52px) 48px; }
+    .comparison { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 16px; }
+    .option { background: #fff; border: 1px solid #d9dfdc; border-radius: 6px; overflow: hidden; min-width: 0; }
+    .option.candidate { border-color: #387d74; }
+    .option-heading { min-height: 76px; padding: 17px 18px 13px; border-bottom: 1px solid #e5e9e7; }
+    .option-heading h2 { margin: 0; font-size: 16px; font-weight: 650; }
+    .option-heading p { margin: 6px 0 0; font-size: 12px; color: #63706d; }
+    .sample { padding: 16px 18px 18px; border-bottom: 1px solid #e9edeb; }
+    .sample:last-child { border-bottom: 0; }
+    .label { display: block; margin: 0 0 10px; font-size: 11px; font-weight: 650; text-transform: uppercase; color: #596966; }
+    .icon-surface { min-height: 170px; display: flex; align-items: center; justify-content: center; background: #fff; border: 1px solid #edf0ef; }
+    .icon-surface img { display: block; width: 150px; height: 150px; object-fit: fill; }
+    .photo-surface { background: #fff; border: 1px solid #edf0ef; }
+    .photo-placeholder { aspect-ratio: 16 / 9; width: 100%; }
+    .hero-surface { position: relative; background: #20302f; overflow: hidden; }
+    .hero-placeholder { width: 100%; min-height: 170px; }
+    .hero-title { position: absolute; left: 16px; bottom: 16px; margin: 0; color: #fff; font-size: 18px; font-weight: 650; text-shadow: 0 1px 4px rgba(0,0,0,.5); }
+    .shimmer { background-size: 200% 100%; background-repeat: no-repeat; animation: shimmerSweep 1.8s linear infinite; }
+    .current .shimmer {
+      background-color: #111b33;
+      background-image: linear-gradient(90deg, transparent 35%, rgba(62,86,142,.55) 50%, transparent 65%);
+    }
+    .neutral .shimmer {
+      --shimmer-alpha: .45;
+      background-color: rgba(0,0,0,var(--base-alpha));
+      background-image: linear-gradient(90deg, transparent 35%, rgba(255,255,255,var(--shimmer-alpha)) 50%, transparent 65%);
+    }
+    .neutral .hero-placeholder { --shimmer-alpha: .12; }
+    @keyframes shimmerSweep { from { background-position: 130% 0; } to { background-position: -30% 0; } }
+    @media (prefers-reduced-motion: reduce) { .shimmer { animation: none; background-position: center; } }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="inner">
+      <h1>Lazy image placeholder comparison</h1>
+      <p class="intro">Current blue and three translucent neutral strengths. Icon samples use an SVG image; photo and header samples use a CSS background. Prototype only.</p>
+    </div>
+  </header>
+  <main>
+    <div class="comparison">
+      <section class="option current" data-base="1" aria-label="Current blue">
+        <div class="option-heading"><h2>Current blue</h2><p>Opaque #111b33 base</p></div>
+        <div class="sample"><span class="label">Icon on white, 150 px</span><div class="icon-surface"><img class="icon-placeholder" alt="Current blue animated icon placeholder"></div></div>
+        <div class="sample"><span class="label">Photo area on white</span><div class="photo-surface"><div class="photo-placeholder shimmer"></div></div></div>
+        <div class="sample"><span class="label">Header on dark</span><div class="hero-surface"><div class="hero-placeholder shimmer"></div><p class="hero-title">Header title</p></div></div>
+      </section>
+      <section class="option neutral" data-base="0.04" style="--base-alpha:.04" aria-label="Neutral four percent">
+        <div class="option-heading"><h2>Neutral 4%</h2><p>Black at 4% alpha</p></div>
+        <div class="sample"><span class="label">Icon on white, 150 px</span><div class="icon-surface"><img class="icon-placeholder" alt="Four percent neutral animated icon placeholder"></div></div>
+        <div class="sample"><span class="label">Photo area on white</span><div class="photo-surface"><div class="photo-placeholder shimmer"></div></div></div>
+        <div class="sample"><span class="label">Header on dark</span><div class="hero-surface"><div class="hero-placeholder shimmer"></div><p class="hero-title">Header title</p></div></div>
+      </section>
+      <section class="option neutral candidate" data-base="0.07" style="--base-alpha:.07" aria-label="Neutral seven percent">
+        <div class="option-heading"><h2>Neutral 7%</h2><p>Black at 7% alpha</p></div>
+        <div class="sample"><span class="label">Icon on white, 150 px</span><div class="icon-surface"><img class="icon-placeholder" alt="Seven percent neutral animated icon placeholder"></div></div>
+        <div class="sample"><span class="label">Photo area on white</span><div class="photo-surface"><div class="photo-placeholder shimmer"></div></div></div>
+        <div class="sample"><span class="label">Header on dark</span><div class="hero-surface"><div class="hero-placeholder shimmer"></div><p class="hero-title">Header title</p></div></div>
+      </section>
+      <section class="option neutral" data-base="0.10" style="--base-alpha:.10" aria-label="Neutral ten percent">
+        <div class="option-heading"><h2>Neutral 10%</h2><p>Black at 10% alpha</p></div>
+        <div class="sample"><span class="label">Icon on white, 150 px</span><div class="icon-surface"><img class="icon-placeholder" alt="Ten percent neutral animated icon placeholder"></div></div>
+        <div class="sample"><span class="label">Photo area on white</span><div class="photo-surface"><div class="photo-placeholder shimmer"></div></div></div>
+        <div class="sample"><span class="label">Header on dark</span><div class="hero-surface"><div class="hero-placeholder shimmer"></div><p class="hero-title">Header title</p></div></div>
+      </section>
+    </div>
+  </main>
+  <script>
+    function placeholderSvg(alpha) {
+      const current = alpha === 1;
+      const base = current ? '<rect width="32" height="18" fill="#111b33"/>' : '<rect width="32" height="18" fill="#000" fill-opacity="' + alpha + '"/>';
+      const stops = current
+        ? '<stop stop-color="#111b33"/><stop offset=".5" stop-color="#3e568e" stop-opacity=".65"/><stop offset="1" stop-color="#111b33"/>'
+        : '<stop offset=".18" stop-color="#fff" stop-opacity="0"/><stop offset=".50" stop-color="#fff" stop-opacity=".45"/><stop offset=".82" stop-color="#fff" stop-opacity="0"/>';
+      const sweep = '<rect x="-32" width="32" height="18" fill="url(#g)"><animate attributeName="x" values="-32;32" dur="1.8s" repeatCount="indefinite"/></rect>';
+      return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 18" preserveAspectRatio="none"><defs><linearGradient id="g" x1="0" x2="1">' + stops + '</linearGradient></defs>' + base + sweep + '</svg>';
+    }
+    document.querySelectorAll('.option').forEach(function (option) {
+      option.querySelector('.icon-placeholder').src = 'data:image/svg+xml,' + encodeURIComponent(placeholderSvg(Number(option.dataset.base)));
+    });
+  </script>
+</body>
+</html>
