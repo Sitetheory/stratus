@@ -275,7 +275,7 @@ Stratus.Components.IdxDisclaimer = {
     // data-ng-repeat="service in idxService"
     template: '<div id="{{::elementId}}" class="disclaimer-outer-container" data-ng-cloak data-ng-show="idxService.length > 0 && !hideMe" role="contentinfo" aria-label="IDX Disclaimers">' +
         '<div class="disclaimer-container" data-ng-repeat="service in idxService" data-ng-bind-html="service.disclaimerHTML"></div>' +
-        '<div class="mls-logos-section" aria-label="MLS Logos">' +
+        '<div class="mls-logos-section" role="group" aria-label="MLS Logos">' +
         '<div class="mls-logos-container" data-ng-repeat="service in idxService">' +
         '<img class="mls-service-logo" width="80" height="75" alt="{{service.name}} MLS Brand Logo" data-ng-show="service.logo.default"  aria-label="{{service.name}}" data-ng-src="{{service.logo.medium || service.logo.default}}">' +
         '<img class="mls-service-logo" width="80" height="75" alt="{{service.name}} MLS supplementary Logo" data-ng-if="service.mandatoryLogo && service.mandatoryLogo.length > 0" data-ng-repeat="mandatoryLogo in service.mandatoryLogo"  aria-label="{{service.name}} supplementary" data-ng-src="{{mandatoryLogo}}">' +
