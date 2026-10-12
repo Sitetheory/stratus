@@ -54,3 +54,19 @@ Article-Magazine: a generated image retains srcset through two normalization
 round trips and loads the xs derivative in a 68px slot; zero page errors. No
 saved site content was modified. Only angular.bundle.js and angular.bundle.min.js
 were uploaded. Backup: editor-dev-before.tgz in the recovery directory.
+
+## 0.13.11 release (2026-10-12)
+
+Source PR877 merged as5ae13759. Release branch release/native-editor-images
+reuses /Users/chadwickmeyer/Sites/stratus and targets master. Angular package and
+root local-package lock entry advance together to0.13.11; root dev version is
+unchanged. Full npm test passes. Packed archive contains both bundles and all
+three editor modules (ordinary/minified); package version verified.
+
+Artifact: /Users/chadwickmeyer/dev/task-archives/sitetheory-image-loading-audit/angular-0.13.11/stratusjs-angular-0.13.11.tgz
+SHA1: 2a21943d0fb8627e5bc448588a5c36699a54688c.
+Publication requires the developer's npm one-time authentication. After
+publication verify the registry integrity, install the published version and
+pin only Sitetheory1.9. Sitetheory template PR3762 is already merged as232a290688.
+Cross-browser/persisted content results are tracked in that repository's audit.
+Integration/dependency rollout and cleanup remain pending; no production deploy.
