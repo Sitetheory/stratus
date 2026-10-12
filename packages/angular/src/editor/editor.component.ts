@@ -1,3 +1,4 @@
+import {nativeEditorImagesEnabled, normalizeNativeEditorImage} from './native-image'
 // Angular Core
 import {
     // ChangeDetectionStrategy,
@@ -626,14 +627,14 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             'charset', 'cellpadding', 'cellspacing', 'checked', 'cite', 'class', 'color',
             'cols', 'colspan', 'content', 'contenteditable', 'contextmenu', 'controls',
             'coords',
-            'data', 'datetime', 'default', 'defer', 'dir', 'dirname',
+            'data', 'datetime', 'decoding', 'default', 'defer', 'dir', 'dirname',
             'disabled', 'download', 'draggable', 'dropzone',
             'enctype',
             'for', 'form', 'formaction', 'frameborder',
             'headers', 'height', 'hidden', 'high', 'href', 'hreflang', 'http-equiv',
             'icon', 'id', 'ismap', 'itemprop',
             'keytype', 'kind',
-            'label', 'lang', 'language', 'list', 'loop', 'low',
+            'label', 'lang', 'language', 'list', 'loading', 'loop', 'low',
             'max', 'maxlength', 'media', 'method', 'min', 'mozallowfullscreen', 'multiple',
             'muted',
             'name', 'novalidate',
@@ -1710,6 +1711,14 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
         const container = document.createElement('div')
         container.innerHTML = data
         _.forEach(container.querySelectorAll('img'), (image: HTMLImageElement) => {
+            const legacyImage = image.hasAttribute('data-stratus-src') || image.hasAttribute('stratus-src')
+            if (image.hasAttribute('data-stratus-placeholder') || (nativeEditorImagesEnabled() && !legacyImage)) {
+                // Preserve native sources through both editor hydration and persistence.
+                // Existing legacy HTML stays on its compatibility path until the database audit.
+                normalizeNativeEditorImage(image)
+                this.ensureImageRatioStyle(image)
+                return
+            }
             const source = image.getAttribute('data-src') || image.getAttribute('src')
             if (!source || source.indexOf('data:image') === 0) {
                 return

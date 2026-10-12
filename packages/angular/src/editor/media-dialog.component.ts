@@ -1,3 +1,4 @@
+import {createNativeEditorImage, nativeEditorImagesEnabled} from './native-image'
 // Angular Core
 import {
     // ChangeDetectionStrategy,
@@ -283,10 +284,14 @@ export class MediaDialogComponent extends ResponsiveComponent implements OnInit 
             }
         }
         if (_.startsWith(media.mime, 'image')) {
-            const imageSrc = media._thumbnailUrl || media.file
-            if (!imageSrc || (media.service === 'directLink' && !media.file)) {
+            const nativeImages = nativeEditorImagesEnabled()
+            const imageSrc = media._thumbnailUrl || media.file || (nativeImages && media.service === 'directLink' ? media.url : '')
+            if (!imageSrc || (!nativeImages && media.service === 'directLink' && !media.file)) {
                 console.warn(`media-dialog: unable to determine image source for media id: ${media.id}`)
                 return null
+            }
+            if (nativeImages) {
+                return {html: createNativeEditorImage(media, imageSrc).outerHTML}
             }
             const alt = _.escape(media.name || media.filename || '')
             const style = this.getImageRatioStyle(media)
