@@ -1,32 +1,63 @@
-@medium-grey-color: #c5c5c5;
 sa-stripe-payment-method-selector,
 .sa-stripe-payment-method-selector-select-override {
   [hidden] {
-    /* full hide */
     display: none !important;
   }
-  /* select-override.mat-select is for controlling select popup options */
   &.mat-select-panel {
+    min-width: 460px !important; /* keeps each option on one line */
     max-height: 50vh;
     .mat-option {
       height: unset;
-      padding: 0 3px;
-      &.current-selection {
-        border-width: 2px;
-        border-color: @medium-grey-color;
-        border-style: dashed;
+      padding: 12px 16px;
+      line-height: normal;
+      border-bottom: 1px solid #eee;
+    }
+    .mat-option-text {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    sa-stripe-payment-method-item {
+      flex: 1;
+    }
+    .option-radio {
+      flex: none;
+      box-sizing: border-box;
+      width: 16px;
+      height: 16px;
+      border: 2px solid #999;
+      border-radius: 50%;
+      &.checked {
+        border-color: #ff7552;
+        background: radial-gradient(#ff7552 45%, #fff 50%);
       }
-      &.remove-selection button {
-        /* center the deselect button */
-        display: table;
-        margin: 3px auto;
+    }
+    .panel-actions {
+      background: #fafafa;
+      border-bottom: none;
+      sa-stripe-setup-intent {
+        margin: 0 0 0 auto;
+      }
+      button {
+        padding: 0;
+        font: bold 13px 'Roboto Condensed', sans-serif;
+        text-transform: uppercase;
+        color: #666;
+        background: none;
+        border: none;
+        box-shadow: none;
+        cursor: pointer;
+      }
+      sa-stripe-setup-intent button {
+        color: #ff7552;
+        &::before {
+          content: '+ ';
+        }
       }
     }
   }
-  .payment-selected.mat-form-field-appearance-legacy.mat-focused .mat-form-field-underline .mat-form-field-ripple,
-  .payment-selected.mat-form-field-appearance-legacy .mat-form-field-underline {
-    transition: none;
-    background-color: initial;
+  mat-form-field {
+    min-width: 340px;
   }
   .no-results {
     text-align: center;
@@ -41,18 +72,15 @@ sa-stripe-payment-method-selector,
   }
 }
 
-/* displayMode 'cards': every payment method as a card with one aligned action row underneath.
-   Up to 3 equal columns that are never narrower than @card-min-width; every card fills its column at the card ratio,
-   so all cards are always the same size and never clip. */
+/* displayMode 'cards': up to 3 equal columns; each card fills its column at the card ratio */
 @card-min-width: 240px;
-/* Keeps a card card-sized when a column is wide (one column on phones and tablets) */
 @card-max-width: 340px;
 @card-ratio: 1.586;
 @card-gap: 28px;
 @card-accent-color: #ff7552;
 sa-stripe-payment-method-selector .payment-method-cards {
   display: grid;
-  /* Escaped so Less passes max()/calc() to the browser instead of evaluating them */
+  /* Escaped so Less doesn't evaluate max()/calc() */
   grid-template-columns: ~"repeat(auto-fill, minmax(max(@{card-min-width}, calc((100% - 2 * @{card-gap}) / 3)), 1fr))";
   gap: @card-gap;
   .payment-method-card {
@@ -69,8 +97,7 @@ sa-stripe-payment-method-selector .payment-method-cards {
       aspect-ratio: @card-ratio;
       .card-row .name {
         display: block;
-        /* Leave room for the brand logo */
-        max-width: calc(100% - 70px);
+        max-width: calc(100% - 70px); /* room for the brand logo */
         padding-right: 0;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -116,10 +143,12 @@ sa-stripe-payment-method-selector .payment-method-cards {
     background: #222;
     border: none;
     border-radius: 2px;
+    &:hover:not(:disabled) {
+      background: #555;
+    }
   }
   .text-button {
     padding: 0;
-    /* #666 on white is ~5.7:1 (WCAG AA) */
     color: #666;
     background: none;
     border: none;

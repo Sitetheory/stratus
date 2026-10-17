@@ -12,20 +12,17 @@
             [paymentMethodApiPath]="paymentMethodApiPath"
             [addCardButtonText]="addCardButtonText"
     ></sa-stripe-setup-intent>
-    <mat-form-field
-            [hidden]="!collection.completed || collection.pending || collection.models.length === 0"
-            style="width: 100%;" [class.payment-selected]="form.controls[fieldName].value"
-    >
+    <mat-form-field appearance="outline" [hidden]="!collection.completed || collection.pending || collection.models.length === 0">
         <mat-label [textContent]="form.controls[fieldName].value ? 'Payment Method' : selectCardButtonText"></mat-label>
         <mat-select
                 #paymentSelect
+                disableOptionCentering
                 [panelClass]="'sa-stripe-payment-method-selector-select-override'"
                 formControlName="{{fieldName}}"
                 [compareWith]="objectComparisonFunction"
         >
             <mat-select-trigger>
-                <sa-stripe-payment-method-item *ngIf="form.controls[fieldName].value" [(model)]="form.controls[fieldName].value" [templateStyle]="selectedTemplateStyle"></sa-stripe-payment-method-item>
-                <!--{{form.controls.dataNumber.value && form.controls.dataNumber.value.data ? form.controls.dataNumber.value.data.id : 'Not Selected'}}-->
+                <sa-stripe-payment-method-item *ngIf="form.controls[fieldName].value" [(model)]="form.controls[fieldName].value" templateStyle="compact"></sa-stripe-payment-method-item>
             </mat-select-trigger>
             <mat-option
                     class="no-results"
@@ -35,30 +32,16 @@
                 No Payment Method on file.
             </mat-option>
             <mat-option
-                    class="current-selection"
-                    *ngIf="form.controls[fieldName].value"
-                    [disabled]="true"
-            >
-                Current Method
-                <sa-stripe-payment-method-item [(model)]="form.controls[fieldName].value"></sa-stripe-payment-method-item>
-            </mat-option>
-            <mat-option
-                    *ngFor="let paymentMethod of collection.models"
+                    *ngFor="let paymentMethod of cardModels()"
                     [value]="paymentMethod"
                     [disabled]="isPMExpired(paymentMethod)"
             >
-                <sa-stripe-payment-method-item [(model)]="paymentMethod" [editable]="true"></sa-stripe-payment-method-item>
+                <span class="option-radio" [class.checked]="isCurrent(paymentMethod)"></span>
+                <sa-stripe-payment-method-item [(model)]="paymentMethod" [editable]="true" [current]="isCurrent(paymentMethod)" templateStyle="compact"></sa-stripe-payment-method-item>
             </mat-option>
-            <mat-option
-                    class="remove-selection"
-                    *ngIf="form.controls[fieldName].value"
-            >
-                <button mat-raised-button>Deselect Payment Method</button>
-            </mat-option>
-            <mat-option
-                    [hidden]="!collection.completed || collection.pending"
-                    [disabled]="true"
-            >
+            <mat-option class="panel-actions" [hidden]="!collection.completed || collection.pending" [disabled]="true">
+                <button type="button" class="deselect-button" *ngIf="form.controls[fieldName].value"
+                        (click)="form.controls[fieldName].setValue(null); paymentSelect.close()">Deselect Payment Method</button>
                 <sa-stripe-setup-intent
                         data-detailed-billing-info="true"
                         [defaultBillingInfo]="defaultBillingInfo"
@@ -80,34 +63,21 @@
                     [class.expired]="isPMExpired(paymentMethod)"
             >
                 <sa-stripe-payment-method-item #paymentMethodItem [(model)]="paymentMethod"></sa-stripe-payment-method-item>
+                <!-- Setting the form control saves the same way as choosing a dropdown option -->
                 <div class="payment-method-card-actions">
-                    <span class="payment-method-card-primary">
-                        <span class="current-method" *ngIf="isCurrent(paymentMethod)">&#10003; <span [textContent]="currentMethodText"></span></span>
-                        <button
-                                *ngIf="!isCurrent(paymentMethod) && !isPMExpired(paymentMethod)"
-                                type="button"
-                                class="select-button"
-                                [disabled]="disabled && disabled !== 'false'"
-                                (click)="selectPaymentMethod(paymentMethod, $event)"
-                                [textContent]="selectButtonText"
-                        ></button>
+                    <span>
+                        <span class="current-method" *ngIf="isCurrent(paymentMethod)">&#10003; Current Method</span>
+                        <button type="button" class="select-button" *ngIf="!isCurrent(paymentMethod) && !isPMExpired(paymentMethod)"
+                                [disabled]="form.controls[fieldName].disabled"
+                                (click)="form.controls[fieldName].setValue(paymentMethod)">Select</button>
                     </span>
                     <span class="payment-method-card-secondary">
-                        <button
-                                *ngIf="isCurrent(paymentMethod)"
-                                type="button"
-                                class="text-button deselect-button"
-                                [disabled]="disabled && disabled !== 'false'"
-                                (click)="selectPaymentMethod(null, $event)"
-                                [textContent]="deselectButtonText"
-                        ></button>
-                        <button
-                                type="button"
-                                class="text-button delete-button"
+                        <button type="button" class="text-button" *ngIf="isCurrent(paymentMethod)"
+                                [disabled]="form.controls[fieldName].disabled"
+                                (click)="form.controls[fieldName].setValue(null)">Deselect</button>
+                        <button type="button" class="text-button"
                                 [disabled]="!paymentMethod.completed || paymentMethod.pending"
-                                (click)="paymentMethodItem.deletePM($event)"
-                                [textContent]="deleteButtonText"
-                        ></button>
+                                (click)="paymentMethodItem.deletePM($event)">Delete</button>
                     </span>
                 </div>
             </div>

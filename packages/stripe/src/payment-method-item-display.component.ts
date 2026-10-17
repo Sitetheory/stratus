@@ -65,12 +65,8 @@ export class StripePaymentMethodItemDisplayComponent extends StripeComponent imp
      * On load, attempt to prepare and render the Card element
      */
     async ngOnInit() {
-        if (
-            this.type &&
-            this.name &&
-            this.last4 &&
-            this.status
-        ) {
+        // Name and status are optional (cards can be saved without a billing name; status 0 is valid)
+        if (this.type && this.last4) {
             this.model = new Model()
             this.model.data.type = this.type
             this.model.data.name = this.name
@@ -97,9 +93,6 @@ export class StripePaymentMethodItemDisplayComponent extends StripeComponent imp
             console.warn(`${this.uid} was missing data. not initializing`)
             if (!this.type) {
                 console.warn(`${this.uid} was missing "type". Add with data-type="card"`)
-            }
-            if (!this.name) {
-                console.warn(`${this.uid} was missing "name". Add with data-name="My Name"`)
             }
             if (!this.last4) {
                 console.warn(`${this.uid} was missing "last4". Add with data-last-4="1234"`)

@@ -62,13 +62,8 @@ export class StripePaymentMethodSelectorComponent extends StripeListComponent im
     // Component Attributes
     @Input() addCardButtonText: string = 'Add Payment Method'
     @Input() selectCardButtonText: string = 'Select Default Payment Method'
-    @Input() selectedTemplateStyle = 'default'
-    // 'select' (default) renders the dropdown. 'cards' renders every payment method as a visible card with its actions.
+    // 'cards' shows every payment method as a card with its actions instead of the dropdown
     @Input() displayMode: 'select' | 'cards' = 'select'
-    @Input() selectButtonText: string = 'Select'
-    @Input() deselectButtonText: string = 'Deselect'
-    @Input() deleteButtonText: string = 'Delete'
-    @Input() currentMethodText: string = 'Current Method'
     @Input() disabled: boolean | string = false // inputs are strings..
     @Input() property: string
     @Input() detailedBillingInfo?: boolean
@@ -452,32 +447,14 @@ export class StripePaymentMethodSelectorComponent extends StripeListComponent im
         return paymentMethod.data.exp_month < month
     }
 
-    /**
-     * Card mode display order: usable cards first, expired cards last, otherwise keeping the API order.
-     * Display only; the collection itself is not reordered.
-     */
+    // Display order: current card first, expired cards last (stable sort keeps the API order otherwise)
     cardModels(): Model[] {
-        const models = (this.collection.models || []) as Model[]
-        return [
-            ...models.filter((paymentMethod) => !this.isPMExpired(paymentMethod)),
-            ...models.filter((paymentMethod) => this.isPMExpired(paymentMethod))
-        ]
+        const rank = (pm: Model) => this.isCurrent(pm) ? 0 : this.isPMExpired(pm) ? 2 : 1
+        return [...(this.collection.models as Model[])].sort((a, b) => rank(a) - rank(b))
     }
 
     isCurrent(paymentMethod: Model): boolean {
         return this.objectComparisonFunction(paymentMethod, this.form.get(this.fieldName).value)
-    }
-
-    /**
-     * Card mode equivalent of choosing a dropdown option. Setting the form control runs the same valueChanges
-     * subscription as the dropdown, so selecting (or deselecting with null) saves the same way.
-     */
-    selectPaymentMethod(paymentMethod: Model | null, ev?: any) {
-        if (ev) {
-            ev.preventDefault()
-        }
-        this.form.get(this.fieldName).setValue(paymentMethod)
-        this.refresh().then()
     }
 
     selectorListClose(ev?: any) {
