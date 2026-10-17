@@ -144,8 +144,7 @@
                             <div class="stat-label">
                                 <div class="stat-border-horizontal"></div>
                                 Lot
-                                <span data-ng-if="::model.data.LotSizeAcres">Acres</span>
-                                <span data-ng-if="::!model.data.LotSizeAcres" data-ng-bind="::model.data.LotSizeUnits || 'SqFt'"></span>
+                                <span data-ng-bind="::model.data.LotSizeSquareFeet ? 'SqFt' : model.data.LotSizeArea ? (model.data.LotSizeUnits || 'SqFt') : 'Acres'"></span>
                             </div>
                         </div>
                     </div>

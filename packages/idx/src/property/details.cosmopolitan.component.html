@@ -99,7 +99,7 @@
                         </div>
                         <div class="big-ass-stat lot"
                              data-ng-if="::(model.data.LotSizeSquareFeet && model.data.LotSizeSquareFeet > 0) || (model.data.LotSizeArea && model.data.LotSizeArea > 0) || (model.data.LotSizeAcres && model.data.LotSizeAcres > 0)">
-                            <span class="stat-value" data-ng-bind="::(model.data.LotSizeSquareFeet || model.data.LotSizeArea || model.data.LotSizeAcres) | number"></span><span class="stat-label">Lot <span data-ng-if="::model.data.LotSizeAcres">Acres</span><span data-ng-if="::!model.data.LotSizeAcres" data-ng-bind="::model.data.LotSizeUnits || 'SqFt'"></span></span>
+                            <span class="stat-value" data-ng-bind="::(model.data.LotSizeSquareFeet || model.data.LotSizeArea || model.data.LotSizeAcres) | number"></span><span class="stat-label">Lot <span data-ng-bind="::model.data.LotSizeSquareFeet ? 'SqFt' : model.data.LotSizeArea ? (model.data.LotSizeUnits || 'SqFt') : 'Acres'"></span></span>
                         </div>
                     </div>
                 </div>
