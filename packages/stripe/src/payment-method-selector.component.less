@@ -72,10 +72,10 @@ sa-stripe-payment-method-selector,
   }
 }
 
-/* displayMode 'cards': up to 3 equal columns (min 240px); each card fills its column at the card ratio */
+/* displayMode 'cards': equal columns (min 240px); each card fills its column at the card ratio */
 sa-stripe-payment-method-selector .payment-method-cards {
   display: grid;
-  grid-template-columns: ~"repeat(auto-fill, minmax(max(240px, calc((100% - 56px) / 3)), 1fr))"; /* escaped so Less doesn't evaluate max()/calc() */
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
   gap: 28px;
   .payment-method-card {
     min-width: 0;
