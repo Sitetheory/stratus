@@ -37,6 +37,7 @@ interface SubSectionOptionItem {
     // Only used for booleans. If value is false text is empty (''), hide the element. Enabled by default
     hideEmpty?: false
     hide?: true, // Only to be used by this component to forcible hide this element at all times (set with hideEmpty)
+    hideIfField?: string[], // Hide this element when any of these Fields has a value (e.g. a duplicate in another unit)
     hideName?: boolean, // Hide the field name from view
     html?: boolean // Process the field as html (DANGEROUS)
 }
@@ -95,7 +96,9 @@ Stratus.Components.IdxPropertyDetailsSubSection = {
                     $scope.model.data[item] !== '0' && // ensure we skip blanks or empty sections that can appear
                     !isString($scope.items[item]) // skip SubSectionOptionItems that are just a string
                 ) {
-                    if (!(
+                    if (get($scope.items[item], 'hideIfField', []).some((field: string) => $scope.model.data[field])) {
+                        ($scope.items[item] as SubSectionOptionItem).hide = true
+                    } else if (!(
                         $scope.model.data[item] === false &&
                         get($scope.items[item], 'false') === ''
                     )) {
