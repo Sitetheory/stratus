@@ -72,20 +72,14 @@ sa-stripe-payment-method-selector,
   }
 }
 
-/* displayMode 'cards': up to 3 equal columns; each card fills its column at the card ratio */
-@card-min-width: 240px;
-@card-max-width: 340px;
-@card-ratio: 1.586;
-@card-gap: 28px;
-@card-accent-color: #ff7552;
+/* displayMode 'cards': up to 3 equal columns (min 240px); each card fills its column at the card ratio */
 sa-stripe-payment-method-selector .payment-method-cards {
   display: grid;
-  /* Escaped so Less doesn't evaluate max()/calc() */
-  grid-template-columns: ~"repeat(auto-fill, minmax(max(@{card-min-width}, calc((100% - 2 * @{card-gap}) / 3)), 1fr))";
-  gap: @card-gap;
+  grid-template-columns: ~"repeat(auto-fill, minmax(max(240px, calc((100% - 56px) / 3)), 1fr))"; /* escaped so Less doesn't evaluate max()/calc() */
+  gap: 28px;
   .payment-method-card {
     min-width: 0;
-    max-width: @card-max-width;
+    max-width: 340px;
     sa-stripe-payment-method-item {
       display: block;
     }
@@ -94,7 +88,7 @@ sa-stripe-payment-method-selector .payment-method-cards {
       width: 100%;
       min-width: 0;
       max-width: none;
-      aspect-ratio: @card-ratio;
+      aspect-ratio: 1.586;
       .card-row .name {
         display: block;
         max-width: calc(100% - 70px); /* room for the brand logo */
@@ -104,7 +98,7 @@ sa-stripe-payment-method-selector .payment-method-cards {
       }
     }
     &.current sa-stripe-payment-method-item .payment-method-container {
-      box-shadow: 0 0 0 3px @card-accent-color;
+      box-shadow: 0 0 0 3px #ff7552;
     }
     &.expired sa-stripe-payment-method-item .payment-method-container {
       opacity: .6;
@@ -126,7 +120,7 @@ sa-stripe-payment-method-selector .payment-method-cards {
     gap: 16px;
   }
   .current-method {
-    color: @card-accent-color;
+    color: #ff7552;
   }
   button {
     font: inherit;
@@ -163,7 +157,7 @@ sa-stripe-payment-method-selector .payment-method-cards {
       button {
         box-sizing: border-box;
         width: 100%;
-        aspect-ratio: @card-ratio;
+        aspect-ratio: 1.586;
         color: #444;
         background: transparent;
         border: 2px dashed #bbb;
@@ -180,7 +174,7 @@ sa-stripe-payment-method-selector .payment-method-cards {
           font-size: 34px;
           font-weight: normal;
           line-height: 1;
-          color: @card-accent-color;
+          color: #ff7552;
         }
         &:hover:not(:disabled) {
           background: #fff;
