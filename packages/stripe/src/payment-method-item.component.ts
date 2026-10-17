@@ -44,6 +44,7 @@ export class StripePaymentMethodItemComponent extends StripeComponent implements
     @Input() model: Model
     @Input() editable = false
     @Input() templateStyle = 'default'
+    @Input() current = false
 
     // Registry Attributes
     @Input() urlRoot = '/Api'
