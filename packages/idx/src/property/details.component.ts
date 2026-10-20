@@ -383,7 +383,8 @@ Stratus.Components.IdxPropertyDetails = {
                             comma: true,
                             appendField: 'LotSizeUnits',
                             appendFieldBackup: 'LivingAreaUnits',
-                            append: ' SqFt'
+                            append: ' SqFt',
+                            hideIfField: ['LotSizeSquareFeet', 'LotSizeAcres']
                         },
                         HorseYN: {name: 'Horse Property', false: ''}
                     }
@@ -889,7 +890,7 @@ Stratus.Components.IdxPropertyDetails = {
                         LotFeatures: 'Lot Features',
                         LotSizeAcres: {name: 'Lot Size', append: ' Acres', comma: true},
                         LotSizeSquareFeet: {name: 'Lot Size', append: ' SqFt', comma: true},
-                        LotSizeArea: {name: 'Lot Size', comma: true},
+                        LotSizeArea: {name: 'Lot Size', comma: true, hideIfField: ['LotSizeSquareFeet', 'LotSizeAcres']},
                         LotSizeDimensions: 'LotSizeDimensions',
 
                         NumberOfBuildings: {name: 'Number of Buildings', comma: true},
