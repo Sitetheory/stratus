@@ -1,32 +1,63 @@
-@medium-grey-color: #c5c5c5;
 sa-stripe-payment-method-selector,
 .sa-stripe-payment-method-selector-select-override {
   [hidden] {
-    /* full hide */
     display: none !important;
   }
-  /* select-override.mat-select is for controlling select popup options */
   &.mat-select-panel {
+    min-width: 460px !important; /* keeps each option on one line */
     max-height: 50vh;
     .mat-option {
       height: unset;
-      padding: 0 3px;
-      &.current-selection {
-        border-width: 2px;
-        border-color: @medium-grey-color;
-        border-style: dashed;
+      padding: 12px 16px;
+      line-height: normal;
+      border-bottom: 1px solid #eee;
+    }
+    .mat-option-text {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    sa-stripe-payment-method-item {
+      flex: 1;
+    }
+    .option-radio {
+      flex: none;
+      box-sizing: border-box;
+      width: 16px;
+      height: 16px;
+      border: 2px solid #999;
+      border-radius: 50%;
+      &.checked {
+        border-color: #ff7552;
+        background: radial-gradient(#ff7552 45%, #fff 50%);
       }
-      &.remove-selection button {
-        /* center the deselect button */
-        display: table;
-        margin: 3px auto;
+    }
+    .panel-actions {
+      background: #fafafa;
+      border-bottom: none;
+      sa-stripe-setup-intent {
+        margin: 0 0 0 auto;
+      }
+      button {
+        padding: 0;
+        font: bold 13px 'Roboto Condensed', sans-serif;
+        text-transform: uppercase;
+        color: #666;
+        background: none;
+        border: none;
+        box-shadow: none;
+        cursor: pointer;
+      }
+      sa-stripe-setup-intent button {
+        color: #ff7552;
+        &::before {
+          content: '+ ';
+        }
       }
     }
   }
-  .payment-selected.mat-form-field-appearance-legacy.mat-focused .mat-form-field-underline .mat-form-field-ripple,
-  .payment-selected.mat-form-field-appearance-legacy .mat-form-field-underline {
-    transition: none;
-    background-color: initial;
+  mat-form-field {
+    min-width: 340px;
   }
   .no-results {
     text-align: center;
@@ -37,6 +68,119 @@ sa-stripe-payment-method-selector,
     margin: 3px auto;
     button:hover {
       background-color: #f1f1f1;
+    }
+  }
+}
+
+/* displayMode 'cards': equal columns (min 240px); each card fills its column at the card ratio */
+sa-stripe-payment-method-selector .payment-method-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 28px;
+  .payment-method-card {
+    min-width: 0;
+    max-width: 340px;
+    sa-stripe-payment-method-item {
+      display: block;
+    }
+    sa-stripe-payment-method-item .payment-method-container {
+      box-sizing: border-box;
+      width: 100%;
+      min-width: 0;
+      max-width: none;
+      aspect-ratio: 1.586;
+      .card-row .name {
+        display: block;
+        max-width: calc(100% - 70px); /* room for the brand logo */
+        padding-right: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+    }
+    &.current sa-stripe-payment-method-item .payment-method-container {
+      box-shadow: 0 0 0 3px #ff7552;
+    }
+    &.expired sa-stripe-payment-method-item .payment-method-container {
+      opacity: .6;
+    }
+  }
+  .payment-method-card-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 36px;
+    margin-top: 12px;
+    font-family: 'Roboto Condensed', sans-serif;
+    font-weight: bold;
+    font-size: 13px;
+    text-transform: uppercase;
+  }
+  .payment-method-card-secondary {
+    display: flex;
+    gap: 16px;
+  }
+  .current-method {
+    color: #ff7552;
+  }
+  button {
+    font: inherit;
+    text-transform: inherit;
+    cursor: pointer;
+    &:disabled {
+      cursor: default;
+      opacity: .5;
+    }
+  }
+  .select-button {
+    padding: 8px 14px;
+    color: #fff;
+    background: #222;
+    border: none;
+    border-radius: 2px;
+    &:hover:not(:disabled) {
+      background: #555;
+    }
+  }
+  .text-button {
+    padding: 0;
+    color: #666;
+    background: none;
+    border: none;
+    &:hover:not(:disabled) {
+      color: #222;
+    }
+  }
+  .add-payment-method {
+    sa-stripe-setup-intent {
+      display: block;
+      margin: 0;
+      button {
+        box-sizing: border-box;
+        width: 100%;
+        aspect-ratio: 1.586;
+        color: #444;
+        background: transparent;
+        border: 2px dashed #bbb;
+        border-radius: 5px;
+        box-shadow: none;
+        font-family: 'Roboto Condensed', sans-serif;
+        font-weight: bold;
+        font-size: 15px;
+        text-transform: uppercase;
+        &::before {
+          content: '+';
+          display: block;
+          margin-bottom: 6px;
+          font-size: 34px;
+          font-weight: normal;
+          line-height: 1;
+          color: #ff7552;
+        }
+        &:hover:not(:disabled) {
+          background: #fff;
+          border-color: #999;
+        }
+      }
     }
   }
 }
