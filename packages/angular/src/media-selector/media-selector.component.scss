@@ -438,3 +438,16 @@ sa-internal-media-selector,
 .lowercase {
   text-transform: lowercase;
 }
+
+// Keep thumbnail pixels out of the drag and hover interaction layer.
+.selected-media-item .image-draggable {
+  position: relative;
+  .native-media-thumbnail {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    pointer-events: none;
+  }
+}

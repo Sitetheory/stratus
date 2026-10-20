@@ -74,3 +74,21 @@ const source = fs.readFileSync('packages/angular/src/editor/editor.component.ts'
 const allowlist = source.slice(source.indexOf('htmlAllowedAttrs:'), source.indexOf('htmlAllowedEmptyTags:'))
 for (const attribute of ['loading', 'decoding', 'srcset', 'sizes']) assert.ok(allowlist.includes(`'${attribute}'`))
 console.log('PASS editor native images: media insertion, repeated save/reopen, replacement, legacy hosts, legacy content, external/blob/data URLs, GIF/SVG, multiple images and removal')
+const migrated = {...media, dimensions:'4000,3000', imageDelivery:{outputs:[{width:200,url:'https://cdn.example/photo-xs.webp'},{width:1600,url:'https://cdn.example/photo-hq.webp'}]}}
+let migratedHtml=dialog.createEmbed(migrated).html
+for(let round=0;round<3;round++) migratedHtml=editor.normalizeOut(editor.normalizeIn(migratedHtml))
+const migratedImage=parse(migratedHtml).querySelector('img')
+assert.ok(migratedImage.srcset.includes('photo-hq.webp 1600w'))
+assert.ok(!migratedImage.srcset.includes('4000w'))
+assert.ok(migratedImage.getAttribute('src').includes('photo.jpg'))
+const uncapped=parse(dialog.createEmbed({...media,dimensions:'4000,3000'}).html).querySelector('img')
+assert.ok(!uncapped.srcset.includes('4000w'))
+const selector=methods('packages/angular/src/media-selector/media-selector.component.ts','MediaSelectorComponent',['getThumbnailSource','getThumbnailCandidates','retryThumbnail'])
+assert.equal(selector.getThumbnailCandidates(migrated),'https://cdn.example/photo-xs.webp 1x')
+assert.equal(selector.getThumbnailCandidates({...migrated,service:'directLink'}),null)
+assert.equal(selector.getThumbnailCandidates({...media}),null)
+assert.equal(selector.getThumbnailSource({bestImage:{thumb:'https://provider.example/poster.jpg'}}),'https://provider.example/poster.jpg')
+const preview=dom.window.document.createElement('img');preview.src='https://cdn.example/original.jpg';preview.srcset='https://cdn.example/broken.webp 1x'
+selector.retryThumbnail({target:preview});selector.retryThumbnail({target:preview})
+assert.equal(preview.hasAttribute('srcset'),false);assert.equal(preview.src,'https://cdn.example/original.jpg')
+console.log('PASS migrated editor save/reopen, 1600px cap, selector manifest selection and bounded retry')

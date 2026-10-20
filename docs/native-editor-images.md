@@ -70,3 +70,13 @@ publication verify the registry integrity, install the published version and
 pin only Sitetheory1.9. Sitetheory template PR3762 is already merged as232a290688.
 Cross-browser/persisted content results are tracked in that repository's audit.
 Integration/dependency rollout and cleanup remain pending; no production deploy.
+
+## Native delivery follow-up (October 20, 2026)
+
+Owner: native image migration chat. Workspace `/Users/chadwickmeyer/Sites/stratus`, branch `feature/native-media-delivery`; canonical return branch `master`. No additional checkout or archive.
+
+New native rich-text insertions prefer completed imageDelivery manifests, preserve original src for fallback and cap automatic candidates at1600px even before migration. Saved crops are deliberately not inherited into arbitrary rich-text placements. Existing saved HTML and old-host legacy writer remain unchanged.
+
+Modern media selector tiles use the smallest available delivery candidate up to600px with1x density, keep provider poster fallback chains, and remove srcset once on error. No page adapter dependency or photographic crop selection. Non-draggable pointer-transparent images preserve tile ownership of drag/hover interactions.
+
+Validation: extended test:editor-native-images covers migrated save/reopen, large-original cap, selector manifest/provider selection and bounded fallback. Full package build and scoped dev-chad1.9 staging pending. Scope/integration/deployment/cleanup remain separate: source PR targets upstream master; npm release and Sitetheory1.9 dependency pin are required after review before normal release deployment. Keep version0.13.11 until release preparation; do not overwrite its registry archive.
