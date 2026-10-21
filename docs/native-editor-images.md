@@ -107,3 +107,25 @@ only; production and npm0.13.11 unchanged. Scope implementation complete;
 integration/release pending PR approval and new Angular package publication.
 Authenticated end-to-end CMS testing remains pending. Clean canonical return to
 master after merge/release, not while the source PR is active.
+
+
+## 0.13.12 Release Preparation
+
+Owner: native image migration chat. Reuse `/Users/chadwickmeyer/Sites/stratus`
+on `release/angular-native-delivery`; canonical return branch is `master`.
+Source PR881 is merged as `707465bf`; its build and Codacy checks passed.
+The Angular package and root local-package lock entry advance to 0.13.12.
+No application source changes are included in this release preparation.
+
+Release sequence: validate the full test suite and packed artifacts, review
+and merge the release metadata, then publish the new package. Verify registry
+integrity before updating Sitetheory 1.9 root/browser dependencies and lockfile.
+Do not update the Sitetheory-Server web branch pin; that integration is deferred
+until the other development workspaces are ready.
+
+Validation: full `npm test` passes. Packed 0.13.12 contains all ten required
+artifacts, byte-identical to the tested build; archive removed after inspection.
+
+Scope: release preparation complete. Upstream integration,
+registry publication, dependency integration and live verification are pending.
+Keep the active checkout until release verification and cleanup are complete.
