@@ -29,12 +29,21 @@ export function createNativeEditorImage(media: {[key: string]: any}, source: str
             const candidates = Object.entries({xs: 200, s: 400, m: 600, l: 800, xl: 1200, hq: 1600})
                 .filter(([, size]) => size <= width)
                 .map(([suffix, size]) => `${base}-${suffix}.${extension}${cache} ${size}w`)
-            if (width > 1600) candidates.push(`${source} ${width}w`)
+
             if (candidates.length) {
                 image.setAttribute('srcset', candidates.join(', '))
                 image.setAttribute('sizes', 'auto, 100vw')
             }
         }
+    }
+    // Completed delivery manifests are additive; the original remains the retry source.
+    // Do not serialize crop defaults into rich text, whose placement can change later.
+    const delivery = media.imageDelivery?.outputs
+    if (library && Array.isArray(delivery) && delivery.length && delivery.every((output: any) =>
+        Number.isInteger(output.width) && output.width > 0 && output.width <= 1600 &&
+        typeof output.url === 'string' && /^https:\/\/[^\s,]+$/.test(output.url))) {
+        image.setAttribute('srcset', delivery.map((output: any) => `${output.url} ${output.width}w`).join(', '))
+        image.setAttribute('sizes', 'auto, 100vw')
     }
     image.setAttribute('src', source)
     image.setAttribute('alt', media.name || media.filename || '')

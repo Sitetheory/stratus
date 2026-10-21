@@ -90,7 +90,12 @@
                                     && !_.get(selectedModel, 'mime').includes('application')
                                 )
                              }"
-                             [ngStyle]="{'background': 'url(' + (_.get(selectedModel, '_thumbnailUrl') || _.get(selectedModel, 'bestImage.thumb') || _.get(selectedModel, 'meta.thumbnail_small') || (Stratus.BaseUrl + 'sitetheorycore/images/shapeholder-square.png') || '') + ') no-repeat center center', 'background-size': 'cover'}">
+                             >
+                            <img *ngIf="getThumbnailSource(selectedModel)" class="native-media-thumbnail"
+                                 [src]="getThumbnailSource(selectedModel)"
+                                 [attr.srcset]="getThumbnailCandidates(selectedModel)"
+                                 (error)="retryThumbnail($event)" loading="lazy" decoding="async"
+                                 alt="" aria-hidden="true" draggable="false">
                             <!-- TODO: Possibly avoid the _.get(selectedModel, '_fileTypeIcon') evaluation in the data above and just have the right class styles appear.  It depends how it looks when the classes are properly set. -->
                             <img class="shapeholder" [src]="Stratus.BaseUrl + 'sitetheorycore/images/shapeholder-square.png'">
 

@@ -547,6 +547,28 @@ export class MediaSelectorComponent extends RootComponent { // implements OnInit
         return name.split('.').pop().trim().toLowerCase()
     }
 
+    getThumbnailSource(model: any): string {
+        return _.get(model, '_thumbnailUrl') || _.get(model, 'bestImage.thumb') || _.get(model, 'meta.thumbnail_small') || ''
+    }
+
+    getThumbnailCandidates(model: any): string|null {
+        // Tiny selector tiles use one bounded candidate; never inherit page crops or
+        // invent derivatives for a provider URL. An absent manifest keeps the poster.
+        const outputs = _.get(model, 'imageDelivery.outputs')
+        if (!model?.prefix || model.service || !String(model.mime || '').startsWith('image/') ||
+            !Array.isArray(outputs)) return null
+        const candidates = outputs.filter(output => Number.isInteger(output.width) && output.width > 0 &&
+            output.width <= 600 && typeof output.url === 'string' && /^https:\/\/[^\s,]+$/.test(output.url))
+            .sort((a, b) => a.width - b.width)
+        return candidates.length ? `${candidates[0].url} 1x` : null
+    }
+
+    retryThumbnail(event: Event): void {
+        // Remove only responsive candidates; a failed original is not retried forever.
+        const image = event.target as HTMLImageElement
+        if (image.hasAttribute('srcset')) image.removeAttribute('srcset')
+    }
+
     getMediaGraphicExtension(model: any): string {
         const extension = this.getMediaExtension(model)
         const normalizedExtension = mediaTypeGraphicAliases[extension] || extension
