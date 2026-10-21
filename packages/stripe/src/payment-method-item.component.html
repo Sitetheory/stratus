@@ -1,3 +1,13 @@
+<div class="payment-method-compact" *ngIf="templateStyle === 'compact'; else cardTile" [class.expired]="isExpired()">
+    <img class="compact-logo" *ngIf="model.data.brand" [src]="getCardLogoUrl(model.data.brand)" [alt]="model.data.brand">
+    <span>{{ model.data.bank_name || model.data.brand }} &bull;&bull;&bull;&bull; {{ model.data.last4 }}</span>
+    <span class="compact-expiration" *ngIf="model.data.exp_month" [class.expiring]="isExpiring()">Expires {{ model.data.exp_month }}/{{ model.data.exp_year }}</span>
+    <span class="compact-badge current" *ngIf="current">Current</span>
+    <span class="compact-badge expired-label" *ngIf="isExpired()">Expired</span>
+    <button type="button" *ngIf="isUnverified()" (click)="verifyPaymentMethod($event)">Verify</button>
+    <button type="button" class="delete-button" *ngIf="editable" [disabled]="!model.completed || model.pending" (click)="deletePM($event)">Delete</button>
+</div>
+<ng-template #cardTile>
 <div
         class="payment-method-container"
         [attr.id]="elementId"
@@ -53,3 +63,4 @@
         <img [src]="getCardLogoUrl(model.data.brand)" [alt]="model.data.brand" />
     </div>
 </div>
+</ng-template>

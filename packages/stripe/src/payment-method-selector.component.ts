@@ -62,7 +62,8 @@ export class StripePaymentMethodSelectorComponent extends StripeListComponent im
     // Component Attributes
     @Input() addCardButtonText: string = 'Add Payment Method'
     @Input() selectCardButtonText: string = 'Select Default Payment Method'
-    @Input() selectedTemplateStyle = 'default'
+    // 'cards' shows every payment method as a card with its actions instead of the dropdown
+    @Input() displayMode: 'select' | 'cards' = 'select'
     @Input() disabled: boolean | string = false // inputs are strings..
     @Input() property: string
     @Input() detailedBillingInfo?: boolean
@@ -444,6 +445,16 @@ export class StripePaymentMethodSelectorComponent extends StripeListComponent im
         if (paymentMethod.data.exp_year < year) {return true}
         if (paymentMethod.data.exp_year > year) {return false}
         return paymentMethod.data.exp_month < month
+    }
+
+    // Display order: current card first, expired cards last (stable sort keeps the API order otherwise)
+    cardModels(): Model[] {
+        const rank = (pm: Model) => this.isCurrent(pm) ? 0 : this.isPMExpired(pm) ? 2 : 1
+        return [...(this.collection.models as Model[])].sort((a, b) => rank(a) - rank(b))
+    }
+
+    isCurrent(paymentMethod: Model): boolean {
+        return this.objectComparisonFunction(paymentMethod, this.form.get(this.fieldName).value)
     }
 
     selectorListClose(ev?: any) {
