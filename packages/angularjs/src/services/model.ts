@@ -235,6 +235,7 @@ export interface ModelOptions extends ModelBaseOptions {
     target?: string,
     targetSuffix?: string,
     toast?: boolean,
+    errorToast?: boolean, // Disable where errors are already rendered inline.
     type?: string,
     urlRoot?: string,
     urlSync?: boolean,
@@ -261,6 +262,7 @@ export class Model<T = LooseObject> extends ModelBase<T> {
     manifest = false
     stagger = false
     toast = true
+    errorToast = true
     identifier?: string | number = null
     urlRoot = '/Api'
     targetSuffix?: string = null
@@ -1045,7 +1047,7 @@ export class Model<T = LooseObject> extends ModelBase<T> {
                     this.error = true
                     this.resetXHRFlags()
                     console.error('FETCH:', error)
-                    if (!this.toast) {
+                    if (!this.toast || !this.errorToast) {
                         reject(error)
                         return
                     }
@@ -1108,7 +1110,7 @@ export class Model<T = LooseObject> extends ModelBase<T> {
                     this.error = true
                     this.resetXHRFlags()
                     console.error('SAVE:', error)
-                    if (!this.toast) {
+                    if (!this.toast || !this.errorToast) {
                         reject(error)
                         return
                     }
@@ -1445,7 +1447,7 @@ export class Model<T = LooseObject> extends ModelBase<T> {
                     this.error = true
                     this.resetXHRFlags()
                     console.error('DESTROY:', error)
-                    if (!this.toast) {
+                    if (!this.toast || !this.errorToast) {
                         reject(error)
                         return
                     }
