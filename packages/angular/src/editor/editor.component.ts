@@ -318,6 +318,7 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
     dataChangeLog: string[] = []
     incomingData = ''
     outgoingData = ''
+    pendingLocalValue: string|null = null
 
     // Debounce Saving Controls
     debounceSave = true
@@ -1266,36 +1267,7 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             // debounceTime(250),
             debounce(() => timer(250)),
             catchError(this.handleError)
-        ).subscribe(evt => {
-            // While the editor is focused, we skip debounce updates to avoid cursor glitches
-            if (this.focused) {
-                if (this.dev) {
-                    console.warn(`[subscriber] waiting on updates due to focus on ${this.uid}`)
-                }
-                return
-            }
-            // TODO: This may need to only work on blur and not focus, unless it is the initialization value
-            const dataControl = this.form.get('dataString')
-            if (dataControl.value === evt) {
-                this.dataReady = true
-                this.froalaLoading = false
-                this.ref.detectChanges()
-                // In the case of data being edited by the code view or something else,
-                // we need to refresh the UI, as long as it has been initialized.
-                if (this.initialized) {
-                    this.refresh()
-                    setTimeout(() => this.ensureFroalaHydration(false), 1)
-                }
-                return
-            }
-            dataControl.patchValue(evt)
-            this.dataReady = true
-            this.froalaLoading = false
-            this.ref.detectChanges()
-            setTimeout(() => this.ensureFroalaHydration(false), 1)
-            // Note: A refresh may be necessary if things become less responsive
-            this.refresh()
-        })
+        ).subscribe(evt => this.applyIncomingValue(evt))
 
         const hydrationFallbackValue = this.form.get('dataString').value
         setTimeout(() => {
@@ -1319,6 +1291,38 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
         // console.info('constructor!');
     }
 
+    applyIncomingValue(evt: string) {
+        // A save response may arrive after blur but before the local save debounce.
+        // Keep pending input until modelSave has copied it into the model.
+        if (this.focused || this.pendingLocalValue !== null) {
+            if (this.dev) {
+                console.warn(`[subscriber] waiting on focused or pending local input on ${this.uid}`)
+            }
+            return
+        }
+        // TODO: This may need to only work on blur and not focus, unless it is the initialization value
+        const dataControl = this.form.get('dataString')
+        if (dataControl.value === evt) {
+            this.dataReady = true
+            this.froalaLoading = false
+            this.ref.detectChanges()
+            // In the case of data being edited by the code view or something else,
+            // we need to refresh the UI, as long as it has been initialized.
+            if (this.initialized) {
+                this.refresh()
+                setTimeout(() => this.ensureFroalaHydration(false), 1)
+            }
+            return
+        }
+        dataControl.patchValue(evt, {emitEvent: false})
+        this.dataReady = true
+        this.froalaLoading = false
+        this.ref.detectChanges()
+        setTimeout(() => this.ensureFroalaHydration(false), 1)
+        // Note: A refresh may be necessary if things become less responsive
+        this.refresh()
+    }
+
     ngOnInit() {
         this.initialized = true
         // Hoist Custom Classes to Froala Config
@@ -1333,6 +1337,12 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
 
         // console.info(`${moduleName}.ngOnInit`)
         const dataControl = this.form.get('dataString')
+        // Record local input synchronously, before the save debounce or an API
+        // response can hydrate the editor with an older value. Model hydration
+        // uses emitEvent:false and must never schedule an editor write.
+        dataControl.valueChanges.subscribe((value: string) => {
+            this.pendingLocalValue = value
+        })
         // This valueChanges field is an Event Emitter
         if (this.debounceSave) {
             // Pipe for Model Debounce
@@ -1434,6 +1444,11 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
     }
 
     modelSave(value: string) {
+        // Blur can follow a read-only focus, and a debounce can fire after blur
+        // already flushed the edit. Neither may write an old outgoing value.
+        if (this.debounceSave && this.pendingLocalValue === null) {
+            return
+        }
         if (!this.model) {
             console.warn('There is no model for sa-editor to save to', this)
             return
@@ -1480,6 +1495,8 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             this.property,
             this.normalizeOut(innerHTML || value)
         )
+
+        this.pendingLocalValue = null
 
         // Remove the changedExternal flag if using debounceSave
         if (this.debounceSave) {
