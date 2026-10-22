@@ -1444,6 +1444,11 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
     }
 
     modelSave(value: string) {
+        // Blur can follow a read-only focus, and a debounce can fire after blur
+        // already flushed the edit. Neither may write an old outgoing value.
+        if (this.debounceSave && this.pendingLocalValue === null) {
+            return
+        }
         if (!this.model) {
             console.warn('There is no model for sa-editor to save to', this)
             return

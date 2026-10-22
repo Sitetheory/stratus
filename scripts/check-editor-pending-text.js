@@ -6,7 +6,7 @@ const {test} = require('node:test')
 const source = fs.readFileSync('packages/angular/src/editor/editor.component.ts', 'utf8')
 const tree = ts.createSourceFile('editor.ts', source, ts.ScriptTarget.Latest, true)
 const editor = tree.statements.find(n => ts.isClassDeclaration(n) && n.name.text === 'EditorComponent')
-const methods = ['applyIncomingValue', 'modelSave'].map(name => editor.members.find(n => n.name?.getText(tree) === name).getText(tree))
+const methods = ['applyIncomingValue', 'modelSave', 'onBlur'].map(name => editor.members.find(n => n.name?.getText(tree) === name).getText(tree))
 const context = {exports: {}, setTimeout: fn => fn(), console}
 vm.runInNewContext(ts.transpileModule(`exports.Editor = class {${methods.join('\n')}}`, {compilerOptions:{target:ts.ScriptTarget.ES2020}}).outputText, context)
 function fixture() {
@@ -35,4 +35,17 @@ test('intentional clearing is protected and saved',()=>{
 test('clean model refresh hydrates without scheduling a write',()=>{
     const {editor,control}=fixture();editor.applyIncomingValue('<p>Server value</p>')
     assert.equal(control.value,'<p>Server value</p>');assert.equal(control.events,0)
+})
+
+test('focus and blur without input never writes an empty outgoing value',()=>{
+    const {editor}=fixture();editor.outgoingData=''
+    editor.onBlur({})
+    assert.equal(editor.model.value,undefined)
+})
+test('a late debounce after blur cannot replay an older edit',()=>{
+    const {editor}=fixture();editor.pendingLocalValue='new';editor.modelSave('new')
+    editor.applyIncomingValue('server normalized new')
+    editor.modelSave('new')
+    assert.equal(editor.form.get().value,'server normalized new')
+    assert.equal(editor.model.value,'new')
 })
