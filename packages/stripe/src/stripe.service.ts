@@ -3,6 +3,7 @@ import {RootComponent} from '@stratusjs/angular/core/root.component'
 import {isEmpty, isNil, isString, uniqueId} from 'lodash'
 import {Stratus} from '@stratusjs/runtime/stratus'
 import {Collection} from '@stratusjs/angularjs/services/collection'
+import {Model} from '@stratusjs/angularjs/services/model'
 import {LooseObject, safeUniqueId} from '@stratusjs/core/misc'
 import {
     Stripe, SetupIntent, ConfirmCardSetupData, StripeElements, StripeElement, StripeElementsOptionsClientSecret, StripeElementsOptionsMode,
@@ -30,7 +31,7 @@ export type StripeEmitter = (source: StripeComponent, ...variables: any) => any
 export type StripeEmitterInit = StripeEmitter & ((source: StripeComponent) => any)
 export type StripeEmitterCollectionUpdated = StripeEmitter & ((source: StripeListComponent, ...collection: [Collection]) => any)
 export type StripeEmitterPMCreated =
-    StripeEmitter & ((source: StripeListComponent, ...details: [PaymentMethodCreateParams.BillingDetails & {type:'card'|'ach'}]) => any)
+    StripeEmitter & ((source: StripeComponent, ...details: [Model]) => any)
 
 export type StripePaymentElementEvent =
     StripePaymentElementChangeEvent & {error: any} |

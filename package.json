@@ -7,7 +7,7 @@
     "test": "test"
   },
   "scripts": {
-    "test": "npm run build && npm run test:bundle-order && npm run test:carousel-images && npm run test:idx-details-template && npm run test:idx-property-filter && npm run test:idx-variable-sync && npm run test:editor-pending-text && npm run test:editor-defer && npm run test:editor-native-images && npm run test:model-error-toast && npm run lint",
+    "test": "npm run build && npm run test:bundle-order && npm run test:carousel-images && npm run test:idx-details-template && npm run test:idx-property-filter && npm run test:idx-variable-sync && npm run test:editor-pending-text && npm run test:editor-defer && npm run test:editor-native-images && npm run test:model-error-toast && npm run test:stripe-payment-selection && npm run lint",
     "build": "npm run compileCSS && npm run compileCoffee && npm run bundle && npm run dist && npm run compress",
     "bundle": "npm run bundle:rollup && npm run compileTypeScript",
     "bundle:rollup": "node_modules/.bin/gulp compileES6TypeScript && npm run rollup",
@@ -23,6 +23,7 @@
     "karma": "node_modules/.bin/karma start karma.conf.js --single-run",
     "mocha": "node_modules/.bin/mocha --recursive --reporter mochawesome --reporter-options reportDir=reports",
     "lint": "node_modules/.bin/gulp lint",
+    "test:stripe-payment-selection": "node scripts/check-stripe-payment-selection.js",
     "test:bundle-order": "node scripts/check-angular-bundle-order.js",
     "lint-deprecate": "node_modules/.bin/gulp lint && ng lint",
     "test:carousel-images": "node scripts/check-carousel-images.js",

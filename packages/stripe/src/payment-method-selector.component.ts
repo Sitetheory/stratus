@@ -272,41 +272,35 @@ export class StripePaymentMethodSelectorComponent extends StripeListComponent im
             this.refresh()
             this.selectorListClose()
         })
-        this.Stripe.on(
-            'Stripe',
-            'paymentMethodCreated',
-            (_source, details: [PaymentMethodCreateParams.BillingDetails & {type:'card'|'ach'}]) =>
-            {
-                // The Stripe components are saying there is a new card added, lets find and select it!
-                const newCardDetails = details[0]
-                // console.log('selector sees the new payment method!!!!', clone(newCardDetails))
-                if (
-                    !isEmpty(newCardDetails.type) &&
-                    !isEmpty(newCardDetails.name) &&
-                    !isEmpty(newCardDetails.email)
-                ) {
-                    const newPM =  this.collection.models.slice(-1)[0] as Model
-                    // console.log('checking last card in collection', newPM)
-                    // Let's double check that these match up
-                    if (
-                        newPM.get('type') === newCardDetails.type &&
-                        newPM.get('name') === newCardDetails.name &&
-                        newPM.get('email') === newCardDetails.email
-                    ) {
-                        // console.log('new card seems to be!!!!', newPM)
-                        this.valueChanged(newPM)
-                    }
-                }
+        this.Stripe.on('Stripe', 'paymentMethodCreated', (_source, details: [Model]) => {
+            this.selectCreatedPaymentMethod(details[0])
         })
 
         // console.log('inited selector, this is model', this.model)
     }
 
-    valueChanged(value?: Model) {
-        if (value) {
-            // Update the field to allow external apps to read
-            this.form.get(this.fieldNameId).setValue(value.get('id'))
+    selectCreatedPaymentMethod(saved: Model) {
+        if (!saved || !saved.get('id') || saved.get('status') !== 1) {
+            return
         }
+        const models = this.collection.models as Model[]
+        let selected = models.find(pm => pm.get('id') === saved.get('id'))
+        if (!selected) {
+            // The write response is authoritative even if a read replica is still catching up.
+            selected = saved
+            models.push(selected)
+        }
+        this.form.get(this.fieldName).setValue(selected)
+        this.refresh()
+    }
+
+    valueChanged(value?: Model) {
+        // Clear the external selection too when the user deselects a card.
+        this.form.get(this.fieldNameId).setValue(value ? value.get('id') : null)
+        this.elementRef.nativeElement.dispatchEvent(new CustomEvent('payment-method-selected', {
+            bubbles: true,
+            detail: {id: value ? value.get('id') : null, elementId: this.elementId}
+        }))
         if (
             !this.model ||
             !this.model.completed

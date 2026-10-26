@@ -39,7 +39,11 @@
                 <span class="option-radio" [class.checked]="isCurrent(paymentMethod)"></span>
                 <sa-stripe-payment-method-item [(model)]="paymentMethod" [editable]="true" [current]="isCurrent(paymentMethod)" templateStyle="compact"></sa-stripe-payment-method-item>
             </mat-option>
-            <mat-option class="panel-actions" [hidden]="!collection.completed || collection.pending" [disabled]="true">
+
+        </mat-select>
+        <input formControlName="{{fieldNameId}}" [attr.id]="elementId+'_'+fieldNameId" type="text" style="display: none;">
+    </mat-form-field>
+        <div class="payment-selector-actions" *ngIf="collection.completed && !collection.pending && collection.models.length > 0">
                 <button type="button" class="deselect-button" *ngIf="form.controls[fieldName].value"
                         (click)="form.controls[fieldName].setValue(null); paymentSelect.close()">Deselect Payment Method</button>
                 <sa-stripe-setup-intent
@@ -49,10 +53,7 @@
                         [paymentMethodApiPath]="paymentMethodApiPath"
                         [addCardButtonText]="addCardButtonText"
                 ></sa-stripe-setup-intent>
-            </mat-option>
-        </mat-select>
-        <input formControlName="{{fieldNameId}}" [attr.id]="elementId+'_'+fieldNameId" type="text" style="display: none;">
-    </mat-form-field>
+        </div>
     </ng-container>
     <ng-container *ngIf="displayMode === 'cards'">
         <div class="payment-method-cards" *ngIf="collection.completed && !collection.pending">
