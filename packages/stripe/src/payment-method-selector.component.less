@@ -58,10 +58,21 @@ sa-stripe-payment-method-selector,
     }
   }
   mat-form-field {
-    .mat-form-field-wrapper { padding-bottom: 8px; }
     min-width: 0;
     width: 100%;
     max-width: 340px;
+    .mat-form-field-wrapper { padding-bottom: 8px; }
+  }
+  .mat-form-field-infix {
+    min-width: 0;
+    width: auto;
+  }
+  .mat-select-value-text { white-space: normal; }
+  .payment-method-compact {
+    min-width: 0;
+    flex-wrap: wrap;
+    white-space: normal;
+    gap: 6px;
   }
   .no-results {
     text-align: center;
@@ -188,10 +199,8 @@ sa-stripe-payment-method-selector .payment-method-cards {
     }
   }
 }
-
 sa-stripe-payment-method-selector .payment-selector-actions {
   display: flex;
-  align-items: center;
   flex-direction: column;
   align-items: flex-start;
   gap: 16px;
@@ -207,17 +216,5 @@ sa-stripe-payment-method-selector .payment-selector-actions {
     font-size: 12px;
     font-style: italic;
     text-decoration: underline;
-  }
-}
-
-sa-stripe-payment-method-selector,
-.sa-stripe-payment-method-selector-select-override {
-  .mat-form-field-infix { min-width: 0; width: auto; }
-  .mat-select-value-text { white-space: normal; }
-  .payment-method-compact {
-    min-width: 0;
-    flex-wrap: wrap;
-    white-space: normal;
-    gap: 6px;
   }
 }
