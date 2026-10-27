@@ -16,10 +16,8 @@ function fixture(models = []) {
     Object.assign(selector, {collection: {models}, fieldName: 'choice', fieldNameId: 'id',
         elementRef: {nativeElement: {dispatchEvent() {}}},
         form: {get: key => ({setValue: value => {fields[key] = value; if (key === 'choice') selector.valueChanged(value)}})}, refresh() {}})
-    return {
-        selector,
-        fields
-    }
+    const result = {selector, fields}
+    return result
 }
 test('saved card remains selectable while replica returns an empty list', () => {
     const {selector, fields} = fixture()
