@@ -6,7 +6,7 @@ const { test } = require('node:test')
 const source = fs.readFileSync('packages/stripe/src/payment-method-selector.component.ts', 'utf8')
 const tree = ts.createSourceFile('selector.ts', source, ts.ScriptTarget.Latest, true)
 const component = tree.statements.find(n => ts.isClassDeclaration(n))
-const methods = component.members.filter(n => n.name && ['selectCreatedPaymentMethod', 'valueChanged'].includes(n.name.getText(tree)))
+const methods = component.members.filter(n => n.name && ['selectCreatedPaymentMethod', 'valueChanged', 'deselectPaymentMethod'].includes(n.name.getText(tree)))
 const context = {exports: {}, CustomEvent: class {}}
 vm.runInNewContext(ts.transpileModule(`exports.Selector = class {${methods.map(n => n.getText(tree)).join('\n')}}`, {compilerOptions: {target: ts.ScriptTarget.ES2020}}).outputText, context)
 const model = (id, status = 1) => ({get: key => ({id, status})[key]})
@@ -113,4 +113,42 @@ test('simultaneous opens share initialization; failed initialization can retry',
     await Promise.all([service.initialize('test-key'), service.initialize('test-key')])
     assert.equal(calls, 2)
     assert.equal(service.initialized, true)
+})
+
+
+test('deselect action clears choice and host ID, closes the list and redraws', () => {
+    const {selector, fields} = fixture([model(557)])
+    let closed = false, refreshed = false
+    selector.selectorListClose = () => { closed = true }
+    selector.refresh = () => { refreshed = true }
+    selector.selectCreatedPaymentMethod(model(557))
+    selector.deselectPaymentMethod()
+    assert.equal(fields.choice, null)
+    assert.equal(fields.id, null)
+    assert.equal(closed, true)
+    assert.equal(refreshed, true)
+})
+
+const removal = serviceClass.members.filter(n => n.name && ['removePaymentMethod', 'filterDeletedPaymentMethods'].includes(n.name.getText(serviceTree)))
+test('confirmed deletion updates all lists and rejects a stale refresh', () => {
+    const sandbox = {exports: {}}
+    vm.runInNewContext(ts.transpileModule(`exports.Service = class {${removal.map(n => n.getText(serviceTree)).join('\n')}}`, {
+        compilerOptions: {target: ts.ScriptTarget.ES2020}
+    }).outputText, sandbox)
+    const service = new sandbox.exports.Service()
+    const kept = model(558), deleted = model(557)
+    const first = {models: [deleted, kept]}, second = {models: [deleted]}
+    service.deletedPaymentMethodIds = new Set()
+    service.collections = {a: {uid: 'a', collection: first}, b: {uid: 'b', collection: second}}
+    const updated = []
+    service.emitManual = (event, uid) => updated.push(uid)
+    service.removePaymentMethod(557)
+    assert.equal(first.models.length, 1)
+    assert.equal(first.models[0], kept)
+    assert.equal(second.models.length, 0)
+    assert.deepEqual(updated, ['a', 'b'])
+    first.models = [deleted, kept]
+    service.filterDeletedPaymentMethods(first)
+    assert.equal(first.models.length, 1)
+    assert.equal(first.models[0], kept)
 })

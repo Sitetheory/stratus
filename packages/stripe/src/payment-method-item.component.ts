@@ -189,8 +189,9 @@ export class StripePaymentMethodItemComponent extends StripeComponent implements
                 if (!dialogResult) {
                     return
                 }
+                const deletedId = this.model.get('id')
                 await this.model.destroy()
-                this.Stripe.fetchCollections() // re-fetch ALL stripe collections just in case (will close the select box too)
+                this.Stripe.removePaymentMethod(deletedId)
             })
         return dialog
     }

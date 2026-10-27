@@ -93,6 +93,7 @@ export class StripeService {
         Stratus.Services.Stripe = this
     }
 
+    private deletedPaymentMethodIds = new Set<number>()
     private initialization?: Promise<void>
 
     async initialize(key: string): Promise<void> {
@@ -232,6 +233,19 @@ export class StripeService {
         return this.stripe.confirmSetup({elements, clientSecret, confirmParams, redirect: 'if_required'})
     }
 
+    removePaymentMethod(id: number) {
+        // A successful DELETE is authoritative; cached/replica reads must not restore it.
+        this.deletedPaymentMethodIds.add(id)
+        Object.values(this.collections).forEach(({uid, component, collection}) => {
+            this.filterDeletedPaymentMethods(collection)
+            this.emitManual('collectionUpdated', uid, component, collection)
+        })
+    }
+
+    private filterDeletedPaymentMethods(collection: Collection) {
+        collection.models = (collection.models as Model[]).filter(model => !this.deletedPaymentMethodIds.has(model.get('id')))
+    }
+
     registerCollection(component: StripeComponent, collection: Collection) {
         this.collections[component.uid] = {uid: component.uid, component, collection}
     }
@@ -253,6 +267,7 @@ export class StripeService {
                 uidList.push(
                     async () => {
                         await this.collections[uidName].collection.fetch()
+                        this.filterDeletedPaymentMethods(this.collections[uidName].collection)
                         this.emitManual(
                             'collectionUpdated',
                             uidName,

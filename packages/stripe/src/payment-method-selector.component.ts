@@ -268,7 +268,10 @@ export class StripePaymentMethodSelectorComponent extends StripeListComponent im
         this.initialized = true
         this.Stripe.emit('init', this) // Note this component is ready
         this.Stripe.on(this.uid, 'collectionUpdated', (_source, _collection: [Collection]) => {
-            // console.log('selector collectionUpdated!!!!', _source, _collection)
+            const selected = this.form.get(this.fieldName).value as Model
+            if (selected && !(this.collection.models as Model[]).some(pm => pm.get('id') === selected.get('id'))) {
+                this.deselectPaymentMethod()
+            }
             this.refresh()
             this.selectorListClose()
         })
@@ -291,6 +294,12 @@ export class StripePaymentMethodSelectorComponent extends StripeListComponent im
             models.push(selected)
         }
         this.form.get(this.fieldName).setValue(selected)
+        this.refresh()
+    }
+
+    deselectPaymentMethod() {
+        this.form.get(this.fieldName).setValue(null)
+        this.selectorListClose()
         this.refresh()
     }
 

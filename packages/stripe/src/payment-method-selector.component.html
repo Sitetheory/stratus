@@ -45,7 +45,7 @@
     </mat-form-field>
         <div class="payment-selector-actions" *ngIf="collection.completed && !collection.pending && collection.models.length > 0">
                 <button type="button" class="deselect-button" *ngIf="form.controls[fieldName].value"
-                        (click)="form.controls[fieldName].setValue(null); paymentSelect.close()">Deselect Payment Method</button>
+                        (click)="deselectPaymentMethod()">Deselect Payment Method</button>
                 <sa-stripe-setup-intent
                         data-detailed-billing-info="true"
                         [defaultBillingInfo]="defaultBillingInfo"
@@ -75,7 +75,7 @@
                     <span class="payment-method-card-secondary">
                         <button type="button" class="text-button" *ngIf="isCurrent(paymentMethod)"
                                 [disabled]="form.controls[fieldName].disabled"
-                                (click)="form.controls[fieldName].setValue(null)">Deselect</button>
+                                (click)="deselectPaymentMethod()">Deselect</button>
                         <button type="button" class="text-button"
                                 [disabled]="!paymentMethod.completed || paymentMethod.pending"
                                 (click)="paymentMethodItem.deletePM($event)">Delete</button>
