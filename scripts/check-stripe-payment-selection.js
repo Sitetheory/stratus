@@ -42,3 +42,46 @@ test('unverified or missing methods are not selected; deselection clears ID', ()
     selector.valueChanged(null)
     assert.equal(fields.id, null)
 })
+
+const paymentSource = fs.readFileSync('packages/stripe/src/payment-method.component.ts', 'utf8')
+const paymentTree = ts.createSourceFile('payment.ts', paymentSource, ts.ScriptTarget.Latest, true)
+const paymentClass = paymentTree.statements.find(n => ts.isClassDeclaration(n))
+const save = paymentClass.members.find(n => n.name && n.name.getText(paymentTree) === 'saveCard')
+function paymentFixture(failSave = false) {
+    const emitted = []
+    const errorElement = {textContent: ''}
+    class Model {
+        async save() {
+            if (failSave) throw new Error('Write failed')
+            this.data = {id: 557, status: 1}
+        }
+        get(key) { return this.data[key] }
+    }
+    const sandbox = {exports: {}, Model, isString: v => typeof v === 'string',
+        document: {getElementById: () => errorElement}}
+    vm.runInNewContext(ts.transpileModule(`exports.Payment = class {${save.getText(paymentTree)}}`, {
+        compilerOptions: {target: ts.ScriptTarget.ES2020}
+    }).outputText, sandbox)
+    const payment = new sandbox.exports.Payment()
+    Object.assign(payment, {isSubmittable: () => true, cardSaved: false,
+        Stripe: {confirmSetup: async () => ({setupIntent: {status: 'succeeded', payment_method: 'test-pm'}}),
+            fetchCollections: async () => {throw new Error('Replica unavailable')},
+            emitManual: (...args) => emitted.push(args)}})
+    return {payment, emitted, errorElement}
+}
+test('successful write still selects saved card when collection refresh fails', async () => {
+    const {payment, emitted} = paymentFixture()
+    await payment.saveCard()
+    assert.equal(payment.cardSaved, true)
+    assert.equal(payment.formPending, false)
+    assert.equal(emitted.length, 1)
+    assert.equal(emitted[0][3].get('id'), 557)
+})
+test('failed persistence does not show success or select a card and releases pending state', async () => {
+    const {payment, emitted, errorElement} = paymentFixture(true)
+    await payment.saveCard()
+    assert.equal(payment.cardSaved, false)
+    assert.equal(payment.formPending, false)
+    assert.equal(emitted.length, 0)
+    assert.match(errorElement.textContent, /Unable to save/)
+})
