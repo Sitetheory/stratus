@@ -18,7 +18,7 @@
         [class.deleted]="isDeleted() || model.data.status === -1"
 >
     <button
-            tabindex="-1"
+            type="button"
             [disabled]="!model.completed || model.pending"
             (click)="deletePM($event)"
             class="action-buttons delete-button default-border-radius"

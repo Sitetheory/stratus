@@ -55,6 +55,8 @@ export class StripePaymentMethodComponent extends StripeComponent implements OnD
     @Input() paymentMethodApiPath: string = 'PaymentMethod'
 
     // States
+    loadError = ''
+    private loadTimer?: ReturnType<typeof setTimeout>
     cardComplete = false
     cardSaved = false
     @Input() pmNotVerified = false
@@ -137,6 +139,12 @@ export class StripePaymentMethodComponent extends StripeComponent implements OnD
     }
 
     async ngOnInit() {
+        this.loadError = ''
+        clearTimeout(this.loadTimer)
+        this.loadTimer = setTimeout(() => {
+            if (!this.initialized) this.loadError = 'The payment form is taking too long to load. Please try again.'
+        }, 20000)
+        try {
         // noinspection RedundantConditionalExpressionJS - dont simplify detailedBillingInfo. needs to be converted to boolean
         const options: StripePaymentElementOptions = {
             // {} // style options
@@ -163,6 +171,8 @@ export class StripePaymentMethodComponent extends StripeComponent implements OnD
                 `#${this.elementId}-mount`
             )
             this.Stripe.elementAddEventListener(this.cardId, 'ready', (event: StripePaymentElement) => {
+                clearTimeout(this.loadTimer)
+                this.loadError = ''
                 this.initialized = true
             })
             // console.log('PaymentMethod loading', options, this)
@@ -199,6 +209,10 @@ export class StripePaymentMethodComponent extends StripeComponent implements OnD
         // $scope.$applyAsync(() => {
         // this.initialized = true
         // })
+        } catch (_) {
+            clearTimeout(this.loadTimer)
+            this.loadError = 'The payment form could not load. Please try again.'
+        }
 
     }
 
@@ -255,121 +269,118 @@ export class StripePaymentMethodComponent extends StripeComponent implements OnD
                 }
             }
         )*/
-        const {setupIntent, error} = await this.Stripe.confirmSetup(
-            this.cardId,
-            this.clientSecret,
-            {
-                return_url: '', // FIXME we dont redirect
-                // payment_method_data now supplied completely by the form,
-                /*payment_method_data: {
-                    billing_details: this.billingInfo
-                    //    name: 'Test'
-                    // }
-                }*/
+        try {
+            const {setupIntent, error} = await this.Stripe.confirmSetup(
+                this.cardId,
+                this.clientSecret,
+                {
+                    return_url: '', // FIXME we dont redirect
+                    // payment_method_data now supplied completely by the form,
+                    /*payment_method_data: {
+                        billing_details: this.billingInfo
+                        //    name: 'Test'
+                        // }
+                    }*/
+                }
+            )
+
+            if (error) {
+                // Display error.message in your UI.
+                console.error('error:', error, setupIntent) // only run this in dev mode
+
+                // $scope.$applyAsync(() => {
+                this.formPending = false
+                const displaySaveError = document.getElementById(`${this.elementId}-errors`)
+                let errorMessage = 'An Unknown Error has occurred'
+                if (Object.prototype.hasOwnProperty.call(error, 'message')) {
+                    errorMessage = error.message
+                }
+                displaySaveError.textContent = errorMessage
+                // })
+                return
             }
-        )
 
-        if (error) {
-            // Display error.message in your UI.
-            console.error('error:', error, setupIntent) // only run this in dev mode
+            if (
+                setupIntent.status === 'succeeded'
+                && isString(setupIntent.payment_method)
+            ) {
+                // The setup has succeeded.
 
-            // $scope.$applyAsync(() => {
+                const apiOptions: ModelOptions = {
+                    target: this.paymentMethodApiPath
+                }
+                if (this.urlRoot) {
+                    apiOptions.urlRoot = this.urlRoot
+                }
+
+                // Send setupIntent.payment_method to your server to save the card to a Customer as default
+                const model = new Model(apiOptions)
+                model.data = {
+                    payment_method: setupIntent.payment_method
+                }
+                await model.save()
+                // hide form and Display a success message
+                this.cardSaved = true
+                this.formPending = false // no more form
+                // Keep the saved model available even if refreshing a read replica fails or lags.
+                try {
+                    await this.Stripe.fetchCollections()
+                } catch (_) {
+                    // The successful write still supplies the selectable payment method.
+                }
+                this.Stripe.emitManual('paymentMethodCreated', 'Stripe', this, model)
+                return
+            }
+
+            if (
+                setupIntent.status === 'requires_action'
+                && isString(setupIntent.payment_method) // Only if we made a paymentMethod
+                && setupIntent.next_action != null
+                && [
+                    'redirect_to_url',
+                    'verify_with_microdeposits'
+                ].includes(setupIntent.next_action.type)
+            ) {
+                // We still need to save this payment Method, but as not status 1
+                const apiOptions: ModelOptions = {
+                    target: this.paymentMethodApiPath
+                }
+                if (this.urlRoot) {
+                    apiOptions.urlRoot = this.urlRoot
+                }
+
+                const model = new Model(apiOptions)
+                model.data = {
+                    status: 0, // this is not enabled yet
+                    next_action: setupIntent.next_action,
+                    payment_method: setupIntent.payment_method,
+                    setup_intent: setupIntent.id,
+                }
+                this.paymentMethodId = setupIntent.payment_method
+                // Submit what we have so far
+                await model.save()
+                // hide form and Display a success message
+                this.cardSaved = true
+                this.pmNotVerified = true // Note that there are more actions to take/await
+                this.formPending = false // no more form
+                this.cardNextAction = clone(setupIntent.next_action)
+                // Reload any collections listing PMs
+                await this.Stripe.fetchCollections()
+                // Unverified methods must not become the selected payment method.
+                return
+            }
+
+            // handle everything else
             this.formPending = false
-            const displaySaveError = document.getElementById(`${this.elementId}-errors`)
-            let errorMessage = 'An Unknown Error has occurred'
-            if (Object.prototype.hasOwnProperty.call(error, 'message')) {
-                errorMessage = error.message
-            }
-            displaySaveError.textContent = errorMessage
-            // })
-            return
+            console.error('something went wrong. no error, no success', setupIntent)
+            const displayError = document.getElementById(`${this.elementId}-errors`)
+            displayError.textContent = 'An unknown Error has occurred'        } catch (_) {
+            const displayError = document.getElementById(`${this.elementId}-errors`)
+            if (displayError) displayError.textContent = 'Unable to save your payment method. Please try again.'
+        } finally {
+            this.formPending = false
         }
 
-        if (
-            setupIntent.status === 'succeeded'
-            && isString(setupIntent.payment_method)
-        ) {
-            // The setup has succeeded.
-
-            const apiOptions: ModelOptions = {
-                target: this.paymentMethodApiPath
-            }
-            if (this.urlRoot) {
-                apiOptions.urlRoot = this.urlRoot
-            }
-
-            // Send setupIntent.payment_method to your server to save the card to a Customer as default
-            const model = new Model(apiOptions)
-            model.data = {
-                payment_method: setupIntent.payment_method
-            }
-            await model.save()
-            // hide form and Display a success message
-            this.cardSaved = true
-            this.formPending = false // no more form
-            // Reload any collections listing PMs
-            await this.Stripe.fetchCollections()
-            // emit this new card to auto-select it
-            const cardDetails = {
-                type: 'card',
-                name: this.billingInfo.name,
-                email: this.billingInfo.email
-            }
-            // console.log('noting a new card', cardDetails)
-            this.Stripe.emitManual('paymentMethodCreated', 'Stripe', this, cardDetails)
-            return
-        }
-
-        if (
-            setupIntent.status === 'requires_action'
-            && isString(setupIntent.payment_method) // Only if we made a paymentMethod
-            && setupIntent.next_action != null
-            && [
-                'redirect_to_url',
-                'verify_with_microdeposits'
-            ].includes(setupIntent.next_action.type)
-        ) {
-            // We still need to save this payment Method, but as not status 1
-            const apiOptions: ModelOptions = {
-                target: this.paymentMethodApiPath
-            }
-            if (this.urlRoot) {
-                apiOptions.urlRoot = this.urlRoot
-            }
-
-            const model = new Model(apiOptions)
-            model.data = {
-                status: 0, // this is not enabled yet
-                next_action: setupIntent.next_action,
-                payment_method: setupIntent.payment_method,
-                setup_intent: setupIntent.id,
-            }
-            this.paymentMethodId = setupIntent.payment_method
-            // Submit what we have so far
-            await model.save()
-            // hide form and Display a success message
-            this.cardSaved = true
-            this.pmNotVerified = true // Note that there are more actions to take/await
-            this.formPending = false // no more form
-            this.cardNextAction = clone(setupIntent.next_action)
-            // Reload any collections listing PMs
-            await this.Stripe.fetchCollections()
-            // emit this new card to auto-select it
-            const cardDetails = {
-                type: 'us_bank_account', // TODO figure out the type of PM
-                name: this.billingInfo.name,
-                email: this.billingInfo.email
-            }
-            // console.log('noting a new card', cardDetails)
-            this.Stripe.emitManual('paymentMethodCreated', 'Stripe', this, cardDetails)
-            return
-        }
-
-        // handle everything else
-        this.formPending = false
-        console.error('something went wrong. no error, no success', setupIntent)
-        const displayError = document.getElementById(`${this.elementId}-errors`)
-        displayError.textContent = 'An unknown Error has occurred'
     }
 
     async verifyPM(ev?: any) {
@@ -418,6 +429,7 @@ export class StripePaymentMethodComponent extends StripeComponent implements OnD
     }
 
     ngOnDestroy() {
+        clearTimeout(this.loadTimer)
         // console.warn('local destroying stratus', this.uid)
         if (this.cardId) {
             this.Stripe.destroyElement(this.cardId)

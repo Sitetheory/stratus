@@ -1,5 +1,28 @@
 
 sa-stripe-payment-method {
+  .payment-method-dialog-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    margin-bottom: 20px;
+    h2 { margin: 0; }
+  }
+  .payment-method-actions {
+    text-align: center;
+    margin-top: 20px;
+  }
+  .payment-method-progress { margin: 20px 0; }
+  .payment-method-success {
+    text-align: center;
+    padding: 24px;
+    margin: 20px 0;
+    border-radius: 4px;
+    background: #f1f7f3;
+    color: #285c3e;
+    h3 { margin: 12px 0 8px; }
+    p { margin: 0; }
+  }
   [hidden] {
     display: none !important;
   }

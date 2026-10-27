@@ -3,6 +3,7 @@ import {
     // ChangeDetectionStrategy,
     // ChangeDetectorRef,
     Component,
+    ChangeDetectorRef,
     ElementRef,
     Input,
     OnInit
@@ -35,7 +36,11 @@ const componentName = 'setup-intent'
 @Component({
     selector: `sa-${packageName}-${componentName}`,
     // templateUrl: `${localDir}/${parentModuleName}/${moduleName}.component.html`,
-    template: '<button mat-raised-button (click)="addPaymentMethod($event)" [disabled]="newPaymentMethodPending || newPaymentMethodPrompt" [textContent]="addCardButtonText"></button>',
+    template: `<button mat-raised-button type="button" (click)="addPaymentMethod($event)"
+        [disabled]="newPaymentMethodPending || newPaymentMethodPrompt"
+        [textContent]="newPaymentMethodPending ? 'Preparing Payment Form…' : addCardButtonText"></button>
+        <mat-progress-bar *ngIf="newPaymentMethodPending" mode="indeterminate" aria-label="Preparing Payment Form"></mat-progress-bar>`,
+    styles: ['mat-progress-bar { margin: 20px 0; }'],
 })
 export class StripeSetupIntentComponent extends StripeComponent implements OnInit {
 
@@ -59,6 +64,7 @@ export class StripeSetupIntentComponent extends StripeComponent implements OnIni
 
     constructor(
         private elementRef: ElementRef,
+        protected ref: ChangeDetectorRef,
         private sanitizer: DomSanitizer,
         public dialog: MatDialog,
     ) {
@@ -111,41 +117,47 @@ export class StripeSetupIntentComponent extends StripeComponent implements OnIni
 
             const model = new Model(apiOptions)
             model.data.setupIntent = true
-            await model.save()
-            // console.log('model', model)
-            if (
-                Object.prototype.hasOwnProperty.call(model, 'meta') &&
-                Object.prototype.hasOwnProperty.call(model.meta, 'data')
-            ) {
+            try {
+                await model.save()
+                // console.log('model', model)
                 if (
-                    Object.prototype.hasOwnProperty.call(model.meta.data, 'clientSecret') &&
-                    Object.prototype.hasOwnProperty.call(model.meta.data, 'publishKey') &&
-                    !isEmpty(model.meta.data.clientSecret) &&
-                    !isEmpty(model.meta.data.publishKey)
+                    Object.prototype.hasOwnProperty.call(model, 'meta') &&
+                    Object.prototype.hasOwnProperty.call(model.meta, 'data')
                 ) {
-                    clientSecret = model.meta.data.clientSecret
-                    publishKey = model.meta.data.publishKey
+                    if (
+                        Object.prototype.hasOwnProperty.call(model.meta.data, 'clientSecret') &&
+                        Object.prototype.hasOwnProperty.call(model.meta.data, 'publishKey') &&
+                        !isEmpty(model.meta.data.clientSecret) &&
+                        !isEmpty(model.meta.data.publishKey)
+                    ) {
+                        clientSecret = model.meta.data.clientSecret
+                        publishKey = model.meta.data.publishKey
+                    }
+                    if (
+                        Object.prototype.hasOwnProperty.call(model.meta.data, 'formMessage') &&
+                        !isEmpty(model.meta.data.formMessage)
+                    ) {
+                        formMessage = model.meta.data.formMessage
+                    }
                 }
+                // TODO check status
+                // console.log('did returned checks')
+
                 if (
-                    Object.prototype.hasOwnProperty.call(model.meta.data, 'formMessage') &&
-                    !isEmpty(model.meta.data.formMessage)
+                    !isEmpty(clientSecret) &&
+                    !isEmpty(publishKey)
                 ) {
-                    formMessage = model.meta.data.formMessage
+                    // console.log('got client and publish, will make an input')
+                    this.newPaymentMethodPrompt = true
+                    this.inputPaymentMethod(clientSecret, publishKey, formMessage, ev)
                 }
-            }
-            // TODO check status
-            // console.log('did returned checks')
 
-            if (
-                !isEmpty(clientSecret) &&
-                !isEmpty(publishKey)
-            ) {
-                // console.log('got client and publish, will make an input')
-                this.newPaymentMethodPrompt = true
-                this.inputPaymentMethod(clientSecret, publishKey, formMessage, ev)
+            } catch (_) {
+                // Model.save displays the API error. Keep the action available for a retry.
+            } finally {
+                this.newPaymentMethodPending = false
+                this.ref.markForCheck()
             }
-
-            this.newPaymentMethodPending = false
         }
     }
 
@@ -173,6 +185,7 @@ export class StripeSetupIntentComponent extends StripeComponent implements OnIni
 
         dialogRef.afterClosed().subscribe((result: StripePaymentMethodDialogData) => {
             this.newPaymentMethodPrompt = false
+            this.ref.markForCheck()
             if (!result || isEmpty(result)) {
                 return
             }

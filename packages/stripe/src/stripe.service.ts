@@ -3,6 +3,7 @@ import {RootComponent} from '@stratusjs/angular/core/root.component'
 import {isEmpty, isNil, isString, uniqueId} from 'lodash'
 import {Stratus} from '@stratusjs/runtime/stratus'
 import {Collection} from '@stratusjs/angularjs/services/collection'
+import {Model} from '@stratusjs/angularjs/services/model'
 import {LooseObject, safeUniqueId} from '@stratusjs/core/misc'
 import {
     Stripe, SetupIntent, ConfirmCardSetupData, StripeElements, StripeElement, StripeElementsOptionsClientSecret, StripeElementsOptionsMode,
@@ -30,7 +31,7 @@ export type StripeEmitter = (source: StripeComponent, ...variables: any) => any
 export type StripeEmitterInit = StripeEmitter & ((source: StripeComponent) => any)
 export type StripeEmitterCollectionUpdated = StripeEmitter & ((source: StripeListComponent, ...collection: [Collection]) => any)
 export type StripeEmitterPMCreated =
-    StripeEmitter & ((source: StripeListComponent, ...details: [PaymentMethodCreateParams.BillingDetails & {type:'card'|'ach'}]) => any)
+    StripeEmitter & ((source: StripeComponent, ...details: [Model]) => any)
 
 export type StripePaymentElementEvent =
     StripePaymentElementChangeEvent & {error: any} |
@@ -92,80 +93,41 @@ export class StripeService {
         Stratus.Services.Stripe = this
     }
 
+    private deletedPaymentMethodIds = new Set<number>()
+    private initialization?: Promise<void>
+
     async initialize(key: string): Promise<void> {
-        this.publishKey = key
-        if (this.initialized || this.initializing) {
-            // wait for completion
-            return await this.waitForInitialization()
+        if (this.initialized && this.publishKey === key) return
+        if (this.initializing) {
+            await this.waitForInitialization()
+            return this.initialize(key)
         }
         this.initializing = true
-        try {
-            await Stratus.Internals.JsLoader('https://js.stripe.com/v3/')
-            const stripe = await loadStripe(key)
-            if (!Object.prototype.hasOwnProperty.call(window, 'Stripe')) {
-                // FIXME find other checks for stripe here
-                console.warn('Stripe Api was not initialized yet, waiting...')
-                await this.delay(3000)
-                if (!Object.prototype.hasOwnProperty.call(window, 'Stripe')) {
-                    const error = 'Stripe Api was not initialized, payment widgets cannot load.'
-                    console.error(error)
-                    this.initializing = false
-                    Toastify({
-                        text: error,
-                        duration: 3000,
-                        close: true,
-                        stopOnFocus: true,
-                        style: {
-                            background: '#E14D45',
-                        }
-                    }).showToast()
-                    return
-                }
+        this.initialized = false
+        this.initialization = (async () => {
+            let timeout: ReturnType<typeof setTimeout>
+            try {
+                const stripe = await Promise.race([
+                    loadStripe(key),
+                    new Promise<never>((_, reject) => {
+                        timeout = setTimeout(() => reject(new Error('Payment form loading timed out. Please try again.')), 15000)
+                    })
+                ])
+                if (!stripe) throw new Error('Unable to load the payment form. Please try again.')
+                this.stripe = stripe
+                this.publishKey = key
+                this.initialized = true
+            } finally {
+                clearTimeout(timeout)
+                this.initializing = false
             }
-            this.stripe = stripe
-        } catch (e) {
-            const error = 'Stripe Api could not be fetched, payment widgets cannot load.'
-            console.error(error)
-            this.initializing = false
-            Toastify({
-                text: error,
-                duration: 3000,
-                close: true,
-                stopOnFocus: true,
-                style: {
-                    background: '#E14D45',
-                }
-            }).showToast()
-            return
-        }
-        // this.Stripe.stripe = (window.Stripe as stripe.StripeStatic)(this.publishKey)
-        // this.Stripe.stripeElements = this.Stripe.stripe.elements() // TODO do we need a client secret here now?
-
-        this.initialized = true
-        this.initializing = false
-    }
-
-    async delay(ms: number): Promise<ReturnType<typeof setTimeout>> {
-        return new Promise((resolve) => {
-            return setTimeout(resolve, ms)
-        })
+        })()
+        return this.initialization
     }
 
     async waitForInitialization(): Promise<void> {
-        await new Promise(() => {
-            setTimeout(async () => {
-                if (this.initializing) {
-                    return await this.waitForInitialization()
-                } else if (!this.initialized) {
-                    // FAILED
-                    throw new Error('Unable to initialize')
-                } else {
-                    // succeeded
-                    return
-                }
-            }, 1000)
-        })
-        return
+        if (this.initialization) return this.initialization
+        if (!this.initialized) throw new Error('Payment form has not initialized.')
     }
 
     // private async elements(key: string): Promise<stripe.elements.Elements> {
@@ -271,6 +233,19 @@ export class StripeService {
         return this.stripe.confirmSetup({elements, clientSecret, confirmParams, redirect: 'if_required'})
     }
 
+    removePaymentMethod(id: number) {
+        // A successful DELETE is authoritative; cached/replica reads must not restore it.
+        this.deletedPaymentMethodIds.add(id)
+        Object.values(this.collections).forEach(({uid, component, collection}) => {
+            this.filterDeletedPaymentMethods(collection)
+            this.emitManual('collectionUpdated', uid, component, collection)
+        })
+    }
+
+    private filterDeletedPaymentMethods(collection: Collection) {
+        collection.models = (collection.models as Model[]).filter(model => !this.deletedPaymentMethodIds.has(model.get('id')))
+    }
+
     registerCollection(component: StripeComponent, collection: Collection) {
         this.collections[component.uid] = {uid: component.uid, component, collection}
     }
@@ -292,6 +267,7 @@ export class StripeService {
                 uidList.push(
                     async () => {
                         await this.collections[uidName].collection.fetch()
+                        this.filterDeletedPaymentMethods(this.collections[uidName].collection)
                         this.emitManual(
                             'collectionUpdated',
                             uidName,

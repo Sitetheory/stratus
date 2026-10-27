@@ -92,9 +92,8 @@ sa-stripe-payment-method-item {
     }
     .action-buttons {
       position: absolute;
-      animation: opacity 0.3s ease-out both;
-      -webkit-animation: opacity 0.3s ease-out both;
-      opacity: 0;
+      // Keep destructive actions discoverable for keyboard and touch users too.
+      opacity: 1;
       top: 4px;
       z-index: 2;
       &.save-button {
@@ -102,11 +101,6 @@ sa-stripe-payment-method-item {
       }
       &.delete-button {
         right: 2px;
-      }
-    }
-    &:hover {
-      .action-buttons.delete-button {
-        opacity: 1;
       }
     }
   }
