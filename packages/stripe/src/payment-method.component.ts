@@ -55,6 +55,8 @@ export class StripePaymentMethodComponent extends StripeComponent implements OnD
     @Input() paymentMethodApiPath: string = 'PaymentMethod'
 
     // States
+    loadError = ''
+    private loadTimer?: ReturnType<typeof setTimeout>
     cardComplete = false
     cardSaved = false
     @Input() pmNotVerified = false
@@ -137,6 +139,12 @@ export class StripePaymentMethodComponent extends StripeComponent implements OnD
     }
 
     async ngOnInit() {
+        this.loadError = ''
+        clearTimeout(this.loadTimer)
+        this.loadTimer = setTimeout(() => {
+            if (!this.initialized) this.loadError = 'The payment form is taking too long to load. Please try again.'
+        }, 20000)
+        try {
         // noinspection RedundantConditionalExpressionJS - dont simplify detailedBillingInfo. needs to be converted to boolean
         const options: StripePaymentElementOptions = {
             // {} // style options
@@ -163,6 +171,8 @@ export class StripePaymentMethodComponent extends StripeComponent implements OnD
                 `#${this.elementId}-mount`
             )
             this.Stripe.elementAddEventListener(this.cardId, 'ready', (event: StripePaymentElement) => {
+                clearTimeout(this.loadTimer)
+                this.loadError = ''
                 this.initialized = true
             })
             // console.log('PaymentMethod loading', options, this)
@@ -199,6 +209,10 @@ export class StripePaymentMethodComponent extends StripeComponent implements OnD
         // $scope.$applyAsync(() => {
         // this.initialized = true
         // })
+        } catch (_) {
+            clearTimeout(this.loadTimer)
+            this.loadError = 'The payment form could not load. Please try again.'
+        }
 
     }
 
@@ -415,6 +429,7 @@ export class StripePaymentMethodComponent extends StripeComponent implements OnD
     }
 
     ngOnDestroy() {
+        clearTimeout(this.loadTimer)
         // console.warn('local destroying stratus', this.uid)
         if (this.cardId) {
             this.Stripe.destroyElement(this.cardId)

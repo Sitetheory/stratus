@@ -93,80 +93,40 @@ export class StripeService {
         Stratus.Services.Stripe = this
     }
 
+    private initialization?: Promise<void>
+
     async initialize(key: string): Promise<void> {
-        this.publishKey = key
-        if (this.initialized || this.initializing) {
-            // wait for completion
-            return await this.waitForInitialization()
+        if (this.initialized && this.publishKey === key) return
+        if (this.initializing) {
+            await this.waitForInitialization()
+            return this.initialize(key)
         }
         this.initializing = true
-        try {
-            await Stratus.Internals.JsLoader('https://js.stripe.com/v3/')
-            const stripe = await loadStripe(key)
-            if (!Object.prototype.hasOwnProperty.call(window, 'Stripe')) {
-                // FIXME find other checks for stripe here
-                console.warn('Stripe Api was not initialized yet, waiting...')
-                await this.delay(3000)
-                if (!Object.prototype.hasOwnProperty.call(window, 'Stripe')) {
-                    const error = 'Stripe Api was not initialized, payment widgets cannot load.'
-                    console.error(error)
-                    this.initializing = false
-                    Toastify({
-                        text: error,
-                        duration: 3000,
-                        close: true,
-                        stopOnFocus: true,
-                        style: {
-                            background: '#E14D45',
-                        }
-                    }).showToast()
-                    return
-                }
+        this.initialized = false
+        this.initialization = (async () => {
+            let timeout: ReturnType<typeof setTimeout>
+            try {
+                const stripe = await Promise.race([
+                    loadStripe(key),
+                    new Promise<never>((_, reject) => {
+                        timeout = setTimeout(() => reject(new Error('Payment form loading timed out. Please try again.')), 15000)
+                    })
+                ])
+                if (!stripe) throw new Error('Unable to load the payment form. Please try again.')
+                this.stripe = stripe
+                this.publishKey = key
+                this.initialized = true
+            } finally {
+                clearTimeout(timeout)
+                this.initializing = false
             }
-            this.stripe = stripe
-        } catch (e) {
-            const error = 'Stripe Api could not be fetched, payment widgets cannot load.'
-            console.error(error)
-            this.initializing = false
-            Toastify({
-                text: error,
-                duration: 3000,
-                close: true,
-                stopOnFocus: true,
-                style: {
-                    background: '#E14D45',
-                }
-            }).showToast()
-            return
-        }
-        // this.Stripe.stripe = (window.Stripe as stripe.StripeStatic)(this.publishKey)
-        // this.Stripe.stripeElements = this.Stripe.stripe.elements() // TODO do we need a client secret here now?
-
-        this.initialized = true
-        this.initializing = false
-    }
-
-    async delay(ms: number): Promise<ReturnType<typeof setTimeout>> {
-        return new Promise((resolve) => {
-            return setTimeout(resolve, ms)
-        })
+        })()
+        return this.initialization
     }
 
     async waitForInitialization(): Promise<void> {
-        await new Promise(() => {
-            setTimeout(async () => {
-                if (this.initializing) {
-                    return await this.waitForInitialization()
-                } else if (!this.initialized) {
-                    // FAILED
-                    throw new Error('Unable to initialize')
-                } else {
-                    // succeeded
-                    return
-                }
-            }, 1000)
-        })
-        return
+        if (this.initialization) return this.initialization
+        if (!this.initialized) throw new Error('Payment form has not initialized.')
     }
 
     // private async elements(key: string): Promise<stripe.elements.Elements> {

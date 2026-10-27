@@ -36,7 +36,11 @@ const componentName = 'setup-intent'
 @Component({
     selector: `sa-${packageName}-${componentName}`,
     // templateUrl: `${localDir}/${parentModuleName}/${moduleName}.component.html`,
-    template: '<button mat-raised-button (click)="addPaymentMethod($event)" [disabled]="newPaymentMethodPending || newPaymentMethodPrompt" [textContent]="addCardButtonText"></button>',
+    template: `<button mat-raised-button type="button" (click)="addPaymentMethod($event)"
+        [disabled]="newPaymentMethodPending || newPaymentMethodPrompt"
+        [textContent]="newPaymentMethodPending ? 'Preparing Payment Form…' : addCardButtonText"></button>
+        <mat-progress-bar *ngIf="newPaymentMethodPending" mode="indeterminate" aria-label="Preparing Payment Form"></mat-progress-bar>`,
+    styles: ['mat-progress-bar { margin: 20px 0; }'],
 })
 export class StripeSetupIntentComponent extends StripeComponent implements OnInit {
 

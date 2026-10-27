@@ -8,11 +8,15 @@
         <div *ngIf="formMessage" class="billing-message" [innerHTML]="formMessage"></div>
         <div [attr.id]="elementId+'-mount'" class="card-element" [class.no-pointer-event]="!isEditable()"></div>
         <div [attr.id]="elementId+'-errors'" class="card-errors" role="alert"></div>
+        <div *ngIf="loadError" role="alert" class="notice-inset">
+            <p>{{loadError}}</p>
+            <button mat-button type="button" (click)="ngOnInit()">Try Again</button>
+        </div>
         <div class="payment-method-actions">
             <button mat-flat-button type="button" class="btn-action" (click)="saveCard()"
                     [disabled]="!isSubmittable()" *ngIf="initialized">Confirm Payment Method</button>
         </div>
-        <mat-progress-bar class="payment-method-progress" *ngIf="formPending || !initialized"
+        <mat-progress-bar class="payment-method-progress" *ngIf="formPending || (!initialized && !loadError)"
                           mode="indeterminate" aria-label="Saving Payment Method"></mat-progress-bar>
     </mat-card-content>
     <mat-card-content data-layout-padding [hidden]="!cardSaved && !pmNotVerified">

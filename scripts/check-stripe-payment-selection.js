@@ -85,3 +85,32 @@ test('failed persistence does not show success or select a card and releases pen
     assert.equal(emitted.length, 0)
     assert.match(errorElement.textContent, /Unable to save/)
 })
+
+const serviceSource = fs.readFileSync('packages/stripe/src/stripe.service.ts', 'utf8')
+const serviceTree = ts.createSourceFile('service.ts', serviceSource, ts.ScriptTarget.Latest, true)
+const serviceClass = serviceTree.statements.find(n => ts.isClassDeclaration(n) && n.name.text === 'StripeService')
+const initialization = serviceClass.members.filter(n => n.name && ['initialize', 'waitForInitialization'].includes(n.name.getText(serviceTree)))
+function serviceFixture(loadStripe) {
+    const sandbox = {exports: {}, loadStripe, setTimeout, clearTimeout}
+    vm.runInNewContext(ts.transpileModule(`exports.Service = class {${initialization.map(n => n.getText(serviceTree)).join('\n')}}`, {
+        compilerOptions: {target: ts.ScriptTarget.ES2020}
+    }).outputText, sandbox)
+    return new sandbox.exports.Service()
+}
+test('opening payment form again reuses initialized Stripe without hanging', async () => {
+    let calls = 0
+    const service = serviceFixture(async () => {calls++; return {}})
+    await service.initialize('test-key')
+    await service.initialize('test-key')
+    assert.equal(calls, 1)
+    assert.equal(service.initialized, true)
+})
+test('simultaneous opens share initialization; failed initialization can retry', async () => {
+    let calls = 0
+    const service = serviceFixture(async () => {if (++calls === 1) throw new Error('Offline'); return {}})
+    await assert.rejects(service.initialize('test-key'), /Offline/)
+    assert.equal(service.initializing, false)
+    await Promise.all([service.initialize('test-key'), service.initialize('test-key')])
+    assert.equal(calls, 2)
+    assert.equal(service.initialized, true)
+})
