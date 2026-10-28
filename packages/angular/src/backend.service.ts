@@ -1,3 +1,5 @@
+// Constructor metadata must exist when decorators run, not only at bootstrap.
+import 'reflect-metadata'
 import { Injectable } from '@angular/core'
 import {HttpClient, HttpResponse} from '@angular/common/http'
 import {Observable, Subscriber} from 'rxjs'
