@@ -1,7 +1,7 @@
 const fs = require('fs')
 const path = require('path')
 
-const bundlePath = path.resolve(__dirname, '../packages/angular/dist/angular.bundle.js')
+const bundlePath = process.argv[2] ? path.resolve(process.argv[2]) : path.resolve(__dirname, '../packages/angular/dist/angular.bundle.js')
 const bundle = fs.readFileSync(bundlePath, 'utf8')
 
 const bootstrapMarker = 'platformBrowserDynamic().bootstrapModule(AppModule)'
@@ -32,4 +32,13 @@ if (bootstrapIndex < bootstrapFunctionIndex || bootstrapIndex > scheduledBootstr
   process.exit(1)
 }
 
-console.log('Angular bundle order is valid.')
+// TypeScript's __metadata helper silently skips design:paramtypes until this
+// polyfill exists. Delaying Angular bootstrap cannot restore skipped metadata.
+const metadataIndex = bundle.indexOf('function metadata(metadataKey, metadataValue)')
+const backendIndex = bundle.indexOf('class BackendService')
+if (metadataIndex === -1 || backendIndex === -1 || metadataIndex > backendIndex) {
+  console.error(`Reflect metadata must initialize before BackendService decorators in ${bundlePath}`)
+  process.exit(1)
+}
+
+console.log('Angular bootstrap and BackendService metadata order are valid.')
