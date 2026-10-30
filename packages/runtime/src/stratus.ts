@@ -974,10 +974,19 @@ Stratus.Internals.IsOnScreen = (el: any, offset: any, partial: any) => {
             right: window.innerWidth || document.documentElement.clientWidth
         }
         : viewPort.getBoundingClientRect()
-    const pageTop: any = viewportRect.top + offset
-    const pageBottom: any = viewportRect.bottom - offset
-    const pageLeft: any = viewportRect.left
-    const pageRight: any = viewportRect.right
+    // A responsive scroll root can become a full-document container. Its box
+    // is not the visible screen; intersect it with the browser viewport first.
+    const visibleTop = Math.max(0, viewportRect.top)
+    const visibleBottom = Math.min(window.innerHeight || document.documentElement.clientHeight, viewportRect.bottom)
+    const visibleLeft = Math.max(0, viewportRect.left)
+    const visibleRight = Math.min(window.innerWidth || document.documentElement.clientWidth, viewportRect.right)
+    if (visibleBottom <= visibleTop || visibleRight <= visibleLeft) {
+        return false
+    }
+    const pageTop: any = visibleTop + offset
+    const pageBottom: any = visibleBottom - offset
+    const pageLeft: any = visibleLeft
+    const pageRight: any = visibleRight
     const elementTop: any = elementRect.top
     const elementBottom: any = elementRect.bottom
     const elementLeft: any = elementRect.left
