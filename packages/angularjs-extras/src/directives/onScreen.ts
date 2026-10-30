@@ -84,6 +84,7 @@ Stratus.Directives.OnScreen = (
         let isWaiting = false
         let wasOnScreen = false
         let wipeJob: ReturnType<typeof setTimeout> = null
+        let intersectionVisible: boolean | null = null
 
         // The distance the spy element is allowed to enter the screen before triggering 'onscreen'
         const offset = hydrate($attrs.offset) || 0
@@ -95,6 +96,9 @@ Stratus.Directives.OnScreen = (
         const onScreen = () => $attrs.onScreen && typeof $attrs.onScreen === 'function' ? $attrs.onScreen() : true
         const offScreen = () => $attrs.offScreen && typeof $attrs.offScreen === 'function' ? $attrs.offScreen() : true
         const isOnScreen = () => {
+            if (intersectionVisible !== null) {
+                return intersectionVisible
+            }
             // FIXME: This needs to be converted to the Chronos structure.
             if (isWaiting) {
                 return wasOnScreen
@@ -175,6 +179,22 @@ Stratus.Directives.OnScreen = (
             }
         }
 
+        // Visibility-only placements must follow async layout changes too, not
+        // just scroll events or a short startup retry window. Native observation
+        // clips nested scroll roots and avoids repeated synchronous measurements.
+        let visibilityObserver: IntersectionObserver | null = null
+        if (typeof IntersectionObserver !== 'undefined' && partial && !offset && !animation && !event.length) {
+            intersectionVisible = false
+            visibilityObserver = new IntersectionObserver(entries => {
+                entries.forEach(entry => {
+                    intersectionVisible = entry.isIntersecting && entry.intersectionRect.width > 0 && entry.intersectionRect.height > 0
+                    calculate()
+                })
+            })
+            visibilityObserver.observe(spy[0])
+            $scope.$on('$destroy', () => visibilityObserver.disconnect())
+        }
+
         // FIXME: This needs to be converted to the new event structure.
         // Ensure OnScroll is listening
         Stratus.Internals.OnScroll()
@@ -241,6 +261,10 @@ Stratus.Directives.OnScreen = (
             }
             setTimeout(delayed, 250)
         }
-        delayed()
+        if (visibilityObserver) {
+            calculate()
+        } else {
+            delayed()
+        }
     }
 })
