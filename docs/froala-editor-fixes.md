@@ -48,7 +48,6 @@ Questions for Chad (his recent code):
   image classes.
 - The Visual Editor's compact toolbar has no custom-class menu.
 - `data-stratus-src-native-registered` is saved into content.
-- The "Click to refresh the editor" reload drops unsaved edits.
 - Uploaded SVGs are served as `application/octet-stream`.
 
 Not fixed:
