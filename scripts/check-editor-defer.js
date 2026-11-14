@@ -18,9 +18,12 @@ function fixture() {
     const tasks = new Map()
     const warnings = []
     const values = []
+    const cleared = { intervals: [], listeners: [] }
     let serial = 0
     const context = { exports: {}, _: { clone: v => v }, console: { warn: (...v) => warnings.push(v) },
-        setTimeout: fn => { tasks.set(++serial, fn); return serial }, clearTimeout: id => tasks.delete(id) }
+        setTimeout: fn => { tasks.set(++serial, fn); return serial }, clearTimeout: id => tasks.delete(id),
+        clearInterval: id => cleared.intervals.push(id),
+        window: { removeEventListener: (name, fn) => cleared.listeners.push([name, fn]) } }
     vm.runInNewContext(compiled, context)
     const instance = new context.exports.Editor()
     Object.assign(instance, { dataRetryCount: 0, destroyed: false, dataBindingFailed: false,
@@ -28,7 +31,7 @@ function fixture() {
         dataRef() { return this.incomingData = this.value || '' } })
     const subscriber = { closed: false, next: value => values.push(value) }
     const tick = () => { const next = tasks.entries().next().value; if (next) { tasks.delete(next[0]); next[1]() } }
-    const result = { instance, subscriber, tasks, warnings, values, tick }
+    const result = { instance, subscriber, tasks, warnings, values, tick, cleared }
     return result
 }
 test('retries are bounded and late data can recover', () => {
@@ -73,8 +76,12 @@ test('destruction cancels retries and removes only its listener', () => {
     f.instance.dataChangeHandler = own
     f.instance.dataChangeSource = { listeners: { change: [{ method: own }, { method: other }] } }
     f.instance.dataSubscription = { unsubscribe: () => { unsubscribed = true } }
+    f.instance.tokenInterval = 7
+    f.instance.onBeforeUnload = () => {}
     f.instance.dataDefer(f.subscriber)
     f.instance.ngOnDestroy()
+    assert.deepEqual(f.cleared.intervals, [7], 'upload token refresh stops')
+    assert.deepEqual(f.cleared.listeners, [['beforeunload', f.instance.onBeforeUnload]], 'unload guard is removed')
     f.instance.dataDefer(f.subscriber)
     assert.equal(f.tasks.size, 0, 'destroyed editor cannot schedule retries')
     assert.equal(unsubscribed, true)

@@ -98,6 +98,55 @@ div.fr-quick-insert.fr-visible {
   display: flex !important;
 }
 
+// Opening a toolbar "more" row adds height above the cursor, and Chrome's scroll anchoring would move the page
+.fr-box {
+  overflow-anchor: none;
+}
+
+// The admin pins the sticky toolbar to top: 0. When the page itself scrolls (narrow layout), keep it below the fixed
+// header instead.
+sa-editor.editor-page-scroll .fr-box .fr-toolbar.fr-sticky-on {
+  top: var(--sa-editor-sticky-top, 0) !important;
+}
+
+// Code blocks and inline code; translucent for light and dark themes
+.fr-element {
+  pre,
+  code {
+    font-family: SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace;
+  }
+  pre {
+    padding: 12px 16px;
+    border: 1px solid rgba(127, 127, 127, .3);
+    border-radius: 4px;
+    background: rgba(127, 127, 127, .1);
+    font-size: .875em;
+    line-height: 1.5;
+    white-space: pre-wrap;
+  }
+  code {
+    padding: .1em .35em;
+    border-radius: 3px;
+    background: rgba(127, 127, 127, .15);
+    font-size: .9em;
+  }
+  pre code {
+    padding: 0;
+    background: none;
+    font-size: inherit;
+  }
+}
+
+// Froala's sticky-toolbar spacer is see-through and shows the page behind a fullscreen editor
+.fr-box.fr-fullscreen .fr-sticky-dummy {
+  display: none !important;
+}
+
+// Dialogs open above a fullscreen editor (z-index 2147483630). The live editor sets its own with !important.
+body.sa-editor-fullscreen .cdk-overlay-container {
+  z-index: 2147483640 !important;
+}
+
 // These are the selectors you'd want to overwrite to make the editor completely dark.
 /* *
 .dark-theme {

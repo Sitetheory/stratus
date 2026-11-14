@@ -220,6 +220,7 @@ export class CitationDialogComponent extends ResponsiveComponent implements OnIn
         if (!this.newCitation && this.existingCitationElement) {
             // The selection tool is not working properly... so we are just going to directly alter the existing element
             this.existingCitationElement.outerHTML = citationElement
+            this.baseEditor.undo.saveStep()
         } else {
             this.eventManager.trigger('insert', citationElement, this.editor)
             // this.baseEditor.html.insert(citationElement) // same effect as above trigger
@@ -235,10 +236,10 @@ export class CitationDialogComponent extends ResponsiveComponent implements OnIn
         if (!isEmpty(title)) {
             title = `<stratus-citation-title>${title}</stratus-citation-title>`
         } else {
-            title = `<stratus-citation-notitle/>`
+            title = `<stratus-citation-notitle></stratus-citation-notitle>`
         }
 
-        return `<stratus-citation><stratus-citation-content>${content}</stratus-citation-content>${title}</stratus-citation-content>`
+        return `<stratus-citation><stratus-citation-content>${content}</stratus-citation-content>${title}</stratus-citation>`
     }
 
     getSvg(url: string, options?: IconOptions): Observable<string> {
