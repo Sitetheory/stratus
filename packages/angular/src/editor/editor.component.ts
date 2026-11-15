@@ -1487,6 +1487,58 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
         return removed.length || emoji.length || styled || spaced ? template.innerHTML : html
     }
 
+    // Froala's Return handler scrolls the scroll container to the new line's offset inside the editor, which is only
+    // right for an unscrolled editor at the top of the page. Undo that, then scroll just enough to show the cursor.
+    keepScrollOnEnter() {
+        const editor = this.froalaEditorDirective && (this.froalaEditorDirective as any).getEditor()
+        if (!editor || !editor.cursor) {
+            return
+        }
+        const enter = editor.cursor.enter
+        editor.cursor.enter = (shift?: boolean) => {
+            const positions = scrollPositions(editor.$box.get(0).parentElement)
+            enter(shift)
+            restoreScroll(positions)
+            if (!editor.fullscreen.isActive()) {
+                this.revealCursor(editor)
+            }
+        }
+    }
+
+    // Scroll the editor, then whatever scrolls around it, just enough to show the cursor below the toolbar
+    revealCursor(editor: any) {
+        const selection = window.getSelection()
+        if (!selection.rangeCount) {
+            return
+        }
+        const anchor = selection.anchorNode
+        const block = anchor instanceof Element ? anchor : anchor.parentElement
+        // <body> and <html> scroll the window, so their own boxes clip nothing
+        const isPage = (element: Element) => element.contains(document.body)
+        const scrollers: Element[] = []
+        for (let element = block; element; element = element.parentElement) {
+            if (isPage(element) || /auto|scroll/.test(getComputedStyle(element).overflowY)) {
+                scrollers.push(element)
+            }
+        }
+        scrollers.forEach((scroller, index) => {
+            const cursor = selection.getRangeAt(0).getClientRects()[0] || block.getBoundingClientRect()
+            // What this scroller shows: its box, clipped by the scrollers around it, the window and the toolbar
+            let top = editor.$tb.get(0).getBoundingClientRect().bottom
+            let bottom = window.innerHeight
+            scrollers.slice(index).filter(outer => !isPage(outer)).forEach(outer => {
+                const box = outer.getBoundingClientRect()
+                top = Math.max(top, box.top)
+                bottom = Math.min(bottom, box.bottom)
+            })
+            if (cursor.bottom > bottom - 16) {
+                scroller.scrollTop += cursor.bottom - bottom + 32
+            } else if (cursor.top < top + 16) {
+                scroller.scrollTop -= top - cursor.top + 32
+            }
+        })
+    }
+
     // The configured viewport only scrolls in the wide admin layout; in the narrow layout the page itself scrolls
     scrollContainer(): string {
         const viewPort = Stratus.Environment.get('viewPort')
@@ -1821,7 +1873,11 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
     }
 
     onFroalaInit() {
-        setTimeout(() => this.ensureFroalaHydration(false), 1)
+        // The directive only has the editor once Froala's constructor has returned
+        setTimeout(() => {
+            this.ensureFroalaHydration(false)
+            this.keepScrollOnEnter()
+        }, 1)
 
         // Set Token via Cookie if present
         // Stratus.Environment.set('token', cookie('apiToken') || null)
@@ -2174,12 +2230,13 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
         if (this.debounceSave && this.pendingLocalValue !== null) {
             this.modelSave(this.outgoingData)
         }
+        // Same rules as the model's own auto-save. Its timer id is never reset, so it can't say what is unsaved.
         const model: any = this.model
-        if (!model || !model.autoSaveTimeout) {
+        if (!model || !model.getSavablePatch || !model.completed || model.isNew() ||
+            (model.autoSaveHalt && !model.autoSave) || _.isEmpty(model.getSavablePatch())) {
             return
         }
         clearTimeout(model.autoSaveTimeout)
-        model.autoSaveTimeout = null
         model.save()
         event.preventDefault()
         event.returnValue = ''

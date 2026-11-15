@@ -109,6 +109,18 @@ All phases are complete; see Completed Tasks.
 - **Froala's `link.insert` only writes the attributes it's given,** and its
   `attr()` skips null on a new link, so `null` removes `target` /
   `data-content-id` on edit and writes nothing on insert.
+- **The model registers a change on the next AngularJS digest** (a deep
+  `$watch`), and its `autoSaveTimeout` id is never reset after it fires. So
+  neither says what is unsaved at unload; `getSavablePatch()` compares the data
+  with the last server payload and does.
+- **Froala's Return handler scrolls the page to the wrong place.** With
+  `scrollableContainer` and `toolbarSticky` set, `cursor.enter` calls
+  `$sc[0].scroll()` with the new line's offset inside the editor (or its
+  viewport top), as if the editor were unscrolled at the top of the container.
+  It fires whenever the cursor is in the lower part of the screen (also on the
+  0.13.15 build). `cursor.enter` is wrapped to undo it.
+- **Froala's `initialized` event fires inside its constructor,** before the
+  directive's `getEditor()` returns the editor, so editor setup is deferred.
 - **Froala hands typing to the form after ~300–600ms,** and only reads code view
   back when it closes.
 - **Froala drops the space after an inline element** in a container that also
@@ -154,8 +166,9 @@ Froala's own link popup.
 
 #### 2.3: A reload within the autosave delay lost text [status: completed]
 
-`beforeunload` pushes the latest text to the model, saves at once and asks the
-browser to confirm leaving.
+`beforeunload` pushes the latest text to the model. If the model then has
+unsaved changes (and auto-saves), it saves at once and asks the browser to
+confirm leaving, so the save can finish. With nothing unsaved it does nothing.
 
 #### 2.4: Markup deleted on save [status: completed]
 
@@ -192,11 +205,18 @@ toolbar sits below the fixed header.
 
 Dialogs open above the fullscreen editor (`body.sa-editor-fullscreen`); leaving
 fullscreen restores the scroll of the page, the admin panel and the Visual
-Editor drawer; the see-through sticky spacer is hidden.
+Editor drawer; the see-through sticky spacer is hidden, and the text area fills
+the screen (Froala sized it from the toolbar's height before fullscreen, which
+left a strip of the page showing when the toolbar went from two rows to one).
 
 #### 3.5: Existing links couldn't be edited [status: completed]
 
 `linkManagerEdit` is back in the link popup.
+
+#### 3.6: Return scrolled the page away from the cursor [status: completed]
+
+Froala's own scroll on Return is undone, then the editor (and the page only if
+needed) scrolls just enough to keep the cursor in view below the toolbar.
 
 ### Phase 4: Link dialog [status: completed]
 

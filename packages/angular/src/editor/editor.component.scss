@@ -142,6 +142,17 @@ sa-editor.editor-page-scroll .fr-box .fr-toolbar.fr-sticky-on {
   display: none !important;
 }
 
+// Froala sizes the fullscreen text area from the toolbar's height before fullscreen, which can leave a strip of the
+// page showing at the bottom. Let the text area fill what the toolbars leave.
+.fr-box.fr-fullscreen {
+  display: flex;
+  flex-direction: column;
+  .fr-wrapper {
+    flex: 1 1 auto;
+    height: auto !important;
+  }
+}
+
 // Dialogs open above a fullscreen editor (z-index 2147483630). The live editor sets its own with !important.
 body.sa-editor-fullscreen .cdk-overlay-container {
   z-index: 2147483640 !important;
