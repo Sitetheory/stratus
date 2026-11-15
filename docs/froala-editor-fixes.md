@@ -119,6 +119,12 @@ All phases are complete; see Completed Tasks.
   viewport top), as if the editor were unscrolled at the top of the container.
   It fires whenever the cursor is in the lower part of the screen (also on the
   0.13.15 build). `cursor.enter` is wrapped to undo it.
+- **The Visual Editor drawer wraps the editor in `md-input-container`,** so
+  AngularJS Material's floating-label rules (absolute position, `bottom: 100%`,
+  a 28px transform, hidden overflow) and its transparent text for empty
+  unfocused inputs apply to Froala's toolbar popups. The admin's
+  `.fr-btn.fr-open { margin-top: 0 }` rule (`edit.less`) isn't loaded there
+  either.
 - **Froala's `initialized` event fires inside its constructor,** before the
   directive's `getEditor()` returns the editor, so editor setup is deferred.
 - **Froala hands typing to the form after ~300–600ms,** and only reads code view
@@ -288,9 +294,44 @@ and the pager sit in the footer.
 Toolbar buttons (admin and Visual Editor) and in-editor styling; `skip` is
 removed after `paragraphFormat`.
 
-### Phase 9: Wrap-up [status: completed]
+### Phase 9: Popups and narrow editors [status: completed]
 
-#### 9.1: Version bump, build, retest, cleanup [status: completed]
+#### 9.1: Popup labels inside a Material container [status: completed]
+
+Inside an `md-input-container`, Froala popup labels sit where Froala puts them
+and unfocused inputs keep their text colour (video URL and embed, colour hex).
+
+#### 9.2: Toolbar re-wrapped when a "more" row opened [status: completed]
+
+The open "more" button no longer hangs 6px lower than the others, so wrapped
+button groups stay on their rows.
+
+#### 9.3: Quick insert [status: completed]
+
+Off for compact editors: it sits 50px left of the editor, which a sidebar
+covers. Its icons are inline again, as Froala lays them out: Sitetheory's
+page-wide `svg { display: block }` collapsed their top margin and left them
+off-centre.
+
+#### 9.4: Popups in the scroll container [status: completed]
+
+Froala misplaces the popups it puts in the scroll container (image, video,
+link) when that container is scrolled (the admin's `#section-mask`), when
+another scroller clips the editor (the Visual Editor drawer), or when the
+image is taller than the screen: it hides them, opens them behind a header,
+or opens them far away and scrolls the page there by focusing their first
+field. `popups.show` is wrapped:
+
+- The scroll is kept.
+- A popup opened from an edit popup (image size, alt text, replace) takes its
+  place and keeps it while open.
+- A popup that is hidden or cut off while its image or link is in view is put
+  under it, above it, or over it (an image filling the view).
+- Any popup is kept inside the window.
+
+### Phase 10: Wrap-up [status: completed]
+
+#### 10.1: Version bump, build, retest, cleanup [status: completed]
 
 ## Testing
 

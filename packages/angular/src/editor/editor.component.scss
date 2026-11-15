@@ -88,6 +88,10 @@ md-tabs {
 div.fr-quick-insert.fr-visible {
 
 }
+// A page-wide svg { display: block } (Sitetheory's common.css) collapses the icons' top margin, so they sit off-centre
+.fr-floating-btn svg {
+  display: inline;
+}
 
 // CodeMirror 6 CSS for Froala
 // Note: This needs !important to override the built-in !important
@@ -107,6 +111,28 @@ div.fr-quick-insert.fr-visible {
 // header instead.
 sa-editor.editor-page-scroll .fr-box .fr-toolbar.fr-sticky-on {
   top: var(--sa-editor-sticky-top, 0) !important;
+}
+
+// Froala hangs an open "more" button 6px lower than the others, and in a narrow toolbar the wrapped buttons snag on it
+sa-editor .fr-toolbar .fr-command.fr-btn.fr-open {
+  margin-top: 4px;
+}
+
+// Inside an AngularJS Material md-input-container (the Visual Editor drawer), Material's floating-label and
+// empty-input rules reach Froala's popups: labels are moved or hidden, and unfocused inputs get transparent text
+md-input-container .fr-popup {
+  label:not(.md-no-float):not(.md-container-ignore) {
+    bottom: auto;
+    width: auto;
+    pointer-events: auto;
+    transform: none;
+  }
+  .fr-checkbox-line label {
+    position: static;
+  }
+}
+md-input-container:not(.md-input-has-value):not(.md-input-has-placeholder) .fr-popup input:not(:focus) {
+  color: #222;
 }
 
 // Code blocks and inline code; translucent for light and dark themes

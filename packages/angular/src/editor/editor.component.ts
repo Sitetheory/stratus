@@ -1489,11 +1489,7 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
 
     // Froala's Return handler scrolls the scroll container to the new line's offset inside the editor, which is only
     // right for an unscrolled editor at the top of the page. Undo that, then scroll just enough to show the cursor.
-    keepScrollOnEnter() {
-        const editor = this.froalaEditorDirective && (this.froalaEditorDirective as any).getEditor()
-        if (!editor || !editor.cursor) {
-            return
-        }
+    keepScrollOnEnter(editor: any) {
         const enter = editor.cursor.enter
         editor.cursor.enter = (shift?: boolean) => {
             const positions = scrollPositions(editor.$box.get(0).parentElement)
@@ -1501,6 +1497,83 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             restoreScroll(positions)
             if (!editor.fullscreen.isActive()) {
                 this.revealCursor(editor)
+            }
+        }
+    }
+
+    // Froala misplaces the popups it puts in the scroll container (image, video, link) when that container is scrolled,
+    // when another scroller clips the editor, or when the image is taller than the screen: it hides them, opens them
+    // behind a header, or opens them far away and scrolls the page there by focusing their first field. Keep the
+    // scroll, and keep each popup in view.
+    keepPopupsInView(editor: any) {
+        const show = editor.popups.show
+        editor.popups.show = (id: string, ...position: any[]) => {
+            const [family] = id.split('.')
+            const edit = `${family}.edit`
+            // A popup opened from an edit popup (image size, alt text) takes its place, and keeps it when Froala shows
+            // the popup again on scroll
+            const from = id === edit ? null : [edit, id]
+                .map(open => editor.popups.isVisible(open) && editor.popups.get(open).get(0).getBoundingClientRect())
+                .find(rect => rect && rect.height)
+            const positions = scrollPositions(editor.el)
+            show(id, ...position)
+            restoreScroll(positions)
+            const $popup = editor.popups.get(id)
+            const popup: HTMLElement = $popup && $popup.get(0)
+            if (!popup) {
+                return
+            }
+            const style = getComputedStyle(popup)
+            const moveTo = (top: number) => {
+                popup.classList.remove('fr-hidden')
+                popup.style.top = `${parseFloat(style.top) + top - popup.getBoundingClientRect().top}px`
+            }
+            // The image, video or link the popup is for
+            const owner = editor[family] && editor[family].get && editor[family].get()
+            const element: Element = owner && (owner.get ? owner.get(0) : owner)
+            if (from) {
+                moveTo(from.top)
+            } else if (element && popup.parentElement === editor.$sc.get(0)) {
+                // What the scrollers around the editor leave on screen. A fixed box (fullscreen, a drawer) isn't
+                // clipped by what is around it.
+                let top = 0
+                let bottom = window.innerHeight
+                for (let scroller: Element = editor.$box.get(0); scroller && !scroller.contains(document.body);
+                     scroller = scroller.parentElement) {
+                    const css = getComputedStyle(scroller)
+                    if (/auto|scroll/.test(css.overflowY)) {
+                        const clip = scroller.getBoundingClientRect()
+                        top = Math.max(top, clip.top)
+                        bottom = Math.min(bottom, clip.bottom)
+                    }
+                    if (css.position === 'fixed') {
+                        break
+                    }
+                }
+                const at = popup.getBoundingClientRect()
+                const text = editor.$wp.get(0).getBoundingClientRect()
+                const target = element.getBoundingClientRect()
+                // Hidden or cut off while its image or link is in view: put it next to that
+                const lost = popup.classList.contains('fr-hidden') || at.top < top || at.bottom > bottom
+                if (lost && target.bottom > Math.max(top, text.top) && target.top < Math.min(bottom, text.bottom)) {
+                    popup.classList.remove('fr-hidden')
+                    // Under it, or above it, or over it (an image filling the view), clear of the toolbar
+                    const low = Math.max(top, editor.$tb.get(0).getBoundingClientRect().bottom) + 10
+                    const high = bottom - popup.offsetHeight - 10
+                    const spot = [target.bottom + 10, target.top - popup.offsetHeight - 10]
+                        .find(option => option >= low && option <= high)
+                    moveTo(spot === undefined ? Math.max(low, Math.min(target.top + 10, high)) : spot)
+                }
+            }
+            // Inside the window (a popup near the right edge of a narrow drawer, or taller than the room under it)
+            const box = popup.getBoundingClientRect()
+            const up = Math.min(box.bottom - window.innerHeight + 10, box.top - 10)
+            const left = Math.min(box.right - window.innerWidth + 10, box.left - 10)
+            if (up > 0) {
+                popup.style.top = `${parseFloat(style.top) - up}px`
+            }
+            if (left > 0) {
+                popup.style.left = `${parseFloat(style.left) - left}px`
             }
         }
     }
@@ -1560,7 +1633,9 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
         // This is necessary in order to make the drop down menus appear
         this.froalaConfig.scrollableContainer = 'body';
         // Try to make it reset after fullscreen
-        (this.froalaConfig as any).toolbarResponsiveToEditor = true
+        (this.froalaConfig as any).toolbarResponsiveToEditor = true;
+        // The quick insert button sits 50px left of the editor, where a sidebar has no room
+        (this.froalaConfig as any).quickInsertEnabled = false
         const compactButtons = {
             moreText: {
                 buttons: [
@@ -1876,7 +1951,11 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
         // The directive only has the editor once Froala's constructor has returned
         setTimeout(() => {
             this.ensureFroalaHydration(false)
-            this.keepScrollOnEnter()
+            const editor = this.froalaEditorDirective && (this.froalaEditorDirective as any).getEditor()
+            if (editor && editor.cursor) {
+                this.keepScrollOnEnter(editor)
+                this.keepPopupsInView(editor)
+            }
         }, 1)
 
         // Set Token via Cookie if present
