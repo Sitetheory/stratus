@@ -41,17 +41,22 @@ and media dialogs. Add Code Block and Inline Code buttons.
 
 ## Out of scope
 
-Questions for Chad (his recent code):
+Questions for Chad:
 
-- `changeImgSize()` `mode === 'out'` removes `src` from legacy images.
-- Inline `max-width: 100%` on native images (`native-image.ts`) overrides site
-  image classes.
-- The Visual Editor's compact toolbar has no custom-class menu.
-- `data-stratus-src-native-registered` is saved into content.
-- Uploaded SVGs are served as `application/octet-stream`.
+- Uploaded SVGs are served as `application/octet-stream` and don't display.
+- Pasted embeds (YouTube etc.) are blocked on published pages by
+  `ConsentMarkup::protect()` when the site uses the built-in consent manager.
+- Images uploaded straight into the editor are saved as the `-xs` thumbnail
+  with no `srcset`.
 
 Not fixed:
 
+- `changeImgSize()` `mode === 'out'` removes `src` from legacy images
+  (asserted by `scripts/check-editor-native-images.js`).
+- Inline `max-width: 100%` on native images (`native-image.ts`) overrides site
+  image classes; a site can restore them with `!important`.
+- The Visual Editor's compact toolbar has no custom-class menu.
+- `data-stratus-src-native-registered` is saved on legacy images.
 - Table popup placement and Froala's image classes (Froala's own behaviour).
 - Citation titles aren't escaped: escaping would double-escape existing HTML
   titles.
