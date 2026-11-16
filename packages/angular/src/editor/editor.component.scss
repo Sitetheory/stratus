@@ -88,6 +88,10 @@ md-tabs {
 div.fr-quick-insert.fr-visible {
 
 }
+// A page-wide svg { display: block } (Sitetheory's common.css) collapses the icons' top margin, so they sit off-centre
+.fr-floating-btn svg {
+  display: inline;
+}
 
 // CodeMirror 6 CSS for Froala
 // Note: This needs !important to override the built-in !important
@@ -96,6 +100,88 @@ div.fr-quick-insert.fr-visible {
 }
 .fr-box.fr-code-view .ͼ1.cm-editor {
   display: flex !important;
+}
+
+// Opening a toolbar "more" row adds height above the cursor, and Chrome's scroll anchoring would move the page
+.fr-box {
+  overflow-anchor: none;
+}
+
+// The admin pins the sticky toolbar to top: 0. When the page itself scrolls (narrow layout), keep it below the fixed
+// header instead.
+sa-editor.editor-page-scroll .fr-box .fr-toolbar.fr-sticky-on {
+  top: var(--sa-editor-sticky-top, 0) !important;
+}
+
+// Froala hangs an open "more" button 6px lower than the others, and in a narrow toolbar the wrapped buttons snag on it
+sa-editor .fr-toolbar .fr-command.fr-btn.fr-open {
+  margin-top: 4px;
+}
+
+// Inside an AngularJS Material md-input-container (the Visual Editor drawer), Material's floating-label and
+// empty-input rules reach Froala's popups: labels are moved or hidden, and unfocused inputs get transparent text
+md-input-container .fr-popup {
+  label:not(.md-no-float):not(.md-container-ignore) {
+    bottom: auto;
+    width: auto;
+    pointer-events: auto;
+    transform: none;
+  }
+  .fr-checkbox-line label {
+    position: static;
+  }
+}
+md-input-container:not(.md-input-has-value):not(.md-input-has-placeholder) .fr-popup input:not(:focus) {
+  color: #222;
+}
+
+// Code blocks and inline code; translucent for light and dark themes
+.fr-element {
+  pre,
+  code {
+    font-family: SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace;
+  }
+  pre {
+    padding: 12px 16px;
+    border: 1px solid rgba(127, 127, 127, .3);
+    border-radius: 4px;
+    background: rgba(127, 127, 127, .1);
+    font-size: .875em;
+    line-height: 1.5;
+    white-space: pre-wrap;
+  }
+  code {
+    padding: .1em .35em;
+    border-radius: 3px;
+    background: rgba(127, 127, 127, .15);
+    font-size: .9em;
+  }
+  pre code {
+    padding: 0;
+    background: none;
+    font-size: inherit;
+  }
+}
+
+// Froala's sticky-toolbar spacer is see-through and shows the page behind a fullscreen editor
+.fr-box.fr-fullscreen .fr-sticky-dummy {
+  display: none !important;
+}
+
+// Froala sizes the fullscreen text area from the toolbar's height before fullscreen, which can leave a strip of the
+// page showing at the bottom. Let the text area fill what the toolbars leave.
+.fr-box.fr-fullscreen {
+  display: flex;
+  flex-direction: column;
+  .fr-wrapper {
+    flex: 1 1 auto;
+    height: auto !important;
+  }
+}
+
+// Dialogs open above a fullscreen editor (z-index 2147483630). The live editor sets its own with !important.
+body.sa-editor-fullscreen .cdk-overlay-container {
+  z-index: 2147483640 !important;
 }
 
 // These are the selectors you'd want to overwrite to make the editor completely dark.

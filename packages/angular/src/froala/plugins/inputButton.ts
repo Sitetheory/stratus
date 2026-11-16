@@ -13,12 +13,36 @@ import {
 // External Dependencies
 import _ from 'lodash'
 
+export type ScrollPositions = Array<[Element, number]>
+
+// Scroll positions of an element and its ancestors, the page included
+export function scrollPositions(element: Element): ScrollPositions {
+    const positions: ScrollPositions = []
+    for (; element; element = element.parentElement) {
+        positions.push([element, element.scrollTop])
+    }
+    return positions
+}
+
+// Put them back at once (the admin sets `scroll-behavior: smooth` on html)
+export function restoreScroll(positions: ScrollPositions) {
+    const root = document.documentElement
+    const scrollBehavior = root.style.scrollBehavior
+    root.style.scrollBehavior = 'auto'
+    for (const [element, top] of positions) {
+        element.scrollTop = top
+    }
+    root.style.scrollBehavior = scrollBehavior
+}
+
 // Universal Button
 // TODO: Some of this can move elsewhere, since it isn't completely specific to Froala
 export class InputButtonPlugin<EventData = string|LooseObject> implements TriggerInterface {
     // Local
     uid: string
     snapshot: any
+    // Text selected when the dialog opened
+    selectionText = ''
 
     // Settings
     debug = false
@@ -75,7 +99,13 @@ export class InputButtonPlugin<EventData = string|LooseObject> implements Trigge
         }
         // Save selection before passing off event
         if (this.autoSaveSelection) {
+            // Froala's popups (e.g. the link popup) restore the selection from the same markers when they close,
+            // which would use up ours
+            this.editor.popups.hideAll()
+            this.selectionText = this.editor.selection ? this.editor.selection.text() : ''
             this.saveSelection()
+            // A blur saves and can re-render the editor, losing the markers; restoreSelection() turns blur back on
+            this.editor.events.disableBlur()
         }
         // Get snapshot before passing off event
         this.updateSnapshot()
@@ -90,8 +120,8 @@ export class InputButtonPlugin<EventData = string|LooseObject> implements Trigge
         if (this.debug) {
             console.log(`${this.name}.trigger():`, name, data, callee)
         }
-        // This checks the data and inserts it on the cursor
-        if (_.isEmpty(data)) {
+        // Only inserts need data; 'restore' (cancel) just puts the selection back
+        if (name === 'insert' && _.isEmpty(data)) {
             console.warn(`${this.name}.trigger():`, data, 'is not valid data.')
             return
         }
@@ -112,13 +142,13 @@ export class InputButtonPlugin<EventData = string|LooseObject> implements Trigge
         if (this.autoRestoreSelection) {
             this.restoreSelection()
         }
-        // Ensure we only continue for 'insert' events
         if (name !== 'insert') {
-            console.warn(`${this.name}.trigger():`, name, 'event is not supported.')
             return
         }
         // Insert our data into Froala on the caret
         this.insert ? this.insert(data): this.editor.html.insert(data)
+        // The undo step is what fires contentChanged, which saves the model
+        this.editor.undo.saveStep()
         // Update snapshot for next insert
         this.updateSnapshot()
         // Save new selection
@@ -167,6 +197,8 @@ export class InputButtonPlugin<EventData = string|LooseObject> implements Trigge
         if (this.debug) {
             console.log('[restoreSelection]is focused:', this.editor.core.hasFocus())
         }
+        // Focusing the editor resets its inner scroll (long content) and can move the page
+        const positions = scrollPositions(this.editor.el)
         // Always disable blur before changing focus
         this.editor.events.disableBlur()
         // Get focus back to the editor
@@ -175,6 +207,7 @@ export class InputButtonPlugin<EventData = string|LooseObject> implements Trigge
         this.editor.selection.restore()
         // Enable Blur
         this.editor.events.enableBlur()
+        restoreScroll(positions)
         return true
     }
 

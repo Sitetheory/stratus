@@ -12,7 +12,8 @@
             <mat-label>Link Text</mat-label>
             <input matInput
                    aria-label="Link Text"
-                   formControlName='linkTextInput'>
+                   formControlName='linkTextInput'
+                   (keydown.enter)="$event.preventDefault(); onAcceptClick()">
         </mat-form-field>
 
         <!-- Target Selector -->
@@ -34,16 +35,20 @@
         <mat-form-field class="form-field"
                         *ngIf="linkType == 'content'">
             <input matInput
-                   placeholder="Search Content"
+                   placeholder="Search Pages"
                    aria-label="Search Content"
                    [matAutocomplete]="auto"
-                   formControlName='contentSelectorInput'>
+                   formControlName='contentSelectorInput'
+                   (focus)="$any($event.target).select()">
         </mat-form-field>
         <mat-autocomplete autoActiveFirstOption
                           #auto="matAutocomplete"
                           [displayWith]="displayContentText">
             <mat-option *ngIf="isContentLoading || isSingleContentLoading" class="is-loading">
                 <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+            </mat-option>
+            <mat-option *ngIf="!isContentLoading && !contentEntities.length" disabled>
+                No matching pages
             </mat-option>
             <ng-container *ngIf="!isContentLoading">
                 <!-- TODO: Modify to filteredContentModels|async which should improve responsiveness -->
@@ -67,7 +72,7 @@
 
                     <!-- Title & Route Display -->
                     <!--<span [class.selected-item]="isSelected(model)">-->
-                    {{(model && model.version) ? model.version.title : 'Untitled'}}
+                    {{contentTitle(model)}}
                     <small *ngIf="model.routing && model.routing.length">
                         {{'/' + model.routing[0].url}}
                     </small>
@@ -80,15 +85,25 @@
             <input matInput
                    placeholder="Edit URL"
                    aria-label="Edit URL"
-                   formControlName='linkURLInput'>
+                   formControlName='linkURLInput'
+                   (keydown.enter)="$event.preventDefault(); onAcceptClick()">
         </mat-form-field>
 
         <br>
 
-        <mat-checkbox class=""
-                      formControlName='linkTargetCheckbox'>
-            Open in new tab
-        </mat-checkbox>
+        <h4>
+            <label id="link-target-label">Open In:</label>
+        </h4>
+        <mat-radio-group class="radio-group"
+                         aria-labelledby="link-target-label"
+                         formControlName='linkTargetCheckbox'>
+            <mat-radio-button class="radio-button" [value]="false">
+                Same tab
+            </mat-radio-button>
+            <mat-radio-button class="radio-button" [value]="true">
+                New tab
+            </mat-radio-button>
+        </mat-radio-group>
     </form>
     <!-- List View and AutoComplete View Progress Bars -->
     <mat-progress-bar mode="indeterminate" *ngIf="!isListView && !isStyled"></mat-progress-bar>
@@ -173,6 +188,7 @@
         Cancel
     </button>
     <button mat-button
+            [disabled]="!isStyled"
             (click)="onAcceptClick()">
         Ok
     </button>

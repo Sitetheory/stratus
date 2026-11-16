@@ -72,7 +72,7 @@ export class ResponsiveComponent implements OnDestroy, ResponsiveInterface, Base
      * use super.ngOnDestroy() to override
      */
     ngOnDestroy() {
-        if (!_.isEmpty(this.uid)) {
+        if (_.isEmpty(this.uid)) {
             return
         }
         delete Stratus.Instances[this.uid]

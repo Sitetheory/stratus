@@ -5,7 +5,7 @@ const ts = require('typescript')
 const vm = require('vm')
 const { JSDOM } = require('jsdom')
 const dom = new JSDOM('')
-const context = { exports: {}, window: dom.window, document: dom.window.document, _: require('lodash'), console }
+const context = { exports: {}, window: dom.window, document: dom.window.document, Node: dom.window.Node, _: require('lodash'), console }
 const compile = source => ts.transpileModule(source, { compilerOptions: { target: ts.ScriptTarget.ES2020, module: ts.ModuleKind.CommonJS } }).outputText
 vm.runInNewContext(compile(fs.readFileSync('packages/angular/src/editor/native-image.ts', 'utf8')), context)
 Object.assign(context, context.exports)
@@ -19,7 +19,8 @@ function methods(file, name, names) {
   return new context.exports[name]()
 }
 const editor = methods('packages/angular/src/editor/editor.component.ts', 'EditorComponent',
-  ['normalizeIn', 'normalizeOut', 'changeImgSize', 'getSizedImageSrc', 'ensureImageRatioStyle', 'parseImageRatio'])
+  ['normalizeIn', 'normalizeOut', 'changeImgSize', 'getSizedImageSrc', 'ensureImageRatioStyle', 'parseImageRatio',
+    'protectSpaces', 'protectSpacesBeforeBlocks', 'restoreIcons'])
 const dialog = methods('packages/angular/src/editor/media-dialog.component.ts', 'MediaDialogComponent',
   ['createEmbed', 'getImageRatioStyle', 'getImageRatioAttributes', 'parseRatio'])
 const parse = html => { const div = dom.window.document.createElement('div'); div.innerHTML = html; return div }
@@ -63,6 +64,12 @@ for (const extension of ['gif', 'svg']) {
   const item = parse(dialog.createEmbed({ ...media, extension, mime: 'image/' + extension, _thumbnailUrl: 'https://example.com/photo.' + extension }).html).querySelector('img')
   assert.ok(!item.hasAttribute('srcset'))
 }
+// GIFs insert the original file: the resized thumbnail may lose the animation
+for (const enabled of [false, true]) {
+  windowCheck(enabled)
+  const gif = { ...media, extension: 'gif', mime: 'image/gif', _directUrl: '//cdn.sitetheory.io/site/430/anim.gif?v=1', _thumbnailUrl: '//cdn.sitetheory.io/site/430/anim-xs.gif' }
+  assert.equal(parse(editor.normalizeOut(editor.normalizeIn(dialog.createEmbed(gif).html))).querySelector('img').getAttribute('src'), gif._directUrl)
+}
 const legacy = '<img data-stratus-src data-src="//cdn.sitetheory.io/photo-xs.jpg" src="data:image/svg+xml,placeholder" class="fr-fic loading" data-ratio-real="4:3"><img src="https://other.example/b.jpg">'
 const converted = parse(editor.normalizeOut(editor.normalizeIn(legacy)))
 assert.equal(converted.querySelector('img').getAttribute('data-src'), '//cdn.sitetheory.io/photo-xs.jpg')
@@ -91,4 +98,11 @@ assert.equal(selector.getThumbnailSource({bestImage:{thumb:'https://provider.exa
 const preview=dom.window.document.createElement('img');preview.src='https://cdn.example/original.jpg';preview.srcset='https://cdn.example/broken.webp 1x'
 selector.retryThumbnail({target:preview});selector.retryThumbnail({target:preview})
 assert.equal(preview.hasAttribute('srcset'),false);assert.equal(preview.src,'https://cdn.example/original.jpg')
-console.log('PASS migrated editor save/reopen, 1600px cap, selector manifest selection and bounded retry')
+// Froala drops a space after a leading inline element when the container also holds blocks; load protects it
+const spaced = parse(editor.normalizeIn('<ul><li><strong>Notice.</strong> Slow down<ul><li>Walk</li></ul></li></ul><p><em>a</em> b</p>'))
+assert.equal(spaced.querySelector('li').childNodes[1].textContent, '\u200B Slow down', 'space after a leading inline element is protected')
+assert.equal(spaced.querySelector('p').textContent, 'a b', 'plain paragraphs are untouched')
+// Font Awesome's JavaScript swaps icon tags for SVGs inside the editor; saving restores the original tag
+const icons = editor.normalizeOut('<p>A <svg class="svg-inline--fa fa-star" data-prefix="fa" data-icon="star" data-fa-i2svg=""><path d="M0"></path></svg><!-- <i class="fa fa-star"></i> Font Awesome fontawesome.com --> b <svg data-prefix="fab" data-icon="github" data-fa-i2svg=""></svg></p>')
+assert.equal(icons, '<p>A <i class="fa fa-star"></i> b <i class="fab fa-github"></i></p>')
+console.log('PASS migrated editor save/reopen, 1600px cap, selector manifest selection and bounded retry, protected spaces, icons')

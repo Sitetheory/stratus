@@ -28,12 +28,13 @@
             <!-- [disabled]="isSelected(mediaEntity)" -->
             <!-- This action button is for selecting the Media, instead of clicking directly on the image -->
             <button mat-button
+                    type="button"
                     (click)="confirm()"
                     [disabled]="formDisabled || isPopupLoading"
             >
                 Confirm
             </button>
-            <button mat-button (click)="cancel()">
+            <button mat-button type="button" (click)="cancel()">
                 Cancel
             </button>
             <!-- TODO: Add action buttons for deleting media with confirm dialog (i.e. trash can) -->

@@ -131,7 +131,6 @@ import 'font-awesome'
 import 'froala-plugins'
 import 'froala-embedly'
 import 'froala-font-awesome'
-import 'froala-image-tui'
 // import 'froala-spell-checker'
 
 // Froala Individual Plugins
@@ -174,7 +173,9 @@ import 'froala-image-tui'
 // import 'froala-word-paste'
 
 // Froala Custom Plugins
+import {restoreScroll, ScrollPositions, scrollPositions} from '../froala/plugins/inputButton'
 import '../froala/plugins/citationManager'
+import '../froala/plugins/codeFormat'
 import '../froala/plugins/linkManager'
 import '../froala/plugins/mediaManager'
 // import '../froala/plugins/menuButton'
@@ -187,7 +188,7 @@ import {
     basicSetup,
     EditorView
 } from 'codemirror'
-import {Extension} from '@codemirror/state'
+import {Extension, Transaction} from '@codemirror/state'
 import {html} from '@codemirror/lang-html'
 import {oneDarkTheme} from '@codemirror/theme-one-dark'
 import {XHR} from '@stratusjs/core/datastore/xhr'
@@ -290,6 +291,9 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
     private dataRetryCount = 0
     private dataBindingFailed = false
     private destroyed = false
+    private tokenInterval: ReturnType<typeof setInterval>
+    // Fullscreen resets the scroll of the page and the editor's containers (e.g. the Visual Editor drawer)
+    private scrollBeforeFullscreen: ScrollPositions = []
     private dataChangeSource: EventManager
     private dataChangeHandler: () => void
     // Note: It may be better to LifeCycle::tick(), but this works for now
@@ -443,6 +447,7 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             'italic',
             'underline',
             'strikeThrough',
+            'inlineCode',
             'subscript',
             'superscript',
             // FIXME: The vertical lines don't work
@@ -467,6 +472,7 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             'indent',
             'outdent',
             'quote',
+            'codeBlock',
             'paragraphFormat',
             'paragraphStyle',
             // 'lineHeight'
@@ -522,22 +528,54 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             // FIXME: Froala doesn't support focus events, so this never fires...
             focus: (event: FocusEvent) => this.onFocus(event),
             'commands.before': (command: string) => {
+                const editor = (this.froalaEditorDirective as any).getEditor()
+                if (command === 'fullscreen' && !editor.fullscreen.isActive()) {
+                    this.scrollBeforeFullscreen = scrollPositions(editor.$box.get(0))
+                }
+                // Insert the rule after the selection instead of replacing it
+                if (command === 'insertHR' && !editor.selection.isCollapsed()) {
+                    editor.selection.get().collapseToEnd()
+                }
                 if (command !== 'insertImage' || !this.isCompact) {
                     return true
                 }
-                const editor = (this.froalaEditorDirective as any).getEditor()
                 editor.commands.exec('mediaManager')
                 return false
             },
-            fullscreen: () => {
+            'commands.after': (command: string) => {
                 const editor = (this.froalaEditorDirective as any).getEditor()
+                // Froala's link popup (image links) saves no undo step, so contentChanged never fires
+                if (command === 'linkInsert') {
+                    editor.undo.saveStep()
+                }
+                // Froala marks every <pre> with skip="true" and only unmarks those still a <pre>
+                if (command === 'paragraphFormat' || command === 'codeBlock') {
+                    editor.$el.find('[skip]').removeAttr('skip')
+                }
+                if (command !== 'fullscreen') {
+                    return
+                }
                 this.fullscreenActive = !!editor.fullscreen.isActive()
-
+                // Dialogs open above the fullscreen editor (editor.component.scss)
+                document.body.classList.toggle('sa-editor-fullscreen', this.fullscreenActive)
                 setTimeout(() => {
                     editor.size.refresh()
                     editor.position.refresh()
                     this.refresh()
+                    if (!this.fullscreenActive) {
+                        restoreScroll(this.scrollBeforeFullscreen)
+                    }
                 }, 30)
+            },
+            'image.inserted': (images: any, response?: string) => this.removeUploadAttributes(images, response),
+            'image.replaced': (images: any, response?: string) => this.removeUploadAttributes(images, response),
+            'paste.beforeCleanup': (html: string) => this.cleanPastedHtml(html),
+            'paste.after': () => {
+                // Froala 4.0.18 can leave its paste markers behind (images it won't upload keep theirs)
+                const editor = (this.froalaEditorDirective as any).getEditor()
+                editor.$el.find('#isPasted').removeAttr('id')
+                editor.$el.find('img[data-fr-image-pasted]:not([src^="data:"]):not([src^="blob:"])').removeAttr('data-fr-image-pasted')
+                editor.undo.saveStep()
             },
             // bound to Froala Editor
             // contentChanged () {
@@ -569,6 +607,13 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
                 const extensions: Array<Extension> = [
                     basicSetup,
                     EditorView.lineWrapping,
+                    // Froala only reads code view back when it closes, so sync the form as the user types (without
+                    // writing back to the editor, which would reset code view)
+                    EditorView.updateListener.of(update => {
+                        if (update.docChanged && update.transactions.some(tr => tr.annotation(Transaction.userEvent))) {
+                            this.form.get('dataString').setValue(update.state.doc.toString(), {emitModelToViewChange: false})
+                        }
+                    }),
                     html({
                         // extraTags: [
                         //     'sa-editor'
@@ -633,7 +678,7 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             'enctype',
             'for', 'form', 'formaction', 'frameborder',
             'headers', 'height', 'hidden', 'high', 'href', 'hreflang', 'http-equiv',
-            'icon', 'id', 'ismap', 'itemprop',
+            'icon', 'id', 'ismap', 'itemprop', 'itemscope', 'itemtype',
             'keytype', 'kind',
             'label', 'lang', 'language', 'list', 'loading', 'loop', 'low',
             'max', 'maxlength', 'media', 'method', 'min', 'mozallowfullscreen', 'multiple',
@@ -641,7 +686,7 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             'name', 'novalidate',
             'open', 'optimum',
             'pattern', 'ping', 'placeholder', 'playsinline', 'poster', 'preload', 'pubdate',
-            'radiogroup', 'readonly', 'rel', 'required', 'reversed', 'rows', 'rowspan',
+            'radiogroup', 'readonly', 'rel', 'required', 'reversed', 'role', 'rows', 'rowspan',
             'sandbox', 'scope', 'scoped', 'scrolling', 'seamless', 'selected', 'shape',
             'size', 'sizes', 'span', 'src', 'srcdoc', 'srclang', 'srcset', 'start', 'step',
             'summary', 'spellcheck', 'style',
@@ -705,6 +750,8 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             // '.fa', '.fr-emoticon', '.fr-inner',
             // 'path', 'line',
             'hr', 'div',
+            // Icon fonts (e.g. Font Awesome) use empty elements
+            'i', '.fa',
             // SVG Exclusive Tags
             'animate', 'animateMotion', 'animateTransform', 'circle', 'clipPath', 'defs', 'desc', 'discard', 'ellipse',
             'feBlend', 'feColorMatrix', 'feComponentTransfer', 'feComposite', 'feConvolveMatrix', 'feDiffuseLighting',
@@ -805,6 +852,8 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
         ],
         // No Support for REGEXP (used inside CSS query selector)
         htmlDoNotWrapTags: [
+            // Froala's defaults (replaced by this list)
+            'script', 'style',
             // THIRD PARTY:
             // RealScout
             'realscout-simple-search',
@@ -868,7 +917,7 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             'main', 'map', 'mark', 'menu', 'menuitem', 'meter',
             'nav', 'noscript',
             'object', 'ol', 'optgroup', 'option', 'output',
-            'p', 'param', 'pre', 'progress',
+            'p', 'param', 'picture', 'pre', 'progress',
             'queue',
             'rp', 'rt', 'ruby',
             's', 'samp', 'script', 'style', 'section', 'select', 'small',
@@ -961,8 +1010,7 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             'linkOpen',
             // 'linkStyle',
             // 'linkEdit',
-            // FIXME: This is disabled for now because it places the links at the top of the field instead of at the cursor.
-            // 'linkManagerEdit',
+            'linkManagerEdit',
             'linkRemove',
         ],
         linkInsertButtons: [
@@ -998,6 +1046,8 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             'class',
             'style',
             'dir',
+            'role',
+            'contenteditable',
             'data-.+',
             'aria-.+',
             'ng-.+',
@@ -1031,8 +1081,6 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             'fullscreen',
             'help',
             'image',
-            // TODO: Install & Configure: https://froala.com/wysiwyg-editor/examples/tui-advanced-image-editor/
-            'imageTUI',
             // 'imageManager',
             'inlineStyle',
             'inlineClass',
@@ -1069,10 +1117,11 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             'ol',
             'hr'
         ],
-        scrollableContainer: Stratus.Environment.get('viewPort') || 'body',
+        scrollableContainer: this.scrollContainer(),
         spellcheck: true,
         theme: cookie('dark') ? 'dark' : null,
         toolbarSticky: true,
+        toolbarStickyOffset: this.scrollContainer() === 'body' ? this.fixedHeaderHeight() : 0,
         toolbarButtons: {
             moreText: {
                 buttons: this.froalaStandardButtons.moreText,
@@ -1180,7 +1229,6 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             `${froalaDir}css/themes/dark${min}.css`,
             `${froalaDir}css/third_party/embedly${min}.css`,
             `${froalaDir}css/third_party/font_awesome${min}.css`,
-            `${froalaDir}css/third_party/image_tui${min}.css`,
             // `${froalaDir}css/third_party/spell_checker${min}.css`
         ]).then(() => {
             this.styled = true
@@ -1325,6 +1373,7 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
 
     ngOnInit() {
         this.initialized = true
+        window.addEventListener('beforeunload', this.onBeforeUnload)
         // Hoist Custom Classes to Froala Config
         if (!_.isUndefined(this.classes)) {
             // @ts-ignore
@@ -1333,6 +1382,13 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
 
         if (this.compact) {
             this.applyCompactToolbar()
+        }
+
+        // When the page itself scrolls, the sticky toolbar sits below the fixed header (editor.component.scss)
+        if (this.froalaConfig.toolbarSticky && this.froalaConfig.scrollableContainer === 'body') {
+            const host: HTMLElement = this.elementRef.nativeElement
+            host.classList.add('editor-page-scroll')
+            host.style.setProperty('--sa-editor-sticky-top', `${this.froalaConfig.toolbarStickyOffset || 0}px`)
         }
 
         // console.info(`${moduleName}.ngOnInit`)
@@ -1376,6 +1432,199 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
         }
     }
 
+    // Froala adds every key of the upload response (the whole media record) to the image as an attribute
+    removeUploadAttributes(images: any, response?: string) {
+        let data: LooseObject
+        try {
+            data = JSON.parse(response)
+        } catch (e) {
+            return
+        }
+        if (!_.isPlainObject(data)) {
+            return
+        }
+        for (const key of _.keys(data)) {
+            if (key !== 'link') {
+                images.removeAttr(key)
+            }
+        }
+        const editor = (this.froalaEditorDirective as any).getEditor()
+        editor.undo.saveStep()
+    }
+
+    // Runs before Froala strips pasted styles. Returns the HTML untouched when nothing changed (Froala expects
+    // clipboards such as Word's full documents exactly as they came).
+    cleanPastedHtml(html: string): string {
+        if (!_.isString(html)) {
+            return html
+        }
+        const template = document.createElement('template')
+        template.innerHTML = html
+        const content = template.content
+        const all = (selector: string) => Array.from(content.querySelectorAll<HTMLElement>(selector))
+        // Drop what the styles hid, tracking pixels and page controls
+        const junk = '[hidden], img[width="1"][height="1"], button, select, textarea'
+        const removed = all(`${junk}, [style]`).filter(element =>
+            element.matches(junk) || element.style.display === 'none' || element.style.visibility === 'hidden'
+        )
+        removed.forEach(element => element.remove())
+        // Emoji pasted as images (WordPress, Twemoji) would be uploaded as pictures; use the emoji text
+        const emojiOnly = new RegExp('^(?=.*[\\p{Extended_Pictographic}\\p{Regional_Indicator}])[\\p{Extended_Pictographic}\\p{Regional_Indicator}\\u200d\\ufe0f\\u20e3\\u{1F3FB}-\\u{1F3FF}#*0-9]+$', 'u')
+        const emoji = all('img[alt]').filter(image => emojiOnly.test(image.getAttribute('alt')))
+        emoji.forEach(image => image.replaceWith(image.getAttribute('alt')))
+        // Keep bold and italic set by inline styles (Google Docs, Notion)
+        let styled = 0
+        all('span[style]').forEach(span => {
+            const tags = [/^(bold|[6-9]00)$/.test(span.style.fontWeight) && 'strong', span.style.fontStyle === 'italic' && 'em']
+            tags.filter(Boolean).forEach((name: string) => {
+                const tag = document.createElement(name)
+                tag.append(...Array.from(span.childNodes))
+                span.appendChild(tag)
+                styled++
+            })
+        })
+        const spaced = this.protectSpacesBeforeBlocks(content)
+        return removed.length || emoji.length || styled || spaced ? template.innerHTML : html
+    }
+
+    // Froala's Return handler scrolls the scroll container to the new line's offset inside the editor, which is only
+    // right for an unscrolled editor at the top of the page. Undo that, then scroll just enough to show the cursor.
+    keepScrollOnEnter(editor: any) {
+        const enter = editor.cursor.enter
+        editor.cursor.enter = (shift?: boolean) => {
+            const positions = scrollPositions(editor.$box.get(0).parentElement)
+            enter(shift)
+            restoreScroll(positions)
+            if (!editor.fullscreen.isActive()) {
+                this.revealCursor(editor)
+            }
+        }
+    }
+
+    // Froala misplaces the popups it puts in the scroll container (image, video, link) when that container is scrolled,
+    // when another scroller clips the editor, or when the image is taller than the screen: it hides them, opens them
+    // behind a header, or opens them far away and scrolls the page there by focusing their first field. Keep the
+    // scroll, and keep each popup in view.
+    keepPopupsInView(editor: any) {
+        const show = editor.popups.show
+        editor.popups.show = (id: string, ...position: any[]) => {
+            const [family] = id.split('.')
+            const edit = `${family}.edit`
+            // A popup opened from an edit popup (image size, alt text) takes its place, and keeps it when Froala shows
+            // the popup again on scroll
+            const from = id === edit ? null : [edit, id]
+                .map(open => editor.popups.isVisible(open) && editor.popups.get(open).get(0).getBoundingClientRect())
+                .find(rect => rect && rect.height)
+            const positions = scrollPositions(editor.el)
+            show(id, ...position)
+            restoreScroll(positions)
+            const $popup = editor.popups.get(id)
+            const popup: HTMLElement = $popup && $popup.get(0)
+            if (!popup) {
+                return
+            }
+            const style = getComputedStyle(popup)
+            const moveTo = (top: number) => {
+                popup.classList.remove('fr-hidden')
+                popup.style.top = `${parseFloat(style.top) + top - popup.getBoundingClientRect().top}px`
+            }
+            // The image, video or link the popup is for
+            const owner = editor[family] && editor[family].get && editor[family].get()
+            const element: Element = owner && (owner.get ? owner.get(0) : owner)
+            if (from) {
+                moveTo(from.top)
+            } else if (element && popup.parentElement === editor.$sc.get(0)) {
+                // What the scrollers around the editor leave on screen. A fixed box (fullscreen, a drawer) isn't
+                // clipped by what is around it.
+                let top = 0
+                let bottom = window.innerHeight
+                for (let scroller: Element = editor.$box.get(0); scroller && !scroller.contains(document.body);
+                     scroller = scroller.parentElement) {
+                    const css = getComputedStyle(scroller)
+                    if (/auto|scroll/.test(css.overflowY)) {
+                        const clip = scroller.getBoundingClientRect()
+                        top = Math.max(top, clip.top)
+                        bottom = Math.min(bottom, clip.bottom)
+                    }
+                    if (css.position === 'fixed') {
+                        break
+                    }
+                }
+                const at = popup.getBoundingClientRect()
+                const text = editor.$wp.get(0).getBoundingClientRect()
+                const target = element.getBoundingClientRect()
+                // Hidden or cut off while its image or link is in view: put it next to that
+                const lost = popup.classList.contains('fr-hidden') || at.top < top || at.bottom > bottom
+                if (lost && target.bottom > Math.max(top, text.top) && target.top < Math.min(bottom, text.bottom)) {
+                    popup.classList.remove('fr-hidden')
+                    // Under it, or above it, or over it (an image filling the view), clear of the toolbar
+                    const low = Math.max(top, editor.$tb.get(0).getBoundingClientRect().bottom) + 10
+                    const high = bottom - popup.offsetHeight - 10
+                    const spot = [target.bottom + 10, target.top - popup.offsetHeight - 10]
+                        .find(option => option >= low && option <= high)
+                    moveTo(spot === undefined ? Math.max(low, Math.min(target.top + 10, high)) : spot)
+                }
+            }
+            // Inside the window (a popup near the right edge of a narrow drawer, or taller than the room under it)
+            const box = popup.getBoundingClientRect()
+            const up = Math.min(box.bottom - window.innerHeight + 10, box.top - 10)
+            const left = Math.min(box.right - window.innerWidth + 10, box.left - 10)
+            if (up > 0) {
+                popup.style.top = `${parseFloat(style.top) - up}px`
+            }
+            if (left > 0) {
+                popup.style.left = `${parseFloat(style.left) - left}px`
+            }
+        }
+    }
+
+    // Scroll the editor, then whatever scrolls around it, just enough to show the cursor below the toolbar
+    revealCursor(editor: any) {
+        const selection = window.getSelection()
+        if (!selection.rangeCount) {
+            return
+        }
+        const anchor = selection.anchorNode
+        const block = anchor instanceof Element ? anchor : anchor.parentElement
+        // <body> and <html> scroll the window, so their own boxes clip nothing
+        const isPage = (element: Element) => element.contains(document.body)
+        const scrollers: Element[] = []
+        for (let element = block; element; element = element.parentElement) {
+            if (isPage(element) || /auto|scroll/.test(getComputedStyle(element).overflowY)) {
+                scrollers.push(element)
+            }
+        }
+        scrollers.forEach((scroller, index) => {
+            const cursor = selection.getRangeAt(0).getClientRects()[0] || block.getBoundingClientRect()
+            // What this scroller shows: its box, clipped by the scrollers around it, the window and the toolbar
+            let top = editor.$tb.get(0).getBoundingClientRect().bottom
+            let bottom = window.innerHeight
+            scrollers.slice(index).filter(outer => !isPage(outer)).forEach(outer => {
+                const box = outer.getBoundingClientRect()
+                top = Math.max(top, box.top)
+                bottom = Math.min(bottom, box.bottom)
+            })
+            if (cursor.bottom > bottom - 16) {
+                scroller.scrollTop += cursor.bottom - bottom + 32
+            } else if (cursor.top < top + 16) {
+                scroller.scrollTop -= top - cursor.top + 32
+            }
+        })
+    }
+
+    // The configured viewport only scrolls in the wide admin layout; in the narrow layout the page itself scrolls
+    scrollContainer(): string {
+        const viewPort = Stratus.Environment.get('viewPort')
+        const element = _.isString(viewPort) && document.querySelector(viewPort)
+        return element && /auto|scroll/.test(getComputedStyle(element).overflowY) ? viewPort : 'body'
+    }
+
+    // A fixed admin header covers the sticky toolbar unless the toolbar is offset below it
+    fixedHeaderHeight(): number {
+        const header = document.getElementById('header')
+        return header && getComputedStyle(header).position === 'fixed' ? header.getBoundingClientRect().bottom : 0
+    }
+
     applyCompactToolbar() {
         // this doesn't work anyways in the sidebar
         this.froalaConfig.toolbarSticky = false
@@ -1384,7 +1633,9 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
         // This is necessary in order to make the drop down menus appear
         this.froalaConfig.scrollableContainer = 'body';
         // Try to make it reset after fullscreen
-        (this.froalaConfig as any).toolbarResponsiveToEditor = true
+        (this.froalaConfig as any).toolbarResponsiveToEditor = true;
+        // The quick insert button sits 50px left of the editor, where a sidebar has no room
+        (this.froalaConfig as any).quickInsertEnabled = false
         const compactButtons = {
             moreText: {
                 buttons: [
@@ -1392,6 +1643,7 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
                     'italic',
                     'underline',
                     'strikeThrough',
+                    'inlineCode',
                     'subscript',
                     'superscript',
                     // 'fontFamily',
@@ -1408,7 +1660,8 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
                     'alignLeft',
                     'alignCenter',
                     'alignRight',
-                    'quote'
+                    'quote',
+                    'codeBlock'
                 ],
                 buttonsVisible: 2
             },
@@ -1530,7 +1783,34 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
         if (!data || !_.isString(data)) {
             return ''
         }
-        return this.changeImgSize(data, 'hq', 'in')
+        return this.changeImgSize(this.protectSpaces(data), 'hq', 'in')
+    }
+
+    // Froala 4.0.18 drops the space after an inline element when its container also holds blocks (e.g.
+    // "<li><strong>Note.</strong> text<ul>…"), on load and on paste. A zero-width space in front keeps it, and
+    // Froala removes that itself.
+    protectSpaces(data: string): string {
+        const template = document.createElement('template')
+        template.innerHTML = data
+        return this.protectSpacesBeforeBlocks(template.content) ? template.innerHTML : data
+    }
+
+    // See protectSpaces(). Returns whether anything changed.
+    protectSpacesBeforeBlocks(content: DocumentFragment): boolean {
+        const blocks = ['BLOCKQUOTE', 'DIV', 'FIGURE', 'H1', 'H2', 'H3', 'H4', 'H5', 'H6', 'HR', 'OL', 'P', 'PRE', 'TABLE', 'UL']
+        let changed = false
+        content.querySelectorAll('li, blockquote, div, td, th, dd, figcaption').forEach(container => {
+            if (!Array.from(container.children).some(child => blocks.includes(child.tagName))) {
+                return
+            }
+            container.childNodes.forEach(node => {
+                if (node.nodeType === Node.TEXT_NODE && (node as Text).data[0] === ' ' && node.previousSibling?.nodeType === Node.ELEMENT_NODE) {
+                    (node as Text).data = '\u200B' + (node as Text).data
+                    changed = true
+                }
+            })
+        })
+        return changed
     }
     normalizeOut(data?: string): string {
         // Normalize null values to empty strings to maintain consistent typing.
@@ -1541,7 +1821,28 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             // TODO: look into either piping the data here to remove `fr-original-style`
             return data
         }
-        return this.changeImgSize(data, 'xs', 'out')
+        return this.changeImgSize(this.restoreIcons(data), 'xs', 'out')
+    }
+
+    // Font Awesome's JavaScript (loaded by the editor) swaps icon tags, even in the text being edited, for inline
+    // SVGs plus a comment holding the original tag. Save the original.
+    restoreIcons(data: string): string {
+        if (data.indexOf('data-fa-i2svg') === -1) {
+            return data
+        }
+        const template = document.createElement('template')
+        template.innerHTML = data
+        template.content.querySelectorAll('svg[data-fa-i2svg]').forEach(svg => {
+            const comment = svg.nextSibling
+            const original = comment && comment.nodeType === Node.COMMENT_NODE && (comment as Comment).data.match(/^\s*(<i\b[^>]*><\/i>)/)
+            const icon = document.createElement('template')
+            icon.innerHTML = original ? original[1] : `<i class="${svg.getAttribute('data-prefix')} fa-${svg.getAttribute('data-icon')}"></i>`
+            if (original) {
+                comment.remove()
+            }
+            svg.replaceWith(icon.content)
+        })
+        return template.innerHTML
     }
 
     htmlHasMeaningfulContent(data?: string): boolean {
@@ -1647,7 +1948,15 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
     }
 
     onFroalaInit() {
-        setTimeout(() => this.ensureFroalaHydration(false), 1)
+        // The directive only has the editor once Froala's constructor has returned
+        setTimeout(() => {
+            this.ensureFroalaHydration(false)
+            const editor = this.froalaEditorDirective && (this.froalaEditorDirective as any).getEditor()
+            if (editor && editor.cursor) {
+                this.keepScrollOnEnter(editor)
+                this.keepPopupsInView(editor)
+            }
+        }, 1)
 
         // Set Token via Cookie if present
         // Stratus.Environment.set('token', cookie('apiToken') || null)
@@ -1715,7 +2024,7 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
         setTimeout(setToken, 1)
 
         // Add Interval
-        setInterval(setToken, 1000 * 60 * 29)
+        this.tokenInterval = setInterval(setToken, 1000 * 60 * 29)
     }
 
     changeImgSize(data?: string, size?: string, mode: 'in'|'out' = 'in'): string {
@@ -1725,9 +2034,10 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
         if (!size || !_.isString(size)) {
             return data
         }
-        const container = document.createElement('div')
+        // A template's content is inert: no images load and no event handlers run
+        const container = document.createElement('template')
         container.innerHTML = data
-        _.forEach(container.querySelectorAll('img'), (image: HTMLImageElement) => {
+        _.forEach(container.content.querySelectorAll('img'), (image: HTMLImageElement) => {
             const legacyImage = image.hasAttribute('data-stratus-src') || image.hasAttribute('stratus-src')
             if (image.hasAttribute('data-stratus-placeholder') || (nativeEditorImagesEnabled() && !legacyImage)) {
                 // Preserve native sources through both editor hydration and persistence.
@@ -1737,7 +2047,8 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
                 return
             }
             const source = image.getAttribute('data-src') || image.getAttribute('src')
-            if (!source || source.indexOf('data:image') === 0) {
+            // GIFs and SVGs have no resized versions (and a resized GIF would lose its animation)
+            if (!source || source.indexOf('data:image') === 0 || /\.(gif|svg)([?#]|$)/i.test(source)) {
                 return
             }
             const sizedSource = this.getSizedImageSrc(source, size)
@@ -1878,6 +2189,8 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
     ngOnDestroy(): void {
         this.destroyed = true
         this.clearDataRetry()
+        clearInterval(this.tokenInterval)
+        window.removeEventListener('beforeunload', this.onBeforeUnload)
         if (this.dataSubscription) {
             this.dataSubscription.unsubscribe()
         }
@@ -1985,6 +2298,29 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
         this.blurred = false
     }
 
+    // Autosave waits ~9s (5s debounce here + the model's idle timer). On reload or close, save now and ask the
+    // browser to confirm leaving, so the save can finish.
+    onBeforeUnload = (event: BeforeUnloadEvent) => {
+        // Froala hands typing to the form after a short delay; push the latest text now
+        const editor = this.froalaEditorDirective && (this.froalaEditorDirective as any).getEditor()
+        if (editor && editor.events) {
+            editor.events.trigger('contentChanged')
+        }
+        if (this.debounceSave && this.pendingLocalValue !== null) {
+            this.modelSave(this.outgoingData)
+        }
+        // Same rules as the model's own auto-save. Its timer id is never reset, so it can't say what is unsaved.
+        const model: any = this.model
+        if (!model || !model.getSavablePatch || !model.completed || model.isNew() ||
+            (model.autoSaveHalt && !model.autoSave) || _.isEmpty(model.getSavablePatch())) {
+            return
+        }
+        clearTimeout(model.autoSaveTimeout)
+        model.save()
+        event.preventDefault()
+        event.returnValue = ''
+    }
+
     onBlur(event: FocusEvent) {
         if (this.dev && this.debug) {
             console.warn(`[onBlur] triggered on ${this.uid}`)
@@ -2022,6 +2358,8 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
     public openCitationDialog(callee: TriggerInterface): void {
         const dialogRef = this.dialog.open(CitationDialogComponent, {
             width: '1000px',
+            // Refocusing the editor scrolls long content to the top; the selection restore refocuses it instead
+            restoreFocus: false,
             data: {
                 editor: this,
                 eventManager: callee,
@@ -2035,6 +2373,8 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
 
         const that = this
         dialogRef.afterClosed().subscribe((result: CitationDialogData) => {
+            // Put the selection back however the dialog closed (inserts have already used it)
+            callee.trigger('restore', null, this)
             if (!result || _.isEmpty(result)) {
                 return
             }
@@ -2050,6 +2390,7 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
     public openLinkDialog(callee: TriggerInterface, data: any): void {
         const dialogRef = this.dialog.open(LinkDialogComponent, {
             width: '500px',
+            restoreFocus: false,
             data: {
                 editor: this,
                 eventManager: callee,
@@ -2064,6 +2405,7 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
 
         const that = this
         dialogRef.afterClosed().subscribe((result: LinkDialogData) => {
+            callee.trigger('restore', null, this)
             if (!result || _.isEmpty(result)) {
                 return
             }
@@ -2079,6 +2421,7 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
     public openMediaDialog(callee: TriggerInterface): void {
         const dialogRef = this.dialog.open(MediaDialogComponent, {
             width: '1000px',
+            restoreFocus: false,
             data: {
                 editor: this,
                 eventManager: callee,
@@ -2092,6 +2435,7 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
 
         const that = this
         dialogRef.afterClosed().subscribe((result: MediaDialogData) => {
+            callee.trigger('restore', null, this)
             if (!result || _.isEmpty(result)) {
                 return
             }

@@ -232,7 +232,7 @@ export class MediaDialogComponent extends ResponsiveComponent implements OnInit 
     }
 
     select(media: Media) {
-        if (_.isUndefined(media)) {
+        if (_.isUndefined(media) || this.isSelected(media)) {
             return
         }
         const mediaElement = this.createEmbed(media)
@@ -285,7 +285,9 @@ export class MediaDialogComponent extends ResponsiveComponent implements OnInit 
         }
         if (_.startsWith(media.mime, 'image')) {
             const nativeImages = nativeEditorImagesEnabled()
-            const imageSrc = media._thumbnailUrl || media.file || (nativeImages && media.service === 'directLink' ? media.url : '')
+            // GIFs use the original file: the resized thumbnail is small and may lose the animation
+            const imageSrc = (media.mime === 'image/gif' && media._directUrl) || media._thumbnailUrl || media.file ||
+                (nativeImages && media.service === 'directLink' ? media.url : '')
             if (!imageSrc || (!nativeImages && media.service === 'directLink' && !media.file)) {
                 console.warn(`media-dialog: unable to determine image source for media id: ${media.id}`)
                 return null

@@ -212,6 +212,8 @@ export class LinkDialogComponent extends ResponsiveComponent implements OnInit, 
                             this.content = value
                             return this.getQuery()
                         }
+                        // Typing replaces the chosen page, so Ok can't link the old one
+                        this.content = null
                         return this.getQuery(value)
                     }
                 )
@@ -230,9 +232,6 @@ export class LinkDialogComponent extends ResponsiveComponent implements OnInit, 
         this.dialogContentForm
             .get('linkTypeRadio')
             .valueChanges
-            .pipe(
-                debounceTime(300),
-            )
             .subscribe((response: string) => this.linkType = response)
 
         // Populate Data from Froala Element
@@ -245,13 +244,12 @@ export class LinkDialogComponent extends ResponsiveComponent implements OnInit, 
         this.dialogContentForm
             .get('linkTextInput')
             .valueChanges
-            .pipe(
-                debounceTime(300),
-            )
             .subscribe((response: string) => this.linkText = response)
 
         // Populate Data from Froala Element
-        this.linkInitText = this.linkText = this.element ? this.element.textContent : ''
+        // Drop the selection markers' zero-width spaces, so unchanged text keeps the link's own formatting
+        this.linkInitText = this.linkText = (this.element ? this.element.textContent : _.get(this.eventManager, 'selectionText', ''))
+            .replace(/\u200B/g, '')
         this.dialogContentForm
             .get('linkTextInput')
             .patchValue(this.linkText)
@@ -260,9 +258,6 @@ export class LinkDialogComponent extends ResponsiveComponent implements OnInit, 
         this.dialogContentForm
             .get('linkURLInput')
             .valueChanges
-            .pipe(
-                debounceTime(300),
-            )
             .subscribe((response: string) => this.linkURL = response)
 
         // Populate Data from Froala Element
@@ -275,9 +270,6 @@ export class LinkDialogComponent extends ResponsiveComponent implements OnInit, 
         this.dialogContentForm
             .get('linkTargetCheckbox')
             .valueChanges
-            .pipe(
-                debounceTime(300),
-            )
             .subscribe((response: boolean) => this.linkTarget = response)
 
         // Populate Data from Froala Element
@@ -338,11 +330,6 @@ export class LinkDialogComponent extends ResponsiveComponent implements OnInit, 
     }
 
     onCancelClick(): void {
-        if (!this.eventManager) {
-            console.warn(`${moduleName}: event manager is not set.`)
-            return
-        }
-        this.eventManager.trigger('restore', null, this.editor)
         this.dialogRef.close()
         this.refresh()
     }
@@ -396,7 +383,7 @@ export class LinkDialogComponent extends ResponsiveComponent implements OnInit, 
             text: this.linkText,
             target: this.linkTarget,
         }
-        if (!link) {
+        if (!link || !_.trim(link.url)) {
             const identifier = this.content && this.content.id ? `for Content ID: ${this.content.id}.` : 'without Content Selected or URL Input.'
             console.warn(`${moduleName}: unable to build link ${identifier}`)
             this.snackBar.open(`Unable to build link ${identifier}`, 'dismiss', {
@@ -431,8 +418,8 @@ export class LinkDialogComponent extends ResponsiveComponent implements OnInit, 
             return
         }
         this.eventManager.trigger('insert', link, this.editor)
-        // close dialog after inserting link
-        this.onCancelClick()
+        this.dialogRef.close()
+        this.refresh()
     }
 
     isSelected(content: ContentEntity) : boolean {
@@ -520,7 +507,8 @@ export class LinkDialogComponent extends ResponsiveComponent implements OnInit, 
         return uid
     }
 
-    displayContentText(content: ContentEntity) {
+    // An arrow function: the autocomplete calls displayWith without the component as `this`
+    displayContentText = (content: ContentEntity) => {
         // Ensure Content is Selected before Display Text
         if (!content) {
             return
@@ -528,11 +516,11 @@ export class LinkDialogComponent extends ResponsiveComponent implements OnInit, 
         // Routing Display
         const routing = _.get(content, 'routing[0].url')
         const routingText = !_.isUndefined(routing) ? ` (/${routing})` : ' (No route!)'
-        // ContentId Fallback
-        const contentId = _.get(content, 'id')
-        const contentIdText = !_.isUndefined(contentId) ? `Content: ${contentId}` : null
-        // Return Version Title or Fallback Text
-        return (_.get(content, 'version.title') || contentIdText) + routingText
+        return this.contentTitle(content) + routingText
+    }
+
+    contentTitle(content: ContentEntity): string {
+        return _.get(content, 'version.title') || `Untitled ${_.get(content, 'contentType.name') || 'Page'}`
     }
 
     goToUrl(content: ContentEntity) {

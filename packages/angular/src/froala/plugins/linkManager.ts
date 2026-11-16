@@ -13,8 +13,7 @@ import {
     cookie
 } from '@stratusjs/core/environment'
 import {
-    isJSON,
-    LooseObject
+    isJSON
 } from '@stratusjs/core/misc'
 
 // Stratus Runtime
@@ -34,6 +33,14 @@ import FroalaEditor from 'froala-editor'
 FroalaEditor.DEFAULTS = Object.assign(FroalaEditor.DEFAULTS, {
     endpoint: '/Api/Content'
 })
+
+// Froala only updates the attributes it's given on an existing link, so pass null to remove them
+function insertLink(editor: any, link: Link) {
+    editor.link.insert(link.url, link.text, {
+        'data-content-id': link.id || null,
+        target: link.target ? '_blank' : null
+    })
+}
 
 /**
  * @param editor The Froala instance
@@ -56,16 +63,7 @@ FroalaEditor.PLUGINS.linkManager = function linkManager (editor: any) {
             name: 'Link Manager',
             eventName: 'link-library',
             editor,
-            insert: (link: Link) => {
-                const attrs: LooseObject = {}
-                if (link.id) {
-                    attrs['data-content-id'] = link.id
-                }
-                if (link.target) {
-                    attrs.target = '_blank'
-                }
-                editor.link.insert(link.url, link.text, attrs)
-            },
+            insert: (link: Link) => insertLink(editor, link),
             // Note: We use Custom Bindings for this via this.insert()
             autoSaveSelection: true,
             // maintainSnapshot: true,
@@ -134,6 +132,9 @@ FroalaEditor.RegisterCommand('linkManager', {
 }),
 FroalaEditor.DefineIcon('linkManager', {NAME: 'folder', SVG_KEY: 'insertLink'}),
 
+// Cmd/Ctrl+K opens our link dialog (Froala's own link popup isn't set up, so its shortcut throws)
+FroalaEditor.RegisterShortcut(FroalaEditor.KEYCODE.K, 'linkManager', null, 'K'),
+
 // Link Edit Icon
 FroalaEditor.RegisterCommand('linkManagerEdit', {
     title: 'Edit Link',
@@ -170,9 +171,7 @@ FroalaEditor.RegisterQuickInsertButton('link', {
             eventName: 'link-library',
             // Contextual `this` is equivalent to the editor instance
             editor: this,
-            insert: (link: Link) => {
-                this.link.insert(link.url, '', {'aria-label': link.title})
-            },
+            insert: (link: Link) => insertLink(this, link),
             autoSaveSelection: true,
             // maintainSnapshot: false,
             autoRestoreSelection: true,
