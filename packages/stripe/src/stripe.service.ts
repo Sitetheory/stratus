@@ -233,6 +233,22 @@ export class StripeService {
         return this.stripe.confirmSetup({elements, clientSecret, confirmParams, redirect: 'if_required'})
     }
 
+    isPaymentMethodDeleted(id: number): boolean {
+        return this.deletedPaymentMethodIds.has(id)
+    }
+
+    findPaymentMethod(paymentMethodId: string): Model | undefined {
+        // Older APIs return an empty create response. Match the Stripe identity,
+        // never list position or billing details, after the scoped lists refresh.
+        for (const {collection} of Object.values(this.collections)) {
+            const saved = (collection.models as Model[]).find(model =>
+                model.get('paymentMethodId') === paymentMethodId &&
+                model.get('status') === 1 && !this.isPaymentMethodDeleted(model.get('id')))
+            if (saved) return saved
+        }
+        return undefined
+    }
+
     removePaymentMethod(id: number) {
         // A successful DELETE is authoritative; cached/replica reads must not restore it.
         this.deletedPaymentMethodIds.add(id)

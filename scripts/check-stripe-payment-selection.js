@@ -6,7 +6,7 @@ const { test } = require('node:test')
 const source = fs.readFileSync('packages/stripe/src/payment-method-selector.component.ts', 'utf8')
 const tree = ts.createSourceFile('selector.ts', source, ts.ScriptTarget.Latest, true)
 const component = tree.statements.find(n => ts.isClassDeclaration(n))
-const methods = component.members.filter(n => n.name && ['selectCreatedPaymentMethod', 'valueChanged', 'deselectPaymentMethod'].includes(n.name.getText(tree)))
+const methods = component.members.filter(n => n.name && ['selectCreatedPaymentMethod', 'valueChanged', 'deselectPaymentMethod', 'reconcileDeletedPaymentMethod'].includes(n.name.getText(tree)))
 const context = {exports: {}, CustomEvent: class {}}
 vm.runInNewContext(ts.transpileModule(`exports.Selector = class {${methods.map(n => n.getText(tree)).join('\n')}}`, {compilerOptions: {target: ts.ScriptTarget.ES2020}}).outputText, context)
 const model = (id, status = 1) => ({get: key => ({id, status})[key]})
@@ -15,7 +15,7 @@ function fixture(models = []) {
     const fields = {}
     Object.assign(selector, {collection: {models}, fieldName: 'choice', fieldNameId: 'id',
         elementRef: {nativeElement: {dispatchEvent() {}}},
-        form: {get: key => ({setValue: value => {fields[key] = value; if (key === 'choice') selector.valueChanged(value)}})}, refresh() {}})
+        form: {get: key => ({get value() { return fields[key] }, setValue: value => {fields[key] = value; if (key === 'choice') selector.valueChanged(value)}})}, refresh() {}})
     const result = {selector, fields}
     return result
 }
@@ -48,13 +48,13 @@ const paymentSource = fs.readFileSync('packages/stripe/src/payment-method.compon
 const paymentTree = ts.createSourceFile('payment.ts', paymentSource, ts.ScriptTarget.Latest, true)
 const paymentClass = paymentTree.statements.find(n => ts.isClassDeclaration(n))
 const save = paymentClass.members.find(n => n.name && n.name.getText(paymentTree) === 'saveCard')
-function paymentFixture(failSave = false) {
+function paymentFixture(failSave = false, emptyResponse = false, refreshed = undefined) {
     const emitted = []
     const errorElement = {textContent: ''}
     class Model {
         async save() {
             if (failSave) throw new Error('Write failed')
-            this.data = {id: 557, status: 1}
+            this.data = emptyResponse ? {} : {id: 557, status: 1}
         }
         get(key) { return this.data[key] }
     }
@@ -66,7 +66,8 @@ function paymentFixture(failSave = false) {
     const payment = new sandbox.exports.Payment()
     Object.assign(payment, {isSubmittable: () => true, cardSaved: false,
         Stripe: {confirmSetup: async () => ({setupIntent: {status: 'succeeded', payment_method: 'test-pm'}}),
-            fetchCollections: async () => {throw new Error('Replica unavailable')},
+            fetchCollections: async () => {if (!refreshed) throw new Error('Replica unavailable')},
+            findPaymentMethod: id => id === 'test-pm' ? refreshed : undefined,
             emitManual: (...args) => emitted.push(args)}})
     return {payment, emitted, errorElement}
 }
@@ -152,4 +153,44 @@ test('confirmed deletion updates all lists and rejects a stale refresh', () => {
     service.filterDeletedPaymentMethods(first)
     assert.equal(first.models.length, 1)
     assert.equal(first.models[0], kept)
+})
+
+test('scoped refresh preserves a default absent from the viewer collection', () => {
+    const {selector, fields} = fixture()
+    selector.Stripe = {isPaymentMethodDeleted: () => false}
+    fields.choice = model(557)
+    fields.id = 557
+    selector.reconcileDeletedPaymentMethod()
+    assert.equal(fields.id, 557)
+    selector.Stripe.isPaymentMethodDeleted = id => id === 557
+    selector.selectorListClose = () => {}
+    selector.reconcileDeletedPaymentMethod()
+    assert.equal(fields.id, null)
+})
+test('empty legacy create response selects the exact refreshed saved record', async () => {
+    const saved = model(557)
+    const {payment, emitted} = paymentFixture(false, true, saved)
+    await payment.saveCard()
+    assert.equal(emitted.length, 1)
+    assert.equal(emitted[0][3], saved)
+})
+test('empty legacy create response without a refreshed match does not guess a card', async () => {
+    const {payment, emitted} = paymentFixture(false, true)
+    await payment.saveCard()
+    assert.equal(payment.cardSaved, true)
+    assert.equal(emitted.length, 0)
+})
+const lookup = serviceClass.members.filter(n => n.name && ['findPaymentMethod', 'isPaymentMethodDeleted'].includes(n.name.getText(serviceTree)))
+test('lookup requires exact Stripe identity, verified status and no confirmed deletion', () => {
+    const sandbox = {exports: {}}
+    vm.runInNewContext(ts.transpileModule(`exports.Service = class {${lookup.map(n => n.getText(serviceTree)).join('\n')}}`, {
+        compilerOptions: {target: ts.ScriptTarget.ES2020}
+    }).outputText, sandbox)
+    const service = new sandbox.exports.Service()
+    const card = (id, paymentMethodId, status = 1) => ({get: key => ({id, paymentMethodId, status})[key]})
+    const saved = card(557, 'pm_exact')
+    service.deletedPaymentMethodIds = new Set([556])
+    service.collections = {a: {collection: {models: [card(558, 'pm_other'), card(556, 'pm_exact'), card(559, 'pm_exact', 0), saved]}}}
+    assert.equal(service.findPaymentMethod('pm_exact'), saved)
+    assert.equal(service.findPaymentMethod('pm_missing'), undefined)
 })
