@@ -16,7 +16,8 @@
                       tabindex="0"
                       [class.selected]="isSelected(mediaEntity)"
                       (click)="select(mediaEntity)"
-                      (keydown.enter)="select(mediaEntity)">
+                      (keydown.enter)="$event.preventDefault(); select(mediaEntity)"
+                      (keydown.space)="$event.preventDefault(); select(mediaEntity)">
                 <mat-card-header>
                     <!--<div mat-card-avatar class="media-header-image"></div>-->
                     <!--<mat-card-title [innerText]="mediaEntity.name || 'Untitled'"></mat-card-title>-->

@@ -328,7 +328,9 @@ export class StripePaymentMethodComponent extends StripeComponent implements OnD
                 } catch (_) {
                     // The successful write still supplies the selectable payment method.
                 }
-                this.Stripe.emitManual('paymentMethodCreated', 'Stripe', this, model)
+                const saved = model.get('id') && model.get('status') === 1
+                    ? model : this.Stripe.findPaymentMethod(setupIntent.payment_method)
+                if (saved) this.Stripe.emitManual('paymentMethodCreated', 'Stripe', this, saved)
                 return
             }
 

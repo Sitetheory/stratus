@@ -268,10 +268,7 @@ export class StripePaymentMethodSelectorComponent extends StripeListComponent im
         this.initialized = true
         this.Stripe.emit('init', this) // Note this component is ready
         this.Stripe.on(this.uid, 'collectionUpdated', (_source, _collection: [Collection]) => {
-            const selected = this.form.get(this.fieldName).value as Model
-            if (selected && !(this.collection.models as Model[]).some(pm => pm.get('id') === selected.get('id'))) {
-                this.deselectPaymentMethod()
-            }
+            this.reconcileDeletedPaymentMethod()
             this.refresh()
             this.selectorListClose()
         })
@@ -280,6 +277,14 @@ export class StripePaymentMethodSelectorComponent extends StripeListComponent im
         })
 
         // console.log('inited selector, this is model', this.model)
+    }
+
+    reconcileDeletedPaymentMethod() {
+        const selected = this.form.get(this.fieldName).value as Model
+        // A scoped list can omit a valid default owned by another user.
+        if (selected && this.Stripe.isPaymentMethodDeleted(selected.get('id'))) {
+            this.deselectPaymentMethod()
+        }
     }
 
     selectCreatedPaymentMethod(saved: Model) {

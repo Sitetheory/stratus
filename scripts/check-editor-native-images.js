@@ -106,3 +106,18 @@ assert.equal(spaced.querySelector('p').textContent, 'a b', 'plain paragraphs are
 const icons = editor.normalizeOut('<p>A <svg class="svg-inline--fa fa-star" data-prefix="fa" data-icon="star" data-fa-i2svg=""><path d="M0"></path></svg><!-- <i class="fa fa-star"></i> Font Awesome fontawesome.com --> b <svg data-prefix="fab" data-icon="github" data-fa-i2svg=""></svg></p>')
 assert.equal(icons, '<p>A <i class="fa fa-star"></i> b <i class="fab fa-github"></i></p>')
 console.log('PASS migrated editor save/reopen, 1600px cap, selector manifest selection and bounded retry, protected spaces, icons')
+
+// Execute the actual template keyboard bindings: both keys insert exactly once
+// and suppress the browser's native form/scroll default.
+const mediaTemplate = fs.readFileSync('packages/angular/src/editor/media-dialog.component.html', 'utf8')
+for (const key of ['enter', 'space']) {
+    const binding = mediaTemplate.match(new RegExp('\\(keydown\\.' + key + '\\)="([^"]+)"'))
+    assert.ok(binding, key + ' must activate the media card')
+    let prevented = 0, inserted = 0
+    const mediaEntity = {id: 42}
+    new Function('$event', 'select', 'mediaEntity', binding[1])(
+        {preventDefault() { prevented++ }},
+        selected => { assert.equal(selected, mediaEntity); inserted++ }, mediaEntity)
+    assert.equal(prevented, 1)
+    assert.equal(inserted, 1)
+}
