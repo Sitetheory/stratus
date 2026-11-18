@@ -7,7 +7,7 @@
     "test": "test"
   },
   "scripts": {
-    "test": "npm run build && npm run test:bundle-order && npm run test:carousel-images && npm run test:idx-details-template && npm run test:idx-property-filter && npm run test:idx-variable-sync && npm run test:editor-pending-text && npm run test:editor-defer && npm run test:editor-native-images && npm run test:model-error-toast && npm run test:stripe-payment-selection && npm run lint",
+    "test": "npm run build && npm run test:bundle-order && npm run test:carousel-images && npm run test:idx-details-template && npm run test:idx-property-filter && npm run test:idx-variable-sync && npm run test:editor-pending-text && npm run test:editor-defer && npm run test:editor-native-images && npm run test:model-error-toast && npm run test:stripe-payment-selection && npm run test:session-origin-isolation && npm run lint",
     "build": "npm run compileCSS && npm run compileCoffee && npm run bundle && npm run dist && npm run compress",
     "bundle": "npm run bundle:rollup && npm run compileTypeScript",
     "bundle:rollup": "node_modules/.bin/gulp compileES6TypeScript && npm run rollup",
@@ -33,7 +33,8 @@
     "test:editor-defer": "node scripts/check-editor-defer.js",
     "test:model-error-toast": "node scripts/check-model-error-toast.js",
     "test:editor-native-images": "node scripts/check-editor-native-images.js",
-    "test:editor-pending-text": "node scripts/check-editor-pending-text.js"
+    "test:editor-pending-text": "node scripts/check-editor-pending-text.js",
+    "test:session-origin-isolation": "node scripts/check-session-origin-isolation.js"
   },
   "repository": {
     "type": "git",
